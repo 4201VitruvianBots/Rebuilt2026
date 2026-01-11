@@ -4,13 +4,18 @@
 
 package frc.robot;
 
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
+import frc.robot.commands.Shoot;
+import frc.robot.subsystems.ShooterRollers;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -18,18 +23,29 @@ import frc.robot.subsystems.ExampleSubsystem;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
+@Logged(name = "RobotContainer", importance = Logged.Importance.CRITICAL)
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
+  private ShooterRollers m_ShooterRollers = new ShooterRollers();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  @Logged(name = "AutoChooser")
+  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    initializeSubSystems();
+    initSmartDashboard();
+  }
+
+  private void initializeSubSystems() {
+    m_ShooterRollers = new ShooterRollers();
   }
 
   /**
