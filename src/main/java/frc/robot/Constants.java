@@ -32,7 +32,7 @@ public final class Constants {
         0.0001; /* This probably doesn't matter because Krakens are stupid powerful. */
 
     // Copied from elevator so don't you even think about testing these. No way we'd reach testing
-    // phase without
+    // phase without changing these... right?
     public static double motionMagicCruiseVelocity =
         100; // target cruise velocity of 100 rps, so 6000 rpm
     public static double motionMagicAcceleration = 40; // target acceleration of 40 rps/s

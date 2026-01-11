@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Acceleration;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -40,7 +41,7 @@ public class ShooterRollers extends SubsystemBase {
       new MotionMagicVelocityVoltage(0).withEnableFOC(true);
   private double m_rpmSetpoint;
 
-  private final DCMotorSim m_endEffectorSim =
+  private final DCMotorSim m_shooterMotorSim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
               SHOOTERMOTORS.gearbox, SHOOTERMOTORS.kInertia, SHOOTERMOTORS.gearRatio),
@@ -79,9 +80,9 @@ public class ShooterRollers extends SubsystemBase {
     }
   }
 
-  @Logged(name = "Motor Velocity", importance = Logged.Importance.DEBUG)
+  @Logged(name = "Motor Velocity in RPS", importance = Logged.Importance.DEBUG)
   public AngularVelocity getMotorSpeed() {
-    return m_motors[0].getVelocity().refresh().getValue().div(60);
+    return m_motors[0].getVelocity().refresh().getValue();
   }
 
   @Logged(name = "Motor Acceleration", importance = Logged.Importance.DEBUG)
@@ -110,14 +111,14 @@ public class ShooterRollers extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_endEffectorSim.setInputVoltage(m_simState.getMotorVoltage());
+    m_shooterMotorSim.setInputVoltage(m_simState.getMotorVoltage());
 
-    m_endEffectorSim.update(0.02);
+    m_shooterMotorSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_endEffectorSim.getAngularPositionRotations())
+        Rotations.of(m_shooterMotorSim.getAngularPositionRotations())
             .times(SHOOTERMOTORS.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_endEffectorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
+        RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
   }
 }
