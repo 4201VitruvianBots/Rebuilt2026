@@ -58,13 +58,19 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    m_driverController
+        .a()
+        .whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()))
+        .onFalse(new Shoot(m_ShooterRollers, ShooterRPM.IDLE.getRPM()));
+  }
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+  private void initAutoChooser() {
+    SmartDashboard.putData("Auto Mode", m_chooser);
+    m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+  }
+
+  private void initSmartDashboard() {
+    initAutoChooser();
   }
 
   /**
@@ -74,6 +80,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return new InstantCommand();
   }
 }

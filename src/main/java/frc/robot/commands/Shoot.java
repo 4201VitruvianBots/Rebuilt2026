@@ -5,22 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.ShooterRollers;
 
-/** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
+public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  private final ExampleSubsystem m_subsystem;
+  private final ShooterRollers m_shooterRollers;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public ExampleCommand(ExampleSubsystem subsystem) {
-    m_subsystem = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+  private final double m_rpm;
+
+  public Shoot(ShooterRollers shooterRollers, double rpm) {
+    m_shooterRollers = shooterRollers;
+    m_rpm = rpm;
+
+    addRequirements(shooterRollers);
   }
 
   // Called when the command is initially scheduled.
@@ -29,7 +26,9 @@ public class ExampleCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_shooterRollers.setRPMOutputFOC(m_rpm);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
