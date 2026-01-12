@@ -15,7 +15,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.Acceleration;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -58,6 +57,7 @@ public class ShooterRollers extends SubsystemBase {
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERMOTORS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = SHOOTERMOTORS.peakReverseOutput;
 
+    config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERMOTORS.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERMOTORS.motionMagicAcceleration;
     config.MotionMagic.MotionMagicJerk = SHOOTERMOTORS.motionMagicJerk;
 
@@ -85,11 +85,6 @@ public class ShooterRollers extends SubsystemBase {
     return m_motors[0].getVelocity().refresh().getValue();
   }
 
-  @Logged(name = "Motor Acceleration", importance = Logged.Importance.DEBUG)
-  public AngularAcceleration getMotorAcceleration() {
-    return m_motors[0].getAcceleration().refresh().getValue();
-  }
-
   @Logged(name = "Motor Voltage", importance = Logged.Importance.DEBUG)
   public Voltage getMotorVoltage() {
     return m_motors[0].getMotorVoltage().refresh().getValue();
@@ -102,7 +97,7 @@ public class ShooterRollers extends SubsystemBase {
   public void setRPMOutputFOC(double rpm) {
     m_rpmSetpoint = rpm;
     var rps = rpm / 60;
-    m_motors[0].setControl(m_request.withVelocity(rps).withFeedForward(0));
+    m_motors[0].setControl(m_request.withVelocity(rps));
   }
 
   @Override

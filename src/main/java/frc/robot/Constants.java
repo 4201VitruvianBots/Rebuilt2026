@@ -22,14 +22,14 @@ public final class Constants {
 
   public class SHOOTERMOTORS {
     public static final double kP =
-        0.1; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+      0.1; // TODO: These will all need to be changed because we are attempting to reach a set rpm
     public static final double kI = 0.0;
-    public static final double kD = 0.0;
+    public static final double kD = 0.02;
     public static final double gearRatio = 1.0; // Placeholder value
-    public static final double peakForwardOutput = 1.0; // Placeholder value
-    public static final double peakReverseOutput = -1.0; // Placeholder value
+    public static final double peakForwardOutput = 0.4; // Placeholder value
+    public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia =
-        0.0001; /* This probably doesn't matter because Krakens are stupid powerful. */
+        0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
     // Copied from elevator so don't you even think about testing these. No way we'd reach testing
     // phase without changing these... right?
@@ -37,7 +37,7 @@ public final class Constants {
         100; // target cruise velocity of 100 rps, so 6000 rpm
     public static double motionMagicAcceleration = 40; // target acceleration of 40 rps/s
 
-    public static double motionMagicJerk = 0;
+    public static double motionMagicJerk = 0.0;
     /* Make this higher to increase the acceleration.
     This increases acceleration a lot faster than increasing the MotionMagicAcceleration value.
     No jerk means trapezoidal profile. */
@@ -47,7 +47,7 @@ public final class Constants {
     public enum ShooterRPM {
       IDLE(500.0),
       LOW(1000.0),
-      HIGH(6000.0);
+      HIGH(4000.0);
 
       private final double rpm;
 
