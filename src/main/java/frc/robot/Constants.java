@@ -22,7 +22,7 @@ public final class Constants {
 
   public class SHOOTERMOTORS {
     public static final double kP =
-      0.1; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+        0.1; // TODO: These will all need to be changed because we are attempting to reach a set rpm
     public static final double kI = 0.0;
     public static final double kD = 0.02;
     public static final double gearRatio = 1.0; // Placeholder value

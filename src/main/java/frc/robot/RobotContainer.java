@@ -58,9 +58,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController
-        .a()
-        .whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
   }
 
   private void initAutoChooser() {

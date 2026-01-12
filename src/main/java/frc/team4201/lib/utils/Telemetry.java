@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.team4201.lib.utils;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
@@ -8,13 +8,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.*;
-import frc.robot.constants.SWERVE;
-import org.team4201.codex.simulation.FieldSim;
+
+// import org.team4201.codex.simulation.FieldSim;
 
 public class Telemetry {
-  private final double m_maxSpeed = SWERVE.kMaxSpeedMetersPerSecond;
+  // private final double m_maxSpeed = SWERVE.kMaxSpeedMetersPerSecond;
 
-  private FieldSim m_fieldSim;
+  // private FieldSim m_fieldSim;
   // TODO: Re-implement
   //    private final SwerveModuleVisualizer[] m_moduleVisualizer = {
   //            new SwerveModuleVisualizer(MODULE_POSITION.FRONT_LEFT.name(), m_maxSpeed),
@@ -55,9 +55,9 @@ public class Telemetry {
   /** Construct a telemetry object */
   public Telemetry() {}
 
-  public void registerFieldSim(FieldSim fieldSim) {
-    m_fieldSim = fieldSim;
-  }
+  // public void registerFieldSim(FieldSim fieldSim) {
+  //   m_fieldSim = fieldSim;
+  // }
 
   /* Accept the swerve drive state and telemeterize it to SmartDashboard */
   public void telemeterize(SwerveDriveState state) {
@@ -86,19 +86,19 @@ public class Telemetry {
     SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
     SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
-    if (m_fieldSim != null) {
-      // TODO: Re-implement
-      //            for (MODULE_POSITION i : MODULE_POSITION.values()) {
-      //                m_moduleVisualizer[i.ordinal()].update(state.ModuleStates[i.ordinal()]);
-      //                m_moduleTransforms[i.ordinal()] = new
-      // Transform2d(SWERVE.DRIVE.kModuleTranslations.get(i),
-      // state.ModuleStates[i.ordinal()].angle);
-      //                m_swerveModulePoses[i.ordinal()] =
-      // pose.transformBy(m_moduleTransforms[i.ordinal()]);
-      //            }
-      //
-      m_fieldSim.addPoses("robotPose", state.Pose);
-      // m_fieldSim.updateSwervePoses(m_swerveModulePoses);
-    }
+    // if (m_fieldSim != null) {
+    //   // TODO: Re-implement
+    //   //            for (MODULE_POSITION i : MODULE_POSITION.values()) {
+    //   //                m_moduleVisualizer[i.ordinal()].update(state.ModuleStates[i.ordinal()]);
+    //   //                m_moduleTransforms[i.ordinal()] = new
+    //   // Transform2d(SWERVE.DRIVE.kModuleTranslations.get(i),
+    //   // state.ModuleStates[i.ordinal()].angle);
+    //   //                m_swerveModulePoses[i.ordinal()] =
+    //   // pose.transformBy(m_moduleTransforms[i.ordinal()]);
+    //   //            }
+    //   //
+    //   m_fieldSim.addPoses("robotPose", state.Pose);
+    //   // m_fieldSim.updateSwervePoses(m_swerveModulePoses);
+    // }
   }
 }
