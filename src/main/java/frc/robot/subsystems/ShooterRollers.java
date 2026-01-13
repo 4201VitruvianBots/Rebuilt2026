@@ -8,10 +8,13 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.System_StateValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -35,8 +38,8 @@ public class ShooterRollers extends SubsystemBase {
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
-  private final MotionMagicVelocityVoltage m_request =
-      new MotionMagicVelocityVoltage(0).withEnableFOC(true);
+  private final MotionMagicVelocityTorqueCurrentFOC m_request =
+      new MotionMagicVelocityTorqueCurrentFOC(0);
   private double m_rpmSetpoint;
 
   private final DCMotorSim m_shooterMotorSim =
@@ -79,7 +82,7 @@ public class ShooterRollers extends SubsystemBase {
     }
   }
 
-  @Logged(name = "Motor Velocity in RPS", importance = Logged.Importance.DEBUG)
+  @Logged(name = "Motor Velocity in RPS", importance = Logged.Importance.INFO)
   public AngularVelocity getMotorSpeed() {
     return m_motors[0].getVelocity().refresh().getValue();
   }
@@ -96,7 +99,8 @@ public class ShooterRollers extends SubsystemBase {
   public void setRPMOutputFOC(double rpm) {
     m_rpmSetpoint = rpm;
     var rps = rpm / 60;
-    m_motors[0].setControl(m_request.withVelocity(rps));
+    System.out.println(rps);
+    m_motors[0].setControl(m_request.withVelocity(rps).withFeedForward(0.1));
   }
 
   @Override
