@@ -79,8 +79,8 @@ public class ShooterRollers extends SubsystemBase {
     }
   }
 
-  @Logged(name = "Motor Velocity in RPS", importance = Logged.Importance.INFO)
-  public AngularVelocity getMotorSpeed() {
+  @Logged(name = "Motor Velocity in Radians per Second", importance = Logged.Importance.INFO)
+  public AngularVelocity getMotorSpeedRadians() {
     return m_motors[0].getVelocity().refresh().getValue();
   }
 
@@ -96,7 +96,6 @@ public class ShooterRollers extends SubsystemBase {
   public void setRPMOutputFOC(double rpm) {
     m_rpmSetpoint = rpm;
     var rps = rpm / 60;
-    System.out.println(rps);
     m_motors[0].setControl(m_request.withVelocity(rps).withFeedForward(0.1));
   }
 
