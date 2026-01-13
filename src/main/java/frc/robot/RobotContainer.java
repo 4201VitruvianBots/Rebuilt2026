@@ -45,15 +45,11 @@ public class RobotContainer {
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
 
-      /*commented out bc its not doing anything rn but will probably later */
-  // private final CommandXboxController m_operatorController =
-  //     new CommandXboxController(USB.operator_xBoxController);
-
-       private double MaxSpeed = 
-           TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); //Kspeed at 12 volts desired top speed
-       private double MaxAngularRate = 
-           RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
-               .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+  private double MaxSpeed = 
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); //Kspeed at 12 volts desired top speed
+  private double MaxAngularRate = 
+      RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
+          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =

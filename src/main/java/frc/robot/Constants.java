@@ -107,7 +107,6 @@ public final class Constants {
   //usb n swerve are like lwk copied from reefscape
   public final class USB {
     public static final int driver_xBoxController = 0;
-    public static final int operator_xBoxController = 1;
   }
 
   public class SWERVE {
