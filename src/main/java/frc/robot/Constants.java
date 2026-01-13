@@ -47,7 +47,8 @@ public final class Constants {
     // phase without changing these... right?
     public static double motionMagicCruiseVelocity =
         70; // target cruise velocity of 100 rps, so 6000 rpm
-    public static double motionMagicAcceleration = 60; // target acceleration of 60 rps/s.. I don't actually know if krakens can do this
+    public static double motionMagicAcceleration =
+        60; // target acceleration of 60 rps/s.. I don't actually know if krakens can do this
 
     public static double motionMagicJerk = 0.0;
     /* Make this higher to increase the acceleration.
