@@ -141,17 +141,6 @@ public final class Constants {
     public static final double kMaxRotationRadiansPerSecond =
         Math.PI * 0.3; // temporary to reduce speed (original value 2.0)
 
-    // Auto-alignment constants
-    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17, 0, 0);
-    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9, 0, 0);
-    public static final PPHolonomicDriveController kDriveController =
-        new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
-    public static final PathConstraints kAutoAlignPathConstraints =
-        new PathConstraints(
-            1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI); // The constraints for this path.
-    public static final Time kEndTriggerDebounce = Seconds.of(0.04);
-    public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
-
     public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
     public static final Distance kPositionTolerance = Inches.of(0.4);
     public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
