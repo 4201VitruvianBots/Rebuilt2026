@@ -4,7 +4,19 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Meters;
+
+import com.pathplanner.lib.config.PIDConstants;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
+import java.util.Map;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -62,9 +74,86 @@ public final class Constants {
   }
 
   public class CAN {
+    public static final String rioCanbus = "rio";
+    public static String driveBaseCanbus = "drivebase";
+
+    public static final int pigeon = 9;
+
+    public static final int frontLeftCanCoder = 10;
+    public static final int frontRightCanCoder = 11;
+    public static final int backLeftCanCoder = 12;
+    public static final int backRightCanCoder = 13;
+
+    public static final int frontLeftDriveMotor = 20;
+    public static final int frontLeftTurnMotor = 21;
+    public static final int frontRightDriveMotor = 22;
+    public static final int frontRightTurnMotor = 23;
+    public static final int backLeftDriveMotor = 24;
+    public static final int backLeftTurnMotor = 25;
+    public static final int backRightDriveMotor = 26;
+    public static final int backRightTurnMotor = 27;
     public static final int kShooterRollerMotor1 = 30;
     public static final int kShooterRollerMotor2 = 31;
     public static final int kShooterRollerMotor3 = 32;
     public static final int kShooterRollerMotor4 = 33;
+  }
+
+  // usb n swerve are like lwk copied from reefscape
+  public final class USB {
+    public static final int driver_xBoxController = 0;
+  }
+
+  public class SWERVE {
+    // TODO: Remove unused variables
+    // (maybe crossreferencing with Reefscape2025 to see what gets used in a full robot project)
+
+    public enum MOTOR_TYPE {
+      ALL,
+      DRIVE,
+      STEER
+    }
+
+    public static final Distance kWheelBase = Inches.of(23.75);
+    public static final Distance kTrackWidth = Inches.of(23.75);
+    public static final Distance kBumperThickness = Inches.of(2.5);
+
+    public static final PIDConstants kTranslationPID = new PIDConstants(10, 0, 0);
+    public static final PIDConstants kRotationPID = new PIDConstants(7, 0, 0);
+
+    public static final Map<MODULE_POSITION, Translation2d> kModuleTranslations =
+        Map.of(
+            MODULE_POSITION.FRONT_LEFT,
+            new Translation2d(kWheelBase.div(2).in(Meters), kTrackWidth.div(2).in(Meters)),
+            MODULE_POSITION.FRONT_RIGHT,
+            new Translation2d(kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)),
+            MODULE_POSITION.BACK_LEFT,
+            new Translation2d(-kWheelBase.div(2).in(Meters), kTrackWidth.div(2).in(Meters)),
+            MODULE_POSITION.BACK_RIGHT,
+            new Translation2d(-kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)));
+
+    public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
+    public static final double kMaxRotationRadiansPerSecond =
+        Math.PI * 0.3; // temporary to reduce speed (original value 2.0)
+
+    public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
+    public static final Distance kPositionTolerance = Inches.of(0.4);
+    public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
+
+    public enum ROUTINE_TYPE {
+      DRIVE_DYNAMIC(2),
+      DRIVE_QUASISTATIC(6),
+      TURN_DYNAMIC(8),
+      TURN_QUASISTATIC(8);
+
+      private final int lengthSeconds;
+
+      ROUTINE_TYPE(int lengthSeconds) {
+        this.lengthSeconds = lengthSeconds;
+      }
+
+      public int getLengthSeconds() {
+        return lengthSeconds;
+      }
+    }
   }
 }
