@@ -24,12 +24,12 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_shooterRollers.setRPMOutputFOC(m_rpm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooterRollers.setRPMOutputFOC(m_rpm);
   }
 
   // Called once the command ends or is interrupted.

@@ -42,7 +42,7 @@ public final class Constants {
     This increases acceleration a lot faster than increasing the MotionMagicAcceleration value.
     No jerk means trapezoidal profile. */
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX60(4);
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
     public enum ShooterRPM {
       IDLE(500.0),
