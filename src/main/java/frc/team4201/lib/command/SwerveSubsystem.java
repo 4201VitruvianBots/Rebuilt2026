@@ -4,7 +4,6 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,7 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.team4201.lib.vision.LimelightHelpers;
 
-public interface SwerveSubsystem extends Subsystem{
+public interface SwerveSubsystem extends Subsystem {
 
   AngularVelocity getYawRate();
 
@@ -25,7 +24,6 @@ public interface SwerveSubsystem extends Subsystem{
 
   void addVisionMeasurement(Pose2d pose, double timestampSeconds, Matrix<N3, N1> standardDevs);
 
-  
   /**
    * Function to get the module locations as a {@link Translation2d} array
    *

@@ -7,22 +7,16 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Seconds;
-
-import java.util.Map;
 
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
+import java.util.Map;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -104,7 +98,7 @@ public final class Constants {
     public static final int kShooterRollerMotor4 = 33;
   }
 
-  //usb n swerve are like lwk copied from reefscape
+  // usb n swerve are like lwk copied from reefscape
   public final class USB {
     public static final int driver_xBoxController = 0;
   }
@@ -112,7 +106,7 @@ public final class Constants {
   public class SWERVE {
     // TODO: Remove unused variables
     // (maybe crossreferencing with Reefscape2025 to see what gets used in a full robot project)
-    
+
     public enum MOTOR_TYPE {
       ALL,
       DRIVE,
@@ -162,5 +156,4 @@ public final class Constants {
       }
     }
   }
-
 }

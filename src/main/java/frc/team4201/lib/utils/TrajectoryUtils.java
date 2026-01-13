@@ -15,10 +15,10 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.team4201.lib.command.SwerveSubsystem;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
-import frc.team4201.lib.command.SwerveSubsystem;
 
 /**
  * Utility class for working with autonomous trajectory following. Is currently designed around <a
@@ -105,7 +105,7 @@ public class TrajectoryUtils {
         .andThen(
             new FollowPathCommand(
                     path,
-                    () -> m_swerveDrive.getState().Pose, 
+                    () -> m_swerveDrive.getState().Pose,
                     () -> m_swerveDrive.getState().Speeds,
                     m_swerveDrive::setChassisSpeedsAuto,
                     new PPHolonomicDriveController(

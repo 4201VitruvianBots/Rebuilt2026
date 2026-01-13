@@ -41,7 +41,6 @@ import frc.team4201.lib.utils.ModuleMap;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,7 +104,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               // Log state with SignalLogger class
               state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
           new SysIdRoutine.Mechanism(
-              output -> setControl(m_translationCharacterization.withVolts(output)), null, (Subsystem) this));
+              output -> setControl(m_translationCharacterization.withVolts(output)),
+              null,
+              (Subsystem) this));
 
   /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
   private final SysIdRoutine m_sysIdRoutineSteer =
