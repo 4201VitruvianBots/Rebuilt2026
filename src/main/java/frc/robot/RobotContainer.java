@@ -4,6 +4,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,8 +20,12 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.USB;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
+import frc.robot.Constants.SWERVE;
 import frc.robot.commands.Shoot;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterRollers;
 
 /**
@@ -28,10 +39,27 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
   private ShooterRollers m_ShooterRollers = new ShooterRollers();
+  private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+      new CommandXboxController(USB.driver_xBoxController);
+
+      /*commented out bc its not doing anything rn but will probably later */
+  // private final CommandXboxController m_operatorController =
+  //     new CommandXboxController(USB.operator_xBoxController);
+
+       private double MaxSpeed = 
+           TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); //Kspeed at 12 volts desired top speed
+       private double MaxAngularRate = 
+           RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
+               .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+  /* Setting up bindings for necessary control of the swerve drive platform */
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(MaxSpeed * 0.1)
+          .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -46,6 +74,26 @@ public class RobotContainer {
 
   private void initializeSubSystems() {
     m_ShooterRollers = new ShooterRollers();
+    m_swerveDrive.setDefaultCommand(
+        // Drivetrain will execute this command periodically
+        m_swerveDrive.applyRequest(
+            () -> {
+              var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
+              // // if heading target
+              // if (m_swerveDrive.isTrackingState()) {
+              //   rotationRate = m_swerveDrive.calculateRotationToTarget();
+              // }
+              drive
+                  .withVelocityX(
+                      -m_driverController.getLeftY()
+                          * MaxSpeed) // Drive forward with negative Y (forward)
+                  .withVelocityY(
+                      -m_driverController.getLeftX()
+                          * MaxSpeed) // Drive left with negative X (left)
+                  .withRotationalRate(
+                      rotationRate); // Drive counterclockwise with negative X (left)
+              return drive;
+            }));
   }
 
   /**
