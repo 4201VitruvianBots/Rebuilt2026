@@ -80,8 +80,6 @@ public final class Constants {
   }
 
   public class CAN {
-    // 9 - 27 are the same values as reefscape
-
     public static final String rioCanbus = "rio";
     public static String driveBaseCanbus = "drivebase";
 
@@ -105,73 +103,76 @@ public final class Constants {
     public static final int kShooterRollerMotor3 = 32;
     public static final int kShooterRollerMotor4 = 33;
   }
-//usb n swerve are like lwk copied from reefscape
-public final class USB {
-  public static final int driver_xBoxController = 0;
-  public static final int operator_xBoxController = 1;
 
-  public static final int testController = 3;
-}
+  //usb n swerve are like lwk copied from reefscape
+  public final class USB {
+    public static final int driver_xBoxController = 0;
+    public static final int operator_xBoxController = 1;
+  }
+
   public class SWERVE {
-  public enum MOTOR_TYPE {
-    ALL,
-    DRIVE,
-    STEER
-  }
-
-  public static final Distance kWheelBase = Inches.of(23.75);
-  public static final Distance kTrackWidth = Inches.of(23.75);
-  public static final Distance kBumperThickness = Inches.of(2.5);
-
-  public static final PIDConstants kTranslationPID = new PIDConstants(10, 0, 0);
-  public static final PIDConstants kRotationPID = new PIDConstants(7, 0, 0);
-
-  public static final Map<MODULE_POSITION, Translation2d> kModuleTranslations =
-      Map.of(
-          MODULE_POSITION.FRONT_LEFT,
-          new Translation2d(kWheelBase.div(2).in(Meters), kTrackWidth.div(2).in(Meters)),
-          MODULE_POSITION.FRONT_RIGHT,
-          new Translation2d(kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)),
-          MODULE_POSITION.BACK_LEFT,
-          new Translation2d(-kWheelBase.div(2).in(Meters), kTrackWidth.div(2).in(Meters)),
-          MODULE_POSITION.BACK_RIGHT,
-          new Translation2d(-kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)));
-
-  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
-  public static final double kMaxRotationRadiansPerSecond =
-      Math.PI * 0.3; // temporary to reduce speed (original value 2.0)
-
-  // Auto-alignment constants
-  public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17, 0, 0);
-  public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9, 0, 0);
-  public static final PPHolonomicDriveController kDriveController =
-      new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
-  public static final PathConstraints kAutoAlignPathConstraints =
-      new PathConstraints(
-          1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI); // The constraints for this path.
-  public static final Time kEndTriggerDebounce = Seconds.of(0.04);
-  public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
-
-  public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
-  public static final Distance kPositionTolerance = Inches.of(0.4);
-  public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
-
-  public enum ROUTINE_TYPE {
-    DRIVE_DYNAMIC(2),
-    DRIVE_QUASISTATIC(6),
-    TURN_DYNAMIC(8),
-    TURN_QUASISTATIC(8);
-
-    private final int lengthSeconds;
-
-    ROUTINE_TYPE(int lengthSeconds) {
-      this.lengthSeconds = lengthSeconds;
+    // TODO: Remove unused variables
+    // (maybe crossreferencing with Reefscape2025 to see what gets used in a full robot project)
+    
+    public enum MOTOR_TYPE {
+      ALL,
+      DRIVE,
+      STEER
     }
 
-    public int getLengthSeconds() {
-      return lengthSeconds;
+    public static final Distance kWheelBase = Inches.of(23.75);
+    public static final Distance kTrackWidth = Inches.of(23.75);
+    public static final Distance kBumperThickness = Inches.of(2.5);
+
+    public static final PIDConstants kTranslationPID = new PIDConstants(10, 0, 0);
+    public static final PIDConstants kRotationPID = new PIDConstants(7, 0, 0);
+
+    public static final Map<MODULE_POSITION, Translation2d> kModuleTranslations =
+        Map.of(
+            MODULE_POSITION.FRONT_LEFT,
+            new Translation2d(kWheelBase.div(2).in(Meters), kTrackWidth.div(2).in(Meters)),
+            MODULE_POSITION.FRONT_RIGHT,
+            new Translation2d(kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)),
+            MODULE_POSITION.BACK_LEFT,
+            new Translation2d(-kWheelBase.div(2).in(Meters), kTrackWidth.div(2).in(Meters)),
+            MODULE_POSITION.BACK_RIGHT,
+            new Translation2d(-kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)));
+
+    public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
+    public static final double kMaxRotationRadiansPerSecond =
+        Math.PI * 0.3; // temporary to reduce speed (original value 2.0)
+
+    // Auto-alignment constants
+    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17, 0, 0);
+    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9, 0, 0);
+    public static final PPHolonomicDriveController kDriveController =
+        new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
+    public static final PathConstraints kAutoAlignPathConstraints =
+        new PathConstraints(
+            1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+    public static final Time kEndTriggerDebounce = Seconds.of(0.04);
+    public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
+
+    public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
+    public static final Distance kPositionTolerance = Inches.of(0.4);
+    public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
+
+    public enum ROUTINE_TYPE {
+      DRIVE_DYNAMIC(2),
+      DRIVE_QUASISTATIC(6),
+      TURN_DYNAMIC(8),
+      TURN_QUASISTATIC(8);
+
+      private final int lengthSeconds;
+
+      ROUTINE_TYPE(int lengthSeconds) {
+        this.lengthSeconds = lengthSeconds;
+      }
+
+      public int getLengthSeconds() {
+        return lengthSeconds;
+      }
     }
   }
-}
 
 }
