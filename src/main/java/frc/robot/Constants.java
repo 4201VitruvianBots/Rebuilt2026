@@ -88,11 +88,13 @@ public final class Constants {
     public static final int backLeftTurnMotor = 25;
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
-    
+
     public static final int kShooterRollerMotor1 = 30;
     public static final int kShooterRollerMotor2 = 31;
     public static final int kShooterRollerMotor3 = 32;
     public static final int kShooterRollerMotor4 = 33;
+
+    public static final int kShooterHoodMotor = 34;
   }
 
   // usb n swerve are like lwk copied from reefscape
