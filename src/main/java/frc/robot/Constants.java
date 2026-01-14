@@ -96,6 +96,7 @@ public final class Constants {
     public static final int kShooterRollerMotor2 = 31;
     public static final int kShooterRollerMotor3 = 32;
     public static final int kShooterRollerMotor4 = 33;
+    public static final int kClimberMotor = 40; //TODO: Update or change this later.
   }
 
   // usb n swerve are like lwk copied from reefscape
@@ -155,5 +156,9 @@ public final class Constants {
         return lengthSeconds;
       }
     }
+  }
+
+  public class CLIMBER {
+    public static final double gearRatio = 1.0 / 27.0; //Climber Gear ratio.
   }
 }
