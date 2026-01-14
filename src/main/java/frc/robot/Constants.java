@@ -159,6 +159,15 @@ public final class Constants {
   }
 
   public class CLIMBER {
+
+    //Config for Motor TODO: input the proper values
+    public static double kG = 0.0; // output to overcome gravity (output)
+    public static double kV = 0.0; // output per unit of target velocity (output/rps)
+    public static double kA = 0.0; // output per unit of target acceleration (output/(rps/s))
+    public static double kP = 0; // output per unit of error in position (output/rotation)
+    public static double kI = 0.0; // output per unit of integrated error in position (output/rotations*s))
+    public static double kD = 0.0; // output per unit of error in velocity (output/rps)
+
     public static final double gearRatio = 1.0 / 27.0; //Climber Gear ratio.
   }
 }
