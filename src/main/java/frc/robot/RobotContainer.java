@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
+import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 
 /**
@@ -36,7 +38,10 @@ import frc.robot.subsystems.ShooterRollers;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_ShooterRollers = new ShooterRollers();
+  private ShooterRollers m_shooterRollers = new ShooterRollers();
+
+  @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
+  private ShooterHood m_shooterHood = new ShooterHood();
 
   @NotLogged
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
@@ -48,6 +53,7 @@ public class RobotContainer {
   @NotLogged
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+
   @NotLogged
   private double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
@@ -71,7 +77,8 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
-    m_ShooterRollers = new ShooterRollers();
+    m_shooterRollers = new ShooterRollers();
+    m_shooterHood = new ShooterHood();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -104,7 +111,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    m_driverController.a().whileTrue(new Shoot(m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
   }
 
   private void initAutoChooser() {

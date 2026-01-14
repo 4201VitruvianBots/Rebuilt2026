@@ -4,15 +4,19 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
@@ -31,7 +35,10 @@ public final class Constants {
     public static final double kP =
         5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
     public static final double kI = 0.0;
-    public static final double kD = 0.02;
+    public static final double kD = 0.02; // TODO: Change kV later, use ReCalc
+    public static final double kV = 0.0;
+    public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun, 
+    // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
@@ -52,19 +59,55 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
-    public enum ShooterRPM {
-      IDLE(500.0),
-      LOW(1000.0),
-      HIGH(4080.0);
+    public enum ShooterRPS {
+      IDLE(RotationsPerSecond.of(500.0 / 60)), // The number on the left is the RPM
+      LOW(RotationsPerSecond.of(1000.0 / 60)),
+      HIGH(RotationsPerSecond.of(4080.0 / 60));
 
-      private final double rpm;
+      private final AngularVelocity rps;
 
-      ShooterRPM(double rpm) {
-        this.rpm = rpm;
+      ShooterRPS(AngularVelocity rps) {
+        this.rps = rps;
       }
 
-      public double getRPM() {
-        return rpm;
+      public AngularVelocity getRPS() {
+        return rps;
+      }
+    }
+  }
+
+  public class SHOOTERHOOD {
+    public static final double kP = 2.0; // TODO: Change this
+    public static final double kI = 0.0;
+    public static final double kD = 0.02;
+    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+    public static final double kV = 0.0;
+    public static final double gearRatio = 1.0; // Placeholder value
+    public static final double peakForwardOutput = 0.4; // Placeholder value
+    public static final double peakReverseOutput = -0.35; // Placeholder value
+    public static final double kInertia =
+        0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
+
+    public static double motionMagicCruiseVelocity = 70; 
+    public static double motionMagicAcceleration = 60; 
+    public static double motionMagicJerk = 0.0;
+ 
+    public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+
+    public enum HoodAngle {
+      // TODO: Going to stop using this because we are going to do math instead :) 
+      CLOSE(Degrees.of(30.0)),
+      FAR(Degrees.of(60.0)),
+      VERYFAR(Degrees.of(90.0));
+
+      private final Angle angle;
+
+      HoodAngle(Angle angle) {
+        this.angle = angle;
+      }
+
+      public Angle getAngle() {
+        return angle;
       }
     }
   }

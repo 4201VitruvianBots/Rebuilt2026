@@ -14,34 +14,39 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERMOTORS;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class ShooterRollers extends SubsystemBase {
 
-  private final TalonFX[] m_motors = {
-    new TalonFX(CAN.kShooterRollerMotor1),
-    new TalonFX(CAN.kShooterRollerMotor2),
-    new TalonFX(CAN.kShooterRollerMotor3),
-    new TalonFX(CAN.kShooterRollerMotor4)
-  }; // Replace these device ids after motors are set up
+  // TODO: Check how many motors we have later
+  @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
+  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1);
+  @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
+  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
+  @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
+  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
+  @Logged(name = "Flywheel Motor 4", importance = Importance.DEBUG)
+  private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4);
+  
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0);
-  private double m_rpmSetpoint;
+  private AngularVelocity m_rpmSetpoint = ShooterRPS.IDLE.getRPS();
 
-  private final DCMotorSim m_shooterMotorSim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
+  private final FlywheelSim m_shooterMotorSim =
+      new FlywheelSim(
+          LinearSystemId.createFlywheelSystem(
               SHOOTERMOTORS.gearbox, SHOOTERMOTORS.kInertia, SHOOTERMOTORS.gearRatio),
           SHOOTERMOTORS.gearbox);
   private final TalonFXSimState m_simState;
@@ -51,6 +56,8 @@ public class ShooterRollers extends SubsystemBase {
     config.Slot0.kP = SHOOTERMOTORS.kP;
     config.Slot0.kI = SHOOTERMOTORS.kI;
     config.Slot0.kD = SHOOTERMOTORS.kD;
+    // config.Slot0.kV = SHOOTERMOTORS.kV;
+    // config.Slot0.kS = SHOOTERMOTORS.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = SHOOTERMOTORS.gearRatio;
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERMOTORS.peakForwardOutput;
@@ -59,44 +66,45 @@ public class ShooterRollers extends SubsystemBase {
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERMOTORS.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERMOTORS.motionMagicAcceleration;
     config.MotionMagic.MotionMagicJerk = SHOOTERMOTORS.motionMagicJerk;
+    config.CurrentLimits.StatorCurrentLimit = 30;
 
-    for (int i = 0; i < m_motors.length; i++) {
-      CtreUtils.configureTalonFx(m_motors[i], config);
-    }
+    CtreUtils.configureTalonFx(m_motor1, config);
+    CtreUtils.configureTalonFx(m_motor2, config);
+    CtreUtils.configureTalonFx(m_motor3, config);
+    CtreUtils.configureTalonFx(m_motor4, config);
 
     m_simState =
-        m_motors[0]
-            .getSimState(); // We only need the sim state of a single motor because all the motors
-    // are doing the same thing.
+        m_motor1
+            .getSimState();
+    // We only need the sim state of a single motor because all the motors are doing the same thing.
 
-    for (int i = 1; i < m_motors.length; i++) {
-      m_motors[i].setControl(
-          new Follower(
-              m_motors[0].getDeviceID(),
-              MotorAlignmentValue
-                  .Aligned)); // TODO: Pls pls check if they all are actually aligned because it'd
+    
+    m_motor2.setControl(new Follower(m_motor2.getDeviceID(),MotorAlignmentValue.Aligned)); 
+    m_motor3.setControl(new Follower(m_motor3.getDeviceID(),MotorAlignmentValue.Aligned)); 
+    m_motor4.setControl(new Follower(m_motor4.getDeviceID(),MotorAlignmentValue.Aligned)); 
+      // TODO: Pls pls check if they all are actually aligned because it'd
       // be horrible if they weren't
-    }
+
   }
 
-  @Logged(name = "Motor Velocity in Radians per Second", importance = Logged.Importance.INFO)
-  public AngularVelocity getMotorSpeedRadians() {
-    return m_motors[0].getVelocity().refresh().getValue();
+  public void changeNeutralMode(NeutralModeValue neutralmode){
+    m_neutralMode = neutralmode;
   }
 
-  @Logged(name = "Motor Voltage", importance = Logged.Importance.DEBUG)
-  public Voltage getMotorVoltage() {
-    return m_motors[0].getMotorVoltage().refresh().getValue();
+  public void setRPSOutputFOC(AngularVelocity rps) {
+    m_rpmSetpoint = rps;
+    m_motor1.setControl(
+        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
   }
 
+  @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
   public double getRPMSetpoint() {
-    return m_rpmSetpoint;
+    return m_rpmSetpoint.in(RotationsPerSecond);
   }
 
-  public void setRPMOutputFOC(double rpm) {
-    m_rpmSetpoint = rpm;
-    var rps = rpm / 60;
-    m_motors[0].setControl(m_request.withVelocity(rps).withFeedForward(0.1));
+  @Logged(name = "Motor Velocity in Rotations per Second", importance = Logged.Importance.INFO)
+  public double getMotorSpeedRotations() {
+    return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond);
   }
 
   @Override
@@ -110,7 +118,7 @@ public class ShooterRollers extends SubsystemBase {
     m_shooterMotorSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterMotorSim.getAngularPositionRotations())
+        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM())
             .times(SHOOTERMOTORS.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
