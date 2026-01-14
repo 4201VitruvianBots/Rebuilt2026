@@ -170,4 +170,13 @@ public final class Constants {
 
     public static final double gearRatio = 1.0 / 27.0; //Climber Gear ratio.
   }
+
+  public class ROBOT {
+
+    //Climber Controls
+    public enum CONTROL_MODE {
+    OPEN_LOOP,
+    CLOSED_LOOP
+  }
+  }
 }
