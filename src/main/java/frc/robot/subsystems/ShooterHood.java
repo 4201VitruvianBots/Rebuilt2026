@@ -14,6 +14,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -22,8 +23,8 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERHOOD;
-import frc.robot.Constants.SHOOTERMOTORS;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
+import frc.robot.Constants.SHOOTERMOTORS;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class ShooterHood extends SubsystemBase {
@@ -69,7 +70,6 @@ public class ShooterHood extends SubsystemBase {
   public void setShooterHoodSetpoint(Angle setpoint) {
     m_hoodSetpoint = setpoint;
     m_motor.setControl(m_request.withPosition(setpoint));
-    System.out.println(setpoint);
   }
 
   public Angle getShooterHoodSetpoint() {
@@ -85,15 +85,20 @@ public class ShooterHood extends SubsystemBase {
   public AngularVelocity getHoodVelocity() {
     return m_motor.getVelocity().refresh().getValue();
   }
- 
+
   @Logged(name = "Hood Angle", importance = Importance.INFO)
-  public Angle getHoodAngle(){
+  public double getHoodAngle() {
+    return m_motor.getPosition().refresh().getValueAsDouble() * 360;
+  }
+
+  @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
+  public Angle getHoodRotations() {
     return m_motor.getPosition().refresh().getValue();
   }
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.DEBUG)
   public boolean atSetpoint() {
-    return m_hoodSetpoint.minus(getHoodAngle()).abs(Degrees) <= 1; // RIP the 254 reference
+    return m_hoodSetpoint.minus(getHoodRotations()).abs(Degrees) <= 1; // RIP the 254 reference
   }
 
   public boolean[] isConnected() {

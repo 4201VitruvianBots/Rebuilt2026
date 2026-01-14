@@ -18,10 +18,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
-import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -111,7 +111,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().whileTrue(new Shoot(m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
+    m_driverController
+        .a()
+        .whileTrue(
+            new Shoot(
+                m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
   }
 
   private void initAutoChooser() {

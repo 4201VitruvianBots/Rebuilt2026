@@ -30,13 +30,15 @@ public class ShooterRollers extends SubsystemBase {
   // TODO: Check how many motors we have later
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1);
+
   @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
   private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
+
   @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
   private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
+
   @Logged(name = "Flywheel Motor 4", importance = Importance.DEBUG)
   private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4);
-  
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
@@ -73,21 +75,18 @@ public class ShooterRollers extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor3, config);
     CtreUtils.configureTalonFx(m_motor4, config);
 
-    m_simState =
-        m_motor1
-            .getSimState();
+    m_simState = m_motor1.getSimState();
     // We only need the sim state of a single motor because all the motors are doing the same thing.
 
-    
-    m_motor2.setControl(new Follower(m_motor2.getDeviceID(),MotorAlignmentValue.Aligned)); 
-    m_motor3.setControl(new Follower(m_motor3.getDeviceID(),MotorAlignmentValue.Aligned)); 
-    m_motor4.setControl(new Follower(m_motor4.getDeviceID(),MotorAlignmentValue.Aligned)); 
-      // TODO: Pls pls check if they all are actually aligned because it'd
-      // be horrible if they weren't
+    m_motor2.setControl(new Follower(m_motor2.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_motor3.setControl(new Follower(m_motor3.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_motor4.setControl(new Follower(m_motor4.getDeviceID(), MotorAlignmentValue.Aligned));
+    // TODO: Pls pls check if they all are actually aligned because it'd
+    // be horrible if they weren't
 
   }
 
-  public void changeNeutralMode(NeutralModeValue neutralmode){
+  public void changeNeutralMode(NeutralModeValue neutralmode) {
     m_neutralMode = neutralmode;
   }
 
@@ -108,7 +107,9 @@ public class ShooterRollers extends SubsystemBase {
   }
 
   public boolean[] isConnected() {
-    return new boolean[] {m_motor1.isConnected(), m_motor2.isConnected(), m_motor3.isConnected(), m_motor4.isConnected()};
+    return new boolean[] {
+      m_motor1.isConnected(), m_motor2.isConnected(), m_motor3.isConnected(), m_motor4.isConnected()
+    };
   }
 
   @Override
@@ -122,8 +123,7 @@ public class ShooterRollers extends SubsystemBase {
     m_shooterMotorSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM())
-            .times(SHOOTERMOTORS.gearRatio));
+        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
   }

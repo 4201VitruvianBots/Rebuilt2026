@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.subsystems.ShooterHood;
@@ -14,12 +13,14 @@ import frc.robot.subsystems.ShooterRollers;
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ShooterRollers m_shooterRollers;
+
   private final ShooterHood m_shooterHood;
 
   private final ShooterRPS m_rps;
   private final Angle m_angle;
 
-  public Shoot(ShooterRollers shooterRollers, ShooterHood shooterHood, ShooterRPS rps, Angle angle) {
+  public Shoot(
+      ShooterRollers shooterRollers, ShooterHood shooterHood, ShooterRPS rps, Angle angle) {
     m_shooterRollers = shooterRollers;
     m_rps = rps;
     m_shooterHood = shooterHood;
