@@ -28,7 +28,7 @@ import frc.team4201.lib.utils.CtreUtils;
 public class ShooterRollers extends SubsystemBase {
 
   // TODO: Check how many motors we have later
-  @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
+  @Logged(name = "Flywheel Motor 1", importance = Importance.DEBUG)
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1);
 
   @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
@@ -56,8 +56,6 @@ public class ShooterRollers extends SubsystemBase {
   public ShooterRollers() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = SHOOTERMOTORS.kP;
-    config.Slot0.kI = SHOOTERMOTORS.kI;
-    config.Slot0.kD = SHOOTERMOTORS.kD;
     // config.Slot0.kV = SHOOTERMOTORS.kV;
     // config.Slot0.kS = SHOOTERMOTORS.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
@@ -76,11 +74,12 @@ public class ShooterRollers extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor4, config);
 
     m_simState = m_motor1.getSimState();
-    // We only need the sim state of a single motor because all the motors are doing the same thing.
 
-    m_motor2.setControl(new Follower(m_motor2.getDeviceID(), MotorAlignmentValue.Aligned));
-    m_motor3.setControl(new Follower(m_motor3.getDeviceID(), MotorAlignmentValue.Aligned));
-    m_motor4.setControl(new Follower(m_motor4.getDeviceID(), MotorAlignmentValue.Aligned));
+    // We only need the sim state of a single motor because all the motors are doing the same thing... right???
+
+    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // TODO: Pls pls check if they all are actually aligned because it'd
     // be horrible if they weren't
 

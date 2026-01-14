@@ -14,7 +14,6 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -36,7 +35,7 @@ public class ShooterHood extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0).withEnableFOC(true);
-  private Angle m_hoodSetpoint = HoodAngle.CLOSE.getAngle();
+  private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
@@ -98,7 +97,7 @@ public class ShooterHood extends SubsystemBase {
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.DEBUG)
   public boolean atSetpoint() {
-    return m_hoodSetpoint.minus(getHoodRotations()).abs(Degrees) <= 1; // RIP the 254 reference
+    return m_hoodSetpoint.minus(getHoodRotations()).abs(Degrees) <= 1; // Works as good as always
   }
 
   public boolean[] isConnected() {
