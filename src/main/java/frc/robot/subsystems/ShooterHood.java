@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -90,6 +89,15 @@ public class ShooterHood extends SubsystemBase {
   @Logged(name = "Hood Angle", importance = Importance.INFO)
   public Angle getHoodAngle(){
     return m_motor.getPosition().refresh().getValue();
+  }
+
+  @Logged(name = "At Setpoint", importance = Logged.Importance.DEBUG)
+  public boolean atSetpoint() {
+    return m_hoodSetpoint.minus(getHoodAngle()).abs(Degrees) <= 1; // RIP the 254 reference
+  }
+
+  public boolean[] isConnected() {
+    return new boolean[] {m_motor.isConnected()};
   }
 
   @Override

@@ -107,6 +107,10 @@ public class ShooterRollers extends SubsystemBase {
     return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond);
   }
 
+  public boolean[] isConnected() {
+    return new boolean[] {m_motor1.isConnected(), m_motor2.isConnected(), m_motor3.isConnected(), m_motor4.isConnected()};
+  }
+
   @Override
   public void periodic() {}
 
