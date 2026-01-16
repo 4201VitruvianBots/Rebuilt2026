@@ -27,6 +27,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -116,6 +118,12 @@ public class RobotContainer {
         .whileTrue(
             new Shoot(
                 m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
+
+    // sysID ROUTINES, UNBIND THESE LATER
+    m_driverController.povDown().whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController.povUp().whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController.povLeft().whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverController.povRight().whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   private void initAutoChooser() {

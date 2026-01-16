@@ -7,28 +7,24 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.VelocityUnit;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.*;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERMOTORS;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
@@ -62,6 +58,15 @@ public class ShooterRollers extends SubsystemBase {
               SHOOTERMOTORS.gearbox, SHOOTERMOTORS.kInertia, SHOOTERMOTORS.gearRatio),
           SHOOTERMOTORS.gearbox);
   private final TalonFXSimState m_simState;
+
+  // Inside your Subsystem class
+  private void sysIDLogMotors(SysIdRoutineLog log) {
+    log.motor("motor1")
+       .voltage(m_motor1.getMotorVoltage().refresh().getValue()) // Units: Volts
+       .angularPosition(m_motor1.getPosition().refresh().getValue())   // Units: Rotations/Meters
+       .angularVelocity(m_motor1.getVelocity().refresh().getValue());  // Units: Rotations per sec/Meters per sec
+  }
+
 
   public ShooterRollers() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -126,18 +131,36 @@ public class ShooterRollers extends SubsystemBase {
     };
   }
 
-  private SysIdRoutine m_SysIdRoutine = new SysIdRoutine(
+  private SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(
             Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
             Volts.of(2), // Constant voltage value for dynamic routine
-            Seconds.of(40.0) // Max time before automatically ending the routine
+            Seconds.of(500.0) // Max time before automatically ending the routine
         ),
     new SysIdRoutine.Mechanism(
             this::setVoltageOutputFOC, // Set voltage of mechanism
-            null, 
+            this::sysIDLogMotors,
             this
     )
   );
+
+  /**
+   * Returns a command that will execute a quasistatic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Returns a command that will execute a dynamic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
+  }
 
   @Override
   public void periodic() {}
