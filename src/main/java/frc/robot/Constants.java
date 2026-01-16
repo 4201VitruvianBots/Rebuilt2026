@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -175,6 +176,21 @@ public final class Constants {
       public static double motionMagicJerk = 0;
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
+
+      public enum IndexerRPM {
+        DISABLED(0),
+        ENABLED(4000);
+
+          private final double rpm;
+
+          IndexerRPM(double rpm) {
+            this.rpm = rpm;
+          }
+
+          public double getRPM() {
+            return rpm;
+          }
+      }
 
   }
 }

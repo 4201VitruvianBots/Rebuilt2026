@@ -94,7 +94,8 @@ public class Indexer extends SubsystemBase {
   }
 
   public void setRPMOutputFOC(double rpm) {
-    
+      m_rpmSetpoint = rpm;
+      m_indexerMotors[0].setControl(m_request.withVelocity(rpm));
   }
 
   @Override
