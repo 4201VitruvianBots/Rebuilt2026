@@ -23,6 +23,7 @@ import frc.robot.Constants.USB;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.ShooterRollers;
 
 /**
@@ -36,6 +37,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
   private ShooterRollers m_ShooterRollers = new ShooterRollers();
+
+  @Logged(name = "Indexer", importance =  Logged.Importance.INFO)
+  private Indexer m_Indexer = new Indexer();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
@@ -68,6 +72,7 @@ public class RobotContainer {
 
   private void initializeSubSystems() {
     m_ShooterRollers = new ShooterRollers();
+    m_Indexer = new Indexer();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
