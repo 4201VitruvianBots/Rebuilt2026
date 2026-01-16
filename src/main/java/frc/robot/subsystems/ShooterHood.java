@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -20,7 +21,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERHOOD;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
@@ -36,6 +40,7 @@ public class ShooterHood extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0).withEnableFOC(true);
+  private final DutyCycleOut m_VoltageOut = new DutyCycleOut(0).withEnableFOC(true);
   private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
 
   private final DCMotorSim m_shooterHoodSim =
@@ -44,6 +49,12 @@ public class ShooterHood extends SubsystemBase {
               SHOOTERHOOD.gearbox, SHOOTERHOOD.kInertia, SHOOTERHOOD.gearRatio),
           SHOOTERHOOD.gearbox);
   private final TalonFXSimState m_simState;
+  private void sysIDLogMotors(SysIdRoutineLog log) {
+    log.motor("motor1")
+       .voltage(m_motor.getMotorVoltage().refresh().getValue()) // Units: Volts
+       .angularPosition(m_motor.getPosition().refresh().getValue())   // Units: Rotations/Meters
+       .angularVelocity(m_motor.getVelocity().refresh().getValue());  // Units: Rotations per sec/Meters per sec
+  }
 
   public ShooterHood() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -57,10 +68,9 @@ public class ShooterHood extends SubsystemBase {
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERHOOD.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = SHOOTERHOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = 30;
-
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERHOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERHOOD.motionMagicAcceleration;
-    config.MotionMagic.MotionMagicJerk = SHOOTERHOOD.motionMagicJerk;
 
     CtreUtils.configureTalonFx(m_motor, config);
 
@@ -108,8 +118,48 @@ public class ShooterHood extends SubsystemBase {
     return new boolean[] {m_motor.isConnected()};
   }
 
+  public void setVoltageOutputFOC(Voltage voltage){
+    m_motor.setControl(m_VoltageOut.withOutput(voltage.abs(Volts)));
+  }
+
+  private SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
+    new SysIdRoutine.Config(
+            Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
+            Volts.of(7), // Constant voltage value for dynamic routine
+            Seconds.of(500.0) // Max time before automatically ending the routine
+        ),
+    new SysIdRoutine.Mechanism(
+            this::setVoltageOutputFOC, // Set voltage of mechanism
+            this::sysIDLogMotors,
+            this
+    )
+  );
+
+    /**
+   * Returns a command that will execute a quasistatic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Returns a command that will execute a dynamic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
+  }
+
   @Override
-  public void periodic() {}
+  public void periodic() {
+    // Should only be a factor while tuning but we'll see
+    if (getHoodAngle() < SHOOTERHOOD.minAngle.in(Degrees) | getHoodAngle() > SHOOTERHOOD.maxAngle.in(Degrees)) {
+      m_motor.set(0.0);
+    }
+  }
 
   @Override
   public void simulationPeriodic() {

@@ -124,6 +124,10 @@ public class RobotContainer {
     m_driverController.povUp().whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     m_driverController.povLeft().whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kForward));
     m_driverController.povRight().whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_driverController.y().whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController.b().whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController.x().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverController.leftBumper().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   private void initAutoChooser() {

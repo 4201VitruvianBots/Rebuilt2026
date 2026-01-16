@@ -87,12 +87,11 @@ public final class Constants {
     public static final double kInertia =
         0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    public static final double motionMagicCruiseVelocity = 80;
-    public static final double motionMagicAcceleration = 160;
-    public static final double motionMagicJerk = 0.0;
+    public static final double motionMagicCruiseVelocity = 60;
+    public static final double motionMagicAcceleration = 30;
 
-    public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(70.0);
+    public static final Angle minAngle = Degrees.of(-10.0);
+    public static final Angle maxAngle = Degrees.of(180.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 

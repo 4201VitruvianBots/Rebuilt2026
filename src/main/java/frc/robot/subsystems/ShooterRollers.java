@@ -59,7 +59,6 @@ public class ShooterRollers extends SubsystemBase {
           SHOOTERMOTORS.gearbox);
   private final TalonFXSimState m_simState;
 
-  // Inside your Subsystem class
   private void sysIDLogMotors(SysIdRoutineLog log) {
     log.motor("motor1")
        .voltage(m_motor1.getMotorVoltage().refresh().getValue()) // Units: Volts
@@ -78,11 +77,11 @@ public class ShooterRollers extends SubsystemBase {
     config.Feedback.SensorToMechanismRatio = SHOOTERMOTORS.gearRatio;
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERMOTORS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = SHOOTERMOTORS.peakReverseOutput;
+    config.CurrentLimits.StatorCurrentLimit = 30;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERMOTORS.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERMOTORS.motionMagicAcceleration;
-    config.MotionMagic.MotionMagicJerk = SHOOTERMOTORS.motionMagicJerk;
-    config.CurrentLimits.StatorCurrentLimit = 30;
 
     CtreUtils.configureTalonFx(m_motor1, config);
     CtreUtils.configureTalonFx(m_motor2, config);
