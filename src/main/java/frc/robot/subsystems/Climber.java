@@ -16,7 +16,8 @@ import frc.robot.Constants.ROBOT.CONTROL_MODE;
 
 public class Climber extends SubsystemBase {
 
-  TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor); //Update Number if the DeviceID changes.
+  TalonFX m_climberMotor1 = new TalonFX(CAN.kClimberMotor1); //Update Number if the DeviceID changes.
+  TalonFX m_climbermotor2 = new TalonFX(CAN.kClimberMotor2); //this one too.
 
   // Booleans:
   private CONTROL_MODE m_controlMode = CONTROL_MODE.OPEN_LOOP;
