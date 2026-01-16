@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -47,10 +48,10 @@ public class ShooterHood extends SubsystemBase {
   public ShooterHood() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = SHOOTERHOOD.kP;
-    config.Slot0.kI = SHOOTERHOOD.kI;
     config.Slot0.kD = SHOOTERHOOD.kD;
     // config.Slot0.kA = SHOOTERHOOD.kA;
     // config.Slot0.kV = SHOOTERHOOD.kV;
+    // config.Slot0.kS = SHOOTERHOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = SHOOTERHOOD.gearRatio;
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERHOOD.peakForwardOutput;
@@ -67,8 +68,11 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void setShooterHoodSetpoint(Angle setpoint) {
-    m_hoodSetpoint = setpoint;
-    m_motor.setControl(m_request.withPosition(setpoint));
+    m_hoodSetpoint =
+          Degrees.of(
+              MathUtil.clamp(
+                  setpoint.in(Degrees), SHOOTERHOOD.minAngle.in(Degrees), SHOOTERHOOD.maxAngle.in(Degrees)));
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint));
   }
 
   public Angle getShooterHoodSetpoint() {

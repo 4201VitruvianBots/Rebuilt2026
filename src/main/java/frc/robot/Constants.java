@@ -36,6 +36,7 @@ public final class Constants {
         5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
     public static final double kV = 0.0;
     public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
+    public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
     public static final double peakForwardOutput = 0.4; // Placeholder value
@@ -76,19 +77,22 @@ public final class Constants {
 
   public class SHOOTERHOOD {
     public static final double kP = 1.0; // TODO: Change this
-    public static final double kI = 0.0;
     public static final double kD = 0.1;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
-    public static final double gearRatio = 1.0; // Placeholder value
+    public static final double kS = 0.0;
+    public static final double gearRatio = 1.0; // TODO: Change this later because this is confirmed not what the final thing will be
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia =
         0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    public static double motionMagicCruiseVelocity = 80;
-    public static double motionMagicAcceleration = 160;
-    public static double motionMagicJerk = 0.0;
+    public static final double motionMagicCruiseVelocity = 80;
+    public static final double motionMagicAcceleration = 160;
+    public static final double motionMagicJerk = 0.0;
+
+    public static final Angle minAngle = Degrees.of(0.0);
+    public static final Angle maxAngle = Degrees.of(70.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
