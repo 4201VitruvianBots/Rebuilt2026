@@ -7,9 +7,10 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -18,6 +19,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -28,18 +30,22 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {
 
-  private final TalonFX[] m_indexerMotors = {
-    new TalonFX(CAN.kIndexerMotor1),
-    new TalonFX(CAN.kIndexerMotor2),
-    new TalonFX(CAN.kIndexerMotor3)
-  };
-  private NeutralModeValue m_neutralMode = 
-      NeutralModeValue.Brake;
-    private final MotionMagicVelocityVoltage m_request = 
-      new MotionMagicVelocityVoltage(0).withEnableFOC(true).withVelocity(0.6);
-    private double m_setSpeed;
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2);
+  private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
 
-        private final DCMotorSim m_indexerMotorSim =
+  private final StatusSignal<AngularVelocity> m_velocitySignal =
+      m_indexerMotor1.getVelocity().clone();
+  private final StatusSignal<Voltage> m_voltageSignal =
+      m_indexerMotor1.getMotorVoltage().clone();
+  private final StatusSignal<Current> m_supplyCurrentSignal =
+      m_indexerMotor1.getSupplyCurrent().clone();
+  private final StatusSignal<Current> m_statorCurrentSignal =
+      m_indexerMotor1.getStatorCurrent().clone();
+  private final StatusSignal<Current> m_torqueCurrentSignal =
+      m_indexerMotor1.getTorqueCurrent().clone();
+
+    private final DCMotorSim m_indexerMotor1im =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
               INDEXERMOTORS.gearbox, INDEXERMOTORS.kInertia, INDEXERMOTORS.gearRatio),
@@ -51,55 +57,41 @@ public class Indexer extends SubsystemBase {
     config.Slot0.kA = INDEXERMOTORS.kA;
     config.Slot0.kV = INDEXERMOTORS.kV;
     config.Slot0.kP = INDEXERMOTORS.kP;
-    config.Slot0.kI = INDEXERMOTORS.kI;
     config.Slot0.kD = INDEXERMOTORS.kD;
+    config.Slot0.kS = INDEXERMOTORS.kS;
 
-    config.MotorOutput.NeutralMode = m_neutralMode;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.PeakForwardDutyCycle = INDEXERMOTORS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = INDEXERMOTORS.peakReverseOutput;
     config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
+    CtreUtils.configureTalonFx(m_indexerMotor1, config);
 
-    config.MotionMagic.MotionMagicAcceleration = INDEXERMOTORS.motionMagicAcceleration;
-    config.MotionMagic.MotionMagicCruiseVelocity = INDEXERMOTORS.motionMagicCruiseVelocity;
-    config.MotionMagic.MotionMagicJerk = INDEXERMOTORS.motionMagicJerk;
-
-    for (int i = 0; i < m_indexerMotors.length; i++ ) {
-      CtreUtils.configureTalonFx(m_indexerMotors[i], config);
-    }
-
-    for (int i = 2; i < m_indexerMotors.length; i++) {
-      m_indexerMotors[i].setControl(
-          new Follower(
-              m_indexerMotors[0].getDeviceID(),
-              MotorAlignmentValue
-                  .Aligned));
-    }
-    m_indexerMotors[1].setControl(new Follower(m_indexerMotors[0].getDeviceID(), MotorAlignmentValue.Opposed));
+    m_indexerMotor2.setControl(new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_indexerMotor3.setControl(new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
 
     m_simState =
-      m_indexerMotors[0]
+      m_indexerMotor1
               .getSimState();
     
   }
-  public void setPercentOutputFOC(double speed) {
-    m_setSpeed = speed;
-    m_indexerMotors[0].set(speed);
+
+  public void setSpeed(double speed) {
+    m_indexerMotor1.set(speed);
   }
 
-  
 
   @Logged(name = "Motor Output",importance =  Logged.Importance.INFO)
   public double getPercentOutput() {
-    return m_indexerMotors[0].get();
+    return m_indexerMotor1.get();
   }
 
   @Logged(name = "Motor Speed", importance = Logged.Importance.DEBUG)
   public AngularVelocity getMotorSpeed() {
-    return m_indexerMotors[0].getVelocity().refresh().getValue();
+    return m_indexerMotor1.getVelocity().refresh().getValue();
   }
   @Logged(name = "Motor Voltage", importance =  Logged.Importance.DEBUG)
   public Voltage getMotorVoltage() {
-    return m_indexerMotors[0].getMotorVoltage().refresh().getValue();
+    return m_indexerMotor1.getMotorVoltage().refresh().getValue();
   }
 
  
@@ -111,15 +103,15 @@ public class Indexer extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_indexerMotorSim.setInputVoltage(m_simState.getMotorVoltage());
+    m_indexerMotor1im.setInputVoltage(m_simState.getMotorVoltage());
 
-    m_indexerMotorSim.update(0.02);
+    m_indexerMotor1im.update(0.02);
 
     m_simState.setRawRotorPosition(
-      Rotations.of(m_indexerMotorSim.getAngularPositionRotations())
+      Rotations.of(m_indexerMotor1im.getAngularPositionRotations())
         .times(INDEXERMOTORS.gearRatio));
     m_simState.setRotorVelocity(
-      RPM.of(m_indexerMotorSim.getAngularVelocityRPM())
+      RPM.of(m_indexerMotor1im.getAngularVelocityRPM())
         .times(INDEXERMOTORS.gearRatio));
   }
 }

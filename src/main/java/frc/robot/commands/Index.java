@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.INDEXERMOTORS;
 import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
 import frc.robot.subsystems.Indexer;
 
@@ -28,7 +29,7 @@ public class Index extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_indexer.setPercentOutputFOC(m_speed.get());
+    m_indexer.setSpeed(m_speed.get());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
