@@ -7,8 +7,8 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -40,7 +40,7 @@ public class ShooterHood extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0).withEnableFOC(true);
-  private final DutyCycleOut m_VoltageOut = new DutyCycleOut(0).withEnableFOC(true);
+  private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
   private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
 
   private final DCMotorSim m_shooterHoodSim =
@@ -71,6 +71,9 @@ public class ShooterHood extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERHOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERHOOD.motionMagicAcceleration;
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SHOOTERHOOD.maxAngle.in(Rotations);
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SHOOTERHOOD.minAngle.in(Rotations);
 
     CtreUtils.configureTalonFx(m_motor, config);
 
@@ -119,14 +122,14 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void setVoltageOutputFOC(Voltage voltage){
-    m_motor.setControl(m_VoltageOut.withOutput(voltage.abs(Volts)));
+    m_motor.setControl(m_VoltageOut.withOutput(voltage));
   }
 
   private SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(
             Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
-            Volts.of(7), // Constant voltage value for dynamic routine
-            Seconds.of(500.0) // Max time before automatically ending the routine
+            Volts.of(10), // Constant voltage value for dynamic routine
+            null // Max time before automatically ending the routine, Defaults to 10 sec
         ),
     new SysIdRoutine.Mechanism(
             this::setVoltageOutputFOC, // Set voltage of mechanism
@@ -156,11 +159,10 @@ public class ShooterHood extends SubsystemBase {
   @Override
   public void periodic() {
     // Should only be a factor while tuning but we'll see
-    if (getHoodAngle() < SHOOTERHOOD.minAngle.in(Degrees) | getHoodAngle() > SHOOTERHOOD.maxAngle.in(Degrees)) {
+    if (getHoodAngle() < SHOOTERHOOD.minAngle.in(Degrees) || getHoodAngle() > SHOOTERHOOD.maxAngle.in(Degrees)) {
       m_motor.set(0.0);
     }
   }
-
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());

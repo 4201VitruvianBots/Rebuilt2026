@@ -134,7 +134,7 @@ public class ShooterRollers extends SubsystemBase {
     new SysIdRoutine.Config(
             Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
             Volts.of(2), // Constant voltage value for dynamic routine
-            Seconds.of(500.0) // Max time before automatically ending the routine
+            null // Max time before automatically ending the routine
         ),
     new SysIdRoutine.Mechanism(
             this::setVoltageOutputFOC, // Set voltage of mechanism
