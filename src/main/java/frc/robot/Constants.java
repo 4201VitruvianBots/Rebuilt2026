@@ -7,8 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
-
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,7 +14,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
@@ -177,18 +174,19 @@ public final class Constants {
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
 
-      public enum IndexerRPM {
-        DISABLED(0),
-        ENABLED(4000);
+      public enum INDEXERSPEED {
+        ZERO(0),
+        INDEXING(0.7),
+        FREEING(-0.2);
 
-          private final double rpm;
+          private final double value;
 
-          IndexerRPM(double rpm) {
-            this.rpm = rpm;
+          INDEXERSPEED(double value) {
+            this.value = value;
           }
 
-          public double getRPM() {
-            return rpm;
+          public double get() {
+            return value;
           }
       }
 

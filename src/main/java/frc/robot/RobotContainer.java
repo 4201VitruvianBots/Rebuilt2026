@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
+import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
+import frc.robot.commands.Index;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -106,6 +108,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
   }
 
   private void initAutoChooser() {

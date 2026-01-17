@@ -36,8 +36,8 @@ public class Indexer extends SubsystemBase {
   private NeutralModeValue m_neutralMode = 
       NeutralModeValue.Brake;
     private final MotionMagicVelocityVoltage m_request = 
-      new MotionMagicVelocityVoltage(0).withEnableFOC(true);
-    private double m_rpmSetpoint;
+      new MotionMagicVelocityVoltage(0).withEnableFOC(true).withVelocity(0.6);
+    private double m_setSpeed;
 
         private final DCMotorSim m_indexerMotorSim =
       new DCMotorSim(
@@ -81,10 +81,19 @@ public class Indexer extends SubsystemBase {
               .getSimState();
     
   }
+  public void setPercentOutputFOC(double speed) {
+    m_setSpeed = speed;
+    m_indexerMotors[0].set(speed);
+  }
 
   
 
-  @Logged(name = "Motor Velocity (RPM)", importance = Logged.Importance.DEBUG)
+  @Logged(name = "Motor Output",importance =  Logged.Importance.INFO)
+  public double getPercentOutput() {
+    return m_indexerMotors[0].get();
+  }
+
+  @Logged(name = "Motor Speed", importance = Logged.Importance.DEBUG)
   public AngularVelocity getMotorSpeed() {
     return m_indexerMotors[0].getVelocity().refresh().getValue();
   }
@@ -93,10 +102,7 @@ public class Indexer extends SubsystemBase {
     return m_indexerMotors[0].getMotorVoltage().refresh().getValue();
   }
 
-  public void setRPMOutputFOC(double rpm) {
-      m_rpmSetpoint = rpm;
-      m_indexerMotors[0].setControl(m_request.withVelocity(rpm));
-  }
+ 
 
   @Override
   public void periodic() {
