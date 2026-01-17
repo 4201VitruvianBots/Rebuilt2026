@@ -166,7 +166,7 @@ public final class Constants {
       public static final double gearRatio = 1.0 / 1.0;
       public static final double peakForwardOutput = 0.5;
       public static final double peakReverseOutput = -0.5;
-      public static final double kInertia = 0.1;
+      public static final double kInertia = 0.005;
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
 
