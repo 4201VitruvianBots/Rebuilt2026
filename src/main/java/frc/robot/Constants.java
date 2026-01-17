@@ -76,16 +76,16 @@ public final class Constants {
   }
 
   public class SHOOTERHOOD {
-    public static final double kP = 1.0; // TODO: Change this
+    public static final double kP = 7.0; // TODO: Change this
     public static final double kD = 0.1;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
     public static final double kS = 0.0;
-    public static final double gearRatio = 1.0; // TODO: Change this later because this is confirmed not what the final thing will be
+    public static final double gearRatio = 8.0 / 1.0; // TODO: Change this later because this is confirmed not what the final thing will be
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia =
-        0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
+        0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
 
     public static final double motionMagicCruiseVelocity = 60;
     public static final double motionMagicAcceleration = 30;
