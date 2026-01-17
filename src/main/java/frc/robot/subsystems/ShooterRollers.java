@@ -119,7 +119,7 @@ public class ShooterRollers extends SubsystemBase {
     return m_rpmSetpoint.in(RotationsPerSecond);
   }
 
-  @Logged(name = "Motor Velocity in Rotations per Second", importance = Logged.Importance.INFO)
+  @Logged(name = "Motor Velocity in Rotations per Second", importance = Logged.Importance.DEBUG)
   public double getMotorSpeedRotations() {
     return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond);
   }

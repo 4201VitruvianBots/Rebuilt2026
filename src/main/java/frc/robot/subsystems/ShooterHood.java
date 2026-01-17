@@ -65,13 +65,16 @@ public class ShooterHood extends SubsystemBase {
     // config.Slot0.kS = SHOOTERHOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = SHOOTERHOOD.gearRatio;
-    config.MotorOutput.PeakForwardDutyCycle = SHOOTERHOOD.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = SHOOTERHOOD.peakReverseOutput;
+    // config.MotorOutput.PeakForwardDutyCycle = SHOOTERHOOD.peakForwardOutput;
+    // config.MotorOutput.PeakReverseDutyCycle = SHOOTERHOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERHOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERHOOD.motionMagicAcceleration;
+
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SHOOTERHOOD.maxAngle.in(Rotations);
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SHOOTERHOOD.minAngle.in(Rotations);
 
