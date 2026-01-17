@@ -122,13 +122,13 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void setVoltageOutputFOC(Voltage voltage){
-    m_motor.setControl(m_VoltageOut.withOutput(voltage));
+    m_motor.setControl(m_VoltageOut.withOutput(voltage.in(Volts)));
   }
 
   private SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(
             Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
-            Volts.of(10), // Constant voltage value for dynamic routine
+            Volts.of(7), // Constant voltage value for dynamic routine
             null // Max time before automatically ending the routine, Defaults to 10 sec
         ),
     new SysIdRoutine.Mechanism(
@@ -157,12 +157,8 @@ public class ShooterHood extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    // Should only be a factor while tuning but we'll see
-    if (getHoodAngle() < SHOOTERHOOD.minAngle.in(Degrees) || getHoodAngle() > SHOOTERHOOD.maxAngle.in(Degrees)) {
-      m_motor.set(0.0);
-    }
-  }
+  public void periodic() {}
+
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
