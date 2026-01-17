@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -19,9 +18,6 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,17 +33,6 @@ public class Indexer extends SubsystemBase {
   private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2);
   @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
-
-  private final StatusSignal<AngularVelocity> m_velocitySignal =
-      m_indexerMotor1.getVelocity().clone();
-  private final StatusSignal<Voltage> m_voltageSignal =
-      m_indexerMotor1.getMotorVoltage().clone();
-  private final StatusSignal<Current> m_supplyCurrentSignal =
-      m_indexerMotor1.getSupplyCurrent().clone();
-  private final StatusSignal<Current> m_statorCurrentSignal =
-      m_indexerMotor1.getStatorCurrent().clone();
-  private final StatusSignal<Current> m_torqueCurrentSignal =
-      m_indexerMotor1.getTorqueCurrent().clone();
 
     private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
@@ -86,31 +71,7 @@ public class Indexer extends SubsystemBase {
   }
 
 
-  @Logged(name = "Motor Output",importance =  Logged.Importance.INFO)
-  public double getPercentOutput() {
-    return m_indexerMotor1.get();
-  }
-
-  public AngularVelocity getMotorSpeed() {
-    return m_velocitySignal.refresh().getValue();
-  }
-
-  public Voltage getMotorVoltage() {
-    return m_voltageSignal.refresh().getValue();
-  }
   
-  public Current getSupplyCurrent() {
-    return m_supplyCurrentSignal.refresh().getValue();
-  }
-
-  public Current getStatorCurrent() {
-    return m_statorCurrentSignal.refresh().getValue();
-  }
-
-  public Current getTorqueCurrent() {
-    return m_torqueCurrentSignal.refresh().getValue();
-  }
-
   public boolean isConnected() {
     return m_indexerMotor1.isConnected();
   }
