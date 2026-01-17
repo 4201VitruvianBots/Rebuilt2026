@@ -33,8 +33,9 @@ public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1);
-
+  @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2);
+  @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
 
   private final StatusSignal<AngularVelocity> m_velocitySignal =
@@ -68,6 +69,7 @@ public class Indexer extends SubsystemBase {
     config.MotorOutput.PeakReverseDutyCycle = INDEXERMOTORS.peakReverseOutput;
     config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = 30;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
 
     m_indexerMotor2.setControl(new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
@@ -89,18 +91,18 @@ public class Indexer extends SubsystemBase {
     return m_indexerMotor1.get();
   }
 
-  @Logged(name = "Motor Speed", importance = Logged.Importance.DEBUG)
   public AngularVelocity getMotorSpeed() {
     return m_velocitySignal.refresh().getValue();
   }
-  @Logged(name = "Motor Voltage", importance =  Logged.Importance.DEBUG)
+
   public Voltage getMotorVoltage() {
     return m_voltageSignal.refresh().getValue();
   }
-  @Logged(name = "Motor Supply Current", importance =  Logged.Importance.DEBUG)
+  
   public Current getSupplyCurrent() {
     return m_supplyCurrentSignal.refresh().getValue();
   }
+
   public Current getStatorCurrent() {
     return m_statorCurrentSignal.refresh().getValue();
   }
