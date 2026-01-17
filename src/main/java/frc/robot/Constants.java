@@ -168,14 +168,12 @@ public final class Constants {
       public static final double peakReverseOutput = -0.5;
       public static final double kInertia = 0.1;
 
-      public static double m_statorCurrentSignal = 0;
-
       public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
 
       public enum INDEXERSPEED {
         ZERO(0),
-        INDEXING(0.7),
-        FREEING(-0.2);
+        INDEXING(0.4),
+        FREEING(-0.1);
 
           private final double value;
 

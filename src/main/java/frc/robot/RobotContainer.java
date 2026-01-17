@@ -108,7 +108,9 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
-    m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController
+      .b()
+      .whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
   }
 
   private void initAutoChooser() {
