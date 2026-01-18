@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
@@ -27,8 +28,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -120,14 +119,28 @@ public class RobotContainer {
                 m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
 
     // sysID ROUTINES, UNBIND THESE LATER
-    m_driverController.povDown().whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    m_driverController.povUp().whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    m_driverController.povLeft().whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    m_driverController.povRight().whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    m_driverController.y().whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    m_driverController.b().whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController
+        .povDown()
+        .whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController
+        .povUp()
+        .whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController
+        .povLeft()
+        .whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverController
+        .povRight()
+        .whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_driverController
+        .y()
+        .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController
+        .b()
+        .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     m_driverController.x().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    m_driverController.leftBumper().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_driverController
+        .leftBumper()
+        .whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   private void initAutoChooser() {

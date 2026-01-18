@@ -61,11 +61,11 @@ public class ShooterRollers extends SubsystemBase {
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
     log.motor("motor1")
-       .voltage(m_motor1.getMotorVoltage().refresh().getValue()) // Units: Volts
-       .angularPosition(m_motor1.getPosition().refresh().getValue())   // Units: Rotations/Meters
-       .angularVelocity(m_motor1.getVelocity().refresh().getValue());  // Units: Rotations per sec/Meters per sec
+        .voltage(m_motor1.getMotorVoltage().refresh().getValue()) // Units: Volts
+        .angularPosition(m_motor1.getPosition().refresh().getValue()) // Units: Rotations/Meters
+        .angularVelocity(
+            m_motor1.getVelocity().refresh().getValue()); // Units: Rotations per sec/Meters per sec
   }
-
 
   public ShooterRollers() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -90,7 +90,8 @@ public class ShooterRollers extends SubsystemBase {
 
     m_simState = m_motor1.getSimState();
 
-    // We only need the sim state of a single motor because all the motors are doing the same thing... right???
+    // We only need the sim state of a single motor because all the motors are doing the same
+    // thing... right???
 
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
@@ -110,7 +111,7 @@ public class ShooterRollers extends SubsystemBase {
         m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
   }
 
-  public void setVoltageOutputFOC(Voltage voltage){
+  public void setVoltageOutputFOC(Voltage voltage) {
     m_motor1.setControl(m_VoltageOut.withOutput(voltage.abs(Volts)));
   }
 
@@ -130,18 +131,17 @@ public class ShooterRollers extends SubsystemBase {
     };
   }
 
-  private SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
-    new SysIdRoutine.Config(
-            Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
-            Volts.of(2), // Constant voltage value for dynamic routine
-            null // Max time before automatically ending the routine
-        ),
-    new SysIdRoutine.Mechanism(
-            this::setVoltageOutputFOC, // Set voltage of mechanism
-            this::sysIDLogMotors,
-            this
-    )
-  );
+  private SysIdRoutine m_sysIdRoutine =
+      new SysIdRoutine(
+          new SysIdRoutine.Config(
+              Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
+              Volts.of(2), // Constant voltage value for dynamic routine
+              null // Max time before automatically ending the routine
+              ),
+          new SysIdRoutine.Mechanism(
+              this::setVoltageOutputFOC, // Set voltage of mechanism
+              this::sysIDLogMotors,
+              this));
 
   /**
    * Returns a command that will execute a quasistatic test in the given direction.

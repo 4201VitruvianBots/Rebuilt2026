@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERHOOD;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
-import frc.robot.Constants.SHOOTERMOTORS;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class ShooterHood extends SubsystemBase {
@@ -50,11 +49,13 @@ public class ShooterHood extends SubsystemBase {
               SHOOTERHOOD.gearbox, SHOOTERHOOD.kInertia, SHOOTERHOOD.gearRatio),
           SHOOTERHOOD.gearbox);
   private final TalonFXSimState m_simState;
+
   private void sysIDLogMotors(SysIdRoutineLog log) {
     log.motor("motor1")
-       .voltage(m_motor.getMotorVoltage().refresh().getValue()) // Units: Volts
-       .angularPosition(m_motor.getPosition().refresh().getValue())   // Units: Rotations/Meters
-       .angularVelocity(m_motor.getVelocity().refresh().getValue());  // Units: Rotations per sec/Meters per sec
+        .voltage(m_motor.getMotorVoltage().refresh().getValue()) // Units: Volts
+        .angularPosition(m_motor.getPosition().refresh().getValue()) // Units: Rotations/Meters
+        .angularVelocity(
+            m_motor.getVelocity().refresh().getValue()); // Units: Rotations per sec/Meters per sec
   }
 
   public ShooterHood() {
@@ -86,9 +87,11 @@ public class ShooterHood extends SubsystemBase {
 
   public void setShooterHoodSetpoint(Angle setpoint) {
     m_hoodSetpoint =
-          Degrees.of(
-              MathUtil.clamp(
-                  setpoint.in(Degrees), SHOOTERHOOD.minAngle.in(Degrees), SHOOTERHOOD.maxAngle.in(Degrees)));
+        Degrees.of(
+            MathUtil.clamp(
+                setpoint.in(Degrees),
+                SHOOTERHOOD.minAngle.in(Degrees),
+                SHOOTERHOOD.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint));
   }
 
@@ -123,24 +126,23 @@ public class ShooterHood extends SubsystemBase {
     return new boolean[] {m_motor.isConnected()};
   }
 
-  public void setVoltageOutputFOC(Voltage voltage){
+  public void setVoltageOutputFOC(Voltage voltage) {
     m_motor.setControl(m_VoltageOut.withOutput(voltage.in(Volts)));
   }
 
-  private SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
-    new SysIdRoutine.Config(
-            Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
-            Volts.of(3), // Constant voltage value for dynamic routine
-            null // Max time before automatically ending the routine, Defaults to 10 sec
-        ),
-    new SysIdRoutine.Mechanism(
-            this::setVoltageOutputFOC, // Set voltage of mechanism
-            this::sysIDLogMotors,
-            this
-    )
-  );
+  private SysIdRoutine m_sysIdRoutine =
+      new SysIdRoutine(
+          new SysIdRoutine.Config(
+              Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
+              Volts.of(3), // Constant voltage value for dynamic routine
+              null // Max time before automatically ending the routine, Defaults to 10 sec
+              ),
+          new SysIdRoutine.Mechanism(
+              this::setVoltageOutputFOC, // Set voltage of mechanism
+              this::sysIDLogMotors,
+              this));
 
-    /**
+  /**
    * Returns a command that will execute a quasistatic test in the given direction.
    *
    * @param direction The direction (forward or reverse) to run the test in
@@ -173,8 +175,7 @@ public class ShooterHood extends SubsystemBase {
     m_shooterHoodSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterHoodSim.getAngularPositionRotations())
-            .times(SHOOTERHOOD.gearRatio));
+        Rotations.of(m_shooterHoodSim.getAngularPositionRotations()).times(SHOOTERHOOD.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_shooterHoodSim.getAngularVelocityRPM()).times(SHOOTERHOOD.gearRatio));
   }

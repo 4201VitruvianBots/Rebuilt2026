@@ -81,7 +81,9 @@ public final class Constants {
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
     public static final double kS = 0.0;
-    public static final double gearRatio = 8.0 / 1.0; // TODO: Change this later because this is confirmed not what the final thing will be
+    public static final double gearRatio =
+        8.0 / 1.0; // TODO: Change this later because this is confirmed not what the final thing
+    // will be
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia =
