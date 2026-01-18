@@ -15,14 +15,12 @@ public class Index extends Command {
 
   private final INDEXERSPEED m_speed;
 
-  
   /** Creates a new Index. */
   public Index(Indexer indexer, INDEXERSPEED speed) {
     m_indexer = indexer;
     m_speed = speed;
 
     addRequirements(indexer);
-
   }
 
   // Called when the command is initially scheduled.

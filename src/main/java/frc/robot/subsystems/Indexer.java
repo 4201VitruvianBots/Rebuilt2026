@@ -14,7 +14,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -29,17 +28,20 @@ public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1);
+
   @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2);
+
   @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
 
-    private final DCMotorSim m_indexerMotor1Sim =
+  private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
               INDEXERMOTORS.gearbox, INDEXERMOTORS.kInertia, INDEXERMOTORS.gearRatio),
           INDEXERMOTORS.gearbox);
   private final TalonFXSimState m_simState;
+
   /** Creates a new Indexer. */
   public Indexer() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -57,21 +59,18 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
 
-    m_indexerMotor2.setControl(new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    m_indexerMotor3.setControl(new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_indexerMotor2.setControl(
+        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_indexerMotor3.setControl(
+        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
 
-    m_simState =
-      m_indexerMotor1
-              .getSimState();
-    
+    m_simState = m_indexerMotor1.getSimState();
   }
 
   public void setSpeed(double speed) {
     m_indexerMotor1.set(speed);
   }
 
-
-  
   public boolean isConnected() {
     return m_indexerMotor1.isConnected();
   }
@@ -80,6 +79,7 @@ public class Indexer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
@@ -88,10 +88,9 @@ public class Indexer extends SubsystemBase {
     m_indexerMotor1Sim.update(0.02);
 
     m_simState.setRawRotorPosition(
-      Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations())
-        .times(INDEXERMOTORS.gearRatio));
+        Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations())
+            .times(INDEXERMOTORS.gearRatio));
     m_simState.setRotorVelocity(
-      RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM())
-        .times(INDEXERMOTORS.gearRatio));
+        RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXERMOTORS.gearRatio));
   }
 }

@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
-import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
 import frc.robot.commands.Index;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
@@ -40,7 +40,7 @@ public class RobotContainer {
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
   private ShooterRollers m_ShooterRollers = new ShooterRollers();
 
-  @Logged(name = "Indexer", importance =  Logged.Importance.INFO)
+  @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   private Indexer m_Indexer = new Indexer();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
@@ -108,13 +108,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
-    m_driverController
-      .b()
-      .whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
   }
 
   private void initAutoChooser() {
-    
+
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
   }
