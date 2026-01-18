@@ -21,16 +21,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
-import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
-import frc.robot.commands.Index;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 
 /**
