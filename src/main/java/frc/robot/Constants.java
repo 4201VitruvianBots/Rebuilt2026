@@ -76,8 +76,8 @@ public final class Constants {
   }
 
   public class SHOOTERHOOD {
-    public static final double kP = 1.0; // TODO: Change this
-    public static final double kD = 0.0;
+    public static final double kP = 3.0; // TODO: Change this
+    public static final double kD = 0.1;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
     public static final double kS = 0.0;
