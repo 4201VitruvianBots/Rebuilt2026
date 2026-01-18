@@ -41,6 +41,7 @@ public class ShooterHood extends SubsystemBase {
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(0).withEnableFOC(true);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
+
   private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
 
   private final DCMotorSim m_shooterHoodSim =
@@ -65,8 +66,8 @@ public class ShooterHood extends SubsystemBase {
     // config.Slot0.kS = SHOOTERHOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = SHOOTERHOOD.gearRatio;
-    // config.MotorOutput.PeakForwardDutyCycle = SHOOTERHOOD.peakForwardOutput;
-    // config.MotorOutput.PeakReverseDutyCycle = SHOOTERHOOD.peakReverseOutput;
+    config.MotorOutput.PeakForwardDutyCycle = SHOOTERHOOD.peakForwardOutput;
+    config.MotorOutput.PeakReverseDutyCycle = SHOOTERHOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -95,19 +96,17 @@ public class ShooterHood extends SubsystemBase {
     return m_hoodSetpoint;
   }
 
-  @Logged(name = "Motor Voltage", importance = Importance.DEBUG)
   public Voltage getHoodVoltage() {
     return m_motor.getMotorVoltage().refresh().getValue();
   }
 
-  @Logged(name = "Motor Velocity", importance = Importance.DEBUG)
   public AngularVelocity getHoodVelocity() {
     return m_motor.getVelocity().refresh().getValue();
   }
 
   @Logged(name = "Hood Angle", importance = Importance.INFO)
   public double getHoodAngle() {
-    return m_motor.getPosition().refresh().getValueAsDouble() * 360;
+    return m_motor.getPosition().refresh().getValue().in(Degrees);
   }
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
@@ -131,7 +130,7 @@ public class ShooterHood extends SubsystemBase {
   private SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(
             Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
-            Volts.of(7), // Constant voltage value for dynamic routine
+            Volts.of(3), // Constant voltage value for dynamic routine
             null // Max time before automatically ending the routine, Defaults to 10 sec
         ),
     new SysIdRoutine.Mechanism(
@@ -160,7 +159,11 @@ public class ShooterHood extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    if (getHoodAngle() > SHOOTERHOOD.maxAngle.in(Degrees) + 1.0) {
+      m_motor.setControl(m_request.withPosition(179.0));
+    }
+  }
 
   @Override
   public void simulationPeriodic() {
@@ -171,8 +174,8 @@ public class ShooterHood extends SubsystemBase {
 
     m_simState.setRawRotorPosition(
         Rotations.of(m_shooterHoodSim.getAngularPositionRotations())
-            .times(SHOOTERMOTORS.gearRatio));
+            .times(SHOOTERHOOD.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_shooterHoodSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
+        RPM.of(m_shooterHoodSim.getAngularVelocityRPM()).times(SHOOTERHOOD.gearRatio));
   }
 }

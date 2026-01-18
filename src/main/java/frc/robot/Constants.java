@@ -92,8 +92,6 @@ public final class Constants {
 
     public static final Angle minAngle = Degrees.of(-10.0);
     public static final Angle maxAngle = Degrees.of(180.0);
-    public static final Angle minRotations = Degrees.of(-10.0 / 360);
-    public static final Angle maxRotations = Degrees.of(180.0 / 360);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
