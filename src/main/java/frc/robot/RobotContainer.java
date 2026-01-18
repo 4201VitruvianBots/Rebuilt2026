@@ -21,12 +21,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
+import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
+import frc.robot.commands.Index;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterHood;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.ShooterRollers;
 
 /**
@@ -45,6 +49,9 @@ public class RobotContainer {
   private ShooterHood m_shooterHood = new ShooterHood();
 
   @NotLogged
+  @Logged(name = "Indexer", importance = Logged.Importance.INFO)
+  private Indexer m_Indexer = new Indexer();
+
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -80,6 +87,7 @@ public class RobotContainer {
   private void initializeSubSystems() {
     m_shooterRollers = new ShooterRollers();
     m_shooterHood = new ShooterHood();
+    m_Indexer = new Indexer();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -144,6 +152,7 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
+
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
   }
