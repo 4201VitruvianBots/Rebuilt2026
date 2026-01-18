@@ -45,7 +45,6 @@ public class Indexer extends SubsystemBase {
   /** Creates a new Indexer. */
   public Indexer() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kA = INDEXERMOTORS.kA;
     config.Slot0.kV = INDEXERMOTORS.kV;
     config.Slot0.kP = INDEXERMOTORS.kP;
     config.Slot0.kD = INDEXERMOTORS.kD;
@@ -55,6 +54,7 @@ public class Indexer extends SubsystemBase {
     config.MotorOutput.PeakForwardDutyCycle = INDEXERMOTORS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = INDEXERMOTORS.peakReverseOutput;
     config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
+
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
@@ -73,6 +73,11 @@ public class Indexer extends SubsystemBase {
 
   public boolean isConnected() {
     return m_indexerMotor1.isConnected();
+  }
+
+  @Logged(name = "Motor Output", importance = Logged.Importance.INFO)
+  public double getPercentOutput() {
+    return m_indexerMotor1.get();
   }
 
   @Override
