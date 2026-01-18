@@ -45,7 +45,6 @@ public class RobotContainer {
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   private ShooterHood m_shooterHood = new ShooterHood();
 
-  @NotLogged
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   private Indexer m_Indexer = new Indexer();
 
@@ -144,7 +143,7 @@ public class RobotContainer {
     //     .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     m_driverController.x().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kForward));
     m_driverController
-        .leftBumper()
+        .b()
         .whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 

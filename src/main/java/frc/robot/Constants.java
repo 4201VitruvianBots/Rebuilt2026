@@ -76,7 +76,7 @@ public final class Constants {
   }
 
   public class SHOOTERHOOD {
-    public static final double kP = 3.0; // TODO: Change this
+    public static final double kP = 1.0; // TODO: Change this
     public static final double kD = 0.0;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
@@ -89,8 +89,8 @@ public final class Constants {
     public static final double kInertia =
         0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    public static final double motionMagicCruiseVelocity = 60;
-    public static final double motionMagicAcceleration = 30;
+    public static final double motionMagicCruiseVelocity = 6.0;
+    public static final double motionMagicAcceleration = 4.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
     public static final Angle maxAngle = Degrees.of(45.0);

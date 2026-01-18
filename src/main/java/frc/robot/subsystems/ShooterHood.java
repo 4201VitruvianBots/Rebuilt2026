@@ -94,8 +94,6 @@ public class ShooterHood extends SubsystemBase {
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SHOOTERHOOD.minAngle.in(Rotations);
 
     if (RobotBase.isSimulation()) m_cancoder.setPosition(HoodAngle.NOTHING.getAngle());
-    // Ensure we initialize the Talon position using rotations (not degrees).
-    // getHoodRotations() returns an Angle; convert to Rotations to match motor units.
     m_motor.setPosition(getHoodRotations().in(Rotations));
 
     CtreUtils.configureTalonFx(m_motor, config);
