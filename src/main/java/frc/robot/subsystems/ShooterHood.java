@@ -9,8 +9,11 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
@@ -19,6 +22,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -36,10 +40,14 @@ public class ShooterHood extends SubsystemBase {
   private final TalonFX m_motor =
       new TalonFX(CAN.kShooterHoodMotor); // Replace these device ids after motors are set up
 
+  private final CANcoder m_cancoder =
+      new CANcoder(CAN.kShooterHoodCANCoder); // Replace these device ids after motors are set up
+
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
-  private final MotionMagicVoltage m_request = new MotionMagicVoltage(0).withEnableFOC(true);
-  private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
+  private final MotionMagicVoltage m_request =
+      new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(true);
+  private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(true);
 
   private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
 
@@ -48,7 +56,9 @@ public class ShooterHood extends SubsystemBase {
           LinearSystemId.createDCMotorSystem(
               SHOOTERHOOD.gearbox, SHOOTERHOOD.kInertia, SHOOTERHOOD.gearRatio),
           SHOOTERHOOD.gearbox);
+
   private final TalonFXSimState m_simState;
+  private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
     log.motor("motor1")
@@ -66,11 +76,14 @@ public class ShooterHood extends SubsystemBase {
     // config.Slot0.kV = SHOOTERHOOD.kV;
     // config.Slot0.kS = SHOOTERHOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
-    config.Feedback.SensorToMechanismRatio = SHOOTERHOOD.gearRatio;
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERHOOD.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = SHOOTERHOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    config.Feedback.SensorToMechanismRatio = SHOOTERHOOD.gearRatio;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
 
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERHOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERHOOD.motionMagicAcceleration;
@@ -79,6 +92,11 @@ public class ShooterHood extends SubsystemBase {
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SHOOTERHOOD.maxAngle.in(Rotations);
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SHOOTERHOOD.minAngle.in(Rotations);
+
+    if (RobotBase.isSimulation()) m_cancoder.setPosition(HoodAngle.NOTHING.getAngle());
+    // Ensure we initialize the Talon position using rotations (not degrees).
+    // getHoodRotations() returns an Angle; convert to Rotations to match motor units.
+    m_motor.setPosition(getHoodRotations().in(Rotations));
 
     CtreUtils.configureTalonFx(m_motor, config);
 
@@ -92,7 +110,7 @@ public class ShooterHood extends SubsystemBase {
                 setpoint.in(Degrees),
                 SHOOTERHOOD.minAngle.in(Degrees),
                 SHOOTERHOOD.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint));
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
   public Angle getShooterHoodSetpoint() {
@@ -107,14 +125,14 @@ public class ShooterHood extends SubsystemBase {
     return m_motor.getVelocity().refresh().getValue();
   }
 
-  @Logged(name = "Hood Angle", importance = Importance.INFO)
-  public double getHoodAngle() {
-    return m_motor.getPosition().refresh().getValue().in(Degrees);
-  }
-
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
   public Angle getHoodRotations() {
-    return m_motor.getPosition().refresh().getValue();
+    return m_cancoder.getAbsolutePosition().refresh().getValue();
+  }
+
+  @Logged(name = "Hood Angle", importance = Importance.INFO)
+  public double getHoodAngle() {
+    return getHoodRotations().in(Degrees);
   }
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.DEBUG)
@@ -162,8 +180,8 @@ public class ShooterHood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getHoodAngle() > SHOOTERHOOD.maxAngle.in(Degrees) + 1.0) {
-      m_motor.setControl(m_request.withPosition(179.0));
+    if (getHoodAngle() > SHOOTERHOOD.maxAngle.in(Degrees)) {
+      m_motor.setControl(m_request.withPosition(SHOOTERHOOD.maxAngle.in(Rotations)));
     }
   }
 
@@ -178,5 +196,9 @@ public class ShooterHood extends SubsystemBase {
         Rotations.of(m_shooterHoodSim.getAngularPositionRotations()).times(SHOOTERHOOD.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_shooterHoodSim.getAngularVelocityRPM()).times(SHOOTERHOOD.gearRatio));
+    // Update the pivotEncoder simState
+    m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
+    m_cancoderSimState.setVelocity(
+        RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocityRadPerSec()));
   }
 }

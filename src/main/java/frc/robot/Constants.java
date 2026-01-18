@@ -76,13 +76,13 @@ public final class Constants {
   }
 
   public class SHOOTERHOOD {
-    public static final double kP = 7.0; // TODO: Change this
-    public static final double kD = 0.1;
+    public static final double kP = 3.0; // TODO: Change this
+    public static final double kD = 0.0;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
-        8.0 / 1.0; // TODO: Change this later because this is confirmed not what the final thing
+        1.0; // TODO: Change this later because this is confirmed not what the final thing
     // will be
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
@@ -92,8 +92,8 @@ public final class Constants {
     public static final double motionMagicCruiseVelocity = 60;
     public static final double motionMagicAcceleration = 30;
 
-    public static final Angle minAngle = Degrees.of(-10.0);
-    public static final Angle maxAngle = Degrees.of(180.0);
+    public static final Angle minAngle = Degrees.of(0.0);
+    public static final Angle maxAngle = Degrees.of(45.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
@@ -101,8 +101,7 @@ public final class Constants {
       // TODO: Going to stop using this because we are going to do math instead :)
       NOTHING(Degrees.of(0.0)),
       CLOSE(Degrees.of(30.0)),
-      FAR(Degrees.of(60.0)),
-      VERYFAR(Degrees.of(90.0));
+      FAR(Degrees.of(45.0));
 
       private final Angle angle;
 
@@ -118,7 +117,7 @@ public final class Constants {
 
   public class CAN {
     public static final String rioCanbus = "rio";
-    public static String driveBaseCanbus = "drivebase";
+    public static final String driveBaseCanbus = "drivebase";
 
     public static final int pigeon = 9;
 
@@ -146,6 +145,7 @@ public final class Constants {
     public static final int kIndexerMotor3 = 52;
 
     public static final int kShooterHoodMotor = 34;
+    public static final int kShooterHoodCANCoder = 35;
   }
 
   // usb n swerve are like lwk copied from reefscape
