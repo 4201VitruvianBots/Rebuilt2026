@@ -17,12 +17,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
+import frc.robot.commands.Index;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.ShooterRollers;
 
 /**
@@ -36,6 +39,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
   private ShooterRollers m_ShooterRollers = new ShooterRollers();
+
+  @Logged(name = "Indexer", importance = Logged.Importance.INFO)
+  private Indexer m_Indexer = new Indexer();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
@@ -68,6 +74,7 @@ public class RobotContainer {
 
   private void initializeSubSystems() {
     m_ShooterRollers = new ShooterRollers();
+    m_Indexer = new Indexer();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -101,9 +108,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
   }
 
   private void initAutoChooser() {
+
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
   }
