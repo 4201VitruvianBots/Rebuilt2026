@@ -98,6 +98,10 @@ public final class Constants {
     public static final int kShooterRollerMotor4 = 33;
     public static final int kClimberMotor1 = 40; //TODO: Update or change this later.
     public static final int kClimberMotor2 = 41; //this one too.
+
+    public static final int kIndexerMotor1 = 50; /* TODO: change values later */
+    public static final int kIndexerMotor2 = 51;
+    public static final int kIndexerMotor3 = 52;
   }
 
   // usb n swerve are like lwk copied from reefscape
@@ -157,27 +161,5 @@ public final class Constants {
         return lengthSeconds;
       }
     }
-  }
-
-  public class CLIMBER {
-
-    //Config for Motor TODO: input the proper values
-    public static double kG = 0.0; // output to overcome gravity (output)
-    public static double kV = 0.0; // output per unit of target velocity (output/rps)
-    public static double kA = 0.0; // output per unit of target acceleration (output/(rps/s))
-    public static double kP = 0; // output per unit of error in position (output/rotation)
-    public static double kI = 0.0; // output per unit of integrated error in position (output/rotations*s))
-    public static double kD = 0.0; // output per unit of error in velocity (output/rps)
-
-    public static final double gearRatio = 1.0 / 27.0; //Climber Gear ratio.
-  }
-
-  public class ROBOT {
-
-    //Climber Controls
-    public enum CONTROL_MODE {
-    OPEN_LOOP,
-    CLOSED_LOOP
-  }
   }
 }
