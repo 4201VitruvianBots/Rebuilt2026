@@ -198,8 +198,6 @@ public final class Constants {
     public static class ROLLERS {
       
     }
-    public static class INTAKEPIVOT {
 
-    }
   }
 }
