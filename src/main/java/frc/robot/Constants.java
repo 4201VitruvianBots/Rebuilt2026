@@ -162,4 +162,56 @@ public final class Constants {
       }
     }
   }
+
+  public class CLIMBER {
+
+    //Config for Motor TODO: input the proper values
+    public static double kG = 0.0; // output to overcome gravity (output)
+    public static double kV = 0.0; // output per unit of target velocity (output/rps)
+    public static double kA = 0.0; // output per unit of target acceleration (output/(rps/s))
+    public static double kP = 0; // output per unit of error in position (output/rotation)
+    public static double kI = 0.0; // output per unit of integrated error in position (output/rotations*s))
+    public static double kD = 0.0; // output per unit of error in velocity (output/rps)
+
+    public static final double gearRatio = 1.0 / 27.0; //Climber Gear ratio.
+  }
+
+  public class ROBOT {
+
+    //Climber Controls
+    public enum CONTROL_MODE {
+    OPEN_LOOP,
+    CLOSED_LOOP
+  }
+  }
+
+   public class INDEXERMOTORS {
+    /*TODO: change every value they are ALL placeholders */
+    public static final double kP = 1.0;
+    public static final double kD = 0.0;
+    public static final double kV = 0.0;
+    public static final double kS = 0.01;
+    public static final double gearRatio = 1.0;
+    public static final double peakForwardOutput = 0.5;
+    public static final double peakReverseOutput = -0.5;
+    public static final double kInertia = 0.005;
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
+
+    public enum INDEXERSPEED {
+      ZERO(0),
+      INDEXING(0.4),
+      FREEING(-0.1);
+
+      private final double value;
+
+      INDEXERSPEED(double value) {
+        this.value = value;
+      }
+
+      public double get() {
+        return value;
+      }
+    }
+  }
 }
