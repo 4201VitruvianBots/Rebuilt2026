@@ -98,6 +98,10 @@ public final class Constants {
     public static final int kShooterRollerMotor4 = 33;
     public static final int kClimberMotor1 = 40; //TODO: Update or change this later.
     public static final int kClimberMotor2 = 41; //this one too.
+
+    public static final int kIndexerMotor1 = 50; /* TODO: change values later */
+    public static final int kIndexerMotor2 = 51;
+    public static final int kIndexerMotor3 = 52;
   }
 
   // usb n swerve are like lwk copied from reefscape
