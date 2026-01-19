@@ -185,36 +185,6 @@ public final class Constants {
   }
   }
 
-   public class INDEXERMOTORS {
-    /*TODO: change every value they are ALL placeholders */
-    public static final double kP = 1.0;
-    public static final double kD = 0.0;
-    public static final double kV = 0.0;
-    public static final double kS = 0.01;
-    public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.5;
-    public static final double peakReverseOutput = -0.5;
-    public static final double kInertia = 0.005;
-
-    public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
-
-    public enum INDEXERSPEED {
-      ZERO(0),
-      INDEXING(0.4),
-      FREEING(-0.1);
-
-      private final double value;
-
-      INDEXERSPEED(double value) {
-        this.value = value;
-      }
-
-      public double get() {
-        return value;
-      }
-    }
-  }
-
   public class INDEXERMOTORS {
     /*TODO: change every value they are ALL placeholders */
     public static final double kP = 1.0;
