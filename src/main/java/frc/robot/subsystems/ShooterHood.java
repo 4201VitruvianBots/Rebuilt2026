@@ -101,7 +101,7 @@ public class ShooterHood extends SubsystemBase {
     m_simState = m_motor.getSimState();
   }
 
-  public void setShooterHoodSetpoint(Angle setpoint) {
+  public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
         Degrees.of(
             MathUtil.clamp(
@@ -111,7 +111,7 @@ public class ShooterHood extends SubsystemBase {
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
-  public Angle getShooterHoodSetpoint() {
+  public Angle getDesiredAngle() {
     return m_hoodSetpoint;
   }
 

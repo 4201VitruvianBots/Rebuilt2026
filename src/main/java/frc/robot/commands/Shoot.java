@@ -33,8 +33,7 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     m_shooterRollers.setRPSOutputFOC(m_rps.getRPS());
-    m_shooterHood.setShooterHoodSetpoint(m_angle);
-    m_shooterHood.setShooterHoodSetpoint(m_angle);
+    m_shooterHood.setAngle(m_angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
