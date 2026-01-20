@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Shoot;
@@ -121,7 +121,7 @@ public class RobotContainer {
           .a()
           .whileTrue(
               new Shoot(
-                  m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
+                  m_shooterRollers, m_shooterHood, ShooterVelocity.HIGH, HoodAngle.CLOSE.getAngle()));
     }
 
     // // sysID ROUTINES, UNBIND THESE LATER

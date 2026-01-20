@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERMOTORS;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class ShooterRollers extends SubsystemBase {
@@ -52,7 +52,7 @@ public class ShooterRollers extends SubsystemBase {
       new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
 
-  private AngularVelocity m_rpmSetpoint = ShooterRPS.IDLE.getRPS();
+  private AngularVelocity m_rpmSetpoint = ShooterVelocity.IDLE.getRPM();
 
   private final FlywheelSim m_shooterMotorSim =
       new FlywheelSim(
@@ -103,8 +103,8 @@ public class ShooterRollers extends SubsystemBase {
     m_neutralMode = neutralmode;
   }
 
-  public void setRPSOutputFOC(AngularVelocity rps) {
-    m_rpmSetpoint = rps;
+  public void setRPMOutputFOC(AngularVelocity rpm) {
+    m_rpmSetpoint = rpm;
     m_motor1.setControl(
         m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
   }
@@ -114,12 +114,12 @@ public class ShooterRollers extends SubsystemBase {
   }
 
   @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
-  public double getRPMSetpoint() {
-    return m_rpmSetpoint.in(RotationsPerSecond);
+  public double getSetpointRPM() {
+    return m_rpmSetpoint.in(RotationsPerSecond) * 60.0;
   }
 
-  @Logged(name = "Motor Velocity in Rotations per Minute", importance = Logged.Importance.INFO)
-  public double getMotorSpeedRotationsPerMinute() {
+  @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
+  public double getVelocityRPM() {
     return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond) * 60.0;
   }
 

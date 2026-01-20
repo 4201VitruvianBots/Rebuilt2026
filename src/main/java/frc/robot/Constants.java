@@ -53,19 +53,19 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
-    public enum ShooterRPS {
-      IDLE(RotationsPerSecond.of(0.0 / 60)), // The number on the left is the RPM
-      LOW(RotationsPerSecond.of(1000.0 / 60)),
-      HIGH(RotationsPerSecond.of(2900.0 / 60));
+    public enum ShooterVelocity {
+      IDLE(0.0),
+      LOW(1000.0),
+      HIGH(2900.0);
 
-      private final AngularVelocity rps;
+      private final double rpm;
 
-      ShooterRPS(AngularVelocity rps) {
-        this.rps = rps;
+      ShooterVelocity(double rpm) {
+        this.rpm = rpm;
       }
 
-      public AngularVelocity getRPS() {
-        return rps;
+      public AngularVelocity getRPM() {
+        return RotationsPerSecond.of(rpm / 60.0);
       }
     }
   }
