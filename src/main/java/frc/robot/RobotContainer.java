@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
+import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootFlywheel;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Uptake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
