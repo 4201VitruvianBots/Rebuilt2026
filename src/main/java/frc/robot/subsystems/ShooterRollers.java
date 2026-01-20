@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -33,22 +34,22 @@ import frc.team4201.lib.utils.CtreUtils;
 public class ShooterRollers extends SubsystemBase {
 
   // TODO: Check how many motors we have later
-  @Logged(name = "Flywheel Motor 1", importance = Importance.DEBUG)
+  @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1);
 
-  @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
+  // @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
+  // private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
 
-  @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
-  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
+  // @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
+  // private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
 
-  @Logged(name = "Flywheel Motor 4", importance = Importance.DEBUG)
-  private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4);
+  // @Logged(name = "Flywheel Motor 4", importance = Importance.DEBUG)
+  // private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4);
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
-  private final MotionMagicVelocityTorqueCurrentFOC m_request =
-      new MotionMagicVelocityTorqueCurrentFOC(0);
+  private final MotionMagicVelocityVoltage m_request =
+      new MotionMagicVelocityVoltage(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
   private AngularVelocity m_rpmSetpoint = ShooterRPS.IDLE.getRPS();
 
@@ -70,32 +71,32 @@ public class ShooterRollers extends SubsystemBase {
   public ShooterRollers() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = SHOOTERMOTORS.kP;
-    // config.Slot0.kV = SHOOTERMOTORS.kV;
-    // config.Slot0.kS = SHOOTERMOTORS.kS;
+    config.Slot0.kV = SHOOTERMOTORS.kV;
+    config.Slot0.kS = SHOOTERMOTORS.kS;
     // config.Slot0.kA = SHOOTERMOTORS.kA;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = SHOOTERMOTORS.gearRatio;
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERMOTORS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = SHOOTERMOTORS.peakReverseOutput;
-    config.CurrentLimits.StatorCurrentLimit = 30;
+    config.CurrentLimits.StatorCurrentLimit = 120;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERMOTORS.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERMOTORS.motionMagicAcceleration;
 
     CtreUtils.configureTalonFx(m_motor1, config);
-    CtreUtils.configureTalonFx(m_motor2, config);
-    CtreUtils.configureTalonFx(m_motor3, config);
-    CtreUtils.configureTalonFx(m_motor4, config);
+    // CtreUtils.configureTalonFx(m_motor2, config);
+
+
 
     m_simState = m_motor1.getSimState();
 
     // We only need the sim state of a single motor because all the motors are doing the same
     // thing... right???
 
-    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    // m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    // m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    // m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // TODO: Pls pls check if they all are actually aligned because it'd
     // be horrible if they weren't
 
@@ -120,14 +121,14 @@ public class ShooterRollers extends SubsystemBase {
     return m_rpmSetpoint.in(RotationsPerSecond);
   }
 
-  @Logged(name = "Motor Velocity in Rotations per Second", importance = Logged.Importance.DEBUG)
-  public double getMotorSpeedRotations() {
-    return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond);
+  @Logged(name = "Motor Velocity in Rotations per Minute", importance = Logged.Importance.INFO)
+  public double getMotorSpeedRotationsPerMinute() {
+    return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond) * 60;
   }
 
   public boolean[] isConnected() {
     return new boolean[] {
-      m_motor1.isConnected(), m_motor2.isConnected(), m_motor3.isConnected(), m_motor4.isConnected()
+      m_motor1.isConnected()
     };
   }
 

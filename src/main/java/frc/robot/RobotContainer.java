@@ -24,6 +24,7 @@ import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootFlywheel;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -43,12 +44,12 @@ public class RobotContainer {
   private ShooterRollers m_shooterRollers = new ShooterRollers();
 
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
-  private ShooterHood m_shooterHood = new ShooterHood();
+  private ShooterHood m_shooterHood;
 
-  @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_Indexer = new Indexer();
+  // @Logged(name = "Indexer", importance = Logged.Importance.INFO)
+  // private Indexer m_Indexer = new Indexer();
 
-  private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
+  // private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -81,29 +82,28 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
-    m_shooterRollers = new ShooterRollers();
-    m_shooterHood = new ShooterHood();
-    m_Indexer = new Indexer();
-    m_swerveDrive.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        m_swerveDrive.applyRequest(
-            () -> {
-              var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
-              // // if heading target
-              // if (m_swerveDrive.isTrackingState()) {
-              //   rotationRate = m_swerveDrive.calculateRotationToTarget();
-              // }
-              drive
-                  .withVelocityX(
-                      -m_driverController.getLeftY()
-                          * MaxSpeed) // Drive forward with negative Y (forward)
-                  .withVelocityY(
-                      -m_driverController.getLeftX()
-                          * MaxSpeed) // Drive left with negative X (left)
-                  .withRotationalRate(
-                      rotationRate); // Drive counterclockwise with negative X (left)
-              return drive;
-            }));
+    // if (m_swerveDrive != null) {    
+    //   m_swerveDrive.setDefaultCommand(
+    //     // Drivetrain will execute this command periodically
+    //     m_swerveDrive.applyRequest(
+    //         () -> {
+    //           var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
+    //           // // if heading target
+    //           // if (m_swerveDrive.isTrackingState()) {
+    //           //   rotationRate = m_swerveDrive.calculateRotationToTarget();
+    //           // }
+    //           drive
+    //               .withVelocityX(
+    //                   -m_driverController.getLeftY()
+    //                       * MaxSpeed) // Drive forward with negative Y (forward)
+    //               .withVelocityY(
+    //                   -m_driverController.getLeftX()
+    //                       * MaxSpeed) // Drive left with negative X (left)
+    //               .withRotationalRate(
+    //                   rotationRate); // Drive counterclockwise with negative X (left)
+    //           return drive;
+    //         }));
+    //   }
   }
 
   /**
@@ -116,11 +116,19 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController
-        .a()
+    if (m_shooterRollers != null && m_shooterHood != null){
+      m_driverController
+        .b()
         .whileTrue(
             new Shoot(
                 m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
+    }
+
+    if (m_shooterRollers != null){
+      m_driverController
+        .a()
+        .whileTrue(new ShootFlywheel(m_shooterRollers, ShooterRPS.HIGH));
+    }
 
     // // sysID ROUTINES, UNBIND THESE LATER
     // m_driverController
@@ -141,8 +149,8 @@ public class RobotContainer {
     // m_driverController
     //     .b()
     //     .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    m_driverController.x().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    m_driverController.b().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // m_driverController.x().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // m_driverController.b().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   private void initAutoChooser() {
