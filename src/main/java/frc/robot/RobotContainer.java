@@ -24,11 +24,14 @@ import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootFlywheel;
+import frc.robot.commands.Intake.RunIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
@@ -47,6 +50,9 @@ public class RobotContainer {
 
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   private ShooterHood m_shooterHood;
+
+  @Logged(name = "Intake", importance = Logged.Importance.INFO)
+  private Intake m_intake;
 
   // @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   // private Indexer m_Indexer = new Indexer();
@@ -78,8 +84,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
     initializeSubSystems();
+    configureBindings();
     initSmartDashboard();
   }
 
@@ -106,6 +112,8 @@ public class RobotContainer {
     //           return drive;
     //         }));
     //   }
+    m_intake = new Intake();
+    // m_shooterHood = new ShooterHood();
   }
 
   /**
@@ -130,6 +138,12 @@ public class RobotContainer {
       m_driverController
         .a()
         .whileTrue(new ShootFlywheel(m_shooterRollers, ShooterRPS.HIGH));
+    }
+
+    if (m_intake != null){
+      m_driverController
+        .rightBumper()
+        .whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
 
     // // sysID ROUTINES, UNBIND THESE LATER
