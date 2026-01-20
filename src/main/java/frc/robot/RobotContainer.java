@@ -21,12 +21,17 @@ import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
+import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Vision;
+import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.utils.Telemetry;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,7 +48,16 @@ public class RobotContainer {
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   private Indexer m_Indexer = new Indexer();
 
-  private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
+
+  private Controls m_controls = new Controls();
+
+  @Logged(name = "Vision", importance = Logged.Importance.INFO)
+  private Vision m_vision = new Vision(m_controls);
+
+  private Telemetry m_telemetry = new Telemetry();
+
+  private FieldSim m_fieldSim = new FieldSim();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -95,6 +109,10 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_vision.registerSwerveDrive(m_swerveDrive);
+    m_vision.registerFieldSim(m_fieldSim);
+    m_telemetry.registerFieldSim(m_fieldSim);
+    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
   /**
@@ -109,6 +127,15 @@ public class RobotContainer {
   private void configureBindings() {
     m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
     m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+
+    // aim at target
+    m_driverController
+        .rightBumper()
+        .whileTrue(
+            new AutoAlignDrive(
+                m_swerveDrive,
+                () -> m_driverController.getLeftY(),
+                () -> m_driverController.getLeftX()));
   }
 
   private void initAutoChooser() {
