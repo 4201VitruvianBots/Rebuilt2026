@@ -201,9 +201,6 @@ public final class Constants {
     public static class ROLLERS {
       /* TODO: change values because these are ALSO placeholders yay fun */
       public static final double kP = 1.0;
-      public static final double kD = 0.0;
-      public static final double kV = 0.0;
-      public static final double kS = 0.01;
       public static final double gearRatio = 1.0;
       public static final double peakForwardOutput = 0.5;
       public static final double peakReverseOutput = -0.5;
@@ -231,9 +228,6 @@ public final class Constants {
 
   public class UPTAKEMOTORS {
     public static final double kP = 1.0; /*more placeholders FUN*/
-    public static final double kD = 0.0;
-    public static final double kV = 0.0;
-    public static final double kS = 0.01;
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
     public static final double peakReverseOutput = -0.5;

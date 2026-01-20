@@ -24,6 +24,7 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Uptake extends SubsystemBase {
 
+  @Logged(name = "Uptake Motor", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor);
 
   private final DCMotorSim m_motorSim =
@@ -38,8 +39,6 @@ public class Uptake extends SubsystemBase {
   public Uptake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = UPTAKEMOTORS.kP;
-    config.Slot0.kD = UPTAKEMOTORS.kD;
-    config.Slot0.kV = UPTAKEMOTORS.kV;
     config.Feedback.SensorToMechanismRatio = UPTAKEMOTORS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

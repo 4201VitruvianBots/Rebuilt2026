@@ -121,10 +121,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
-    m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
-    m_driverController.x().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
-    m_driverController.y().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
+    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController.a().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+    m_driverController.b().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
   }
 
   private void initAutoChooser() {

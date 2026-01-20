@@ -25,30 +25,27 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Intake extends SubsystemBase {
 
+  @Logged(name = "Intake Motor 1", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor1 = new TalonFX(CAN.kIntakeRollerMotor1);
 
   private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 
   private final DCMotorSim m_motor1Sim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              INTAKEMOTORS.ROLLERS.gearbox,
-              INTAKEMOTORS.ROLLERS.gearRatio,
-              INTAKEMOTORS.ROLLERS.kInertia),
+    new DCMotorSim(
+      LinearSystemId.createDCMotorSystem(
+        INTAKEMOTORS.ROLLERS.gearbox, INTAKEMOTORS.ROLLERS.gearRatio, INTAKEMOTORS.ROLLERS.kInertia),
           INTAKEMOTORS.ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
-
   /** Creates a new Intake. */
   public Intake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = INTAKEMOTORS.ROLLERS.kP; // completely uneccesary lmao
-    config.Slot0.kD = INTAKEMOTORS.ROLLERS.kD;
-    config.Slot0.kV = INTAKEMOTORS.ROLLERS.kV;
+    config.Slot0.kP = INTAKEMOTORS.ROLLERS.kP; 
     config.Feedback.SensorToMechanismRatio = INTAKEMOTORS.ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_motor1, config);
+    CtreUtils.configureTalonFx(m_motor2, config);
 
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
 
