@@ -47,21 +47,17 @@ public final class Constants {
     // Copied from elevator so don't you even think about testing these. No way we'd reach testing
     // phase without changing these... right?
     public static double motionMagicCruiseVelocity =
-        70; // target cruise velocity of 100 rps, so 6000 rpm
+        35.0; // target cruise velocity of 35 rps, so 2100 rpm
     public static double motionMagicAcceleration =
-        60; // target acceleration of 60 rps/s.. I don't actually know if krakens can do this
-
+        22.0; // target acceleration of 22 rps/s.. 
     public static double motionMagicJerk = 0.0;
-    /* Make this higher to increase the acceleration.
-    This increases acceleration a lot faster than increasing the MotionMagicAcceleration value.
-    No jerk means trapezoidal profile. */
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
     public enum ShooterRPS {
-      IDLE(RotationsPerSecond.of(500.0 / 60)), // The number on the left is the RPM
+      IDLE(RotationsPerSecond.of(0.0 / 60)), // The number on the left is the RPM
       LOW(RotationsPerSecond.of(1000.0 / 60)),
-      HIGH(RotationsPerSecond.of(4080.0 / 60));
+      HIGH(RotationsPerSecond.of(2900.0 / 60));
 
       private final AngularVelocity rps;
 
@@ -135,10 +131,10 @@ public final class Constants {
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
 
-    public static final int kShooterRollerMotor1 = 30;
-    public static final int kShooterRollerMotor2 = 31;
-    public static final int kShooterRollerMotor3 = 32;
-    public static final int kShooterRollerMotor4 = 33;
+    public static final int kShooterRollerMotor1 = 40;
+    public static final int kShooterRollerMotor2 = 41;
+    public static final int kShooterRollerMotor3 = 42;
+    public static final int kShooterRollerMotor4 = 43;
 
     public static final int kIndexerMotor1 = 50; /* TODO: change values later */
     public static final int kIndexerMotor2 = 51;

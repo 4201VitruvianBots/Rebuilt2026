@@ -47,9 +47,11 @@ public class ShooterRollers extends SubsystemBase {
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
+
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
-      new MotionMagicVelocityTorqueCurrentFOC(0);
+      new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
+
   private AngularVelocity m_rpmSetpoint = ShooterRPS.IDLE.getRPS();
 
   private final FlywheelSim m_shooterMotorSim =
@@ -77,7 +79,7 @@ public class ShooterRollers extends SubsystemBase {
     config.Feedback.SensorToMechanismRatio = SHOOTERMOTORS.gearRatio;
     config.MotorOutput.PeakForwardDutyCycle = SHOOTERMOTORS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = SHOOTERMOTORS.peakReverseOutput;
-    config.CurrentLimits.StatorCurrentLimit = 30;
+    config.CurrentLimits.StatorCurrentLimit = 120;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERMOTORS.motionMagicCruiseVelocity;
@@ -89,16 +91,12 @@ public class ShooterRollers extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor4, config);
 
     m_simState = m_motor1.getSimState();
-
-    // We only need the sim state of a single motor because all the motors are doing the same
-    // thing... right???
-
+    
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // TODO: Pls pls check if they all are actually aligned because it'd
     // be horrible if they weren't
-
   }
 
   public void changeNeutralMode(NeutralModeValue neutralmode) {
@@ -120,15 +118,31 @@ public class ShooterRollers extends SubsystemBase {
     return m_rpmSetpoint.in(RotationsPerSecond);
   }
 
-  @Logged(name = "Motor Velocity in Rotations per Second", importance = Logged.Importance.DEBUG)
-  public double getMotorSpeedRotations() {
-    return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond);
+  @Logged(name = "Motor Velocity in Rotations per Minute", importance = Logged.Importance.INFO)
+  public double getMotorSpeedRotationsPerMinute() {
+    return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond) * 60.0;
   }
 
   public boolean[] isConnected() {
     return new boolean[] {
       m_motor1.isConnected(), m_motor2.isConnected(), m_motor3.isConnected(), m_motor4.isConnected()
     };
+  }
+
+  @Override
+  public void periodic() {}
+
+  @Override
+  public void simulationPeriodic() {
+    m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_shooterMotorSim.setInputVoltage(m_simState.getMotorVoltage());
+
+    m_shooterMotorSim.update(0.02);
+
+    m_simState.setRawRotorPosition(
+        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
+    m_simState.setRotorVelocity(
+        RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
   }
 
   private SysIdRoutine m_sysIdRoutine =
@@ -159,21 +173,5 @@ public class ShooterRollers extends SubsystemBase {
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
-  }
-
-  @Override
-  public void periodic() {}
-
-  @Override
-  public void simulationPeriodic() {
-    m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_shooterMotorSim.setInputVoltage(m_simState.getMotorVoltage());
-
-    m_shooterMotorSim.update(0.02);
-
-    m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
-    m_simState.setRotorVelocity(
-        RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
   }
 }

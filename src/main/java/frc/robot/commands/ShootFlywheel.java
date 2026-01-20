@@ -4,27 +4,22 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.units.measure.Angle;
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 
-public class Shoot extends Command {
+public class ShootFlywheel extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ShooterRollers m_shooterRollers;
 
-  private final ShooterHood m_shooterHood;
-
   private final ShooterRPS m_rps;
-  private final Angle m_angle;
 
-  public Shoot(
-      ShooterRollers shooterRollers, ShooterHood shooterHood, ShooterRPS rps, Angle angle) {
+  public ShootFlywheel(
+      ShooterRollers shooterRollers, ShooterRPS rps) {
     m_shooterRollers = shooterRollers;
     m_rps = rps;
-    m_shooterHood = shooterHood;
-    m_angle = angle;
 
     addRequirements(shooterRollers);
   }
@@ -33,8 +28,6 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     m_shooterRollers.setRPSOutputFOC(m_rps.getRPS());
-    m_shooterHood.setShooterHoodSetpoint(m_angle);
-    m_shooterHood.setShooterHoodSetpoint(m_angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,7 +37,7 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterRollers.setRPSOutputFOC(ShooterRPS.IDLE.getRPS());
+    m_shooterRollers.setVoltageOutputFOC(Volts.of(0.0));
   }
 
   // Returns true when the command should end.

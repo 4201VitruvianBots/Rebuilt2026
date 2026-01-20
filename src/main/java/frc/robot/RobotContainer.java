@@ -116,11 +116,13 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController
+    if (m_shooterRollers != null && m_shooterHood != null){
+      m_driverController
         .a()
         .whileTrue(
             new Shoot(
                 m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
+    }
 
     // // sysID ROUTINES, UNBIND THESE LATER
     // m_driverController
