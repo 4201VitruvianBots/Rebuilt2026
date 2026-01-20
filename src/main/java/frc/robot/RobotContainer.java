@@ -18,11 +18,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Index;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.Intake.RunIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -79,6 +81,7 @@ public class RobotContainer {
   private void initializeSubSystems() {
     m_ShooterRollers = new ShooterRollers();
     m_Indexer = new Indexer();
+    m_Intake = new Intake();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -113,6 +116,7 @@ public class RobotContainer {
   private void configureBindings() {
     m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
     m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController.x().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
   }
 
   private void initAutoChooser() {
