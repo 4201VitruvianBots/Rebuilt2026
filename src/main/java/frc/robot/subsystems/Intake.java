@@ -14,7 +14,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.RobotController;
@@ -26,21 +25,24 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Intake extends SubsystemBase {
 
-    private final TalonFX m_motor1 = new TalonFX(CAN.kIntakeRollerMotor1);
+  private final TalonFX m_motor1 = new TalonFX(CAN.kIntakeRollerMotor1);
 
-    private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 
-    private final DCMotorSim m_motor1Sim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                INTAKEMOTORS.ROLLERS.gearbox, INTAKEMOTORS.ROLLERS.gearRatio, INTAKEMOTORS.ROLLERS.kInertia),
-                 INTAKEMOTORS.ROLLERS.gearbox);
+  private final DCMotorSim m_motor1Sim =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(
+              INTAKEMOTORS.ROLLERS.gearbox,
+              INTAKEMOTORS.ROLLERS.gearRatio,
+              INTAKEMOTORS.ROLLERS.kInertia),
+          INTAKEMOTORS.ROLLERS.gearbox);
 
-    private final TalonFXSimState m_simState;
+  private final TalonFXSimState m_simState;
+
   /** Creates a new Intake. */
   public Intake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = INTAKEMOTORS.ROLLERS.kP; //completely uneccesary lmao
+    config.Slot0.kP = INTAKEMOTORS.ROLLERS.kP; // completely uneccesary lmao
     config.Slot0.kD = INTAKEMOTORS.ROLLERS.kD;
     config.Slot0.kV = INTAKEMOTORS.ROLLERS.kV;
     config.Feedback.SensorToMechanismRatio = INTAKEMOTORS.ROLLERS.gearRatio;
@@ -48,12 +50,9 @@ public class Intake extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_motor1, config);
 
-    m_motor2.setControl(
-        new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
 
-    
     m_simState = m_motor1.getSimState();
-
   }
 
   public void setOutputPercent(double speed) {
@@ -72,7 +71,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {}
 
-    @Override
+  @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 

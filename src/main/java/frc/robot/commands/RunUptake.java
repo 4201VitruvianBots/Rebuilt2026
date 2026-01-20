@@ -11,15 +11,16 @@ import frc.robot.subsystems.Uptake;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class RunUptake extends Command {
 
-    private final Uptake m_uptake;
+  private final Uptake m_uptake;
 
-    private final UPTAKESPEED m_speed;
+  private final UPTAKESPEED m_speed;
+
   /** Creates a new RunUptake. */
   public RunUptake(Uptake uptake, UPTAKESPEED speed) {
-      m_uptake = uptake;
-      m_speed = speed;
+    m_uptake = uptake;
+    m_speed = speed;
 
-      addRequirements(uptake);
+    addRequirements(uptake);
   }
 
   // Called when the command is initially scheduled.

@@ -24,9 +24,9 @@ import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Index;
+import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.Intake.RunIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -48,7 +48,7 @@ public class RobotContainer {
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   private Indexer m_Indexer = new Indexer();
-  
+
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_Intake = new Intake();
 

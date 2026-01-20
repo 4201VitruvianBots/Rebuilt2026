@@ -12,7 +12,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.RobotController;
@@ -27,11 +26,11 @@ public class Uptake extends SubsystemBase {
 
   private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor);
 
-  private final DCMotorSim m_motorSim = 
+  private final DCMotorSim m_motorSim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
               UPTAKEMOTORS.gearbox, UPTAKEMOTORS.gearRatio, UPTAKEMOTORS.kInertia),
-              UPTAKEMOTORS.gearbox);
+          UPTAKEMOTORS.gearbox);
 
   private final TalonFXSimState m_simState;
 
@@ -65,7 +64,7 @@ public class Uptake extends SubsystemBase {
   @Override
   public void periodic() {}
 
-      @Override
+  @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
 

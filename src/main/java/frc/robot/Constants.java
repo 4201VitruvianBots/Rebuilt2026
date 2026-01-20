@@ -196,6 +196,7 @@ public final class Constants {
       }
     }
   }
+
   public class INTAKEMOTORS {
     public static class ROLLERS {
       /* TODO: change values because these are ALSO placeholders yay fun */
@@ -215,15 +216,15 @@ public final class Constants {
         INTAKING(0.5),
         HELPSOMETHINGSSTUCK(-0.2);
 
-          private final double value;
-          
-          INTAKESPEED(double value) {
-            this.value = value;
-          }
+        private final double value;
 
-          public double get() {
-            return value;
-          }
+        INTAKESPEED(double value) {
+          this.value = value;
+        }
+
+        public double get() {
+          return value;
+        }
       }
     }
   }
@@ -245,14 +246,15 @@ public final class Constants {
       UPTAKING(0.6),
       WEIRDREVERSE(-0.3);
 
-        private final double value;
+      private final double value;
 
-        UPTAKESPEED(double value) {
-          this.value = value;
-        }
-        public double get() {
-          return value;
-        }
+      UPTAKESPEED(double value) {
+        this.value = value;
+      }
+
+      public double get() {
+        return value;
+      }
     }
   }
 }
