@@ -48,8 +48,7 @@ public final class Constants {
     // phase without changing these... right?
     public static double motionMagicCruiseVelocity =
         35.0; // target cruise velocity of 35 rps, so 2100 rpm
-    public static double motionMagicAcceleration =
-        22.0; // target acceleration of 22 rps/s.. 
+    public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
     public static double motionMagicJerk = 0.0;
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);

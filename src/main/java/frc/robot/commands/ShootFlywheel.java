@@ -16,8 +16,7 @@ public class ShootFlywheel extends Command {
 
   private final ShooterRPS m_rps;
 
-  public ShootFlywheel(
-      ShooterRollers shooterRollers, ShooterRPS rps) {
+  public ShootFlywheel(ShooterRollers shooterRollers, ShooterRPS rps) {
     m_shooterRollers = shooterRollers;
     m_rps = rps;
 

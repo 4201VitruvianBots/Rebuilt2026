@@ -91,7 +91,7 @@ public class ShooterRollers extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor4, config);
 
     m_simState = m_motor1.getSimState();
-    
+
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
