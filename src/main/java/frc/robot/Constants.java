@@ -104,6 +104,8 @@ public final class Constants {
     public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
     public static final int kIntakeRollerMotor2 = 54;
     public static final int kIntakePivotMotor = 55;
+
+    public static final int kUptakeMotor = 56; /* TODO: another placeholder "Fun!" */
   }
 
   // usb n swerve are like lwk copied from reefscape
@@ -223,6 +225,34 @@ public final class Constants {
             return value;
           }
       }
+    }
+  }
+
+  public class UPTAKEMOTORS {
+    public static final double kP = 1.0; /*more placeholders FUN*/
+    public static final double kD = 0.0;
+    public static final double kV = 0.0;
+    public static final double kS = 0.01;
+    public static final double gearRatio = 1.0;
+    public static final double peakForwardOutput = 0.5;
+    public static final double peakReverseOutput = -0.5;
+    public static final double kInertia = 0.005;
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX60(1);
+
+    public enum UPTAKESPEED {
+      ZERO(0),
+      UPTAKING(0.6),
+      WEIRDREVERSE(-0.3);
+
+        private final double value;
+
+        UPTAKESPEED(double value) {
+          this.value = value;
+        }
+        public double get() {
+          return value;
+        }
     }
   }
 }
