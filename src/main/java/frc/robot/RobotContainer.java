@@ -26,6 +26,7 @@ import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterRollers;
 
 /**
@@ -42,6 +43,9 @@ public class RobotContainer {
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   private Indexer m_Indexer = new Indexer();
+  
+  @Logged(name = "Intake", importance = Logged.Importance.INFO)
+  private Intake m_Intake = new Intake();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 

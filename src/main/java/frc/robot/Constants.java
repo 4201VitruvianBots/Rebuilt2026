@@ -196,8 +196,33 @@ public final class Constants {
   }
   public class INTAKEMOTORS {
     public static class ROLLERS {
-      
-    }
+      /* TODO: change values because these are ALSO placeholders yay fun */
+      public static final double kP = 1.0;
+      public static final double kD = 0.0;
+      public static final double kV = 0.0;
+      public static final double kS = 0.01;
+      public static final double gearRatio = 1.0;
+      public static final double peakForwardOutput = 0.5;
+      public static final double peakReverseOutput = -0.5;
+      public static final double kInertia = 0.005;
 
+      public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
+
+      public enum INTAKESPEED {
+        ZERO(0),
+        INTAKING(0.5),
+        HELPSOMETHINGSSTUCK(-0.2);
+
+          private final double value;
+          
+          INTAKESPEED(double value) {
+            this.value = value;
+          }
+
+          public double get() {
+            return value;
+          }
+      }
+    }
   }
 }
