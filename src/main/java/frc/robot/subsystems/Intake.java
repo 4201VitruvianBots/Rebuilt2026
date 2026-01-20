@@ -31,16 +31,19 @@ public class Intake extends SubsystemBase {
   private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 
   private final DCMotorSim m_motor1Sim =
-    new DCMotorSim(
-      LinearSystemId.createDCMotorSystem(
-        INTAKEMOTORS.ROLLERS.gearbox, INTAKEMOTORS.ROLLERS.gearRatio, INTAKEMOTORS.ROLLERS.kInertia),
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(
+              INTAKEMOTORS.ROLLERS.gearbox,
+              INTAKEMOTORS.ROLLERS.gearRatio,
+              INTAKEMOTORS.ROLLERS.kInertia),
           INTAKEMOTORS.ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
+
   /** Creates a new Intake. */
   public Intake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = INTAKEMOTORS.ROLLERS.kP; 
+    config.Slot0.kP = INTAKEMOTORS.ROLLERS.kP;
     config.Feedback.SensorToMechanismRatio = INTAKEMOTORS.ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
