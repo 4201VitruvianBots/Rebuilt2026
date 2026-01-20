@@ -52,7 +52,7 @@ public class ShooterRollers extends SubsystemBase {
       new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
 
-  private AngularVelocity m_rpmSetpoint = ShooterVelocity.IDLE.getRPM();
+  private static AngularVelocity m_rpmSetpoint = ShooterVelocity.IDLE.getRPM();
 
   private final FlywheelSim m_shooterMotorSim =
       new FlywheelSim(
