@@ -51,7 +51,7 @@ public class ShooterHood extends SubsystemBase {
 
   private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
 
-  private final DCMotorSim m_shooterHoodSim =
+  public final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
               SHOOTERHOOD.gearbox, SHOOTERHOOD.kInertia, SHOOTERHOOD.gearRatio),
@@ -99,6 +99,10 @@ public class ShooterHood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     m_simState = m_motor.getSimState();
+  }
+
+  public double getCurrentDrawAmps() {
+    return m_shooterHoodSim.getCurrentDrawAmps();
   }
 
   public void setAngle(Angle setpoint) {

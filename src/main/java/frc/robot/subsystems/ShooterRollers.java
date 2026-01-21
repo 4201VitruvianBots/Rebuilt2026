@@ -54,7 +54,7 @@ public class ShooterRollers extends SubsystemBase {
 
   private static AngularVelocity m_rpmSetpoint = ShooterVelocity.IDLE.getRPM();
 
-  private final FlywheelSim m_shooterMotorSim =
+  public final FlywheelSim m_shooterMotorSim =
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(
               SHOOTERMOTORS.gearbox, SHOOTERMOTORS.kInertia, SHOOTERMOTORS.gearRatio),
@@ -97,6 +97,10 @@ public class ShooterRollers extends SubsystemBase {
     m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // TODO: Pls pls check if they all are actually aligned because it'd
     // be horrible if they weren't
+  }
+
+  public double getCurrentDrawAmps() {
+    return m_shooterMotorSim.getCurrentDrawAmps();
   }
 
   public void changeNeutralMode(NeutralModeValue neutralmode) {

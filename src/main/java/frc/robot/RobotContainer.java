@@ -11,6 +11,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -72,6 +74,14 @@ public class RobotContainer {
   private double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+  
+  @NotLogged double getTotalCurrentDrawAmps() {
+    double totalCurrent = 0.0;
+    totalCurrent += m_shooterRollers.getCurrentDrawAmps();
+    totalCurrent += m_Intake.getCurrentDrawAmps();
+    totalCurrent += m_Uptake.getCurrentDrawAmps();
+    return totalCurrent;
+  }
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =

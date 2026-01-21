@@ -47,6 +47,10 @@ public class Uptake extends SubsystemBase {
     m_simState = m_motor.getSimState();
   }
 
+  public double getCurrentDrawAmps() {
+    return m_motorSim.getCurrentDrawAmps();
+  }
+
   public void setPercentOutput(double speed) {
     m_motor.set(speed);
   }

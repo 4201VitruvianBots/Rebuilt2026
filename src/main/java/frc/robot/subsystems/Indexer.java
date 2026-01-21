@@ -67,6 +67,10 @@ public class Indexer extends SubsystemBase {
     m_simState = m_indexerMotor1.getSimState();
   }
 
+  public double getCurrentDrawAmps() {
+    return m_indexerMotor1Sim.getCurrentDrawAmps();
+  }
+
   public void setSpeed(double speed) {
     m_indexerMotor1.set(speed);
   }

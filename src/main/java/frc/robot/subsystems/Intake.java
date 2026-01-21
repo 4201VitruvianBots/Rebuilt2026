@@ -55,6 +55,10 @@ public class Intake extends SubsystemBase {
     m_simState = m_motor1.getSimState();
   }
 
+  public double getCurrentDrawAmps() {
+    return m_motor1Sim.getCurrentDrawAmps();
+  }
+
   public void setOutputPercent(double speed) {
     m_motor1.set(speed);
   }
