@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.subsystems.ShooterRollers;
@@ -15,11 +14,9 @@ public class ShootFlywheel extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ShooterRollers m_shooterRollers;
 
-
   private final ShooterRPS m_rps;
 
-  public ShootFlywheel(
-      ShooterRollers shooterRollers, ShooterRPS rps) {
+  public ShootFlywheel(ShooterRollers shooterRollers, ShooterRPS rps) {
     m_shooterRollers = shooterRollers;
     m_rps = rps;
 
