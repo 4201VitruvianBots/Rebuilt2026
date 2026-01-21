@@ -4,17 +4,22 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pounds;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
@@ -104,8 +109,9 @@ public final class Constants {
     public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
     public static final int kIntakeRollerMotor2 = 54;
     public static final int kIntakePivotMotor = 55;
+    public static final int kPivotEncoder = 56;
 
-    public static final int kUptakeMotor = 56; /* TODO: another placeholder "Fun!" */
+    public static final int kUptakeMotor = 57; /* TODO: another placeholder "Fun!" */
   }
 
   // usb n swerve are like lwk copied from reefscape
@@ -178,6 +184,7 @@ public final class Constants {
     public static final double peakReverseOutput = -0.5;
     public static final double kInertia = 0.005;
 
+
     public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
 
     public enum INDEXERSPEED {
@@ -223,6 +230,44 @@ public final class Constants {
           return value;
         }
       }
+    }
+    public static class PIVOT {
+      /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
+        public static final double kP = 5.0;
+        public static final double kD = 0.0;
+        public static final double kS = 0.0; //TODO: Calculate kS and kV as a feedforward. 
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
+        public static final double gearRatio = 1.0;
+        public static final double peakForwardOutput = 0.4;
+        public static final double peakReverseOutput = -0.4;
+        public static final double motionMagicAcceleration = 40.0;
+        public static final double motionMagicCruiseVelocity = 30.0;
+        public static final double motionMagicJerk = 0.0;
+        public static final Angle minAngle = Degrees.of(0);
+        public static final Angle maxAngle = Degrees.of(90);
+        public static final Angle startingAngle = minAngle;
+        public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
+          GravityTypeValue.Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm lwk */
+        public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
+
+        public static final Distance baseLength = Inches.of(3); /* COMPLETELY made up :P */
+        public static final Mass mass = Pounds.of(3);/*also COMPLETELY made up lwk */
+
+        public enum PIVOT_SETPOINT {
+          STOWED(Degrees.of(0)),
+          INTAKING(Degrees.of(90));
+
+          private final Angle angle;
+
+          PIVOT_SETPOINT(Angle angle) {
+            this.angle = angle;
+          }
+
+          public Angle get() {
+            return angle;
+          }
+        }
     }
   }
 
