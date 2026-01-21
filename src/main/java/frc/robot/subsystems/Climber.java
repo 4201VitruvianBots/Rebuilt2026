@@ -7,7 +7,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.CLIMBER;
@@ -16,35 +18,35 @@ import frc.robot.Constants.ROBOT.CONTROL_MODE;
 
 public class Climber extends SubsystemBase {
 
-  TalonFX m_climberMotor1 = new TalonFX(CAN.kClimberMotor1); //Update Number if the DeviceID changes.
-  TalonFX m_climbermotor2 = new TalonFX(CAN.kClimberMotor2); //this one too.
+  TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor); //Update Number if the DeviceID changes.
 
   // Booleans:
-  private CONTROL_MODE m_controlMode = CONTROL_MODE.OPEN_LOOP;
-  private double m_buttonInput = 0.0;
+  
+  //Logging
+  @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
+  private NeutralModeValue m_neutralMode = NeutralModeValue.Brake; //Maye set to coast?
 
   /** Creates a new Climber. */
   public Climber() {
     //Configuring the motor for the elevator:
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kG = CLIMBER.kG;
     config.Slot0.kV = CLIMBER.kV;
     config.Slot0.kA = CLIMBER.kA;
     config.Slot0.kP = CLIMBER.kP;
-    config.Slot0.kI = CLIMBER.kI;
+
     config.Slot0.kD = CLIMBER.kD;
 
-    config.Feedback.SensorToMechanismRatio = CLIMBER.gearRatio;
+    config.Feedback.SensorToMechanismRatio = CLIMBER.gearRatio; //configures climber to gear ratio. (check if absolute cancoder)
+    config.MotionMagic.MotionMagicCruiseVelocity = CLIMBER.motionMagicCruiseVelocity;
+    config.MotionMagic.MotionMagicAcceleration = CLIMBER.motionMagicAcceleration;
+    config.CurrentLimits.StatorCurrentLimit = 40; //TODO: Adjust these
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.MotorOutput.PeakReverseDutyCycle = CLIMBER.peakReverseOutput;
+    config.MotorOutput.PeakForwardDutyCycle = CLIMBER.peakForwardOutput;
+    config.MotorOutput.NeutralMode = m_neutralMode;
   }
 
   //Methods
-  public void setControlMode(CONTROL_MODE controlMode) {
-    m_controlMode = controlMode;
-  }
-
-  public void setButtonInput(double buttonInput) {
-    m_buttonInput = buttonInput;
-  }
 
   @Override
   public void periodic() {

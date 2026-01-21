@@ -30,20 +30,19 @@ public class Climb extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_climber.setControlMode(CONTROL_MODE.OPEN_LOOP);
-    m_climber.setButtonInput(m_voltage.in(Volts) / 12); //May need to change this.
+   
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_climber.setButtonInput(m_voltage.in(Volts) / 12);
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_climber.setButtonInput(0);
+
   }
 
   // Returns true when the command should end.
