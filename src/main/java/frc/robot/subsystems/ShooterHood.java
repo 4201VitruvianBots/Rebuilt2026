@@ -119,6 +119,8 @@ public class ShooterHood extends SubsystemBase {
     return m_motor.getMotorVoltage().refresh().getValue();
   }
 
+  // TODO: Delete this after testing. Only for debugging purposes
+  @Logged(name = "Hood Velocity", importance = Importance.DEBUG)
   public AngularVelocity getHoodVelocity() {
     return m_motor.getVelocity().refresh().getValue();
   }
@@ -133,7 +135,7 @@ public class ShooterHood extends SubsystemBase {
     return getHoodRotations().in(Degrees);
   }
 
-  @Logged(name = "At Setpoint", importance = Logged.Importance.DEBUG)
+  @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
     return m_hoodSetpoint.minus(getHoodRotations()).abs(Degrees) <= 1; // Works as good as always
   }
@@ -144,36 +146,6 @@ public class ShooterHood extends SubsystemBase {
 
   public void setVoltageOutputFOC(Voltage voltage) {
     m_motor.setControl(m_VoltageOut.withOutput(voltage.in(Volts)));
-  }
-
-  private SysIdRoutine m_sysIdRoutine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
-              Volts.of(3), // Constant voltage value for dynamic routine
-              null // Max time before automatically ending the routine, Defaults to 10 sec
-              ),
-          new SysIdRoutine.Mechanism(
-              this::setVoltageOutputFOC, // Set voltage of mechanism
-              this::sysIDLogMotors,
-              this));
-
-  /**
-   * Returns a command that will execute a quasistatic test in the given direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutine.quasistatic(direction);
-  }
-
-  /**
-   * Returns a command that will execute a dynamic test in the given direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutine.dynamic(direction);
   }
 
   @Override
@@ -198,5 +170,35 @@ public class ShooterHood extends SubsystemBase {
     m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
     m_cancoderSimState.setVelocity(
         RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocityRadPerSec()));
+  }
+
+  private SysIdRoutine m_sysIdRoutine =
+    new SysIdRoutine(
+      new SysIdRoutine.Config(
+          Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
+          Volts.of(3), // Constant voltage value for dynamic routine
+  null // Max time before automatically ending the routine, Defaults to 10 sec
+),
+      new SysIdRoutine.Mechanism(
+          this::setVoltageOutputFOC, // Set voltage of mechanism
+          this::sysIDLogMotors,
+          this));
+
+  /**
+   * Returns a command that will execute a quasistatic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  /**
+   * Returns a command that will execute a dynamic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
   }
 }

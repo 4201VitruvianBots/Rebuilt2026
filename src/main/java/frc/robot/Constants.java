@@ -44,8 +44,7 @@ public final class Constants {
     public static final double kInertia =
         0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    // Copied from elevator so don't you even think about testing these. No way we'd reach testing
-    // phase without changing these... right?
+    // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity =
         35.0; // target cruise velocity of 35 rps, so 2100 rpm
     public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..

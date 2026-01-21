@@ -40,13 +40,13 @@ import frc.robot.subsystems.ShooterRollers;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_shooterRollers = new ShooterRollers();
+  private ShooterRollers m_shooterRollers;
 
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
-  private ShooterHood m_shooterHood = new ShooterHood();
+  private ShooterHood m_shooterHood;
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_Indexer = new Indexer();
+  private Indexer m_Indexer;
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
@@ -75,8 +75,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
     initializeSubSystems();
+    configureBindings();
     initSmartDashboard();
   }
 
@@ -106,15 +106,6 @@ public class RobotContainer {
             }));
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
     if (m_shooterRollers != null && m_shooterHood != null) {
       m_driverController
@@ -123,28 +114,6 @@ public class RobotContainer {
               new Shoot(
                   m_shooterRollers, m_shooterHood, ShooterVelocity.HIGH, HoodAngle.CLOSE.getAngle()));
     }
-
-    // // sysID ROUTINES, UNBIND THESE LATER
-    // m_driverController
-    //     .povDown()
-    //     .whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // m_driverController
-    //     .povUp()
-    //     .whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // m_driverController
-    //     .povLeft()
-    //     .whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // m_driverController
-    //     .povRight()
-    //     .whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    // m_driverController
-    //     .y()
-    //     .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // m_driverController
-    //     .b()
-    //     .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    m_driverController.x().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    m_driverController.b().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   private void initAutoChooser() {
