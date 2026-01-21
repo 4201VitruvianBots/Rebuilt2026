@@ -21,14 +21,23 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SWERVE;
+import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.ShooterHood;
+import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.RunUptake;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Uptake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -47,6 +56,12 @@ public class RobotContainer {
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   private Indexer m_Indexer;
+
+  @Logged(name = "Intake", importance = Logged.Importance.INFO)
+  private Intake m_Intake = new Intake();
+
+  @Logged(name = "Uptake", importance = Logged.Importance.INFO)
+  private Uptake m_Uptake = new Uptake();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
@@ -84,6 +99,8 @@ public class RobotContainer {
     m_shooterRollers = new ShooterRollers();
     m_shooterHood = new ShooterHood();
     m_Indexer = new Indexer();
+    m_Intake = new Intake();
+    m_Uptake = new Uptake();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -114,6 +131,10 @@ public class RobotContainer {
               new Shoot(
                   m_shooterRollers, m_shooterHood, ShooterVelocity.HIGH, HoodAngle.CLOSE.getAngle()));
     }
+    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
   }
 
   private void initAutoChooser() {
