@@ -5,15 +5,20 @@
 //Imports
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.CLIMBER;
-import frc.robot.Constants.ROBOT.CONTROL_MODE;
+import frc.team4201.lib.utils.CtreUtils;
 
 
 public class Climber extends SubsystemBase {
@@ -25,6 +30,21 @@ public class Climber extends SubsystemBase {
   //Logging
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode = NeutralModeValue.Brake; //Maye set to coast?
+
+  //Climber Sim State:
+  // Simulation classes help us simulate what's going on, including gravity.
+  private final ElevatorSim m_elevatorSim =
+      new ElevatorSim(
+          CLIMBER.gearbox,
+          CLIMBER.gearRatio,
+          CLIMBER.kCarriageMass.in(Kilograms),
+          CLIMBER.kClimberDrumDiameter.div(2).in(Meters),
+          CLIMBER.lowerLimit.in(Meters),
+          CLIMBER.upperLimit.in(Meters),
+          true,
+          1);
+  private final TalonFXSimState m_motorSimState;
+
 
   /** Creates a new Climber. */
   public Climber() {
@@ -44,6 +64,10 @@ public class Climber extends SubsystemBase {
     config.MotorOutput.PeakReverseDutyCycle = CLIMBER.peakReverseOutput;
     config.MotorOutput.PeakForwardDutyCycle = CLIMBER.peakForwardOutput;
     config.MotorOutput.NeutralMode = m_neutralMode;
+
+    CtreUtils.configureTalonFx(m_climberMotor, config); //Configures the motor.
+
+    m_motorSimState = m_climberMotor.getSimState();
   }
 
   //Methods

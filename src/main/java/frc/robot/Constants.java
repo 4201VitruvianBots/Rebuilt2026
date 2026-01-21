@@ -7,16 +7,20 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pound;
+
+import java.util.Map;
 
 import com.pathplanner.lib.config.PIDConstants;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
-import java.util.Map;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -163,6 +167,8 @@ public final class Constants {
   }
 
   public class CLIMBER {
+    public static final Distance upperLimit = Inches.of(20); //TODO: talk to design about height
+    public static final Distance lowerLimit = Inches.of(0);
 
     //Config for Motor TODO: input the proper values
     public static double kV = 1.0; // output per unit of target velocity (output/rps)
@@ -177,6 +183,10 @@ public final class Constants {
 
     public static final double peakForwardOutput = 1.00; // TODO: test to confirm
     public static final double peakReverseOutput = -0.5; // this too.
+
+    public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
+    public static Mass kCarriageMass = Pound.of(15); //TODO: figure this out, it might be dynamic and wierd
+    public static final Distance kClimberDrumDiameter = Inches.of(2.2557); //TODO: Change this
   }
 
   public class ROBOT {
