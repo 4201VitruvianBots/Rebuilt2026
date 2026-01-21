@@ -173,16 +173,16 @@ public class ShooterHood extends SubsystemBase {
   }
 
   private SysIdRoutine m_sysIdRoutine =
-    new SysIdRoutine(
-      new SysIdRoutine.Config(
-          Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
-          Volts.of(3), // Constant voltage value for dynamic routine
-  null // Max time before automatically ending the routine, Defaults to 10 sec
-),
-      new SysIdRoutine.Mechanism(
-          this::setVoltageOutputFOC, // Set voltage of mechanism
-          this::sysIDLogMotors,
-          this));
+      new SysIdRoutine(
+          new SysIdRoutine.Config(
+              Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine
+              Volts.of(3), // Constant voltage value for dynamic routine
+              null // Max time before automatically ending the routine, Defaults to 10 sec
+              ),
+          new SysIdRoutine.Mechanism(
+              this::setVoltageOutputFOC, // Set voltage of mechanism
+              this::sysIDLogMotors,
+              this));
 
   /**
    * Returns a command that will execute a quasistatic test in the given direction.

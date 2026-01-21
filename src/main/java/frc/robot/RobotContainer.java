@@ -17,25 +17,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
+import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.ShooterHood;
-import frc.robot.commands.Intake.RunIntake;
-import frc.robot.commands.RunUptake;
-import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
 
@@ -129,7 +124,10 @@ public class RobotContainer {
           .a()
           .whileTrue(
               new Shoot(
-                  m_shooterRollers, m_shooterHood, ShooterVelocity.HIGH, HoodAngle.CLOSE.getAngle()));
+                  m_shooterRollers,
+                  m_shooterHood,
+                  ShooterVelocity.HIGH,
+                  HoodAngle.CLOSE.getAngle()));
     }
     // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
