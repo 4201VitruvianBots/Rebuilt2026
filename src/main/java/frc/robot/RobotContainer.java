@@ -75,9 +75,12 @@ public class RobotContainer {
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
   
-  @NotLogged double getTotalCurrentDrawAmps() {
+  @NotLogged 
+  double getTotalCurrentDrawAmps() {
     double totalCurrent = 0.0;
     totalCurrent += m_shooterRollers.getCurrentDrawAmps();
+    totalCurrent += m_shooterHood.getCurrentDrawAmps();
+    totalCurrent += m_Indexer.getCurrentDrawAmps();
     totalCurrent += m_Intake.getCurrentDrawAmps();
     totalCurrent += m_Uptake.getCurrentDrawAmps();
     return totalCurrent;
@@ -139,10 +142,16 @@ public class RobotContainer {
                   ShooterVelocity.HIGH,
                   HoodAngle.CLOSE.getAngle()));
     }
-    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
-    // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
-    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
-    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
+
+    if (m_Uptake != null) {
+      m_driverController
+          .b()
+          .whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
+    }
+
+    if (m_Intake != null) {
+      m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+    }
   }
 
   private void initAutoChooser() {
