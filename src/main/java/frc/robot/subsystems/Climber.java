@@ -5,15 +5,22 @@
 //Imports
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
@@ -23,13 +30,42 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Climber extends SubsystemBase {
 
-  TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor); //Update Number if the DeviceID changes.
+  //Creates new motor
+  TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
 
-  // Booleans:
+  //For logging. It gets you the value of these 4 things. 
+  private final StatusSignal<Angle> m_positionSignal = m_climberMotor.getPosition().clone();
+  private final StatusSignal<AngularVelocity> m_velocitySignal = m_climberMotor.getVelocity().clone();
+  private final StatusSignal<AngularAcceleration> m_accelSignal = m_climberMotor.getAcceleration().clone();
+  private final StatusSignal<Voltage> m_voltageSignal = m_climberMotor.getMotorVoltage().clone();
+
+  private Distance m_desiredPosition = Inches.of(0);
   
-  //Logging
+  //Logging:
+  //Logs the mode
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode = NeutralModeValue.Brake; //Maye set to coast?
+
+  //Logs the Status signals
+  @Logged(name = "Motor Velocity", importance = Logged.Importance.DEBUG)
+  public AngularVelocity getMotorVelocity() {
+    return m_velocitySignal.refresh().getValue();
+  }
+
+    @Logged(name = "Motor Rotations", importance = Logged.Importance.DEBUG)
+  public Angle getRotations() {
+    return m_positionSignal.refresh().getValue();
+  }
+
+  @Logged(name = "Motor Acceleration", importance = Logged.Importance.DEBUG)
+  public AngularAcceleration getMotorAcceleration() {
+    return m_accelSignal.refresh().getValue();
+  }
+
+    @Logged(name = "Motor Voltage", importance = Logged.Importance.DEBUG)
+  public Voltage getMotorVoltage() {
+    return m_voltageSignal.refresh().getValue();
+  }
 
   //Climber Sim State:
   // Simulation classes help us simulate what's going on, including gravity.
@@ -53,7 +89,6 @@ public class Climber extends SubsystemBase {
     config.Slot0.kV = CLIMBER.kV;
     config.Slot0.kA = CLIMBER.kA;
     config.Slot0.kP = CLIMBER.kP;
-
     config.Slot0.kD = CLIMBER.kD;
 
     config.Feedback.SensorToMechanismRatio = CLIMBER.gearRatio; //configures climber to gear ratio. (check if absolute cancoder)
