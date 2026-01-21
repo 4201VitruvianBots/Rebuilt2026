@@ -18,23 +18,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
-import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootFlywheel;
-import frc.robot.commands.Intake.RunIntake;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
-import frc.robot.subsystems.Uptake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -90,7 +85,7 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
-    // if (m_swerveDrive != null) {    
+    // if (m_swerveDrive != null) {
     //   m_swerveDrive.setDefaultCommand(
     //     // Drivetrain will execute this command periodically
     //     m_swerveDrive.applyRequest(
@@ -126,24 +121,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    if (m_shooterRollers != null && m_shooterHood != null){
+    if (m_shooterRollers != null && m_shooterHood != null) {
       m_driverController
-        .b()
-        .whileTrue(
-            new Shoot(
-                m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
+          .b()
+          .whileTrue(
+              new Shoot(
+                  m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
     }
 
-    if (m_shooterRollers != null){
-      m_driverController
-        .a()
-        .whileTrue(new ShootFlywheel(m_shooterRollers, ShooterRPS.HIGH));
+    if (m_shooterRollers != null) {
+      m_driverController.a().whileTrue(new ShootFlywheel(m_shooterRollers, ShooterRPS.HIGH));
     }
 
-    if (m_intake != null){
-      m_driverController
-        .rightBumper()
-        .whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+    if (m_intake != null) {
+      m_driverController.rightBumper().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
 
     // // sysID ROUTINES, UNBIND THESE LATER

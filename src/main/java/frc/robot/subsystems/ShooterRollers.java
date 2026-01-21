@@ -48,8 +48,8 @@ public class ShooterRollers extends SubsystemBase {
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
-  private final MotionMagicVelocityVoltage m_request =
-      new MotionMagicVelocityVoltage(0).withFeedForward(0.1);
+  private final MotionMagicVelocityTorqueCurrentFOC m_request =
+      new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
   private AngularVelocity m_rpmSetpoint = ShooterRPS.IDLE.getRPS();
 
