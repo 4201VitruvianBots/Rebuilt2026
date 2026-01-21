@@ -8,6 +8,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -22,9 +23,11 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.CLIMBER;
+import frc.robot.Constants.ROBOT.CONTROL_MODE;
 import frc.team4201.lib.utils.CtreUtils;
 
 
@@ -39,33 +42,22 @@ public class Climber extends SubsystemBase {
   private final StatusSignal<AngularAcceleration> m_accelSignal = m_climberMotor.getAcceleration().clone();
   private final StatusSignal<Voltage> m_voltageSignal = m_climberMotor.getMotorVoltage().clone();
 
+  //The position it's trying to reach and stabilise at
   private Distance m_desiredPosition = Inches.of(0);
-  
-  //Logging:
-  //Logs the mode
+
+  //indicates how much the joystick is moving. -1 is all the way down, 1 is all the way up.
+  @Logged(name = "Joystick Input", importance = Logged.Importance.DEBUG)
+  private double m_joystickInput = 0.0;
+
+  //open loop is bang bang control
+  //closed loop is pid and motion magic
+  @Logged(name = "Control Mode", importance = Logged.Importance.INFO)
+  private CONTROL_MODE m_controlMode = CONTROL_MODE.OPEN_LOOP;
+
+  //Coast: you let go, gravity lets it fall
+  //Break: locks it in place
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode = NeutralModeValue.Brake; //Maye set to coast?
-
-  //Logs the Status signals
-  @Logged(name = "Motor Velocity", importance = Logged.Importance.DEBUG)
-  public AngularVelocity getMotorVelocity() {
-    return m_velocitySignal.refresh().getValue();
-  }
-
-    @Logged(name = "Motor Rotations", importance = Logged.Importance.DEBUG)
-  public Angle getRotations() {
-    return m_positionSignal.refresh().getValue();
-  }
-
-  @Logged(name = "Motor Acceleration", importance = Logged.Importance.DEBUG)
-  public AngularAcceleration getMotorAcceleration() {
-    return m_accelSignal.refresh().getValue();
-  }
-
-    @Logged(name = "Motor Voltage", importance = Logged.Importance.DEBUG)
-  public Voltage getMotorVoltage() {
-    return m_voltageSignal.refresh().getValue();
-  }
 
   //Climber Sim State:
   // Simulation classes help us simulate what's going on, including gravity.
@@ -103,9 +95,35 @@ public class Climber extends SubsystemBase {
     CtreUtils.configureTalonFx(m_climberMotor, config); //Configures the motor.
 
     m_motorSimState = m_climberMotor.getSimState();
+
+    m_climberMotor.setPosition(Rotations.of(0));
+
+    setName("Climber");
+    SmartDashboard.putData(this);
   }
 
-  //Methods
+  //Logging:
+  //Logs the Status signals
+  @Logged(name = "Motor Velocity", importance = Logged.Importance.DEBUG)
+  public AngularVelocity getMotorVelocity() {
+    return m_velocitySignal.refresh().getValue();
+  }
+
+    @Logged(name = "Motor Rotations", importance = Logged.Importance.DEBUG)
+  public Angle getRotations() {
+    return m_positionSignal.refresh().getValue();
+  }
+
+  @Logged(name = "Motor Acceleration", importance = Logged.Importance.DEBUG)
+  public AngularAcceleration getMotorAcceleration() {
+    return m_accelSignal.refresh().getValue();
+  }
+
+    @Logged(name = "Motor Voltage", importance = Logged.Importance.DEBUG)
+  public Voltage getMotorVoltage() {
+    return m_voltageSignal.refresh().getValue();
+  }
+  //End of logging
 
   @Override
   public void periodic() {
