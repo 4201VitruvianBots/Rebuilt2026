@@ -7,23 +7,33 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.sim.CANcoderSimState;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.INTAKEMOTORS.PIVOT;
+import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
+import frc.robot.Constants.SHOOTERHOOD;
 import frc.team4201.lib.utils.CtreUtils;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,12 +44,15 @@ public class IntakePivot extends SubsystemBase {
 
   private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
   
-  private final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withEnableFOC(true); 
+  private final MotionMagicTorqueCurrentFOC m_request = new MotionMagicTorqueCurrentFOC(0.0);
 
-  private Angle m_desiredRotation = PIVOT.PIVOT_SETPOINT.STOWED.get();
+  private static Angle m_desiredAngle = PIVOT_SETPOINT.STOWED.getAngle();
 
+  private final TalonFXSimState m_motorSimState = m_motor.getSimState();
+  private final CANcoderSimState m_cancoderSimState = m_canCoder.getSimState();
+  
     // Simulation Code
-  private final SingleJointedArmSim m_Sim =
+  private final SingleJointedArmSim m_sim =
       new SingleJointedArmSim(
           PIVOT.gearbox,
           PIVOT.gearRatio,
@@ -47,36 +60,98 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
-          false,
-          PIVOT.startingAngle.in(Radians));
+          true,
+          PIVOT.startingAngle.in(Degrees));
 
   public IntakePivot() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
     config.Slot0.kD = PIVOT.kD;
-    config.Slot0.kA = PIVOT.kA;
     config.Slot0.kV = PIVOT.kV;
     config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
+
     config.MotorOutput.PeakForwardDutyCycle = PIVOT.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = PIVOT.peakReverseOutput;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.ClosedLoopGeneral.ContinuousWrap = false;
 
     config.MotionMagic.MotionMagicCruiseVelocity = PIVOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = PIVOT.motionMagicAcceleration;
-    config.MotionMagic.MotionMagicJerk = PIVOT.motionMagicJerk;
 
     CtreUtils.configureTalonFx(m_motor, config);
+
+    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+
+    if (RobotBase.isReal()) {
+      encoderConfig.MagnetSensor.MagnetOffset = PIVOT.encoderOffset;
+      encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
+    }
+
+    CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
+    if (RobotBase.isSimulation()) {
+      m_motor.setPosition(getAngle());
+      m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
+    }
   }
 
-    public void setPosition(Angle rotations) {
-      m_desiredRotation = Degrees.of(MathUtil.clamp(rotations.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
-    }
+  public void setAngle(Angle angle) {
+    m_desiredAngle = 
+      Rotations.of(MathUtil.clamp(angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
+    m_motor.setControl(m_request.withPosition(m_desiredAngle));
+  }
+
+  @Logged(name = "Pivot Setpoint", importance = Importance.INFO)
+  public Angle getDesiredAngle() {
+    return m_desiredAngle;
+  }
+
+  @Logged(name = "Pivot Angle Rotations", importance = Importance.DEBUG)
+  public Angle getAngle() {
+    return m_canCoder.getAbsolutePosition().refresh().getValue();
+  }
+
+  @Logged(name = "Pivot Angle Degrees", importance = Importance.INFO)
+  public double getAngleDegrees() {
+    return getAngle().in(Degrees);
+  }
+
+
+  @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
+  public boolean atSetpoint() {
+    return m_desiredAngle.minus(getAngle()).abs(Degrees) <= 1; // Works as good as always
+  }
+
+  public boolean isConnected() {
+    return m_motor.isConnected();
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (getAngleDegrees() > PIVOT.maxAngle.in(Degrees)) {
+      m_motor.setControl(m_request.withPosition(PIVOT.maxAngle.in(Rotations)));
+    }
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    m_motorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_sim.setInputVoltage(m_motorSimState.getMotorVoltage());
+
+    m_sim.update(0.02);
+
+    m_motorSimState.setRawRotorPosition(
+        Radians.of(m_sim.getAngleRads()).times(PIVOT.gearRatio));
+    m_motorSimState.setRotorVelocity(
+        RadiansPerSecond.of(m_sim.getVelocityRadPerSec()).times(PIVOT.gearRatio));
+    // Update the pivotEncoder simState
+    m_cancoderSimState.setRawPosition(Radians.of(m_sim.getAngleRads()));
+    m_cancoderSimState.setVelocity(
+        RadiansPerSecond.of(m_sim.getVelocityRadPerSec()));
   }
 }

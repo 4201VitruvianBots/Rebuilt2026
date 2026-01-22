@@ -17,19 +17,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
+import frc.robot.commands.Intake.IntakeSetpoint;
 import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.RunUptake;
-import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
@@ -58,6 +61,9 @@ public class RobotContainer {
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_Uptake = new Uptake();
 
+  @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
+  private IntakePivot m_IntakePivot = new IntakePivot();
+
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -67,7 +73,6 @@ public class RobotContainer {
   @NotLogged
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
-
   @NotLogged
   private double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
@@ -96,6 +101,7 @@ public class RobotContainer {
     m_Indexer = new Indexer();
     m_Intake = new Intake();
     m_Uptake = new Uptake();
+    m_IntakePivot = new IntakePivot();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -121,7 +127,7 @@ public class RobotContainer {
   private void configureBindings() {
     if (m_shooterRollers != null && m_shooterHood != null) {
       m_driverController
-          .a()
+          .x()
           .whileTrue(
               new Shoot(
                   m_shooterRollers,
@@ -131,8 +137,17 @@ public class RobotContainer {
     }
     // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
-    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
-    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
+    if (m_Intake != null) {
+    m_driverController.a().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+    }
+
+    if (m_Uptake != null) {
+      m_driverController.b().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
+    }
+
+    if (m_IntakePivot != null) {
+      m_driverController.y().whileTrue(new IntakeSetpoint(m_IntakePivot, PIVOT_SETPOINT.INTAKING.getAngle()));
+    }
   }
 
   private void initAutoChooser() {

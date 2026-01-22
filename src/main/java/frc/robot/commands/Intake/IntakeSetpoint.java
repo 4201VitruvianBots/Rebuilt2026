@@ -4,18 +4,28 @@
 
 package frc.robot.commands.Intake;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
+import frc.robot.subsystems.IntakePivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeSetpoint extends Command {
+  private final IntakePivot m_IntakePivot;
+  private final Angle m_setpoint;
+
   /** Creates a new IntakeSetpoint. */
-  public IntakeSetpoint() {
+  public IntakeSetpoint(IntakePivot intakePivot, Angle setpoint) {
+    m_IntakePivot = intakePivot;
+    m_setpoint = setpoint;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_IntakePivot.setAngle(m_setpoint);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -23,7 +33,9 @@ public class IntakeSetpoint extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_IntakePivot.setAngle(PIVOT_SETPOINT.STOWED.getAngle());
+  }
 
   // Returns true when the command should end.
   @Override

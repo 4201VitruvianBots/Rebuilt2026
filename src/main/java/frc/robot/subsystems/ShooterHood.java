@@ -57,7 +57,8 @@ public class ShooterHood extends SubsystemBase {
               SHOOTERHOOD.gearbox, SHOOTERHOOD.kInertia, SHOOTERHOOD.gearRatio),
           SHOOTERHOOD.gearbox);
 
-  private final TalonFXSimState m_simState;
+  private final TalonFXSimState m_simState = m_motor.getSimState();
+;
   private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
@@ -80,6 +81,7 @@ public class ShooterHood extends SubsystemBase {
     config.MotorOutput.PeakReverseDutyCycle = SHOOTERHOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.ClosedLoopGeneral.ContinuousWrap = false;
 
     config.Feedback.SensorToMechanismRatio = SHOOTERHOOD.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -97,8 +99,6 @@ public class ShooterHood extends SubsystemBase {
     m_motor.setPosition(getHoodRotations().in(Rotations));
 
     CtreUtils.configureTalonFx(m_motor, config);
-
-    m_simState = m_motor.getSimState();
   }
 
   public void setAngle(Angle setpoint) {
