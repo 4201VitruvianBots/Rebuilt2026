@@ -8,8 +8,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -57,18 +57,18 @@ public final class Constants {
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
     public enum ShooterVelocity {
-      IDLE(0.0),
-      LOW(1000.0),
-      HIGH(2900.0);
+      IDLE(RPM.of(0.0)),
+      LOW(RPM.of(1000.0)),
+      HIGH(RPM.of(2900.0));
 
-      private final double rpm;
+      private final AngularVelocity rpm;
 
-      ShooterVelocity(double rpm) {
+      ShooterVelocity(AngularVelocity rpm) {
         this.rpm = rpm;
       }
 
       public AngularVelocity getRPM() {
-        return RotationsPerSecond.of(rpm / 60.0);
+        return rpm;
       }
     }
   }
@@ -76,7 +76,7 @@ public final class Constants {
   public class SHOOTERHOOD {
     public static final double kP = 3.0; // TODO: Change this
     public static final double kD = 0.1;
-    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc and SysID
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
@@ -273,10 +273,11 @@ public final class Constants {
 
     public static class PIVOT {
       /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-      public static final double kP = 5.0;
+      public static final double kP = 100.0;
       public static final double kD = 0.0;
       public static final double kS = 0.05; // TODO: Calculate kS and kV as a feedforward.
-      public static final double kV = 1.0;
+      public static final double kV = 1.0;  // Recalc these
+      public static final double kA = 0.0;
 
       public static final double gearRatio = 1.0;
       public static final double peakForwardOutput = 0.4;
@@ -285,15 +286,15 @@ public final class Constants {
       public static final double motionMagicCruiseVelocity = 25.0;
       public static final double motionMagicJerk = 0.0;
 
-      public static final Angle minAngle = Degrees.of(0);
+      public static final Angle minAngle = Degrees.of(0.0);
       public static final Angle maxAngle = Degrees.of(110.0);
       public static final Angle startingAngle = minAngle;
       public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
           GravityTypeValue
-              .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm lwk */
+              .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
       public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
-      public static final Distance baseLength = Inches.of(7.0); /* COMPLETELY made up :P */
+      public static final Distance baseLength = Inches.of(7.0); /* Almost completely made up :P */
       public static final Mass mass = Pounds.of(7.0); //TODO: Consult CAD 
 
       public static final double encoderOffset = 0.0;

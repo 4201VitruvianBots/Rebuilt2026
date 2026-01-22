@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
+import frc.robot.Constants.INTAKEMOTORS.PIVOT;
 import frc.robot.Constants.SHOOTERHOOD;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.team4201.lib.utils.CtreUtils;
@@ -70,6 +72,15 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public ShooterHood() {
+    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+
+    if (RobotBase.isReal()) {
+      encoderConfig.MagnetSensor.MagnetOffset = PIVOT.encoderOffset;
+      encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
+    }
+
+    CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
+  
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = SHOOTERHOOD.kP;
     config.Slot0.kD = SHOOTERHOOD.kD;
@@ -89,7 +100,7 @@ public class ShooterHood extends SubsystemBase {
 
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERHOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERHOOD.motionMagicAcceleration;
-
+    
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SHOOTERHOOD.maxAngle.in(Rotations);
@@ -158,14 +169,15 @@ public class ShooterHood extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_shooterHoodSim.setInputVoltage(m_simState.getMotorVoltage());
 
     m_shooterHoodSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterHoodSim.getAngularPositionRotations()).times(SHOOTERHOOD.gearRatio));
+        Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
     m_simState.setRotorVelocity(
-        RPM.of(m_shooterHoodSim.getAngularVelocityRPM()).times(SHOOTERHOOD.gearRatio));
+        RPM.of(m_shooterHoodSim.getAngularVelocityRPM()));
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
     m_cancoderSimState.setVelocity(

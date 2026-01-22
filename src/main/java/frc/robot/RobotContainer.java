@@ -132,13 +132,13 @@ public class RobotContainer {
               new Shoot(
                   m_shooterRollers,
                   m_shooterHood,
-                  ShooterVelocity.HIGH,
-                  HoodAngle.CLOSE.getAngle()));
+                  ShooterVelocity.HIGH.getRPM(),
+                  HoodAngle.FAR.getAngle()));
     }
     // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
     if (m_Intake != null) {
-    m_driverController.a().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+    m_driverController.y().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
     }
 
     if (m_Uptake != null) {
@@ -146,12 +146,11 @@ public class RobotContainer {
     }
 
     if (m_IntakePivot != null) {
-      m_driverController.y().whileTrue(new IntakeSetpoint(m_IntakePivot, PIVOT_SETPOINT.INTAKING.getAngle()));
+      m_driverController.a().whileTrue(new IntakeSetpoint(m_IntakePivot, PIVOT_SETPOINT.INTAKING));
     }
   }
 
   private void initAutoChooser() {
-
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
   }
