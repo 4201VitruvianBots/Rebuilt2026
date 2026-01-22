@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Pounds;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -17,6 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
@@ -32,55 +34,87 @@ import java.util.Map;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
-
-    public static final int kDriverControllerPort = 0;
-  }
-
   public class SHOOTERMOTORS {
     public static final double kP =
-        0.1; // TODO: These will all need to be changed because we are attempting to reach a set rpm
-    public static final double kI = 0.0;
-    public static final double kD = 0.02;
+        5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+    public static final double kV = 0.0;
+    public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
+    public static final double kA = 0.0;
+    // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia =
         0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    // Copied from elevator so don't you even think about testing these. No way we'd reach testing
-    // phase without changing these... right?
+    // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity =
-        100; // target cruise velocity of 100 rps, so 6000 rpm
-    public static double motionMagicAcceleration = 40; // target acceleration of 40 rps/s
-
+        35.0; // target cruise velocity of 35 rps, so 2100 rpm
+    public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
     public static double motionMagicJerk = 0.0;
-    /* Make this higher to increase the acceleration.
-    This increases acceleration a lot faster than increasing the MotionMagicAcceleration value.
-    No jerk means trapezoidal profile. */
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX60(4);
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
-    public enum ShooterRPM {
-      IDLE(500.0),
+    public enum ShooterVelocity {
+      IDLE(0.0),
       LOW(1000.0),
-      HIGH(4000.0);
+      HIGH(2900.0);
 
       private final double rpm;
 
-      ShooterRPM(double rpm) {
+      ShooterVelocity(double rpm) {
         this.rpm = rpm;
       }
 
-      public double getRPM() {
-        return rpm;
+      public AngularVelocity getRPM() {
+        return RotationsPerSecond.of(rpm / 60.0);
+      }
+    }
+  }
+
+  public class SHOOTERHOOD {
+    public static final double kP = 3.0; // TODO: Change this
+    public static final double kD = 0.1;
+    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
+    public static final double gearRatio =
+        1.0; // TODO: Change this later because this is confirmed not what the final thing
+    // will be
+    public static final double peakForwardOutput = 0.4; // Placeholder value
+    public static final double peakReverseOutput = -0.35; // Placeholder value
+    public static final double kInertia =
+        0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
+
+    public static final double motionMagicCruiseVelocity = 6.0;
+    public static final double motionMagicAcceleration = 4.0;
+
+    public static final Angle minAngle = Degrees.of(0.0);
+    public static final Angle maxAngle = Degrees.of(45.0);
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+
+    public enum HoodAngle {
+      // TODO: Going to stop using this because we are going to do math instead :)
+      NOTHING(Degrees.of(0.0)),
+      CLOSE(Degrees.of(30.0)),
+      FAR(Degrees.of(45.0));
+
+      private final Angle angle;
+
+      HoodAngle(Angle angle) {
+        this.angle = angle;
+      }
+
+      public Angle getAngle() {
+        return angle;
       }
     }
   }
 
   public class CAN {
     public static final String rioCanbus = "rio";
-    public static String driveBaseCanbus = "drivebase";
+    public static final String driveBaseCanbus = "drivebase";
 
     public static final int pigeon = 9;
 
@@ -97,15 +131,18 @@ public final class Constants {
     public static final int backLeftTurnMotor = 25;
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
-    public static final int kShooterRollerMotor1 = 30;
-    public static final int kShooterRollerMotor2 = 31;
-    public static final int kShooterRollerMotor3 = 32;
-    public static final int kShooterRollerMotor4 = 33;
+
+    public static final int kShooterRollerMotor1 = 40;
+    public static final int kShooterRollerMotor2 = 41;
+    public static final int kShooterRollerMotor3 = 42;
+    public static final int kShooterRollerMotor4 = 43;
 
     public static final int kIndexerMotor1 = 50; /* TODO: change values later */
     public static final int kIndexerMotor2 = 51;
     public static final int kIndexerMotor3 = 52;
 
+    public static final int kShooterHoodMotor = 34;
+    public static final int kShooterHoodCANCoder = 35;
     public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
     public static final int kIntakeRollerMotor2 = 54;
     public static final int kIntakePivotMotor = 55;
