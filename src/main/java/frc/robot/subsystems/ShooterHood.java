@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -45,8 +45,8 @@ public class ShooterHood extends SubsystemBase {
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
-  private final MotionMagicVoltage m_request =
-      new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(true);
+  private final MotionMagicTorqueCurrentFOC m_request =
+      new MotionMagicTorqueCurrentFOC(Rotations.of(0.0));
   private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(true);
 
   private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
