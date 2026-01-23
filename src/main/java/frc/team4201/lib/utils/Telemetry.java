@@ -8,13 +8,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.*;
-
-// import org.team4201.codex.simulation.FieldSim;
+import frc.team4201.lib.simulation.FieldSim;
 
 public class Telemetry {
   // private final double m_maxSpeed = SWERVE.kMaxSpeedMetersPerSecond;
 
-  // private FieldSim m_fieldSim;
+  private FieldSim m_fieldSim;
   // TODO: Re-implement
   //    private final SwerveModuleVisualizer[] m_moduleVisualizer = {
   //            new SwerveModuleVisualizer(MODULE_POSITION.FRONT_LEFT.name(), m_maxSpeed),
@@ -55,9 +54,9 @@ public class Telemetry {
   /** Construct a telemetry object */
   public Telemetry() {}
 
-  // public void registerFieldSim(FieldSim fieldSim) {
-  //   m_fieldSim = fieldSim;
-  // }
+  public void registerFieldSim(FieldSim fieldSim) {
+    m_fieldSim = fieldSim;
+  }
 
   /* Accept the swerve drive state and telemeterize it to SmartDashboard */
   public void telemeterize(SwerveDriveState state) {

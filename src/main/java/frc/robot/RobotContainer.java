@@ -23,13 +23,21 @@ import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
+import frc.robot.commands.AutoAlignDrive;
+import frc.robot.commands.Index;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootFlywheel;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Vision;
+import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.utils.Telemetry;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -46,14 +54,21 @@ public class RobotContainer {
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   private ShooterHood m_shooterHood;
 
+  private CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
 
-  // @Logged(name = "Indexer", importance = Logged.Importance.INFO)
+  private Controls m_controls = new Controls();
+
+  @Logged(name = "Vision", importance = Logged.Importance.INFO)
+  private Vision m_vision = new Vision(m_controls);
+
+  private Telemetry m_telemetry = new Telemetry();
+
+  private FieldSim m_fieldSim = new FieldSim();
+
   // private Indexer m_Indexer = new Indexer();
-
-  // private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
-
+  // @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
@@ -85,30 +100,31 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
-    // if (m_swerveDrive != null) {
-    //   m_swerveDrive.setDefaultCommand(
-    //     // Drivetrain will execute this command periodically
-    //     m_swerveDrive.applyRequest(
-    //         () -> {
-    //           var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
-    //           // // if heading target
-    //           // if (m_swerveDrive.isTrackingState()) {
-    //           //   rotationRate = m_swerveDrive.calculateRotationToTarget();
-    //           // }
-    //           drive
-    //               .withVelocityX(
-    //                   -m_driverController.getLeftY()
-    //                       * MaxSpeed) // Drive forward with negative Y (forward)
-    //               .withVelocityY(
-    //                   -m_driverController.getLeftX()
-    //                       * MaxSpeed) // Drive left with negative X (left)
-    //               .withRotationalRate(
-    //                   rotationRate); // Drive counterclockwise with negative X (left)
-    //           return drive;
-    //         }));
-    //   }
+    m_swerveDrive.setDefaultCommand(
+        // Drivetrain will execute this command periodically
+        m_swerveDrive.applyRequest(
+            () -> {
+              var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
+              // // if heading target
+              // if (m_swerveDrive.isTrackingState()) {
+              //   rotationRate = m_swerveDrive.calculateRotationToTarget();
+              // }
+              drive
+                  .withVelocityX(
+                      -m_driverController.getLeftY()
+                          * MaxSpeed) // Drive forward with negative Y (forward)
+                  .withVelocityY(
+                      -m_driverController.getLeftX()
+                          * MaxSpeed) // Drive left with negative X (left)
+                  .withRotationalRate(
+                      rotationRate); // Drive counterclockwise with negative X (left)
+              return drive;
+            }));
+    m_vision.registerSwerveDrive(m_swerveDrive);
+    m_vision.registerFieldSim(m_fieldSim);
+    m_telemetry.registerFieldSim(m_fieldSim);
+    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
     m_intake = new Intake();
-    // m_shooterHood = new ShooterHood();
   }
 
   /**
@@ -121,6 +137,14 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    // aim at target
+    m_driverController
+        .rightBumper()
+        .whileTrue(
+            new AutoAlignDrive(
+                m_swerveDrive,
+                () -> m_driverController.getLeftY(),
+                () -> m_driverController.getLeftX()));
     if (m_shooterRollers != null && m_shooterHood != null) {
       m_driverController
           .b()
@@ -137,27 +161,6 @@ public class RobotContainer {
       m_driverController.rightBumper().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
 
-    // // sysID ROUTINES, UNBIND THESE LATER
-    // m_driverController
-    //     .povDown()
-    //     .whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // m_driverController
-    //     .povUp()
-    //     .whileTrue(m_shooterRollers.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // m_driverController
-    //     .povLeft()
-    //     .whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // m_driverController
-    //     .povRight()
-    //     .whileTrue(m_shooterRollers.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    // m_driverController
-    //     .y()
-    //     .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // m_driverController
-    //     .b()
-    //     .whileTrue(m_shooterHood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // m_driverController.x().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // m_driverController.b().whileTrue(m_shooterHood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   private void initAutoChooser() {
