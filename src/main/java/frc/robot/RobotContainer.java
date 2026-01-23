@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
-import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
+import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
+import frc.robot.Constants.SHOOTERMOTORS.ManualRPS;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
 import frc.robot.commands.AutoAlignDrive;
@@ -150,11 +150,11 @@ public class RobotContainer {
           .b()
           .whileTrue(
               new Shoot(
-                  m_shooterRollers, m_shooterHood, ShooterRPS.HIGH, HoodAngle.CLOSE.getAngle()));
+                  m_shooterRollers, m_shooterHood, ManualRPS.HIGH, ManualAngle.CLOSE.getAngle()));
     }
 
     if (m_shooterRollers != null) {
-      m_driverController.a().whileTrue(new ShootFlywheel(m_shooterRollers, ShooterRPS.HIGH));
+      m_driverController.a().whileTrue(new ShootFlywheel(m_shooterRollers, ManualRPS.HIGH));
     }
 
     if (m_intake != null) {

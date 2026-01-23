@@ -58,14 +58,14 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
-    public enum ShooterRPS {
+    public enum ManualRPS {
       IDLE(RotationsPerSecond.of(0.0)), // The number on the left is the RPM
       LOW(RotationsPerSecond.of(1000.0 / 60)),
       HIGH(RotationsPerSecond.of(2900.0 / 60));
 
       private final AngularVelocity rps;
 
-      ShooterRPS(AngularVelocity rps) {
+      ManualRPS(AngularVelocity rps) {
         this.rps = rps;
       }
 
@@ -73,6 +73,16 @@ public final class Constants {
         return rps;
       }
     }
+
+    public static class Shot {
+      public final double shooterRPM;
+      public final double hoodPosition;
+
+      public Shot(double shooterRPM, double hoodPosition) {
+        this.shooterRPM = shooterRPM;
+        this.hoodPosition = hoodPosition;
+      }
+    } 
   }
 
   public class SHOOTERHOOD {
@@ -97,7 +107,7 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-    public enum HoodAngle {
+    public enum ManualAngle {
       // TODO: Going to stop using this because we are going to do math instead :)
       NOTHING(Degrees.of(0.0)),
       CLOSE(Degrees.of(30.0)),
@@ -105,7 +115,7 @@ public final class Constants {
 
       private final Angle angle;
 
-      HoodAngle(Angle angle) {
+      ManualAngle(Angle angle) {
         this.angle = angle;
       }
 

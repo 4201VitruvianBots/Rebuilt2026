@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERMOTORS;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPS;
+import frc.robot.Constants.SHOOTERMOTORS.ManualRPS;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class ShooterRollers extends SubsystemBase {
@@ -51,7 +51,7 @@ public class ShooterRollers extends SubsystemBase {
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
-  private AngularVelocity m_rpmSetpoint = ShooterRPS.IDLE.getRPS();
+  private AngularVelocity m_rpmSetpoint = ManualRPS.IDLE.getRPS();
 
   private final FlywheelSim m_shooterMotorSim =
       new FlywheelSim(

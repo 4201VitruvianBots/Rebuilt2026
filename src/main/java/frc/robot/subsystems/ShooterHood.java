@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERHOOD;
-import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
+import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class ShooterHood extends SubsystemBase {
@@ -49,7 +49,7 @@ public class ShooterHood extends SubsystemBase {
       new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(true);
   private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(true);
 
-  private Angle m_hoodSetpoint = HoodAngle.NOTHING.getAngle();
+  private Angle m_hoodSetpoint = ManualAngle.NOTHING.getAngle();
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
@@ -93,7 +93,7 @@ public class ShooterHood extends SubsystemBase {
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SHOOTERHOOD.maxAngle.in(Rotations);
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SHOOTERHOOD.minAngle.in(Rotations);
 
-    if (RobotBase.isSimulation()) m_cancoder.setPosition(HoodAngle.NOTHING.getAngle());
+    if (RobotBase.isSimulation()) m_cancoder.setPosition(ManualAngle.NOTHING.getAngle());
     m_motor.setPosition(getHoodRotations().in(Rotations));
 
     CtreUtils.configureTalonFx(m_motor, config);
