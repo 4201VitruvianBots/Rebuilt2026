@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.epilogue.Epilogue;
 // import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -32,21 +34,20 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DataLogManager.start();
-    enableLiveWindowInTest(true);
     Epilogue.configure(
         config -> {
-          // config.backend = new FileBackend(DataLogManager.getLog());
+          config.backend = new FileBackend(DataLogManager.getLog());
 
-    //       if (RobotBase.isSimulation()) {
-    //         config.minimumImportance = Logged.Importance.DEBUG;
-    //       } else {
-    //         // During competition/practice
-    //         config.minimumImportance = Logged.Importance.INFO;
-    //       }
+          if (RobotBase.isSimulation()) {
+            config.minimumImportance = Logged.Importance.DEBUG;
+          } else {
+            // During competition/practice
+            config.minimumImportance = Logged.Importance.INFO;
+          }
 
-    //       config.root = "EpilogueTelemetry";
-    //     });
-    // Epilogue.bind(this);
+          config.root = "EpilogueTelemetry";
+        });
+    Epilogue.bind(this);
   }
 
   /**

@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SHOOTERMOTORS;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPS;
+import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class ShooterRollers extends SubsystemBase {
@@ -51,7 +51,7 @@ public class ShooterRollers extends SubsystemBase {
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
-  private AngularVelocity m_rpmSetpoint = ManualRPS.IDLE.getRPS();
+  private AngularVelocity m_rpmSetpoint = ManualRPM.IDLE.getRPM();
 
   private final FlywheelSim m_shooterMotorSim =
       new FlywheelSim(
@@ -106,8 +106,14 @@ public class ShooterRollers extends SubsystemBase {
     m_neutralMode = neutralmode;
   }
 
-  public void setRPSOutputFOC(AngularVelocity rps) {
-    m_rpmSetpoint = rps;
+  public void setManualRPMOutputFOC(AngularVelocity rpm) {
+    m_rpmSetpoint = rpm;
+    m_motor1.setControl(
+        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
+  }
+
+  public void setRPMOutputFOC(double rpm) {
+    m_rpmSetpoint = RPM.of(rpm);
     m_motor1.setControl(
         m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
   }

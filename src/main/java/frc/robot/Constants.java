@@ -8,8 +8,11 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,6 +22,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
@@ -33,9 +37,9 @@ import java.util.Map;
 public final class Constants {
   public class SHOOTERMOTORS {
     public static final double kP =
-        0.7; // TODO: These will all need to be changed because we are attempting to reach a set rpm
-    public static final double kV = 0.11;
-    public static final double kS = 0.2; // TODO: Calculate kS (hooo boy that's gonna be fun
+        5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+    public static final double kV = 0.0;
+    public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
@@ -44,51 +48,46 @@ public final class Constants {
     public static final double kInertia =
         0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    // Copied from elevator so don't you even think about testing these. No way we'd reach testing
-    // phase without changing these... right?
+    // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity =
-        70; // target cruise velocity of 70 rps, so 6000 rpm
-    public static double motionMagicAcceleration =
-        60; // target acceleration of 60 rps/s.. I don't actually know if krakens can do this
-
+        35.0; // target cruise velocity of 35 rps, so 2100 rpm
+    public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
     public static double motionMagicJerk = 0.0;
-    /* Make this higher to increase the acceleration.
-    This increases acceleration a lot faster than increasing the MotionMagicAcceleration value.
-    No jerk means trapezoidal profile. */
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
-    public enum ManualRPS {
-      IDLE(RotationsPerSecond.of(0.0)), // The number on the left is the RPM
-      LOW(RotationsPerSecond.of(1000.0 / 60)),
-      HIGH(RotationsPerSecond.of(2900.0 / 60));
+        public static class Shot {
+        public final double shooterRPM;
+        public final double hoodPosition;
 
-      private final AngularVelocity rps;
-
-      ManualRPS(AngularVelocity rps) {
-        this.rps = rps;
-      }
-
-      public AngularVelocity getRPS() {
-        return rps;
-      }
+        public Shot(double shooterRPM, double hoodPosition) {
+            this.shooterRPM = shooterRPM;
+            this.hoodPosition = hoodPosition;
+        }
     }
 
-    public static class Shot {
-      public final double shooterRPM;
-      public final double hoodPosition;
+    public enum ManualRPM {
+      IDLE(RPM.of(0.0)),
+      LOW(RPM.of(1000.0)),
+      HIGH(RPM.of(2900.0));
 
-      public Shot(double shooterRPM, double hoodPosition) {
-        this.shooterRPM = shooterRPM;
-        this.hoodPosition = hoodPosition;
+      private final AngularVelocity rpm;
+
+      ManualRPM(AngularVelocity rpm) {
+        this.rpm = rpm;
       }
-    } 
+
+      public AngularVelocity getRPM() {
+        return rpm;
+      }
+    }
   }
 
   public class SHOOTERHOOD {
     public static final double kP = 3.0; // TODO: Change this
     public static final double kD = 0.1;
-    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+    public static final double kA =
+        0.0; // TODO: Change these two feedforwards later, use ReCalc and SysID
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
@@ -145,9 +144,6 @@ public final class Constants {
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
 
-    public static final int kShooterHoodMotor = 34;
-    public static final int kShooterHoodCANCoder = 35;
-
     public static final int kShooterRollerMotor1 = 40;
     public static final int kShooterRollerMotor2 = 41;
     public static final int kShooterRollerMotor3 = 42;
@@ -157,10 +153,16 @@ public final class Constants {
     public static final int kIndexerMotor2 = 51;
     public static final int kIndexerMotor3 = 52;
 
-    public static final int kIntakeRollerMotor1 = 60; /* TODO: change values later */
-    public static final int kIntakeRollerMotor2 = 61;
+    public static final int kShooterHoodMotor = 34;
+    public static final int kShooterHoodCANCoder = 35;
 
-    public static final int kUptakeMotor = 62; /* TODO: change value later */
+    public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
+    public static final int kIntakeRollerMotor2 = 54;
+
+    public static final int kIntakePivotMotor = 55;
+    public static final int kPivotEncoder = 56;
+
+    public static final int kUptakeMotor = 57; /* TODO: another placeholder "Fun!" */
   }
 
   // usb n swerve are like lwk copied from reefscape
@@ -276,6 +278,52 @@ public final class Constants {
 
         public double get() {
           return value;
+        }
+      }
+    }
+
+    public static class PIVOT {
+      /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
+      public static final double kP = 100.0;
+      public static final double kD = 0.0;
+      public static final double kS = 0.05; // TODO: Calculate kS and kV as a feedforward.
+      public static final double kV = 1.0; // Recalc these
+      public static final double kA = 0.0;
+
+      public static final double gearRatio = 1.0;
+      public static final double peakForwardOutput = 0.4;
+      public static final double peakReverseOutput = -0.4;
+      public static final double motionMagicAcceleration = 35.0;
+      public static final double motionMagicCruiseVelocity = 25.0;
+      public static final double motionMagicJerk = 0.0;
+
+      public static final Angle minAngle = Degrees.of(0.0);
+      public static final Angle maxAngle = Degrees.of(110.0);
+      public static final Angle startingAngle = minAngle;
+      public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
+          GravityTypeValue
+              .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
+      public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
+
+      public static final Distance baseLength = Inches.of(7.0); /* Almost completely made up :P */
+      public static final Mass mass = Pounds.of(7.0); // TODO: Consult CAD
+
+      public static final double encoderOffset = 0.0;
+      public static final SensorDirectionValue encoderDirection =
+          SensorDirectionValue.CounterClockwise_Positive;
+
+      public enum PIVOT_SETPOINT {
+        STOWED(Degrees.of(0)),
+        INTAKING(Degrees.of(90.0));
+
+        private final Angle angle;
+
+        PIVOT_SETPOINT(Angle angle) {
+          this.angle = angle;
+        }
+
+        public Angle getAngle() {
+          return angle;
         }
       }
     }

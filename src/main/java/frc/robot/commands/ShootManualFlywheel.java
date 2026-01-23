@@ -7,18 +7,18 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPS;
+import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
 import frc.robot.subsystems.ShooterRollers;
 
-public class ShootFlywheel extends Command {
+public class ShootManualFlywheel extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ShooterRollers m_shooterRollers;
 
-  private final ManualRPS m_rps;
+  private final ManualRPM m_rpm;
 
-  public ShootFlywheel(ShooterRollers shooterRollers, ManualRPS rps) {
+  public ShootManualFlywheel(ShooterRollers shooterRollers, ManualRPM rpm) {
     m_shooterRollers = shooterRollers;
-    m_rps = rps;
+    m_rpm = rpm;
 
     addRequirements(shooterRollers);
   }
@@ -26,7 +26,7 @@ public class ShootFlywheel extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooterRollers.setRPSOutputFOC(m_rps.getRPS());
+    m_shooterRollers.setManualRPMOutputFOC(m_rpm.getRPM());
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -20,14 +20,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPS;
+import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.ShootFlywheel;
+import frc.robot.commands.ShootManualFlywheel;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
@@ -145,16 +145,16 @@ public class RobotContainer {
                 m_swerveDrive,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
-    if (m_shooterRollers != null && m_shooterHood != null) {
+    if (m_shooterRollers != null) {
       m_driverController
           .b()
           .whileTrue(
-              new Shoot(
-                  m_shooterRollers, m_shooterHood, ManualRPS.HIGH, ManualAngle.CLOSE.getAngle()));
+              new Shoot(m_swerveDrive,
+                  m_shooterRollers));
     }
 
     if (m_shooterRollers != null) {
-      m_driverController.a().whileTrue(new ShootFlywheel(m_shooterRollers, ManualRPS.HIGH));
+      m_driverController.a().whileTrue(new ShootManualFlywheel(m_shooterRollers, ManualRPM.HIGH));
     }
 
     if (m_intake != null) {
