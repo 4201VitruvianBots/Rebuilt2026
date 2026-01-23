@@ -4,7 +4,6 @@
 
 package frc.robot.commands.Intake;
 
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
 import frc.robot.subsystems.IntakePivot;

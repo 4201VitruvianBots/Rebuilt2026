@@ -76,7 +76,8 @@ public final class Constants {
   public class SHOOTERHOOD {
     public static final double kP = 3.0; // TODO: Change this
     public static final double kD = 0.1;
-    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc and SysID
+    public static final double kA =
+        0.0; // TODO: Change these two feedforwards later, use ReCalc and SysID
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
@@ -276,7 +277,7 @@ public final class Constants {
       public static final double kP = 100.0;
       public static final double kD = 0.0;
       public static final double kS = 0.05; // TODO: Calculate kS and kV as a feedforward.
-      public static final double kV = 1.0;  // Recalc these
+      public static final double kV = 1.0; // Recalc these
       public static final double kA = 0.0;
 
       public static final double gearRatio = 1.0;
@@ -295,10 +296,11 @@ public final class Constants {
       public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
       public static final Distance baseLength = Inches.of(7.0); /* Almost completely made up :P */
-      public static final Mass mass = Pounds.of(7.0); //TODO: Consult CAD 
+      public static final Mass mass = Pounds.of(7.0); // TODO: Consult CAD
 
       public static final double encoderOffset = 0.0;
-      public static final SensorDirectionValue encoderDirection = SensorDirectionValue.CounterClockwise_Positive;
+      public static final SensorDirectionValue encoderDirection =
+          SensorDirectionValue.CounterClockwise_Positive;
 
       public enum PIVOT_SETPOINT {
         STOWED(Degrees.of(0)),

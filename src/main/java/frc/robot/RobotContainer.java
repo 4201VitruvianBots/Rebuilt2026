@@ -26,8 +26,8 @@ import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Intake.IntakeSetpoint;
 import frc.robot.commands.Intake.RunIntake;
-import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.RunUptake;
+import frc.robot.commands.Shooter.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -73,6 +73,7 @@ public class RobotContainer {
   @NotLogged
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+
   @NotLogged
   private double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
@@ -138,7 +139,7 @@ public class RobotContainer {
     // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
     if (m_Intake != null) {
-    m_driverController.y().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+      m_driverController.y().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
     }
 
     if (m_Uptake != null) {

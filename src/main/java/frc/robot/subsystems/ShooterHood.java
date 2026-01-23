@@ -60,7 +60,7 @@ public class ShooterHood extends SubsystemBase {
           SHOOTERHOOD.gearbox);
 
   private final TalonFXSimState m_simState = m_motor.getSimState();
-;
+  
   private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
@@ -80,7 +80,7 @@ public class ShooterHood extends SubsystemBase {
     }
 
     CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
-  
+
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = SHOOTERHOOD.kP;
     config.Slot0.kD = SHOOTERHOOD.kD;
@@ -100,7 +100,7 @@ public class ShooterHood extends SubsystemBase {
 
     config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERHOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = SHOOTERHOOD.motionMagicAcceleration;
-    
+
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SHOOTERHOOD.maxAngle.in(Rotations);
@@ -174,10 +174,8 @@ public class ShooterHood extends SubsystemBase {
 
     m_shooterHoodSim.update(0.02);
 
-    m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
-    m_simState.setRotorVelocity(
-        RPM.of(m_shooterHoodSim.getAngularVelocityRPM()));
+    m_simState.setRawRotorPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
+    m_simState.setRotorVelocity(RPM.of(m_shooterHoodSim.getAngularVelocityRPM()));
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
     m_cancoderSimState.setVelocity(
