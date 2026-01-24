@@ -124,7 +124,7 @@ public class ShooterRollers extends SubsystemBase {
 
   @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
   public double getRPMSetpoint() {
-    return m_rpmSetpoint.in(RotationsPerSecond);
+    return m_rpmSetpoint.in(RPM);
   }
 
   @Logged(name = "Motor Velocity in Rotations per Minute", importance = Logged.Importance.INFO)
