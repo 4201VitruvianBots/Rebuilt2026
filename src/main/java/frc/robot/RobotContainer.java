@@ -10,23 +10,29 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
+import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
-import frc.robot.commands.Index;
+import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Uptake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,10 +44,19 @@ import frc.robot.subsystems.ShooterRollers;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_ShooterRollers = new ShooterRollers();
+  private ShooterRollers m_shooterRollers;
+
+  @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
+  private ShooterHood m_shooterHood;
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_Indexer = new Indexer();
+  private Indexer m_Indexer;
+
+  @Logged(name = "Intake", importance = Logged.Importance.INFO)
+  private Intake m_Intake = new Intake();
+
+  @Logged(name = "Uptake", importance = Logged.Importance.INFO)
+  private Uptake m_Uptake = new Uptake();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
@@ -49,8 +64,11 @@ public class RobotContainer {
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
 
+  @NotLogged
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+
+  @NotLogged
   private double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -67,14 +85,17 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
     initializeSubSystems();
+    configureBindings();
     initSmartDashboard();
   }
 
   private void initializeSubSystems() {
-    m_ShooterRollers = new ShooterRollers();
+    m_shooterRollers = new ShooterRollers();
+    m_shooterHood = new ShooterHood();
     m_Indexer = new Indexer();
+    m_Intake = new Intake();
+    m_Uptake = new Uptake();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -97,18 +118,21 @@ public class RobotContainer {
             }));
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
-    m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
-    m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    if (m_shooterRollers != null && m_shooterHood != null) {
+      m_driverController
+          .a()
+          .whileTrue(
+              new Shoot(
+                  m_shooterRollers,
+                  m_shooterHood,
+                  ShooterVelocity.HIGH,
+                  HoodAngle.CLOSE.getAngle()));
+    }
+    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
   }
 
   private void initAutoChooser() {
