@@ -17,6 +17,9 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
@@ -51,6 +54,8 @@ public class ShooterRollers extends SubsystemBase {
       new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
   private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
   private AngularVelocity m_rpmSetpoint = ManualRPM.IDLE.getRPM();
+  public final DoubleSubscriber m_rpmSubscriber;
+  public final DoublePublisher m_rpmPublisher;
 
   private final FlywheelSim m_shooterMotorSim =
       new FlywheelSim(
@@ -97,14 +102,20 @@ public class ShooterRollers extends SubsystemBase {
     // TODO: Pls pls check if they all are actually aligned because it'd
     // be horrible if they weren't
 
+    var topic = NetworkTableInstance.getDefault()
+      .getTable("SmartDashboard") 
+      .getDoubleTopic("ShooterRPMSetpoint");
+    m_rpmSubscriber = topic.subscribe(0.0);
+    m_rpmPublisher = topic.publish();
+    m_rpmPublisher.set(0.0);
   }
 
   public void changeNeutralMode(NeutralModeValue neutralmode) {
     m_neutralMode = neutralmode;
   }
 
-  public void setManualRPMOutputFOC(AngularVelocity rpm) {
-    m_rpmSetpoint = rpm;
+  public void setManualRPMOutputFOC(double rpm) {
+    m_rpmSetpoint = RPM.of(rpm);
     m_motor1.setControl(
         m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
   }

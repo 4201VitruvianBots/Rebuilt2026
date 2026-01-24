@@ -166,7 +166,7 @@ public class RobotContainer {
     }
 
     if (m_shooterRollers != null) {
-      m_driverController.a().whileTrue(new ShootManualFlywheel(m_shooterRollers, ManualRPM.HIGH));
+      m_driverController.a().whileTrue(new ShootManualFlywheel(m_shooterRollers));
     }
 
     if (m_intake != null) {
@@ -174,7 +174,7 @@ public class RobotContainer {
     }
 
     if (m_uptake != null && m_indexer != null) {
-      m_driverController.leftBumper().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING)));
+      m_driverController.povUp().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING)));
     }
 
   }

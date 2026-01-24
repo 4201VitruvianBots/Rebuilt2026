@@ -14,11 +14,8 @@ public class ShootManualFlywheel extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ShooterRollers m_shooterRollers;
 
-  private final ManualRPM m_rpm;
-
-  public ShootManualFlywheel(ShooterRollers shooterRollers, ManualRPM rpm) {
+  public ShootManualFlywheel(ShooterRollers shooterRollers) {
     m_shooterRollers = shooterRollers;
-    m_rpm = rpm;
 
     addRequirements(shooterRollers);
   }
@@ -26,12 +23,14 @@ public class ShootManualFlywheel extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooterRollers.setManualRPMOutputFOC(m_rpm.getRPM());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    double TargetRPM = m_shooterRollers.m_rpmSubscriber.get() / 3;
+    m_shooterRollers.setManualRPMOutputFOC(TargetRPM);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
