@@ -274,13 +274,13 @@ public final class Constants {
 
     public static class PIVOT {
       /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-      public static final double kP = 100;
+      public static final double kP = 1.0;
       public static final double kD = 0.0;
       public static final double kS = 0.05; // TODO: Calculate kS and kV as a feedforward.
-      public static final double kV = 0; // Recalc these
-      public static final double kA = 0;
+      public static final double kV = 1.0; // Recalc these
+      public static final double kA = 0.0;
 
-      public static final double gearRatio = 1.0;
+      public static final double gearRatio = 1.0; // encoder is after gear ratio
       public static final double motionMagicAcceleration = 35.0;
       public static final double motionMagicCruiseVelocity = 25.0;
       public static final double motionMagicJerk = 0.0;
@@ -293,8 +293,9 @@ public final class Constants {
               .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
       public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
-      public static final Distance baseLength = Inches.of(1.0); /* Almost completely made up :P */
-      public static final Mass mass = Pounds.of(0.01); // TODO: Consult CAD
+      public static final Distance baseLength =
+          Inches.of(13.897040); /* Almost completely made up :P */
+      public static final Mass mass = Pounds.of(20); // TODO: Consult CAD
 
       public static final double encoderOffset = 0.0;
       public static final SensorDirectionValue encoderDirection =

@@ -60,7 +60,7 @@ public class ShooterHood extends SubsystemBase {
           SHOOTERHOOD.gearbox);
 
   private final TalonFXSimState m_simState = m_motor.getSimState();
-  
+
   private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
