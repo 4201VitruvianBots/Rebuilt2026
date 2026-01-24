@@ -11,7 +11,6 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -222,19 +221,23 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
   public boolean isOnTarget() {
-    var translationDelta = getTranslationDelta();
-    SmartDashboard.putNumber("Target Translation Delta", translationDelta.in(Degrees));
+    var rotationDelta =
+        m_swerveDriveTrain
+            .getState()
+            .Pose
+            .getRotation()
+            .minus(robotToTarget[1].getRotation())
+            .getMeasure();
 
-    return translationDelta.lt(Degrees.of(1));
-  }
+    var isAligned = rotationDelta.abs(Degrees) < 0.5;
 
-  public Angle getTranslationDelta() {
-    return m_swerveDriveTrain
-                    .getState()
-                    .Pose
-                    .getRotation()
-                    .minus(robotToTarget[1].getRotation())
-                    .getMeasure();
+    var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
+    SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
+    System.out.println("The angle to the hub is " + setPoint.getAngle());
+    System.out.println("The robot's angle is " + m_swerveDriveTrain.getState().Pose.getRotation());
+    System.out.println("Therefore, the alignment is" + isAligned);
+
+    return isAligned;
   }
 
   @Override
@@ -255,6 +258,8 @@ public class Vision extends SubsystemBase {
     // if (m_swerveDriveTrain != null) {
     //   updateAngleToHub();
     // }
+
+    isOnTarget();
   }
 
   @Override
