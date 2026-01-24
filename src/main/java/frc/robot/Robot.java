@@ -34,9 +34,10 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DataLogManager.start();
+    enableLiveWindowInTest(true);
     Epilogue.configure(
         config -> {
-          config.backend = new FileBackend(DataLogManager.getLog());
+          // config.backend = new FileBackend(DataLogManager.getLog());
 
           if (RobotBase.isSimulation()) {
             config.minimumImportance = Logged.Importance.DEBUG;
