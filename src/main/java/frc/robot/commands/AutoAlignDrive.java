@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
@@ -68,6 +69,17 @@ public class AutoAlignDrive extends Command {
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             turnRate));
+    SmartDashboard.putBoolean("isPointingAtGoal", isPointingAtGoal());
+  }
+
+  public boolean isPointingAtGoal() {
+    // bearing from robot to goal
+    var bearing = m_goal.minus(m_swerveDrivetrain.getState().Pose.getTranslation()).getAngle().getRadians();
+    // robot heading
+    var heading = m_swerveDrivetrain.getState().Pose.getRotation().getRadians();
+    // smallest signed angle difference in [-pi, pi]
+    double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
+    return Math.abs(error) <= Units.degreesToRadians(1.0);
   }
 
   // Called once the command ends or is interrupted.
