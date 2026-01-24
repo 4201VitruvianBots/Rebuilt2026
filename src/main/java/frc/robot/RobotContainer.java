@@ -28,6 +28,7 @@ import frc.robot.commands.Index;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
+import frc.robot.generated.AlphaBotConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
@@ -51,10 +52,10 @@ public class RobotContainer {
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
   private ShooterRollers m_shooterRollers = new ShooterRollers();
 
-  @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
-  private ShooterHood m_shooterHood;
+  // @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
+  // private ShooterHood m_shooterHood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive = AlphaBotConstants.createDrivetrain();
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
 
@@ -75,7 +76,7 @@ public class RobotContainer {
 
   @NotLogged
   private double MaxSpeed =
-      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+      AlphaBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
 
   @NotLogged
   private double MaxAngularRate =
