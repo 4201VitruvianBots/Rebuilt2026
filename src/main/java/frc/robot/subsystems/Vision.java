@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.AutoAlignDrive;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 // import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
@@ -79,7 +80,7 @@ public class Vision extends SubsystemBase {
   public boolean isTargetingRight() {
     return !m_useLeftTarget;
   }
-
+  
   //   private void updateAngleToHub() {
   //   if (m_swerveDriveTrain != null) {
   //     if (DriverStation.isDisabled()) {
@@ -221,17 +222,7 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
   public boolean isOnTarget() {
-    var translationDelta =
-        m_swerveDriveTrain
-            .getState()
-            .Pose
-            .getTranslation()
-            .minus(robotToTarget[1].getTranslation())
-            .getNorm();
-    // TODO: Add Rotation delta
-    SmartDashboard.putNumber("Target Translation Delta", translationDelta);
-
-    return translationDelta < Inches.of(2).in(Meters);
+    return Math.abs(m_swerveDriveTrain.getState().Pose.getRotation().getDegrees() - (m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getDegrees())) <= 1;
   }
 
   @Override

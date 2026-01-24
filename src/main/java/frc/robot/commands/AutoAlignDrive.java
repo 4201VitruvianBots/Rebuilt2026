@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -66,7 +68,6 @@ public class AutoAlignDrive extends Command {
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             turnRate));
-    System.out.println(turnRate);
   }
 
   // Called once the command ends or is interrupted.

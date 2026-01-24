@@ -149,13 +149,15 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // aim at target
-    m_driverController
+    if (m_swerveDrive != null){
+      m_driverController
         .rightBumper()
         .whileTrue(
             new AutoAlignDrive(
                 m_swerveDrive,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
+    }
     
     if (m_shooterRollers != null) {
       m_driverController

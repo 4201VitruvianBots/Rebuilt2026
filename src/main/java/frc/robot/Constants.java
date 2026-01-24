@@ -239,7 +239,7 @@ public final class Constants {
 
     public enum INDEXERSPEED {
       ZERO(0),
-      INDEXING(0.4),
+      INDEXING(0.8),
       FREEING(-0.1);
 
       private final double value;
@@ -267,7 +267,7 @@ public final class Constants {
 
       public enum INTAKESPEED {
         ZERO(0),
-        INTAKING(0.5),
+        INTAKING(0.8),
         HELPSOMETHINGSSTUCK(-0.2);
 
         private final double value;

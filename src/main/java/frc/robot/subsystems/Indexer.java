@@ -32,8 +32,8 @@ public class Indexer extends SubsystemBase {
   @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
   private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2);
 
-  @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
-  private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
+  // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
+  // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
 
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
@@ -60,9 +60,9 @@ public class Indexer extends SubsystemBase {
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
 
     m_indexerMotor2.setControl(
-        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    m_indexerMotor3.setControl(
         new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    // m_indexerMotor3.setControl(
+    //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
 
     m_simState = m_indexerMotor1.getSimState();
   }
