@@ -63,7 +63,7 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
-          true,
+          false,
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
@@ -88,7 +88,7 @@ public class IntakePivot extends SubsystemBase {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
 
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // config.CurrentLimits.StatorCurrentLimit = 30;
