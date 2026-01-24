@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-//Imports
+// Imports:
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -27,32 +28,31 @@ import frc.robot.Constants.ROBOT.CONTROL_MODE;
 import frc.team4201.lib.utils.CtreUtils;
 
 
+
 public class Climber extends SubsystemBase {
 
-  //Creates new motor
+  // Creates a new motor object.
   TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
 
-  //For logging. This is a custom command that logs the important things for debugging. 
-  @Logged (name="Climber Motor", importance = Importance.DEBUG)
+  // Motion Magic things?
+  private final MotionMagicVoltage m_request = new MotionMagicVoltage(0).withEnableFOC(true);
 
-  //The position it's trying to reach and stabilise at
+
+  // For logging. This is a custom command that logs important things for debugging. 
+  @Logged (name="Climber Motor", importance = Importance.DEBUG)
+  
+  // The position it's trying to reach and stabilise at.
   private Distance m_desiredPosition = Inches.of(0);
 
-  //indicates how much the joystick is moving. -1 is all the way down, 1 is all the way up.
+  // Indicates how much the joystick is moving. -1 is all the way down, 1 is all the way up.
   @Logged(name = "Joystick Input", importance = Logged.Importance.DEBUG)
   private double m_joystickInput = 0.0;
-
-  //open loop is bang bang control
-  //closed loop is pid and motion magic
   @Logged(name = "Control Mode", importance = Logged.Importance.INFO)
-  private CONTROL_MODE m_controlMode = CONTROL_MODE.OPEN_LOOP;
-
-  //Coast: you let go, gravity lets it fall
-  //Break: locks it in place
+  private CONTROL_MODE m_controlMode = CONTROL_MODE.OPEN_LOOP; // Open loop is bang bang control. Closed loop is pid and motion magic.
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
-  private NeutralModeValue m_neutralMode = NeutralModeValue.Brake; //Maye set to coast?
+  private NeutralModeValue m_neutralMode = NeutralModeValue.Brake; // Coast: you let go, gravity lets it fall. Break: locks it in place.
 
-  //Climber Sim State:
+  // Climber Sim State:
   // Simulation classes help us simulate what's going on, including gravity.
   private final ElevatorSim m_elevatorSim =
       new ElevatorSim(
@@ -76,16 +76,20 @@ public class Climber extends SubsystemBase {
     config.Slot0.kP = CLIMBER.kP;
     config.Slot0.kD = CLIMBER.kD;
 
-    config.Feedback.SensorToMechanismRatio = CLIMBER.gearRatio; //configures climber to gear ratio. (check if absolute cancoder)
+    config.Feedback.SensorToMechanismRatio = CLIMBER.gearRatio; // Configures climber to gear ratio. (check if absolute cancoder)
     config.MotionMagic.MotionMagicCruiseVelocity = CLIMBER.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = CLIMBER.motionMagicAcceleration;
-    config.CurrentLimits.StatorCurrentLimit = 40; //TODO: Adjust these
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.MotorOutput.PeakReverseDutyCycle = CLIMBER.peakReverseOutput;
-    config.MotorOutput.PeakForwardDutyCycle = CLIMBER.peakForwardOutput;
-    config.MotorOutput.NeutralMode = m_neutralMode;
+    config.CurrentLimits.StatorCurrentLimit = 40; // Prevents Climber from moving too jerkily and also breakage. TODO: Adjust this value.
+    config.CurrentLimits.StatorCurrentLimitEnable = true; //Enables preious function.
+    // Sets limits on motor output. Seperate from current limits.
+    config.MotorOutput.PeakReverseDutyCycle = 
+        CLIMBER.peakReverseOutput;
+    config.MotorOutput.PeakForwardDutyCycle = 
+        CLIMBER.peakForwardOutput;
+    config.MotorOutput.NeutralMode = m_neutralMode; // Puts the motor in Neutral mode.
 
-    CtreUtils.configureTalonFx(m_climberMotor, config); //Configures the motor.
+    //This is the function that applies all these configurations to the motor.
+    CtreUtils.configureTalonFx(m_climberMotor, config); 
 
     m_motorSimState = m_climberMotor.getSimState();
 
