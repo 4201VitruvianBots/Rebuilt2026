@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -210,7 +211,7 @@ public class Vision extends SubsystemBase {
   }
 
   @Logged(name = "Has Initial Pose", importance = Logged.Importance.INFO)
-  public boolean getInitalPose() {
+  public boolean getInitialPose() {
     return this.hasInitialPose;
   }
 
@@ -221,17 +222,19 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
   public boolean isOnTarget() {
-    var translationDelta =
-        m_swerveDriveTrain
-            .getState()
-            .Pose
-            .getTranslation()
-            .minus(robotToTarget[1].getTranslation())
-            .getNorm();
-    // TODO: Add Rotation delta
-    SmartDashboard.putNumber("Target Translation Delta", translationDelta);
+    var translationDelta = getTranslationDelta();
+    SmartDashboard.putNumber("Target Translation Delta", translationDelta.in(Degrees));
 
-    return translationDelta < Inches.of(2).in(Meters);
+    return translationDelta.lt(Degrees.of(1));
+  }
+
+  public Angle getTranslationDelta() {
+    return m_swerveDriveTrain
+                    .getState()
+                    .Pose
+                    .getRotation()
+                    .minus(robotToTarget[1].getRotation())
+                    .getMeasure();
   }
 
   @Override
