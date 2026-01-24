@@ -221,17 +221,23 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
   public boolean isOnTarget() {
-    var translationDelta =
+    var rotationDelta =
         m_swerveDriveTrain
             .getState()
             .Pose
-            .getTranslation()
-            .minus(robotToTarget[1].getTranslation())
-            .getNorm();
-    // TODO: Add Rotation delta
-    SmartDashboard.putNumber("Target Translation Delta", translationDelta);
+            .getRotation()
+            .minus(robotToTarget[1].getRotation())
+            .getMeasure();
+    SmartDashboard.putNumber("Target Rotation Delta", rotationDelta.in(Degrees));
+  
+    var isAligned = rotationDelta.abs(Degrees) < 0.5;
 
-    return translationDelta < Inches.of(2).in(Meters);
+    var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
+    SmartDashboard.putBoolean("Aligned to Hub?", isAligned); 
+    System.out.println("The angle to the hub is " + setPoint.getAngle());
+    System.out.println("The robot's angle is " + m_swerveDriveTrain.getState().Pose.getRotation());
+    System.out.println("Therefore, the alignment is" + isAligned);
+    return isAligned;
   }
 
   @Override
@@ -252,6 +258,8 @@ public class Vision extends SubsystemBase {
     // if (m_swerveDriveTrain != null) {
     //   updateAngleToHub();
     // }
+
+    isOnTarget();
   }
 
   @Override
