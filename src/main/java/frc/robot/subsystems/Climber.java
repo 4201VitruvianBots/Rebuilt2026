@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -36,11 +37,8 @@ public class Climber extends SubsystemBase {
   //Creates new motor
   TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
 
-  //For logging. It gets you the value of these 4 things. 
-  private final StatusSignal<Angle> m_positionSignal = m_climberMotor.getPosition().clone();
-  private final StatusSignal<AngularVelocity> m_velocitySignal = m_climberMotor.getVelocity().clone();
-  private final StatusSignal<AngularAcceleration> m_accelSignal = m_climberMotor.getAcceleration().clone();
-  private final StatusSignal<Voltage> m_voltageSignal = m_climberMotor.getMotorVoltage().clone();
+  //For logging. This is a custom command that logs the important things for debugging. 
+  @Logged (name="Climber Motor", importance = Importance.DEBUG)
 
   //The position it's trying to reach and stabilise at
   private Distance m_desiredPosition = Inches.of(0);
@@ -102,28 +100,6 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putData(this);
   }
 
-  //Logging:
-  //Logs the Status signals
-  @Logged(name = "Motor Velocity", importance = Logged.Importance.DEBUG)
-  public AngularVelocity getMotorVelocity() {
-    return m_velocitySignal.refresh().getValue();
-  }
-
-    @Logged(name = "Motor Rotations", importance = Logged.Importance.DEBUG)
-  public Angle getRotations() {
-    return m_positionSignal.refresh().getValue();
-  }
-
-  @Logged(name = "Motor Acceleration", importance = Logged.Importance.DEBUG)
-  public AngularAcceleration getMotorAcceleration() {
-    return m_accelSignal.refresh().getValue();
-  }
-
-    @Logged(name = "Motor Voltage", importance = Logged.Importance.DEBUG)
-  public Voltage getMotorVoltage() {
-    return m_voltageSignal.refresh().getValue();
-  }
-  //End of logging
 
   @Override
   public void periodic() {
