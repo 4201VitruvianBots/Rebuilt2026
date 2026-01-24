@@ -15,16 +15,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
+import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
+import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
+import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
@@ -36,6 +40,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.Telemetry;
@@ -68,8 +73,11 @@ public class RobotContainer {
 
   private FieldSim m_fieldSim = new FieldSim();
 
-  // private Indexer m_Indexer = new Indexer();
-  // @Logged(name = "Indexer", importance = Logged.Importance.INFO)
+  @Logged(name = "Indexer", importance = Logged.Importance.INFO)
+  private Indexer m_indexer = new Indexer();
+
+  @Logged(name = "Uptake", importance = Logged.Importance.INFO)
+  private Uptake m_uptake = new Uptake();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
@@ -126,6 +134,8 @@ public class RobotContainer {
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
     m_intake = new Intake();
+    m_uptake = new Uptake();
+    m_indexer = new Indexer();
   }
 
   /**
@@ -146,6 +156,7 @@ public class RobotContainer {
                 m_swerveDrive,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
+    
     if (m_shooterRollers != null) {
       m_driverController
           .b()
@@ -160,6 +171,10 @@ public class RobotContainer {
 
     if (m_intake != null) {
       m_driverController.rightBumper().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+    }
+
+    if (m_uptake != null && m_indexer != null) {
+      m_driverController.leftBumper().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING)));
     }
 
   }

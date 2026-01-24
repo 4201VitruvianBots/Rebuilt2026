@@ -79,8 +79,6 @@ public class Shoot extends Command {
     final Shot shot = distanceToShotMap.get(distanceToHub);
     m_shooterRollers.setRPMOutputFOC(shot.shooterRPM);
     // m_shooterHood.setPosition(shot.hoodPosition);
-    System.out.println(distanceToHub);
-    System.out.println(shot.shooterRPM);
   }
 
   // Called once the command ends or is interrupted.

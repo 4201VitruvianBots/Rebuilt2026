@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -76,8 +75,6 @@ public class ShooterRollers extends SubsystemBase {
     // config.Slot0.kA = SHOOTERMOTORS.kA;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = SHOOTERMOTORS.gearRatio;
-    config.MotorOutput.PeakForwardDutyCycle = SHOOTERMOTORS.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = SHOOTERMOTORS.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = 120;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
 
