@@ -10,8 +10,8 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -29,6 +29,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.INTAKEMOTORS.PIVOT;
@@ -42,6 +43,8 @@ public class IntakePivot extends SubsystemBase {
   private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor);
 
   private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
+
+  private final StatusSignal<Angle> m_positionSignal = m_motor.getPosition().clone();
 
   private final MotionMagicTorqueCurrentFOC m_request =
       new MotionMagicTorqueCurrentFOC(Rotations.of(0.0));
@@ -85,19 +88,17 @@ public class IntakePivot extends SubsystemBase {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
 
-    config.MotorOutput.PeakForwardDutyCycle = PIVOT.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = PIVOT.peakReverseOutput;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    config.CurrentLimits.StatorCurrentLimit = 30;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    // config.CurrentLimits.StatorCurrentLimit = 30;
+    // config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
 
-    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SHOOTERHOOD.maxAngle.in(Rotations);
-    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SHOOTERHOOD.minAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
 
     config.MotionMagic.MotionMagicCruiseVelocity = PIVOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = PIVOT.motionMagicAcceleration;
@@ -116,6 +117,7 @@ public class IntakePivot extends SubsystemBase {
             MathUtil.clamp(
                 angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
+    SmartDashboard.putString("Pivot Control Request", m_request.withPosition(m_desiredAngle.in(Rotations)).toString());
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)
@@ -165,4 +167,5 @@ public class IntakePivot extends SubsystemBase {
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
     System.out.println("Pivot Angle (Degrees): " + getAngleDegrees());
   }
+ 
 }
