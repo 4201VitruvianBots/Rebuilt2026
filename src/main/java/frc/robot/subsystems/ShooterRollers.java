@@ -37,7 +37,7 @@ public class ShooterRollers extends SubsystemBase {
 
   // TODO: Check how many motors we have later
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
-  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1);
+  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.driveBaseCanbus);
 
   // @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
   // private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);

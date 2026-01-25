@@ -27,10 +27,10 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor", importance = Importance.DEBUG)
-  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1);
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBaseCanbus);
 
   @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
-  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.driveBaseCanbus);
 
   // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
@@ -60,7 +60,7 @@ public class Indexer extends SubsystemBase {
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
 
     m_indexerMotor2.setControl(
-        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
+        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
     // m_indexerMotor3.setControl(
     //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
 

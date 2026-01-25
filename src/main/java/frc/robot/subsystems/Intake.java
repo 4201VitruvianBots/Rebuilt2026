@@ -26,7 +26,7 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Intake extends SubsystemBase {
 
   @Logged(name = "Intake Motor 1", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor1 = new TalonFX(CAN.kIntakeRollerMotor1);
+  private final TalonFX m_motor1 = new TalonFX(CAN.kIntakeRollerMotor1, CAN.driveBaseCanbus);
 
   // private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 

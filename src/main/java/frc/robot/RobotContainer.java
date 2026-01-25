@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -149,19 +150,20 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null){
+    if (m_swerveDrive != null && m_vision != null && m_swerveDrive != null && m_shooterRollers != null){
       m_driverController
         .rightBumper()
-        .whileTrue(
+        .whileTrue(new ParallelCommandGroup(
             new AutoAlignDrive(
-                m_swerveDrive,
+                m_swerveDrive, m_vision,
                 () -> m_driverController.getLeftY(),
-                () -> m_driverController.getLeftX()));
+                () -> m_driverController.getLeftX()), new Shoot(m_swerveDrive,
+                  m_shooterRollers)));
     }
     
-    if (m_shooterRollers != null) {
+    if (m_swerveDrive != null && m_shooterRollers != null) {
       m_driverController
-          .b()
+          .rightTrigger()
           .whileTrue(
               new Shoot(m_swerveDrive,
                   m_shooterRollers));
@@ -172,11 +174,15 @@ public class RobotContainer {
     }
 
     if (m_intake != null) {
-      m_driverController.rightBumper().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+      m_driverController.leftBumper().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
 
-    if (m_uptake != null && m_indexer != null) {
-      m_driverController.povUp().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING)));
+    if (m_uptake != null) {
+      m_driverController.y().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING)));
+    }
+
+    if (m_indexer != null){
+      m_driverController.b().whileTrue(new Index(m_indexer, INDEXERSPEED.INDEXING));
     }
 
   }

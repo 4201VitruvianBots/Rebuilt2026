@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.AutoAlignDrive;
+import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 // import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
@@ -37,6 +40,9 @@ public class Vision extends SubsystemBase {
   private final Pose2d[] robotToTarget = {Pose2d.kZero, Pose2d.kZero};
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
+  private boolean isUpdatingOnTarget = false;
+  private boolean isAligned = false;
+  private boolean isReadyToShoot = false;
   // NetworkTables publisher setup
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable table = inst.getTable("LimelightPoseEstimate");
@@ -51,7 +57,7 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
-
+    registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, CAMERA_SERVER.limelightR.toString(), port);
@@ -80,7 +86,7 @@ public class Vision extends SubsystemBase {
   public boolean isTargetingRight() {
     return !m_useLeftTarget;
   }
-  
+
   //   private void updateAngleToHub() {
   //   if (m_swerveDriveTrain != null) {
   //     if (DriverStation.isDisabled()) {
@@ -220,11 +226,32 @@ public class Vision extends SubsystemBase {
     lockTarget = set;
   }
 
-  @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
-  public boolean isOnTarget() {
-    return Math.abs(m_swerveDriveTrain.getState().Pose.getRotation().getDegrees() - (m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getDegrees())) <= 1;
+  @Logged(name = "isUpdatingOnTarget", importance = Importance.INFO)
+  public boolean getIsUpdatingOnTarget() {
+    return isUpdatingOnTarget;
   }
 
+  public void setIsAligned(Boolean aligned){
+    isAligned = aligned;
+  }
+
+  public void setIsUpdatingOnTarget(Boolean isupdating){
+    isUpdatingOnTarget = isupdating;
+  }
+
+  public Boolean getIsAligned(){
+    return isAligned;
+  }
+
+  public Boolean getIsReadyToShoot(){
+    isReadyToShoot = getIsAligned() && getIsUpdatingOnTarget();
+    return isReadyToShoot;
+  }
+
+  public void teleopInit() {
+    m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
+  }
+  
   @Override
   public void periodic() {
     // limelight r
@@ -240,9 +267,7 @@ public class Vision extends SubsystemBase {
       m_localized = llaRSuccess && llaLSuccess;
     }
 
-    // if (m_swerveDriveTrain != null) {
-    //   updateAngleToHub();
-    // }
+    SmartDashboard.putBoolean("isAligned", getIsAligned());
   }
 
   @Override

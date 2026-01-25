@@ -55,8 +55,7 @@ public final class Constants {
     public static double motionMagicJerk = 0.0;
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
-
-        public static class Shot {
+    public static class Shot {
         public final double shooterRPM;
         public final double hoodPosition;
 
@@ -231,7 +230,7 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kS = 0.01;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.5;
+    public static final double peakForwardOutput = 0.8;
     public static final double peakReverseOutput = -0.5;
     public static final double kInertia = 0.005;
 
@@ -267,7 +266,7 @@ public final class Constants {
 
       public enum INTAKESPEED {
         ZERO(0),
-        INTAKING(0.8),
+        INTAKING(0.4),
         HELPSOMETHINGSSTUCK(-0.2);
 
         private final double value;
@@ -340,7 +339,7 @@ public final class Constants {
 
     public enum UPTAKESPEED {
       ZERO(0),
-      UPTAKING(0.6),
+      UPTAKING(0.9),
       WEIRDREVERSE(-0.3);
 
       private final double value;

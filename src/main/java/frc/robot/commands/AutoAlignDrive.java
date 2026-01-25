@@ -16,10 +16,13 @@ import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
+import frc.robot.subsystems.Vision;
+
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
+  private final Vision m_vision;
   Translation2d m_goal = new Translation2d();
 
   public static final double kTeleP_Theta = 10.0;
@@ -34,10 +37,11 @@ public class AutoAlignDrive extends Command {
 
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
-      CommandSwerveDrivetrain commandSwerveDrivetrain,
+      CommandSwerveDrivetrain commandSwerveDrivetrain, Vision vision,
       DoubleSupplier throttleInput,
       DoubleSupplier turnInput) {
     m_swerveDrivetrain = commandSwerveDrivetrain;
+    m_vision = vision;
     m_throttleInput = throttleInput;
     m_turnInput = turnInput;
     m_PidController.setTolerance(Units.degreesToRadians(2));
@@ -54,6 +58,7 @@ public class AutoAlignDrive extends Command {
     } else {
       m_goal = FIELD.redAutoHub;
     }
+    m_vision.setIsUpdatingOnTarget(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -69,7 +74,7 @@ public class AutoAlignDrive extends Command {
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             turnRate));
-    SmartDashboard.putBoolean("isPointingAtGoal", isPointingAtGoal());
+    m_vision.setIsAligned(isPointingAtGoal());
   }
 
   public boolean isPointingAtGoal() {
@@ -84,7 +89,9 @@ public class AutoAlignDrive extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_vision.setIsUpdatingOnTarget(false);
+  }
 
   // Returns true when the command should end.
   @Override
