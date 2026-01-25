@@ -63,7 +63,7 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
-          false,
+          true,
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
@@ -90,10 +90,10 @@ public class IntakePivot extends SubsystemBase {
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
+    
     // config.CurrentLimits.StatorCurrentLimit = 30;
     // config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.ClosedLoopGeneral.ContinuousWrap = false;
+    //config.ClosedLoopGeneral.ContinuousWrap = false;
 
     // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
