@@ -125,7 +125,7 @@ public class IntakePivot extends SubsystemBase {
     return m_desiredAngle.in(Degrees);
   }
 
-  @Logged(name = "Pivot Angle Rotations", importance = Importance.DEBUG)
+  @Logged(name = "Pivot Angle Radians", importance = Importance.DEBUG)
   public Angle getAngle() {
     return m_canCoder.getAbsolutePosition().refresh().getValue();
   }
@@ -166,7 +166,7 @@ public class IntakePivot extends SubsystemBase {
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
-    // System.out.println("Pivot Angle (Degrees): " + getAngleDegrees());
+
   }
  
 }
