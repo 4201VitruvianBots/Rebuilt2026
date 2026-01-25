@@ -83,7 +83,7 @@ public class IntakePivot extends SubsystemBase {
     // config.Slot0.kA = PIVOT.kA;
     // config.Slot0.kV = PIVOT.kV;
     // config.Slot0.kS = PIVOT.kS;
-    config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
+    // config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -94,12 +94,12 @@ public class IntakePivot extends SubsystemBase {
 
     // config.CurrentLimits.StatorCurrentLimit = 30;
     // config.CurrentLimits.StatorCurrentLimitEnable = true;
-    //config.ClosedLoopGeneral.ContinuousWrap = false;
+    config.ClosedLoopGeneral.ContinuousWrap = false;
 
-    // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
-    // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
 
     config.MotionMagic.MotionMagicCruiseVelocity = PIVOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = PIVOT.motionMagicAcceleration;
