@@ -214,12 +214,21 @@ public final class Constants {
     public static final Distance lowerLimit = Inches.of(0);
 
     // Config for Motor. TODO: Change placeholder values later.
-    public static double kV = 1.0; // Placeholder. Output per unit of target velocity (output/rps).
-    public static double kA = 1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
-    public static double kP = 1.0; // Placeholder. Output per unit of error in position (output/rotation).
-    public static double kD = 1.0; // Placeholder. Output per unit of error in velocity (output/rps).
+    public static double kVnoRobot = 1.0; // Placeholder. Output per unit of target velocity (output/rps).
+    public static double kAnoRobot = 1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
+    public static double kPnoRobot = 1.0; // Placeholder. Output per unit of error in position (output/rotation).
+    public static double kDnoRobot = 1.0; // Placeholder. Output per unit of error in velocity (output/rps).
+    public static double kGnoRobot = 1.0;
+    public static double kS = 1.0;
+
+    public static double kVRobot = 1.0; // For lifting the robot as well. 
+    public static double kARobot = 1.0;
+    public static double kPRobot = 1.0; 
+    public static double kDRobot = 1.0;
+    public static double kGRobot = 1.0;
 
     public static final double gearRatio = 1.0 / 27.0; // Climber Gear ratio.
+    public static final Distance drumRotationsToMeters = Meters.of(1.0); // TODO: CHANGE THIS LATER THIS MAKES NO SENSE, CONSULT THE MENTORS ON HOW YOU CALCULATE THIS
 
     public static double motionMagicCruiseVelocity = 20; // Placeholder.
     public static double motionMagicAcceleration = 30; // Placeholder.
@@ -230,7 +239,7 @@ public final class Constants {
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
     public static Mass kCarriageMass = Pound.of(15); // TODO: Change this later.
         /* Carriage mass will be the weight that the "carriage,"" in this case climber, is holding.
-        It might be dynamic, because you're lifting the weight of the elevator, 
+        It will be dynamic, because you're lifting the weight of the elevator, 
         but you also might be lifting the weight of the robot. */
     public static final Distance kClimberDrumDiameter = Inches.of(2.2557); // Placeholder.
   }
