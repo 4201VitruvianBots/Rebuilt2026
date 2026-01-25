@@ -8,13 +8,17 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.time.Instant;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
@@ -35,6 +39,7 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.Uptake;
+import frc.team4201.lib.utils.Robot2d;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -64,6 +69,8 @@ public class RobotContainer {
   private LEDs m_led = new LEDs();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
+  
+  private final Robot2d m_robotSim = new Robot2d();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -122,6 +129,12 @@ public class RobotContainer {
               return drive;
             }));
     m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_Intake, /* m_Climber, */ m_Uptake));
+    
+    if (Robot.isSimulation()) {
+      m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_Indexer, m_Intake, m_Uptake);
+    // This one works but mine doesn't. Why?
+    //   CommandScheduler.getInstance().registerSubsystem(m_shooterFlywheel, m_shooterHood, m_Indexer, m_Intake, m_Uptake);
+    }
   }
 
   private void configureBindings() {
