@@ -2,7 +2,7 @@ package frc.team4201.lib.utils;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
-// \import org.team4201.codex.utils.ModuleMap.MODULE_POSITION;
+// \import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 
 public class SysIdUtils {
   private static SysIdRoutine swerveDriveRoutine;
