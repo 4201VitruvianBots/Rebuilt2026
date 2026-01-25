@@ -227,27 +227,16 @@ public class Vision extends SubsystemBase {
   public void setTargetLock(boolean set) {
     lockTarget = set;
   }
-
-  @Logged(name = "isUpdatingOnTarget", importance = Importance.INFO)
-  public boolean getIsUpdatingOnTarget() {
-    return isUpdatingOnTarget;
-  }
-
-  public void setIsAligned(Boolean aligned){
-    isAligned = aligned;
-  }
-
-  public void setIsUpdatingOnTarget(Boolean isupdating){
-    isUpdatingOnTarget = isupdating;
-  }
-
-  public Boolean getIsAligned(){
-    return isAligned;
-  }
-
-  public Boolean getIsReadyToShoot(){
-    isReadyToShoot = getIsAligned() && getIsUpdatingOnTarget();
-    return isReadyToShoot;
+  
+  @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
+  public boolean isPointingAtGoal() {
+    // bearing from robot to goal
+    var bearing = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+    // robot heading
+    var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
+    // smallest signed angle difference in [-pi, pi]
+    double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
+    return Math.abs(error) <= Units.degreesToRadians(1.0);
   }
 
   public void teleopInit() {}
@@ -272,8 +261,6 @@ public class Vision extends SubsystemBase {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
       m_localized = llaRSuccess && llaLSuccess;
     }
-
-    SmartDashboard.putBoolean("isAligned", getIsAligned());
   }
 
   @Override

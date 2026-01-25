@@ -58,7 +58,6 @@ public class AutoAlignDrive extends Command {
     } else {
       m_goal = FIELD.redAutoHub;
     }
-    m_vision.setIsUpdatingOnTarget(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -74,23 +73,11 @@ public class AutoAlignDrive extends Command {
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             turnRate));
-    m_vision.setIsAligned(isPointingAtGoal());
-  }
-
-  public boolean isPointingAtGoal() {
-    // bearing from robot to goal
-    var bearing = m_goal.minus(m_swerveDrivetrain.getState().Pose.getTranslation()).getAngle().getRadians();
-    // robot heading
-    var heading = m_swerveDrivetrain.getState().Pose.getRotation().getRadians();
-    // smallest signed angle difference in [-pi, pi]
-    double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
-    return Math.abs(error) <= Units.degreesToRadians(1.0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_vision.setIsUpdatingOnTarget(false);
   }
 
   // Returns true when the command should end.
