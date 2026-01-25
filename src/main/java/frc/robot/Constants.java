@@ -31,81 +31,83 @@ import java.util.Map;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public class SHOOTERMOTORS {
-    public static final double kP =
-        5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
-    public static final double kV = 0.0;
-    public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
-    public static final double kA = 0.0;
-    // The value of kS is the largest voltage applied before the mechanism begins to move)
-    public static final double gearRatio = 1.0; // Placeholder value
-    public static final double peakForwardOutput = 0.4; // Placeholder value
-    public static final double peakReverseOutput = -0.35; // Placeholder value
-    public static final double kInertia =
-        0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
+  public class SHOOTER {
+    public class FLYWHEEL {
+        public static final double kP =
+            5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+        public static final double kV = 0.0;
+        public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
+        public static final double kA = 0.0;
+        // The value of kS is the largest voltage applied before the mechanism begins to move)
+        public static final double gearRatio = 1.0; // Placeholder value
+        public static final double peakForwardOutput = 0.4; // Placeholder value
+        public static final double peakReverseOutput = -0.35; // Placeholder value
+        public static final double kInertia =
+            0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    // These worked on wood bot. Change jerk later if further optimization is needed
-    public static double motionMagicCruiseVelocity =
-        35.0; // target cruise velocity of 35 rps, so 2100 rpm
-    public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
-    public static double motionMagicJerk = 0.0;
+        // These worked on wood bot. Change jerk later if further optimization is needed
+        public static double motionMagicCruiseVelocity =
+            35.0; // target cruise velocity of 35 rps, so 2100 rpm
+        public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
+        public static double motionMagicJerk = 0.0;
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
+        public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
-    public enum ShooterVelocity {
-      IDLE(0.0),
-      LOW(1000.0),
-      HIGH(2900.0);
+        public enum SHOOTER_VELOCITY {
+            IDLE(0.0),
+            LOW(1000.0),
+            HIGH(2900.0);
 
-      private final double rpm;
+            private final double rpm;
 
-      ShooterVelocity(double rpm) {
-        this.rpm = rpm;
-      }
+            SHOOTER_VELOCITY(double rpm) {
+                this.rpm = rpm;
+            }
 
-      public AngularVelocity getRPM() {
-        return RotationsPerSecond.of(rpm / 60.0);
-      }
+            public AngularVelocity getRPM() {
+                return RotationsPerSecond.of(rpm / 60.0);
+            }
+        }
     }
-  }
 
-  public class SHOOTERHOOD {
-    public static final double kP = 3.0; // TODO: Change this
-    public static final double kD = 0.1;
-    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
-    public static final double kV = 0.0;
-    public static final double kS = 0.0;
-    public static final double gearRatio =
-        1.0; // TODO: Change this later because this is confirmed not what the final thing
-    // will be
-    public static final double peakForwardOutput = 0.4; // Placeholder value
-    public static final double peakReverseOutput = -0.35; // Placeholder value
-    public static final double kInertia =
-        0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
+    public class HOOD {
+        public static final double kP = 3.0; // TODO: Change this
+        public static final double kD = 0.1;
+        public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+        public static final double kV = 0.0;
+        public static final double kS = 0.0;
+        public static final double gearRatio =
+            1.0; // TODO: Change this later because this is confirmed not what the final thing
+        // will be
+        public static final double peakForwardOutput = 0.4; // Placeholder value
+        public static final double peakReverseOutput = -0.35; // Placeholder value
+        public static final double kInertia =
+            0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-    public static final double motionMagicCruiseVelocity = 6.0;
-    public static final double motionMagicAcceleration = 4.0;
+        public static final double motionMagicCruiseVelocity = 6.0;
+        public static final double motionMagicAcceleration = 4.0;
 
-    public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(45.0);
+        public static final Angle minAngle = Degrees.of(0.0);
+        public static final Angle maxAngle = Degrees.of(45.0);
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+        public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-    public enum HoodAngle {
-      // TODO: Going to stop using this because we are going to do math instead :)
-      NOTHING(Degrees.of(0.0)),
-      CLOSE(Degrees.of(30.0)),
-      FAR(Degrees.of(45.0));
+        public enum HOOD_ANGLE {
+            // TODO: Going to stop using this because we are going to do math instead :)
+            NOTHING(Degrees.of(0.0)),
+            CLOSE(Degrees.of(30.0)),
+            FAR(Degrees.of(45.0));
 
-      private final Angle angle;
+            private final Angle angle;
 
-      HoodAngle(Angle angle) {
-        this.angle = angle;
-      }
+            HOOD_ANGLE(Angle angle) {
+                this.angle = angle;
+            }
 
-      public Angle getAngle() {
-        return angle;
-      }
+            public Angle getAngle() {
+                return angle;
+            }
+        }
     }
   }
 
@@ -129,10 +131,10 @@ public final class Constants {
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
 
-    public static final int kShooterRollerMotor1 = 40;
-    public static final int kShooterRollerMotor2 = 41;
-    public static final int kShooterRollerMotor3 = 42;
-    public static final int kShooterRollerMotor4 = 43;
+    public static final int kFlywheelMotor1 = 40;
+    public static final int kFlywheelMotor2 = 41;
+    public static final int kFlywheelMotor3 = 42;
+    public static final int kFlywheelMotor4 = 43;
 
     public static final int kIndexerMotor1 = 50; /* TODO: change values later */
     public static final int kIndexerMotor2 = 51;
@@ -146,8 +148,7 @@ public final class Constants {
 
     public static final int kUptakeMotor = 56; /* TODO: another placeholder "Fun!" */
   }
-
-  // usb n swerve are like lwk copied from reefscape
+  
   public final class USB {
     public static final int driver_xBoxController = 0;
   }
@@ -206,7 +207,7 @@ public final class Constants {
     }
   }
 
-  public class INDEXERMOTORS {
+  public class INDEXER {
     /*TODO: change every value they are ALL placeholders */
     public static final double kP = 1.0;
     public static final double kD = 0.0;
@@ -219,14 +220,14 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
 
-    public enum INDEXERSPEED {
+    public enum INDEXER_SPEED {
       ZERO(0),
       INDEXING(0.4),
       FREEING(-0.1);
 
       private final double value;
 
-      INDEXERSPEED(double value) {
+      INDEXER_SPEED(double value) {
         this.value = value;
       }
 
@@ -236,7 +237,7 @@ public final class Constants {
     }
   }
 
-  public class INTAKEMOTORS {
+  public class INTAKE {
     public static class ROLLERS {
       /* TODO: change values because these are ALSO placeholders yay fun */
       public static final double kP = 1.0;
@@ -247,14 +248,14 @@ public final class Constants {
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
 
-      public enum INTAKESPEED {
+      public enum INTAKE_SPEED {
         ZERO(0),
         INTAKING(0.5),
         HELPSOMETHINGSSTUCK(-0.2);
 
         private final double value;
 
-        INTAKESPEED(double value) {
+        INTAKE_SPEED(double value) {
           this.value = value;
         }
 
@@ -265,7 +266,7 @@ public final class Constants {
     }
   }
 
-  public class UPTAKEMOTORS {
+  public class UPTAKE {
     public static final double kP = 1.0; /*more placeholders FUN*/
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
@@ -274,20 +275,41 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(1);
 
-    public enum UPTAKESPEED {
+    public enum UPTAKE_SPEED {
       ZERO(0),
       UPTAKING(0.6),
       WEIRDREVERSE(-0.3);
 
       private final double value;
 
-      UPTAKESPEED(double value) {
+      UPTAKE_SPEED(double value) {
         this.value = value;
       }
 
       public double get() {
         return value;
       }
+    }
+  }
+  
+  public class LED {
+    public enum LED_STATES {
+        DISABLED("disabled"),
+        IDLE("idle"),
+        DRIVING("driving"),
+        INTAKING("intaking"),
+        SHOOTING("shooting"),
+        CLIMBING("climbing");
+        
+        private final String animation;
+        
+        LED_STATES(String animation) {
+            this.animation = animation;
+        }
+        
+        public String getAnimation() {
+            return animation;
+        }
     }
   }
 }

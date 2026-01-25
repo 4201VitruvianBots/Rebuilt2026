@@ -5,7 +5,7 @@
 package frc.robot.commands.Intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.subsystems.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -13,10 +13,10 @@ public class RunIntake extends Command {
 
   private final Intake m_intake;
 
-  private final INTAKESPEED m_speed;
+  private final INTAKE_SPEED m_speed;
 
   /** Creates a new RunIntake. */
-  public RunIntake(Intake intake, INTAKESPEED speed) {
+  public RunIntake(Intake intake, INTAKE_SPEED speed) {
     m_intake = intake;
     m_speed = speed;
 

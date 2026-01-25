@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.INDEXERMOTORS;
+import frc.robot.Constants.INDEXER;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {
@@ -38,22 +38,22 @@ public class Indexer extends SubsystemBase {
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
-              INDEXERMOTORS.gearbox, INDEXERMOTORS.kInertia, INDEXERMOTORS.gearRatio),
-          INDEXERMOTORS.gearbox);
+              INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+          INDEXER.gearbox);
   private final TalonFXSimState m_simState;
 
   /** Creates a new Indexer. */
   public Indexer() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kV = INDEXERMOTORS.kV;
-    config.Slot0.kP = INDEXERMOTORS.kP;
-    config.Slot0.kD = INDEXERMOTORS.kD;
-    config.Slot0.kS = INDEXERMOTORS.kS;
+    config.Slot0.kV = INDEXER.kV;
+    config.Slot0.kP = INDEXER.kP;
+    config.Slot0.kD = INDEXER.kD;
+    config.Slot0.kS = INDEXER.kS;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.PeakForwardDutyCycle = INDEXERMOTORS.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = INDEXERMOTORS.peakReverseOutput;
-    config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
+    config.MotorOutput.PeakForwardDutyCycle = INDEXER.peakForwardOutput;
+    config.MotorOutput.PeakReverseDutyCycle = INDEXER.peakReverseOutput;
+    config.Feedback.SensorToMechanismRatio = INDEXER.gearRatio;
 
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -94,8 +94,8 @@ public class Indexer extends SubsystemBase {
 
     m_simState.setRawRotorPosition(
         Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations())
-            .times(INDEXERMOTORS.gearRatio));
+            .times(INDEXER.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXERMOTORS.gearRatio));
+        RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
   }
 }
