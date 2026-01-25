@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,7 +28,8 @@ import frc.team4201.lib.vision.LimelightHelpers;
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
   private FieldSim m_fieldSim;
-  private Translation2d m_goal = new Translation2d();
+  private Translation2d m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
+
   // TODO: Re-add this
   //   private LimelightSim visionSim;
   private Controls m_controls;
@@ -248,8 +250,12 @@ public class Vision extends SubsystemBase {
     return isReadyToShoot;
   }
 
-  public void teleopInit() {
-    m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
+  public void teleopInit() {}
+
+  @Logged(name = "Distance to Hub", importance = Importance.INFO)
+  public Distance getDistancetoHub(){
+    final Distance distanceToHub = Meters.of(m_swerveDriveTrain.getState().Pose.getTranslation().getDistance(m_goal));
+    return distanceToHub;
   }
   
   @Override
