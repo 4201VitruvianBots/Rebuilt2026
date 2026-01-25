@@ -83,7 +83,7 @@ public class IntakePivot extends SubsystemBase {
     // config.Slot0.kA = PIVOT.kA;
     // config.Slot0.kV = PIVOT.kV;
     // config.Slot0.kS = PIVOT.kS;
-    // config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
+    config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
