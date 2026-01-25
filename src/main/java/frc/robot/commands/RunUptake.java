@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
+import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.Uptake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -13,10 +13,10 @@ public class RunUptake extends Command {
 
   private final Uptake m_uptake;
 
-  private final UPTAKESPEED m_speed;
+  private final UPTAKE_SPEED m_speed;
 
   /** Creates a new RunUptake. */
-  public RunUptake(Uptake uptake, UPTAKESPEED speed) {
+  public RunUptake(Uptake uptake, UPTAKE_SPEED speed) {
     m_uptake = uptake;
     m_speed = speed;
 

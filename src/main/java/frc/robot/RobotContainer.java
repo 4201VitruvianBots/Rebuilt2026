@@ -17,21 +17,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
-import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
+import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
 import frc.robot.Constants.SWERVE;
-import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
+import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.UpdateLEDs;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.ShooterHood;
-import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.Uptake;
 
 /**
@@ -43,8 +45,8 @@ import frc.robot.subsystems.Uptake;
 @Logged(name = "RobotContainer", importance = Logged.Importance.CRITICAL)
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_shooterRollers;
+  @Logged(name = "ShooterFlywheel", importance = Logged.Importance.INFO)
+  private ShooterFlywheel m_shooterFlywheel;
 
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   private ShooterHood m_shooterHood;
@@ -57,6 +59,9 @@ public class RobotContainer {
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_Uptake = new Uptake();
+
+  @Logged(name = "LEDs", importance = Logged.Importance.INFO)
+  private LEDs m_led = new LEDs();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
@@ -91,7 +96,7 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
-    m_shooterRollers = new ShooterRollers();
+    m_shooterFlywheel = new ShooterFlywheel();
     m_shooterHood = new ShooterHood();
     m_Indexer = new Indexer();
     m_Intake = new Intake();
@@ -116,23 +121,24 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_Intake, /* m_Climber, */ m_Uptake));
   }
 
   private void configureBindings() {
-    if (m_shooterRollers != null && m_shooterHood != null) {
+    if (m_shooterFlywheel != null && m_shooterHood != null) {
       m_driverController
           .a()
           .whileTrue(
               new Shoot(
-                  m_shooterRollers,
+                  m_shooterFlywheel,
                   m_shooterHood,
-                  ShooterVelocity.HIGH,
-                  HoodAngle.CLOSE.getAngle()));
+                  SHOOTER_VELOCITY.HIGH,
+                  HOOD_ANGLE.CLOSE.getAngle()));
     }
-    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    // m_driverController.a().whileTrue(new Shoot(m_ShooterFlywheel, ShooterRPM.HIGH.getRPM()));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
-    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
-    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
+    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKE_SPEED.INTAKING));
+    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKE_SPEED.UPTAKING));
   }
 
   private void initAutoChooser() {
