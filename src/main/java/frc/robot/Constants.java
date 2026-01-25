@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.pathplanner.lib.config.PIDConstants;
@@ -19,6 +20,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
@@ -135,18 +137,19 @@ public final class Constants {
     public static final int kFlywheelMotor2 = 41;
     public static final int kFlywheelMotor3 = 42;
     public static final int kFlywheelMotor4 = 43;
+    public static final int kClimberMotor = 30; // TODO: Change this later.
 
-    public static final int kIndexerMotor1 = 50; /* TODO: change values later */
+    public static final int kIndexerMotor1 = 50; /* TODO: Change values later. */
     public static final int kIndexerMotor2 = 51;
     public static final int kIndexerMotor3 = 52;
 
     public static final int kShooterHoodMotor = 34;
     public static final int kShooterHoodCANCoder = 35;
-    public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
+    public static final int kIntakeRollerMotor1 = 53; /*TODO: Again change these values later. */
     public static final int kIntakeRollerMotor2 = 54;
     public static final int kIntakePivotMotor = 55;
 
-    public static final int kUptakeMotor = 56; /* TODO: another placeholder "Fun!" */
+    public static final int kUptakeMotor = 56; /* TODO: Another placeholder "Fun!" */
   }
   
   public final class USB {
@@ -154,8 +157,8 @@ public final class Constants {
   }
 
   public class SWERVE {
-    // TODO: Remove unused variables
-    // (maybe crossreferencing with Reefscape2025 to see what gets used in a full robot project)
+    // TODO: Remove unused variables.
+    // (maybe crossreferencing with Reefscape2025 to see what gets used in a full robot project).
 
     public enum MOTOR_TYPE {
       ALL,
@@ -183,7 +186,7 @@ public final class Constants {
 
     public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
     public static final double kMaxRotationRadiansPerSecond =
-        Math.PI * 0.3; // temporary to reduce speed (original value 2.0)
+        Math.PI * 0.3; // Temporary to reduce speed (original value 2.0).
 
     public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
     public static final Distance kPositionTolerance = Inches.of(0.4);
@@ -204,6 +207,41 @@ public final class Constants {
       public int getLengthSeconds() {
         return lengthSeconds;
       }
+    }
+  }
+
+  public class CLIMBER {
+    public static final Distance upperLimit = Inches.of(20); // TODO: Talk to design about height.
+    public static final Distance lowerLimit = Inches.of(0);
+
+    // Config for Motor. TODO: Change placeholder values later.
+    public static double kV = 1.0; // Placeholder. Output per unit of target velocity (output/rps).
+    public static double kA = 1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
+    public static double kP = 1.0; // Placeholder. Output per unit of error in position (output/rotation).
+    public static double kD = 1.0; // Placeholder. Output per unit of error in velocity (output/rps).
+
+    public static final double gearRatio = 1.0 / 27.0; // Climber Gear ratio.
+
+    public static double motionMagicCruiseVelocity = 20; // Placeholder.
+    public static double motionMagicAcceleration = 30; // Placeholder.
+
+    public static final double peakForwardOutput = 1.00; // Placeholder.
+    public static final double peakReverseOutput = -0.5; // Placeholder.
+
+    public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
+    public static Mass kCarriageMass = Pound.of(15); // TODO: Change this later.
+        /* Carriage mass will be the weight that the "carriage,"" in this case climber, is holding.
+        It might be dynamic, because you're lifting the weight of the elevator, 
+        but you also might be lifting the weight of the robot. */
+    public static final Distance kClimberDrumDiameter = Inches.of(2.2557); // Placeholder.
+  }
+
+  public class ROBOT {
+
+    // Climber control mode:
+    public enum CONTROL_MODE {
+      OPEN_LOOP,
+      CLOSED_LOOP
     }
   }
 
@@ -239,7 +277,7 @@ public final class Constants {
 
   public class INTAKE {
     public static class ROLLERS {
-      /* TODO: change values because these are ALSO placeholders yay fun */
+      /* TODO: Change values because these are ALSO placeholders yay fun. */
       public static final double kP = 1.0;
       public static final double gearRatio = 1.0;
       public static final double peakForwardOutput = 0.5;
