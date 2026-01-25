@@ -53,7 +53,7 @@ public class Indexer extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = INDEXERMOTORS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = INDEXERMOTORS.peakReverseOutput;
-    config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
+    //config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
 
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;

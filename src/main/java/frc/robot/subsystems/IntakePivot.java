@@ -79,10 +79,10 @@ public class IntakePivot extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
     config.Slot0.kD = PIVOT.kD;
-    config.Slot0.kA = PIVOT.kA;
-    config.Slot0.kV = PIVOT.kV;
-    config.Slot0.kS = PIVOT.kS;
-    config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
+    // config.Slot0.kA = PIVOT.kA;
+    // config.Slot0.kV = PIVOT.kV;
+    // config.Slot0.kS = PIVOT.kS;
+    // config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -162,6 +162,7 @@ public class IntakePivot extends SubsystemBase {
     m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
 
+    
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
