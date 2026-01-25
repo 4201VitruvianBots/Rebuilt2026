@@ -32,6 +32,7 @@ import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.generated.TunerConstants;
+import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -39,7 +40,6 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.Uptake;
-import frc.team4201.lib.utils.Robot2d;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -132,8 +132,6 @@ public class RobotContainer {
     
     if (Robot.isSimulation()) {
       m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_Indexer, m_Intake, m_Uptake);
-    // This one works but mine doesn't. Why?
-    //   CommandScheduler.getInstance().registerSubsystem(m_shooterFlywheel, m_shooterHood, m_Indexer, m_Intake, m_Uptake);
     }
   }
 
