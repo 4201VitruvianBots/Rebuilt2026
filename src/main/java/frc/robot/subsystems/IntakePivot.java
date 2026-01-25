@@ -165,7 +165,7 @@ public class IntakePivot extends SubsystemBase {
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
-    System.out.println("Pivot Angle (Degrees): " + getAngleDegrees());
+    // System.out.println("Pivot Angle (Degrees): " + getAngleDegrees());
   }
  
 }
