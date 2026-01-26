@@ -76,18 +76,38 @@ public class Robot2d extends SubsystemBase {
     170)); // Angle of the indexer relative to the chassis
   
   // Uptake
+  private final Distance uptakeRootX = chassisRootX.plus(Inches.of(18.725)); // Distance from edge of bumper to center of thinnest part of uptake
+  private final Distance uptakeRootY = chassisRootY.plus(Inches.of(2.25)); // Indexer is ~2.25 inches above center of bumpers
+  private final Distance uptakeWidth = Inches.of(6.65); // Width of the uptake at its thinnest point
+  private final Distance uptakeHeight = Inches.of(18.5); // Height of the uptake
   private final MechanismRoot2d m_uptakeRoot =
     m_robot.getRoot("uptakeRoot",
-     chassisRootX.plus(Inches.of(18.725)).in(Inches), // Distance from edge of bumper to center of thinnest part of uptake
-     chassisRootY.plus(Inches.of(2.25)).in(Inches)); // Indexer is ~2.25 inches above center of bumpers
+     uptakeRootX.in(Inches),
+     uptakeRootY.in(Inches));
   private final MechanismLigament2d m_uptake =
     m_uptakeRoot.append(new MechanismLigament2d("Uptake",
-    Inches.of(18.5).in(Inches), // Height of the uptake
+    uptakeHeight.in(Inches), // Height of the uptake
     90)); // Straight up
     
   // Flywheel
+  private final MechanismRoot2d m_flywheelRoot =
+    m_robot.getRoot("flywheelRoot",
+    uptakeRootX.minus(uptakeWidth.div(2)).in(Inches), // Put the flywheel on the top left corner of the uptake
+    uptakeRootY.plus(uptakeHeight).in(Inches));
+  private final Flywheel2d m_flywheel =
+    new Flywheel2d(new Flywheel2dConfig(
+        "Flywheel",
+        new Color8Bit(127, 127, 127), // Grey color for flywheel
+        Inches.of(2.0) // Radius of the flywheel
+    ), m_flywheelRoot);
   
   // Shooter Hood
+  private final Arm2d m_shooterHood = 
+    new Arm2d(new Arm2dConfig("Shooter Hood", 
+      new Color8Bit(0, 255, 255), // Aqua color for shooter hood
+      Degrees.of(35), // TODO: Find actual angle
+      Inches.of(10.0) // TODO: Find actual length
+    ), m_flywheelRoot);
   
   // Climber
   
@@ -101,12 +121,14 @@ public class Robot2d extends SubsystemBase {
     m_chassis.setLineWeight(Inches.of(4.5).in(LineWidthInches)); // Bumpers are 4.5 inches thick
     m_indexer.setLineWeight(Inches.of(1.25).in(LineWidthInches)); // Diameter of the indexer rollers is 1.25 inches
     m_indexer.setColor(new Color8Bit(255, 200, 0)); // Yellow color for indexer
-    m_uptake.setLineWeight(Inches.of(6.65).in(LineWidthInches)); // Width of the uptake at its thinnest point
+    m_uptake.setLineWeight(uptakeWidth.in(LineWidthInches));
     m_uptake.setColor(new Color8Bit(0, 255, 0)); // Green color for uptake
     
     if (RobotBase.isSimulation()) {
       SmartDashboard.putData("Robot2d", m_robot);
       m_intakePivot.generateSubDisplay();
+      m_flywheel.generateSubDisplay();
+      m_shooterHood.generateSubDisplay();
     }
   }
   

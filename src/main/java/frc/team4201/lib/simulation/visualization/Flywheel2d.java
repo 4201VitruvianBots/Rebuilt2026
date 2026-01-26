@@ -38,7 +38,7 @@ public class Flywheel2d implements AutoCloseable {
    * @param parentObject The {@link MechanismObject2d} (Either a {@link MechanismRoot2d} or {@link
    *     MechanismLigament2d})the Flywheel attaches to
    */
-  public Flywheel2d(Flywheel2dConfig config, MechanismLigament2d parentObject) {
+  public Flywheel2d(Flywheel2dConfig config, MechanismObject2d parentObject) {
     m_config = config;
     m_flywheel =
         new MechanismLigament2d(
