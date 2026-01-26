@@ -210,8 +210,8 @@ public final class Constants {
   }
 
   public class CLIMBER {
-    public static final Distance upperLimit = Inches.of(20); // TODO: Talk to design about height.
-    public static final Distance lowerLimit = Inches.of(0);
+    public static final Distance upperLimit = Inches.of(35.0); // TODO: Talk to design about height.
+    public static final Distance lowerLimit = Inches.of(0.0);
 
     // Config for Motor. TODO: Change placeholder values later.
     public static double kVnoRobot = 1.0; // Placeholder. Output per unit of target velocity (output/rps).

@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -18,6 +19,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -34,14 +36,15 @@ public class Climber extends SubsystemBase {
   @Logged (name="Climber Motor", importance = Importance.DEBUG)
   private final TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
 
-  // Motion Magic things?
-  private final MotionMagicVoltage m_request = new MotionMagicVoltage(0).withEnableFOC(true);
+  private final MotionMagicTorqueCurrentFOC m_request = new MotionMagicTorqueCurrentFOC(0.0);
 
   // The position it's trying to reach and stabilise at.
   private Distance m_desiredPosition = Inches.of(0);
 
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode = NeutralModeValue.Brake; // Coast: you let go, gravity lets it fall. Brake: locks it in place.
+
+  private Distance m_desiredPositionMeters = Meters.of(0.0);
 
   // Climber Sim State:
   // Simulation classes help us simulate what's going on, including gravity.
@@ -94,6 +97,29 @@ public class Climber extends SubsystemBase {
     m_climberMotor.setPosition(Rotations.of(0));
   }
 
+  @Logged(name = "Height Inches", importance = Logged.Importance.INFO)
+  public double getHeightInches() {
+    return getHeight().in(Inches);
+  }
+
+  @Logged(name = "Height Meters", importance = Logged.Importance.DEBUG)
+  public Distance getHeight() {
+    return CLIMBER.drumRotationsToMeters.times(m_climberMotor.getPosition().clone().refresh().getValue().magnitude());
+  }  
+
+  public void setDesiredPosition(Distance desiredPosition) {
+    m_desiredPosition = Meters.of(MathUtil.clamp(
+        desiredPosition.in(Meters),
+        CLIMBER.lowerLimit.in(Meters),
+        CLIMBER.upperLimit.in(Meters)));
+    m_climberMotor.setControl(
+              m_request.withPosition(
+                  m_desiredPosition.in(Meters) / CLIMBER.drumRotationsToMeters.in(Meters)));
+  }
+
+  public void holdClimber(){
+    setDesiredPosition(getHeight());
+  }
 
   @Override
   public void periodic() {
