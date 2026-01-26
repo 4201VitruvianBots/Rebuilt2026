@@ -7,47 +7,68 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.util.*;
 
 public class Targeting2d {
-  private static AprilTagFieldLayout wpilibAprilTagLayout;
+  private static AprilTagFieldLayout aprilTagLayout;
+  private static Translation2d fieldCenter;
   private static final Map<String, Target2d> m_targetList = new HashMap<>();
   private static final Map<Integer, AprilTagData> m_aprilTagList = new HashMap<>();
 
   public static void init() {
-    if (wpilibAprilTagLayout == null) {
-      wpilibAprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-    }
-    var tags = wpilibAprilTagLayout.getTags();
+    init(AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark));
+  }
+
+  public static void init(AprilTagFieldLayout layout) {
+    aprilTagLayout = layout;
+
+    fieldCenter =
+        new Translation2d(
+            aprilTagLayout.getFieldLength() / 2.0, aprilTagLayout.getFieldWidth() / 2.0);
+
+    var tags = layout.getTags();
     for (var t : tags) {
       var tagData = new AprilTagData(t.ID, t.pose.toPose2d());
       m_aprilTagList.put(t.ID, tagData);
     }
   }
 
-  public static void addTarget2d(String targetName, Pose2d targetPose, int... aprilTagIds) {
-    var target = new Target2d(targetName, targetPose);
+  public static AprilTagFieldLayout getLayout() {
+    return aprilTagLayout;
+  }
+
+  public static Translation2d getFieldCenter() {
+    return fieldCenter;
+  }
+
+  public static Pose2d getTag(int id) {
+    return m_aprilTagList.get(id).getPose();
+  }
+
+  public static void addTarget2d(
+      String targetName, Translation2d targetTranslation, int... aprilTagIds) {
+    var target = new Target2d(targetName, targetTranslation);
     for (var id : aprilTagIds) {
       target.addAprilTag(id);
       m_aprilTagList.get(id).addRelativeTarget(target);
     }
   }
 
-  public static Optional<Pose2d> getTarget(String name) {
+  public static Optional<Translation2d> getTarget(String name) {
     return getTarget(name, -1);
   }
 
-  public static Optional<Pose2d> getTarget(String name, int nearestTagId) {
+  public static Optional<Translation2d> getTarget(String name, int nearestTagId) {
     return Optional.ofNullable(m_aprilTagList.get(nearestTagId))
-        .map(data -> data.getRelativeTargetPose(name))
-        .orElse(Optional.ofNullable(m_targetList.get(name).getPose()));
+        .map(data -> data.getRelativeTargetTranslation(name))
+        .orElse(Optional.ofNullable(m_targetList.get(name).getTranslation()));
   }
 
   static class Target2d {
     private final String m_name;
-    private final Pose2d m_pose;
+    private final Translation2d m_translation;
     private final ArrayList<Integer> m_associatedAprilTags = new ArrayList<>();
 
-    public Target2d(String name, Pose2d pose) {
+    public Target2d(String name, Translation2d translation) {
       m_name = name;
-      m_pose = pose;
+      m_translation = translation;
     }
 
     public void addAprilTag(int aprilTagId) {
@@ -58,8 +79,8 @@ public class Targeting2d {
       return m_name;
     }
 
-    public Pose2d getPose() {
-      return m_pose;
+    public Translation2d getTranslation() {
+      return m_translation;
     }
 
     public ArrayList<Integer> getAssociatedAprilTags() {
@@ -71,7 +92,6 @@ public class Targeting2d {
     private final int m_tagId;
     private final Pose2d m_tagPose;
     private final Map<String, Translation2d> m_relativeTargetTranslations = new HashMap<>();
-    private final Map<String, Pose2d> m_relativeTargetPoses = new HashMap<>();
 
     public AprilTagData(int id, Pose2d tagPose) {
       m_tagId = id;
@@ -87,17 +107,12 @@ public class Targeting2d {
     }
 
     public void addRelativeTarget(Target2d target) {
-      var transform = target.getPose().minus(getPose());
-      m_relativeTargetTranslations.put(target.getName(), transform.getTranslation());
-      m_relativeTargetPoses.put(target.getName(), getPose().plus(transform));
+      m_relativeTargetTranslations.put(
+          target.getName(), target.getTranslation().minus(getPose().getTranslation()));
     }
 
     public Optional<Translation2d> getRelativeTargetTranslation(String targetName) {
       return Optional.ofNullable(m_relativeTargetTranslations.get(targetName));
-    }
-
-    public Optional<Pose2d> getRelativeTargetPose(String targetName) {
-      return Optional.ofNullable(m_relativeTargetPoses.get(targetName));
     }
   }
 }
