@@ -37,9 +37,9 @@ import java.util.Map;
 public final class Constants {
   public class SHOOTERMOTORS {
     public static final double kP =
-        5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
-    public static final double kV = 10.0;
-    public static final double kS = 0.02; // TODO: Calculate kS (hooo boy that's gonna be fun,
+        4.8; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+    public static final double kV = 10.2;
+    public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
@@ -266,7 +266,7 @@ public final class Constants {
 
       public enum INTAKESPEED {
         ZERO(0),
-        INTAKING(0.4),
+        INTAKING(0.6),
         HELPSOMETHINGSSTUCK(-0.2);
 
         private final double value;

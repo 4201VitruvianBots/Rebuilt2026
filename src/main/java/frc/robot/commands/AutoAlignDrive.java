@@ -22,10 +22,9 @@ import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
-  private final Vision m_vision;
   Translation2d m_goal = new Translation2d();
 
-  public static final double kTeleP_Theta = 10.0;
+  public static final double kTeleP_Theta = 1.0;
   public static final double kTeleI_Theta = 0.0;
   public static final double kTeleD_Theta = 0.0;
 
@@ -37,11 +36,10 @@ public class AutoAlignDrive extends Command {
 
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
-      CommandSwerveDrivetrain commandSwerveDrivetrain, Vision vision,
+      CommandSwerveDrivetrain commandSwerveDrivetrain,
       DoubleSupplier throttleInput,
       DoubleSupplier turnInput) {
     m_swerveDrivetrain = commandSwerveDrivetrain;
-    m_vision = vision;
     m_throttleInput = throttleInput;
     m_turnInput = turnInput;
     m_PidController.setTolerance(Units.degreesToRadians(2));

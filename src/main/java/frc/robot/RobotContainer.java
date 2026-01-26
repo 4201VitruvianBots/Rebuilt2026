@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -34,7 +33,6 @@ import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
 import frc.robot.generated.AlphaBotConstants;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
@@ -153,9 +151,9 @@ public class RobotContainer {
     if (m_swerveDrive != null && m_vision != null && m_swerveDrive != null && m_shooterRollers != null){
       m_driverController
         .rightBumper()
-        .whileTrue(new ParallelCommandGroup(
+        .toggleOnTrue(new ParallelCommandGroup(
             new AutoAlignDrive(
-                m_swerveDrive, m_vision,
+                m_swerveDrive,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()), new Shoot(m_swerveDrive,
                   m_shooterRollers)));
@@ -173,12 +171,12 @@ public class RobotContainer {
       m_driverController.a().whileTrue(new ShootManualFlywheel(m_shooterRollers));
     }
 
-    if (m_intake != null) {
-      m_driverController.leftBumper().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+    if (m_uptake != null) {
+      m_driverController.leftBumper().whileTrue(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING));
     }
 
-    if (m_uptake != null) {
-      m_driverController.y().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING)));
+    if (m_uptake != null && m_indexer != null) {
+      m_driverController.y().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING), new RunIntake(m_intake, INTAKESPEED.INTAKING)));
     }
 
     if (m_indexer != null){
@@ -188,7 +186,6 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
-
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
   }

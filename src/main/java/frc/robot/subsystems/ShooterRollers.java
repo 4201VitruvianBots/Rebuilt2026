@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -52,7 +53,7 @@ public class ShooterRollers extends SubsystemBase {
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
-  private final VoltageOut m_VoltageOut = new VoltageOut(0).withEnableFOC(true);
+  private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0);
   private AngularVelocity m_rpmSetpoint = ManualRPM.IDLE.getRPM();
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
@@ -126,8 +127,8 @@ public class ShooterRollers extends SubsystemBase {
         m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
   }
 
-  public void setVoltageOutputFOC(Voltage voltage) {
-    m_motor1.setControl(m_VoltageOut.withOutput(voltage.abs(Volts)));
+  public void setTorqueCurrentOutputFOC(Voltage voltage) {
+    m_motor1.setControl(m_TorqueCurrentFOC.withOutput(voltage.abs(Volts)));
   }
 
   @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
@@ -154,7 +155,7 @@ public class ShooterRollers extends SubsystemBase {
               null // Max time before automatically ending the routine
               ),
           new SysIdRoutine.Mechanism(
-              this::setVoltageOutputFOC, // Set voltage of mechanism
+              this::setTorqueCurrentOutputFOC, // Set voltage of mechanism
               this::sysIDLogMotors,
               this));
 

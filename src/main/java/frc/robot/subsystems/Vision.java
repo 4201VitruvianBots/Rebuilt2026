@@ -28,7 +28,7 @@ import frc.team4201.lib.vision.LimelightHelpers;
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
   private FieldSim m_fieldSim;
-  private Translation2d m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
+  private Translation2d m_goal;
 
   // TODO: Re-add this
   //   private LimelightSim visionSim;
@@ -42,9 +42,6 @@ public class Vision extends SubsystemBase {
   private final Pose2d[] robotToTarget = {Pose2d.kZero, Pose2d.kZero};
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
-  private boolean isUpdatingOnTarget = false;
-  private boolean isAligned = false;
-  private boolean isReadyToShoot = false;
   // NetworkTables publisher setup
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable table = inst.getTable("LimelightPoseEstimate");
@@ -59,6 +56,7 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
+    m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
     registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
@@ -186,7 +184,7 @@ public class Vision extends SubsystemBase {
       if (!limelightMeasurement.isMegaTag2) {
         // Filter out bad AprilTag vision estimates for MegaTag1
         // TODO: Check 1 tag from center?
-        if (limelightMeasurement.tagCount < 1) {
+        if (limelightMeasurement.tagCount < 2) {
           return false;
         }
 
