@@ -35,23 +35,29 @@ public class Climb extends Command {
   @Override
   public void execute() {
     if (m_climber.getStatorCurrent().in(Amps) < CLIMBER.kHoldingRobotThreshold) {
+      m_climber.setPIDSlot(0);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
           CLIMBER.motionMagicCruiseVelocitynoRobot,
           CLIMBER.motionMagicAccelerationnoRobot,
           0.0);
+      System.out.println("No Robot");
     } else {
+      m_climber.setPIDSlot(1);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
           CLIMBER.motionMagicCruiseVelocityRobot,
           CLIMBER.motionMagicAccelerationRobot,
           0.0);
+      System.out.println("With Robot");
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_climber.holdClimber();
+  }
 
   // Returns true when the command should end.
   @Override

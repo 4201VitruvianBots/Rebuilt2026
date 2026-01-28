@@ -219,23 +219,24 @@ public final class Constants {
     public static double kAnoRobot =
         1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
     public static double kPnoRobot =
-        1.0; // Placeholder. Output per unit of error in position (output/rotation).
+        2000.0; // Placeholder. Output per unit of error in position (output/rotation).
     public static double kDnoRobot =
         1.0; // Placeholder. Output per unit of error in velocity (output/rps).
-    public static double kGnoRobot = 1.0;
+    public static double kGnoRobot = 5.0;
     public static double kS = 1.0;
 
     public static double kVRobot = 1.0; // For lifting the robot as well.
     public static double kARobot = 1.0;
-    public static double kPRobot = 1.0;
+    public static double kPRobot = 2000.0;
     public static double kDRobot = 1.0;
-    public static double kGRobot = 1.0;
+    public static double kGRobot = 5.0;
 
-    public static final double gearRatio = 1.0 / 27.0; // Climber Gear ratio.
-    public static final Distance drumRotationsToMeters =
-        Meters.of(
-            1.0); // TODO: CHANGE THIS LATER THIS MAKES NO SENSE, CONSULT THE MENTORS ON HOW YOU
-    // CALCULATE THIS
+    public static final double gearRatio = 27.0 / 1.0; // Climber Gear ratio.
+    public static final Distance kClimberDrumDiameter =
+        Inches.of(
+            2.2557); // TODO: Find what this year's climber constants are compared to last year's
+    // elevator. It should just be the gear ratio that is different from last year.
+    public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
 
     public static double motionMagicCruiseVelocitynoRobot = 20; // Placeholder.
     public static double motionMagicAccelerationnoRobot = 30; // Placeholder.
@@ -248,14 +249,10 @@ public final class Constants {
     public static final double peakReverseOutput = -0.5; // Placeholder.
 
     public static final double kHoldingRobotThreshold =
-        40.0; // Amount of current you must be measuring to be sure that you are carrying a robot
+        60.0; // Amount of current you must be measuring to be sure that you are carrying a robot
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
     public static Mass kCarriageMass = Pound.of(15); // TODO: Change this later.
-    /* Carriage mass will be the weight that the "carriage,"" in this case climber, is holding.
-    It will be dynamic, because you're lifting the weight of the elevator,
-    but you also might be lifting the weight of the robot. */
-    public static final Distance kClimberDrumDiameter = Inches.of(2.2557); // Placeholder.
 
     public enum CLIMBER_SETPOINT {
       START_POSITION(Inches.of(0.0)),

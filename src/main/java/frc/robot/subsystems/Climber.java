@@ -36,10 +36,11 @@ public class Climber extends SubsystemBase {
   private final DynamicMotionMagicVoltage m_request =
       new DynamicMotionMagicVoltage(
               0.0, CLIMBER.motionMagicCruiseVelocitynoRobot, CLIMBER.motionMagicAccelerationnoRobot)
-          .withEnableFOC(true);
+          .withEnableFOC(true)
+          .withSlot(0);
 
   // The position it's trying to reach and stabilise at.
-  private Distance m_desiredPosition = Inches.of(0);
+  private Distance m_desiredPosition = Inches.of(0.0);
 
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode =
@@ -61,7 +62,7 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   public Climber() {
-    // configNoRoboturing the motor for the elevator:
+    // configuring the motor for the elevator:
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kV = CLIMBER.kVnoRobot;
     config.Slot0.kA = CLIMBER.kAnoRobot;
@@ -69,6 +70,7 @@ public class Climber extends SubsystemBase {
     config.Slot0.kD = CLIMBER.kDnoRobot;
     config.Slot0.kG = CLIMBER.kGnoRobot;
     config.Slot0.kS = CLIMBER.kS;
+
     config.Slot1.kV = CLIMBER.kVRobot;
     config.Slot1.kA = CLIMBER.kARobot;
     config.Slot1.kP = CLIMBER.kPRobot;
@@ -105,7 +107,7 @@ public class Climber extends SubsystemBase {
 
   @Logged(name = "Height Meters", importance = Logged.Importance.DEBUG)
   public Distance getHeight() {
-    return CLIMBER.drumRotationsToMeters.times(
+    return CLIMBER.drumRotationsToDistance.times(
         m_climberMotor.getPosition().clone().refresh().getValue().magnitude());
   }
 
@@ -125,7 +127,12 @@ public class Climber extends SubsystemBase {
                 CLIMBER.upperLimit.in(Meters)));
     m_climberMotor.setControl(
         m_request.withPosition(
-            m_desiredPosition.in(Meters) / CLIMBER.drumRotationsToMeters.in(Meters)));
+            m_desiredPosition.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters)));
+    System.out.println(m_desiredPosition.in(Inches));
+  }
+
+  public void setPIDSlot(int slot) {
+    m_request.Slot = slot;
   }
 
   public Current getStatorCurrent() {
@@ -155,10 +162,10 @@ public class Climber extends SubsystemBase {
     m_motorSimState.setRawRotorPosition(
         m_ClimberSim.getPositionMeters()
             * CLIMBER.gearRatio
-            / CLIMBER.drumRotationsToMeters.in(Meters));
+            / CLIMBER.drumRotationsToDistance.in(Meters));
     m_motorSimState.setRotorVelocity(
         m_ClimberSim.getVelocityMetersPerSecond()
             * CLIMBER.gearRatio
-            / CLIMBER.drumRotationsToMeters.in(Meters));
+            / CLIMBER.drumRotationsToDistance.in(Meters));
   }
 }

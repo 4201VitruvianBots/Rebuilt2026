@@ -17,16 +17,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.CLIMBER.CLIMBER_SETPOINT;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
-import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
+import frc.robot.commands.Climb;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.RunUptake;
-import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -57,6 +57,9 @@ public class RobotContainer {
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_Uptake = new Uptake();
+
+  @Logged(name = "Climber", importance = Logged.Importance.INFO)
+  private Climber m_Climber = new Climber();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
@@ -119,17 +122,17 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    if (m_shooterRollers != null && m_shooterHood != null) {
-      m_driverController
-          .a()
-          .whileTrue(
-              new Shoot(
-                  m_shooterRollers,
-                  m_shooterHood,
-                  ShooterVelocity.HIGH,
-                  HoodAngle.CLOSE.getAngle()));
-    }
-    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    // if (m_shooterRollers != null && m_shooterHood != null) {
+    //   m_driverController
+    //       .a()
+    //       .whileTrue(
+    //           new Shoot(
+    //               m_shooterRollers,
+    //               m_shooterHood,
+    //               ShooterVelocity.HIGH,
+    //               HoodAngle.CLOSE.getAngle()));
+    // }
+    m_driverController.a().whileTrue(new Climb(m_Climber, CLIMBER_SETPOINT.LEVEL_ONE));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
     m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
     m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
