@@ -215,27 +215,28 @@ public final class Constants {
 
     // Config for Motor. TODO: Change placeholder values later.
     public static double kVnoRobot =
-        1.0; // Placeholder. Output per unit of target velocity (output/rps).
+        0.0; // Placeholder. Output per unit of target velocity (output/rps).
     public static double kAnoRobot =
-        1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
+        0.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
     public static double kPnoRobot =
-        2000.0; // Placeholder. Output per unit of error in position (output/rotation).
+        200.0; // Placeholder. Output per unit of error in position (output/rotation).
     public static double kDnoRobot =
-        1.0; // Placeholder. Output per unit of error in velocity (output/rps).
+        0.0; // Placeholder. Output per unit of error in velocity (output/rps).
     public static double kGnoRobot = 5.0;
     public static double kS = 1.0;
 
-    public static double kVRobot = 1.0; // For lifting the robot as well.
-    public static double kARobot = 1.0;
-    public static double kPRobot = 2000.0;
-    public static double kDRobot = 1.0;
+    public static double kVRobot = 0.0; // For lifting the robot as well.
+    public static double kARobot = 0.0;
+    public static double kPRobot = 150.0;
+    public static double kDRobot = 0.0;
     public static double kGRobot = 5.0;
-    public static double kFRobot = 0.0; // This needs to be here because of the friction of the carriage... meaning the whole robot
+ // This needs to be here because of the friction of the carriage... meaning the whole
+    // robot
 
-    public static final double gearRatio = 27.0 / 1.0; // Climber Gear ratio.
+    public static final double gearRatio = 43.2 / 1.0; // Climber Gear ratio.
     public static final Distance kClimberDrumDiameter =
         Inches.of(
-            2.2557); // TODO: Find what this year's climber constants are compared to last year's
+            2.211024); // TODO: Find what this year's climber constants are compared to last year's
     // elevator. It should just be the gear ratio that is different from last year.
     public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
 
@@ -251,7 +252,7 @@ public final class Constants {
     public static final double peakReverseOutput = -0.5; // Placeholder.
 
     public static final double kHoldingRobotThreshold =
-        60.0; // Amount of current you must be measuring to be sure that you are carrying a robot
+        20.0; // Amount of current you must be measuring to be sure that you are carrying a robot
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
     public static Mass kUnweightedCarriageMass = Pound.of(15); // TODO: Change this later.
@@ -260,8 +261,7 @@ public final class Constants {
     public enum CLIMBER_SETPOINT {
       START_POSITION(Inches.of(0.0)),
       LEVEL_ONE(Inches.of(21)),
-      LEVEL_TWO(Inches.of(35)),
-      LEVEL_THREE(Inches.of(7.25));
+      LEVEL_TWO_AND_THREE(Inches.of(17));
 
       private final Distance setpoint;
 

@@ -19,6 +19,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -41,11 +42,14 @@ public class Climber extends SubsystemBase {
           .withSlot(0);
 
   // The position it's trying to reach and stabilise at.
+  @Logged(name = "Desired Position in Inches", importance = Importance.INFO)
   private Distance m_desiredPosition = Inches.of(0.0);
 
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Coast: you let go, gravity lets it fall. Brake: locks it in place.
+  
+  private MedianFilter currentFilter = new MedianFilter(20);
 
   // Climber Sim State:
   // Simulation classes help us simulate what's going on, including gravity.
@@ -58,7 +62,7 @@ public class Climber extends SubsystemBase {
           CLIMBER.lowerLimit.in(Meters),
           CLIMBER.upperLimit.in(Meters),
           true,
-          1);
+          0);
 
   private final ElevatorSim m_climberWeightedSim =
       new ElevatorSim(
@@ -69,8 +73,8 @@ public class Climber extends SubsystemBase {
           CLIMBER.lowerLimit.in(Meters),
           CLIMBER.upperLimit.in(Meters),
           true,
-          1);
-  
+          0);
+
   private final TalonFXSimState m_motorSimState;
 
   /** Creates a new Climber. */
@@ -79,18 +83,18 @@ public class Climber extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     // Climbing No Robot PID Gains
     config.Slot0.kP = CLIMBER.kPnoRobot;
-    config.Slot0.kD = CLIMBER.kDnoRobot;
-    config.Slot0.kV = CLIMBER.kVnoRobot;
-    config.Slot0.kA = CLIMBER.kAnoRobot;
-    config.Slot0.kG = CLIMBER.kGnoRobot;
+    // config.Slot0.kD = CLIMBER.kDnoRobot;
+    // config.Slot0.kV = CLIMBER.kVnoRobot;
+    // config.Slot0.kA = CLIMBER.kAnoRobot;
+    // config.Slot0.kG = CLIMBER.kGnoRobot;
     config.Slot0.kS = CLIMBER.kS;
 
     // Climbing Robot PID Gains
     config.Slot1.kP = CLIMBER.kPRobot;
-    config.Slot1.kD = CLIMBER.kDRobot;
-    config.Slot1.kV = CLIMBER.kVRobot;
-    config.Slot1.kA = CLIMBER.kARobot;
-    config.Slot1.kS = CLIMBER.kS;
+    // config.Slot1.kD = CLIMBER.kDRobot;
+    // config.Slot1.kV = CLIMBER.kVRobot;
+    // config.Slot1.kA = CLIMBER.kARobot;
+    // config.Slot1.kS = CLIMBER.kS;
     config.Slot1.kG = CLIMBER.kGRobot;
 
     config.Feedback.SensorToMechanismRatio =
@@ -150,37 +154,41 @@ public class Climber extends SubsystemBase {
     m_request.Slot = slot;
   }
 
+  @Logged(name = "Is in Holding Robot Mode?", importance = Importance.DEBUG)
+  public boolean isInHoldingRobotMode(){
+    return m_request.Slot == 1;
+  }
+
   public Current getStatorCurrent() {
     return m_climberMotor.getStatorCurrent().clone().refresh().getValue();
   }
 
-  public boolean isHoldingRobot(){
-    return m_climberMotor.getStatorCurrent().clone().refresh().getValue().in(Amps) < CLIMBER.kHoldingRobotThreshold;
+  @Logged(name = "Is Holding Robot", importance = Importance.DEBUG)
+  public boolean isHoldingRobot() {
+    return true;
+    // currentFilter.calculate(getStatorCurrent().in(Amps)) < CLIMBER.kHoldingRobotThreshold;
   }
 
   public void holdClimber() {
     if (isHoldingRobot()) {
       setDesiredPositionAndMotionMagicConfigs(
-      getHeight(),
-      CLIMBER.motionMagicCruiseVelocityRobot,
-      CLIMBER.motionMagicAccelerationRobot,
-      0.0);
+          getHeight(),
+          CLIMBER.motionMagicCruiseVelocityRobot,
+          CLIMBER.motionMagicAccelerationRobot,
+          0.0);
       setPIDSlot(1);
     } else {
       setDesiredPositionAndMotionMagicConfigs(
-      getHeight(),
-      CLIMBER.motionMagicCruiseVelocityNoRobot,
-      CLIMBER.motionMagicAccelerationNoRobot,
-      0.0);
+          getHeight(),
+          CLIMBER.motionMagicCruiseVelocityNoRobot,
+          CLIMBER.motionMagicAccelerationNoRobot,
+          0.0);
       setPIDSlot(0);
     }
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
+  public void periodic() {}
   @Override
   public void simulationPeriodic() {
     m_motorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
@@ -203,13 +211,13 @@ public class Climber extends SubsystemBase {
       m_climberUnweightedSim.update(0.020);
 
       m_motorSimState.setRawRotorPosition(
-        m_climberUnweightedSim.getPositionMeters()
-            * CLIMBER.gearRatio
-            / CLIMBER.drumRotationsToDistance.in(Meters));
+          m_climberUnweightedSim.getPositionMeters()
+              * CLIMBER.gearRatio
+              / CLIMBER.drumRotationsToDistance.in(Meters));
       m_motorSimState.setRotorVelocity(
-        m_climberUnweightedSim.getVelocityMetersPerSecond()
-            * CLIMBER.gearRatio
-            / CLIMBER.drumRotationsToDistance.in(Meters));
+          m_climberUnweightedSim.getVelocityMetersPerSecond()
+              * CLIMBER.gearRatio
+              / CLIMBER.drumRotationsToDistance.in(Meters));
     }
   }
 }
