@@ -7,7 +7,9 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -230,7 +232,7 @@ public final class Constants {
     public static double kPRobot = 150.0;
     public static double kDRobot = 0.0;
     public static double kGRobot = 5.0;
- // This needs to be here because of the friction of the carriage... meaning the whole
+    // This needs to be here because of the friction of the carriage... meaning the whole
     // robot
 
     public static final double gearRatio = 43.2 / 1.0; // Climber Gear ratio.
@@ -239,8 +241,9 @@ public final class Constants {
             2.211024); // TODO: Find what this year's climber constants are compared to last year's
     // elevator. It should just be the gear ratio that is different from last year.
     public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
+    public static final Distance cruiseVelocityInches = Inches.of(14.57);
 
-    public static double motionMagicCruiseVelocityNoRobot = 20; // Placeholder.
+    public static double motionMagicCruiseVelocityNoRobot = cruiseVelocityInches.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters); // Placeholder.
     public static double motionMagicAccelerationNoRobot = 30; // Placeholder.
     public static double motionMagicJerkNoRobot = 0.0; // Placeholder.
 
