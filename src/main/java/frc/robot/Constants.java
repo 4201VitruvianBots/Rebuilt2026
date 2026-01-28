@@ -237,11 +237,18 @@ public final class Constants {
             1.0); // TODO: CHANGE THIS LATER THIS MAKES NO SENSE, CONSULT THE MENTORS ON HOW YOU
     // CALCULATE THIS
 
-    public static double motionMagicCruiseVelocity = 20; // Placeholder.
-    public static double motionMagicAcceleration = 30; // Placeholder.
+    public static double motionMagicCruiseVelocitynoRobot = 20; // Placeholder.
+    public static double motionMagicAccelerationnoRobot = 30; // Placeholder.
+    public static double motionMagicJerknoRobot = 0.0; // Placeholder.
+    public static double motionMagicCruiseVelocityRobot = 20; // Placeholder.
+    public static double motionMagicAccelerationRobot = 30;
+    public static double motionMagicJerkRobot = 0.0; // Placeholder.
 
     public static final double peakForwardOutput = 1.00; // Placeholder.
     public static final double peakReverseOutput = -0.5; // Placeholder.
+
+    public static final double kHoldingRobotThreshold =
+        40.0; // Amount of current you must be measuring to be sure that you are carrying a robot
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
     public static Mass kCarriageMass = Pound.of(15); // TODO: Change this later.
@@ -249,6 +256,23 @@ public final class Constants {
     It will be dynamic, because you're lifting the weight of the elevator,
     but you also might be lifting the weight of the robot. */
     public static final Distance kClimberDrumDiameter = Inches.of(2.2557); // Placeholder.
+
+    public enum CLIMBER_SETPOINT {
+      START_POSITION(Inches.of(0.0)),
+      LEVEL_ONE(Inches.of(21)),
+      LEVEL_TWO(Inches.of(35)),
+      LEVEL_THREE(Inches.of(7.25));
+
+      private final Distance setpoint;
+
+      CLIMBER_SETPOINT(Distance setpoint) {
+        this.setpoint = setpoint;
+      }
+
+      public Distance getSetpoint() {
+        return setpoint;
+      }
+    }
   }
 
   public class ROBOT {

@@ -5,8 +5,11 @@
 // Imports:
 package frc.robot.commands;
 
-import edu.wpi.first.units.measure.Voltage;
+import static edu.wpi.first.units.Units.Amps;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.CLIMBER;
+import frc.robot.Constants.CLIMBER.CLIMBER_SETPOINT;
 import frc.robot.subsystems.Climber;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -14,8 +17,11 @@ public class Climb extends Command {
   // Creates a new Climb Command
   private final Climber m_climber;
 
-  public Climb(Climber climber, Voltage voltage) {
+  private CLIMBER_SETPOINT m_setpoint;
+
+  public Climb(Climber climber, CLIMBER_SETPOINT setpoint) {
     m_climber = climber;
+    m_setpoint = setpoint;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_climber);
@@ -27,7 +33,21 @@ public class Climb extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (m_climber.getStatorCurrent().in(Amps) < CLIMBER.kHoldingRobotThreshold) {
+      m_climber.setDesiredPositionAndMotionMagicConfigs(
+          m_setpoint.getSetpoint(),
+          CLIMBER.motionMagicCruiseVelocitynoRobot,
+          CLIMBER.motionMagicAccelerationnoRobot,
+          0.0);
+    } else {
+      m_climber.setDesiredPositionAndMotionMagicConfigs(
+          m_setpoint.getSetpoint(),
+          CLIMBER.motionMagicCruiseVelocityRobot,
+          CLIMBER.motionMagicAccelerationRobot,
+          0.0);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
