@@ -354,7 +354,7 @@ public final class Constants {
   }
   
   public class SIM {
-    // For some reason, the line width value needs to be 12 times larger in order to actually match up with the visual thickness of lines in the Mechanism2d
-    public static final DistanceUnit LineWidthInches = derive(Inches).splitInto(12).named("LineWidthInches").symbol("lw in").make();
+    // For some reason, the line width value needs to be 2 times larger (~12 times larger in Glass) in order to actually match up with the visual thickness of lines in the Mechanism2d
+    public static final DistanceUnit LineWidthInches = derive(Inches).splitInto(2).named("LineWidthInches").symbol("lw in").make();
   }
 }
