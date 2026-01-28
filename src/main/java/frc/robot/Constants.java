@@ -230,6 +230,7 @@ public final class Constants {
     public static double kPRobot = 2000.0;
     public static double kDRobot = 1.0;
     public static double kGRobot = 5.0;
+    public static double kFRobot = 0.0; // This needs to be here because of the friction of the carriage... meaning the whole robot
 
     public static final double gearRatio = 27.0 / 1.0; // Climber Gear ratio.
     public static final Distance kClimberDrumDiameter =
@@ -238,9 +239,10 @@ public final class Constants {
     // elevator. It should just be the gear ratio that is different from last year.
     public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
 
-    public static double motionMagicCruiseVelocitynoRobot = 20; // Placeholder.
-    public static double motionMagicAccelerationnoRobot = 30; // Placeholder.
-    public static double motionMagicJerknoRobot = 0.0; // Placeholder.
+    public static double motionMagicCruiseVelocityNoRobot = 20; // Placeholder.
+    public static double motionMagicAccelerationNoRobot = 30; // Placeholder.
+    public static double motionMagicJerkNoRobot = 0.0; // Placeholder.
+
     public static double motionMagicCruiseVelocityRobot = 20; // Placeholder.
     public static double motionMagicAccelerationRobot = 30;
     public static double motionMagicJerkRobot = 0.0; // Placeholder.
@@ -252,7 +254,8 @@ public final class Constants {
         60.0; // Amount of current you must be measuring to be sure that you are carrying a robot
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
-    public static Mass kCarriageMass = Pound.of(15); // TODO: Change this later.
+    public static Mass kUnweightedCarriageMass = Pound.of(15); // TODO: Change this later.
+    public static Mass kWeightedCarriageMass = Pound.of(150); // TODO: Change this later.
 
     public enum CLIMBER_SETPOINT {
       START_POSITION(Inches.of(0.0)),

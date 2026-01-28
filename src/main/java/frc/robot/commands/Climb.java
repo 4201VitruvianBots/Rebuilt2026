@@ -34,12 +34,12 @@ public class Climb extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_climber.getStatorCurrent().in(Amps) < CLIMBER.kHoldingRobotThreshold) {
+    if (m_climber.isHoldingRobot()) {
       m_climber.setPIDSlot(0);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
-          CLIMBER.motionMagicCruiseVelocitynoRobot,
-          CLIMBER.motionMagicAccelerationnoRobot,
+          CLIMBER.motionMagicCruiseVelocityNoRobot,
+          CLIMBER.motionMagicAccelerationNoRobot,
           0.0);
       System.out.println("No Robot");
     } else {
