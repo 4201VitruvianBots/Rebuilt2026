@@ -38,7 +38,7 @@ public class Robot2d extends SubsystemBase {
   private final Mechanism2d m_robot = new Mechanism2d(robotCanvasX.in(Meters), robotCanvasY.in(Meters));
   
   private final Distance chassisRootX = Pixels.of(220);
-  private final Distance chassisRootY = Pixels.of(156);
+  private final Distance chassisRootY = Pixels.of(121);
   
   // Includes bumper width
   private final MechanismRoot2d m_chassisRoot =
