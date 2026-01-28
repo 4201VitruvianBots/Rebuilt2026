@@ -38,7 +38,7 @@ public class Elevator2d implements AutoCloseable {
     m_elevatorSuperStructure =
         new MechanismLigament2d(
             m_config.m_name,
-            m_config.m_superStructureOffset.in(Inches),
+            m_config.m_superStructureOffset.in(Meters),
             m_config.m_angleOffset.in(Degrees),
             m_config.m_lineWidth,
             m_config.m_color);
@@ -47,7 +47,7 @@ public class Elevator2d implements AutoCloseable {
       m_elevatorStages[i] =
           new MechanismLigament2d(
               m_config.m_name + "_Stage" + i,
-              m_config.m_initialLength.in(Inches),
+              m_config.m_initialLength.in(Meters),
               0,
               m_config.m_lineWidth,
               m_config.m_color);
@@ -75,7 +75,7 @@ public class Elevator2d implements AutoCloseable {
       totalDistance = totalDistance.plus(m_config.m_stageMaxLengths[i]);
     }
     var defaultMechanism2dDimensions =
-        new Translation2d(totalDistance.in(Inches), totalDistance.in(Inches)).times(1.2);
+        new Translation2d(totalDistance.in(Meters), totalDistance.in(Meters)).times(1.2);
     generateSubDisplay(defaultMechanism2dDimensions);
   }
 
@@ -203,7 +203,7 @@ public class Elevator2d implements AutoCloseable {
    *     Elevator2d} for visualization.
    */
   public void update(Distance height, LinearVelocity velocity) {
-    m_elevatorSuperStructure.setLength(m_config.m_superStructureOffset.in(Inches));
+    m_elevatorSuperStructure.setLength(m_config.m_superStructureOffset.in(Meters));
     m_elevatorSuperStructure.setAngle(m_config.m_angleOffset.in(Degrees));
 
     switch (m_config.m_type) {
@@ -211,10 +211,10 @@ public class Elevator2d implements AutoCloseable {
         var subHeight = height.copy();
         for (int i = 0; i < m_config.m_numberOfStages; i++) {
           if (m_config.m_stageMaxLengths[i].lte(subHeight)) {
-            m_elevatorStages[i].setLength(m_config.m_stageMaxLengths[i].in(Inches));
+            m_elevatorStages[i].setLength(m_config.m_stageMaxLengths[i].in(Meters));
             subHeight.minus(m_config.m_stageMaxLengths[i]);
           } else {
-            m_elevatorStages[i].setLength(subHeight.in(Inches));
+            m_elevatorStages[i].setLength(subHeight.in(Meters));
             break;
           }
         }
@@ -222,7 +222,7 @@ public class Elevator2d implements AutoCloseable {
       case CASCADE:
       default:
         for (int i = 0; i < m_config.m_numberOfStages; i++) {
-          m_elevatorStages[i].setLength(height.div(m_config.m_numberOfStages).in(Inches));
+          m_elevatorStages[i].setLength(height.div(m_config.m_numberOfStages).in(Meters));
         }
     }
 

@@ -5,6 +5,7 @@
 package frc.team4201.lib.simulation.visualization;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -42,7 +43,7 @@ public class Flywheel2d implements AutoCloseable {
     m_config = config;
     m_flywheel =
         new MechanismLigament2d(
-            m_config.m_name, m_config.m_initialRadius.in(Inches), 0, 3, m_config.m_color);
+            m_config.m_name, m_config.m_initialRadius.in(Meters), 0, 3, m_config.m_color);
     initSides();
 
     if (parentObject != null) {
@@ -58,7 +59,7 @@ public class Flywheel2d implements AutoCloseable {
         m_sides[i] =
             new MechanismLigament2d(
                 m_config.m_name + "_side" + i,
-                m_config.m_initialRadius.in(Inches),
+                m_config.m_initialRadius.in(Meters),
                 112.5,
                 m_config.m_lineWidth,
                 m_config.m_color);
@@ -67,7 +68,7 @@ public class Flywheel2d implements AutoCloseable {
         m_sides[i] =
             new MechanismLigament2d(
                 m_config.m_name + "_side" + i,
-                m_config.m_initialRadius.in(Inches),
+                m_config.m_initialRadius.in(Meters),
                 45,
                 m_config.m_lineWidth,
                 m_config.m_color);
@@ -82,7 +83,7 @@ public class Flywheel2d implements AutoCloseable {
    */
   public void generateSubDisplay() {
     var defaultMechanism2dDimensions =
-        new Translation2d(m_config.m_initialRadius.in(Inches), m_config.m_initialRadius.in(Inches))
+        new Translation2d(m_config.m_initialRadius.in(Meters), m_config.m_initialRadius.in(Meters))
             .times(1.2);
     generateSubDisplay(defaultMechanism2dDimensions);
   }

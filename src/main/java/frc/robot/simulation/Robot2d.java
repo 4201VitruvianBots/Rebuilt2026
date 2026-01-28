@@ -6,6 +6,7 @@ package frc.robot.simulation;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.derive;
 import static frc.robot.Constants.SIM.LineWidthInches;
 
@@ -34,24 +35,24 @@ public class Robot2d extends SubsystemBase {
   private final Distance robotCanvasX = Pixels.of(1170);
   private final Distance robotCanvasY = Pixels.of(1170);
   
-  private final Mechanism2d m_robot = new Mechanism2d(robotCanvasX.in(Inches), robotCanvasY.in(Inches));
+  private final Mechanism2d m_robot = new Mechanism2d(robotCanvasX.in(Meters), robotCanvasY.in(Meters));
   
   private final Distance chassisRootX = Pixels.of(220);
   private final Distance chassisRootY = Pixels.of(156);
   
   // Includes bumper width
   private final MechanismRoot2d m_chassisRoot =
-    m_robot.getRoot("chassisRoot", chassisRootX.in(Inches), chassisRootY.in(Inches));
+    m_robot.getRoot("chassisRoot", chassisRootX.in(Meters), chassisRootY.in(Meters));
   private final MechanismLigament2d m_chassis = 
     m_chassisRoot.append(new MechanismLigament2d("chassis",
-    Inches.of(30.5).in(Inches), // Full width including bumpers
+    Inches.of(30.5).in(Meters), // Full width including bumpers
  0));
   
   // Intake
   private final MechanismRoot2d m_intakeRoot =
     m_robot.getRoot("intakeRoot", 
-     chassisRootX.plus(Inches.of(10.588)).in(Inches), // Distance from edge of bumper to center of intake pivot
-     chassisRootY.plus(Inches.of(3.5)).in(Inches)); // Intake is ~3.5 inches above center of bumpers
+     chassisRootX.plus(Inches.of(10.588)).in(Meters), // Distance from edge of bumper to center of intake pivot
+     chassisRootY.plus(Inches.of(3.5)).in(Meters)); // Intake is ~3.5 inches above center of bumpers
   private final Arm2d m_intakePivot =
     new Arm2d(new Arm2dConfig(
         "Intake Pivot",
@@ -62,23 +63,23 @@ public class Robot2d extends SubsystemBase {
     m_intakeRoot);
   private final MechanismLigament2d m_intakeSegment1 = 
     m_intakePivot.getLigament().append(new MechanismLigament2d("Intake Segment 1", 
-    Inches.of(2.0).in(Inches),
+    Inches.of(2.0).in(Meters),
     Degrees.of(21).in(Degrees), 
     Inches.of(1.25).in(LineWidthInches), new Color8Bit(255, 255, 255)));
   private final MechanismLigament2d m_intakeSegment2 = 
     m_intakePivot.getLigament().append(new MechanismLigament2d("Intake Segment 2", 
-    Inches.of(8.27).in(Inches),
+    Inches.of(8.27).in(Meters),
     Degrees.of(48.5).in(Degrees), 
     Inches.of(2.679).in(LineWidthInches), new Color8Bit(255, 255, 255)));
     
   // Indexer
   private final MechanismRoot2d m_indexerRoot =
     m_robot.getRoot("indexerRoot",
-     chassisRootX.plus(Inches.of(13.4)).in(Inches), // Distance from edge of bumper to furthest left indexer roller
-     chassisRootY.plus(Inches.of(2.25)).in(Inches)); // Indexer is ~2.25 inches above center of bumpers
+     chassisRootX.plus(Inches.of(13.4)).in(Meters), // Distance from edge of bumper to furthest left indexer roller
+     chassisRootY.plus(Inches.of(2.25)).in(Meters)); // Indexer is ~2.25 inches above center of bumpers
   private final MechanismLigament2d m_indexer =
     m_indexerRoot.append(new MechanismLigament2d("Indexer",
-    Inches.of(9.6).in(Inches), // Length of the indexer from first roller to last roller
+    Inches.of(9.6).in(Meters), // Length of the indexer from first roller to last roller
     170)); // Angle of the indexer relative to the chassis
   
   // Uptake
@@ -88,18 +89,18 @@ public class Robot2d extends SubsystemBase {
   private final Distance uptakeHeight = Inches.of(18.5); // Height of the uptake
   private final MechanismRoot2d m_uptakeRoot =
     m_robot.getRoot("uptakeRoot",
-     uptakeRootX.in(Inches),
-     uptakeRootY.in(Inches));
+     uptakeRootX.in(Meters),
+     uptakeRootY.in(Meters));
   private final MechanismLigament2d m_uptake =
     m_uptakeRoot.append(new MechanismLigament2d("Uptake",
-    uptakeHeight.in(Inches), // Height of the uptake
+    uptakeHeight.in(Meters), // Height of the uptake
     90)); // Straight up
     
   // Flywheel
   private final MechanismRoot2d m_flywheelRoot =
     m_robot.getRoot("flywheelRoot",
-    uptakeRootX.minus(uptakeWidth.div(2)).in(Inches), // Put the flywheel on the top left corner of the uptake
-    uptakeRootY.plus(uptakeHeight).in(Inches));
+    uptakeRootX.minus(uptakeWidth.div(2)).in(Meters), // Put the flywheel on the top left corner of the uptake
+    uptakeRootY.plus(uptakeHeight).in(Meters));
   private final Flywheel2d m_flywheel =
     new Flywheel2d(new Flywheel2dConfig(
         "Flywheel",
@@ -118,8 +119,8 @@ public class Robot2d extends SubsystemBase {
   // Climber
   private final MechanismRoot2d m_climberRoot =
     m_robot.getRoot("climberRoot",
-    uptakeRootX.plus(uptakeWidth).plus(Inches.of(3.35 / 2)).in(Inches), // Put the flywheel on the top left corner of the uptake
-    uptakeRootY.in(Inches));
+    uptakeRootX.plus(uptakeWidth).plus(Inches.of(3.35 / 2)).in(Meters), // Put the flywheel on the top left corner of the uptake
+    uptakeRootY.in(Meters));
   
   // TODO: Add hopper, Vision, LEDs?
   

@@ -40,7 +40,7 @@ public class Arm2d implements AutoCloseable {
     m_arm2d =
         new MechanismLigament2d(
             m_config.m_name,
-            m_config.m_initialLength.in(Inches),
+            m_config.m_initialLength.in(Meters),
             m_config.m_initialAngle.in(Degrees),
             m_config.m_lineWidth,
             m_config.m_color);
@@ -57,7 +57,7 @@ public class Arm2d implements AutoCloseable {
    */
   public void generateSubDisplay() {
     var defaultMechanism2dDimensions =
-        new Translation2d(m_config.m_maxLength.in(Inches), m_config.m_maxLength.in(Inches))
+        new Translation2d(m_config.m_maxLength.in(Meters), m_config.m_maxLength.in(Meters))
             .times(1.2);
     generateSubDisplay(defaultMechanism2dDimensions);
   }
@@ -184,7 +184,7 @@ public class Arm2d implements AutoCloseable {
    * @param length The length of the Arm2d. By default, it will use its initial length.
    */
   public void update(Angle angle, AngularVelocity velocity, Distance length) {
-    m_arm2d.setLength(length.in(Inches));
+    m_arm2d.setLength(length.in(Meters));
     m_arm2d.setAngle(m_config.m_angleOffset.minus(angle).in(Degrees));
 
     // Update the ligament color based on the module's current speed for easier visualization
