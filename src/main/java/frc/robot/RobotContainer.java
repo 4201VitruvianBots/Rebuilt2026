@@ -41,6 +41,8 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.Uptake;
+import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.utils.Telemetry;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -73,8 +75,6 @@ public class RobotContainer {
   private LEDs m_led = new LEDs();
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
-  
-  private final Robot2d m_robotSim = new Robot2d();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -95,6 +95,10 @@ public class RobotContainer {
           .withDeadband(MaxSpeed * 0.1)
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
+  private final Robot2d m_robotSim = new Robot2d();
+  private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
+  private final FieldSim m_fieldSim = new FieldSim();
+
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -104,6 +108,9 @@ public class RobotContainer {
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
+    
+    m_telemetry.registerFieldSim(m_fieldSim);
+    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
   private void initializeSubSystems() {
