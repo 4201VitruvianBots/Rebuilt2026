@@ -33,6 +33,7 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.generated.TunerConstants;
 import frc.robot.simulation.Robot2d;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -57,13 +58,16 @@ public class RobotContainer {
   private ShooterHood m_shooterHood;
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_Indexer;
+  private Indexer m_indexer;
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
-  private Intake m_Intake = new Intake();
+  private Intake m_intake = new Intake();
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
-  private Uptake m_Uptake = new Uptake();
+  private Uptake m_uptake = new Uptake();
+  
+  @Logged(name = "Climber", importance = Logged.Importance.INFO)
+  private Climber m_climber = new Climber();
 
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led = new LEDs();
@@ -105,9 +109,9 @@ public class RobotContainer {
   private void initializeSubSystems() {
     m_shooterFlywheel = new ShooterFlywheel();
     m_shooterHood = new ShooterHood();
-    m_Indexer = new Indexer();
-    m_Intake = new Intake();
-    m_Uptake = new Uptake();
+    m_indexer = new Indexer();
+    m_intake = new Intake();
+    m_uptake = new Uptake();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -128,10 +132,10 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
-    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_Intake, /* m_Climber, */ m_Uptake));
+    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
     
     if (Robot.isSimulation()) {
-      m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_Indexer, m_Intake, m_Uptake);
+      m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);
     }
   }
 
@@ -148,8 +152,8 @@ public class RobotContainer {
     }
     // m_driverController.a().whileTrue(new Shoot(m_ShooterFlywheel, ShooterRPM.HIGH.getRPM()));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
-    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKE_SPEED.INTAKING));
-    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKE_SPEED.UPTAKING));
+    m_driverController.leftBumper().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+    m_driverController.rightBumper().whileTrue(new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING));
   }
 
   private void initAutoChooser() {

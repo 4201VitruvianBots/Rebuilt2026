@@ -4,7 +4,10 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.LED.LED_STATES;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
@@ -15,16 +18,16 @@ public class UpdateLEDs extends Command {
   private final LEDs m_led;
   private final CommandSwerveDrivetrain m_drivetrain;
   private final Intake m_intake; // Used to track intaking state
-  /* private final Climber m_climber; // Used to track climbing state */
+  private final Climber m_climber; // Used to track climbing state
   private final Uptake m_uptake; // Used to track shooting state
 
   /** Creates a new UpdateLEDs. */
   public UpdateLEDs(LEDs led, CommandSwerveDrivetrain drivetrain, Intake intake,
-      /* Climber climber, */ Uptake uptake) {
+      Climber climber, Uptake uptake) {
     m_led = led;
     m_drivetrain = drivetrain;
     m_intake = intake;
-    /* m_climber = climber; */
+    m_climber = climber;
     m_uptake = uptake;
     
     addRequirements(led);

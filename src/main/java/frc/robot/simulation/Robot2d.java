@@ -11,8 +11,6 @@ import static edu.wpi.first.units.Units.derive;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sound.sampled.Line;
-
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
@@ -64,7 +62,17 @@ public class Robot2d extends SubsystemBase {
         Inches.of(10.735) // Length of first segment of intake
     ).withLineWidth(Inches.of(1.465).in(LineWidthInches)), // Width of the intake pivot arm at its thinnest point
     m_intakeRoot);
-  
+  private final MechanismLigament2d m_intakeSegment1 = 
+    m_intakePivot.getLigament().append(new MechanismLigament2d("Intake Segment 1", 
+    Inches.of(2.0).in(Inches),
+    Degrees.of(21).in(Degrees), 
+    Inches.of(1.25).in(LineWidthInches), new Color8Bit(255, 255, 255)));
+  private final MechanismLigament2d m_intakeSegment2 = 
+    m_intakePivot.getLigament().append(new MechanismLigament2d("Intake Segment 2", 
+    Inches.of(8.27).in(Inches),
+    Degrees.of(48.5).in(Degrees), 
+    Inches.of(2.679).in(LineWidthInches), new Color8Bit(255, 255, 255)));
+    
   // Indexer
   private final MechanismRoot2d m_indexerRoot =
     m_robot.getRoot("indexerRoot",
@@ -110,6 +118,18 @@ public class Robot2d extends SubsystemBase {
     ), m_flywheelRoot);
   
   // Climber
+  private final MechanismRoot2d m_climberRoot =
+    m_robot.getRoot("climberRoot",
+    uptakeRootX.plus(uptakeWidth).plus(Inches.of(3.35 / 2)).in(Inches), // Put the flywheel on the top left corner of the uptake
+    uptakeRootY.in(Inches));
+  private final Elevator2d m_climber = 
+    new Elevator2d(new Elevator2dConfig("Climber",
+      new Color8Bit(255, 0, 255), // Magenta color for climber
+      Inches.of(6.0)
+    ).withLineWidth(Inches.of(1.675).in(LineWidthInches))
+    .withSuperStructureOffset(Inches.of(0)) // Idk why I needed to add this
+    .withAngleOffset(Degrees.of(90)), // Straight up
+    m_climberRoot);
   
   // TODO: Add hopper, Vision, LEDs?
   
@@ -129,6 +149,7 @@ public class Robot2d extends SubsystemBase {
       m_intakePivot.generateSubDisplay();
       m_flywheel.generateSubDisplay();
       m_shooterHood.generateSubDisplay();
+      m_climber.generateSubDisplay();
     }
   }
   
