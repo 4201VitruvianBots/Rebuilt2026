@@ -10,12 +10,14 @@ import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.derive;
 
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -349,5 +351,10 @@ public final class Constants {
             return animation;
         }
     }
+  }
+  
+  public class SIM {
+    // For some reason, the line width value needs to be 12 times larger in order to actually match up with the visual thickness of lines in the Mechanism2d
+    public static final DistanceUnit LineWidthInches = derive(Inches).splitInto(12).named("LineWidthInches").symbol("lw in").make();
   }
 }

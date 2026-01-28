@@ -7,6 +7,7 @@ package frc.robot.simulation;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.derive;
+import static frc.robot.Constants.SIM.LineWidthInches;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +30,6 @@ import frc.team4201.lib.simulation.visualization.configs.*;
 public class Robot2d extends SubsystemBase {
   private static final double pixelsPerInch = 631 / 26.5; // Non-curved edge of the drivebase in the image is 26.5 inches long and 631 pixels long
   private static final DistanceUnit Pixels = derive(Units.Inches).splitInto(pixelsPerInch).named("Pixels").symbol("px").make();
-  
-  // For some reason, the line width value needs to be 12 times larger in order to actually match up with the visual thickness of lines in the Mechanism2d
-  private static final DistanceUnit LineWidthInches = derive(Units.Inches).splitInto(12).named("LineWidthInches").symbol("lw in").make();
   
   private final Distance robotCanvasX = Pixels.of(1170);
   private final Distance robotCanvasY = Pixels.of(1170);
@@ -122,14 +120,6 @@ public class Robot2d extends SubsystemBase {
     m_robot.getRoot("climberRoot",
     uptakeRootX.plus(uptakeWidth).plus(Inches.of(3.35 / 2)).in(Inches), // Put the flywheel on the top left corner of the uptake
     uptakeRootY.in(Inches));
-  private final Elevator2d m_climber = 
-    new Elevator2d(new Elevator2dConfig("Climber",
-      new Color8Bit(255, 0, 255), // Magenta color for climber
-      Inches.of(6.0)
-    ).withLineWidth(Inches.of(1.675).in(LineWidthInches))
-    .withSuperStructureOffset(Inches.of(0)) // Idk why I needed to add this
-    .withAngleOffset(Degrees.of(90)), // Straight up
-    m_climberRoot);
   
   // TODO: Add hopper, Vision, LEDs?
   
@@ -149,7 +139,7 @@ public class Robot2d extends SubsystemBase {
       m_intakePivot.generateSubDisplay();
       m_flywheel.generateSubDisplay();
       m_shooterHood.generateSubDisplay();
-      m_climber.generateSubDisplay();
+      // m_climber.generateSubDisplay();
     }
   }
   
