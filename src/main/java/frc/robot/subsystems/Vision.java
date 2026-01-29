@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
@@ -46,7 +47,12 @@ public class Vision extends SubsystemBase {
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable table = inst.getTable("LimelightPoseEstimate");
 
+  public final DoubleSubscriber m_kPAutoAlignSubscriber;
+  public final DoubleSubscriber m_kDAutoAlignSubscriber;
+
   private final DoublePublisher estTimeStamp = table.getDoubleTopic("estTimeStamp").publish();
+  public final DoublePublisher m_kPAutoAlignPublisher;
+  public final DoublePublisher m_kDAutoAlignPublisher;
 
   private final StructPublisher<Pose2d> estPoseLLR =
       table.getStructTopic("estPoseLLR", Pose2d.struct).publish();
@@ -56,13 +62,27 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
-    m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
+    m_goal = Controls.isRedAlliance() ? FIELD.blueHub : FIELD.redHub;
     registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, CAMERA_SERVER.limelightR.toString(), port);
       PortForwarder.add(port + 10, CAMERA_SERVER.limelightL.toString(), port);
     }
+
+    var topickP = NetworkTableInstance.getDefault()
+      .getTable("SmartDashboard") 
+      .getDoubleTopic("kPAutoAlign");
+    var topickD = NetworkTableInstance.getDefault()
+      .getTable("SmartDashboard") 
+      .getDoubleTopic("kDAutoAlign");
+    m_kPAutoAlignSubscriber = topickP.subscribe(7.4);
+    m_kDAutoAlignSubscriber = topickD.subscribe(0.3);
+
+    m_kDAutoAlignPublisher = topickD.publish();
+    m_kDAutoAlignPublisher.set(0.3);
+    m_kPAutoAlignPublisher = topickP.publish();
+    m_kPAutoAlignPublisher.set(7.4);
   }
 
   public void registerSwerveDrive(CommandSwerveDrivetrain swerveDriveTrain) {

@@ -153,7 +153,7 @@ public class RobotContainer {
         .rightBumper()
         .toggleOnTrue(new ParallelCommandGroup(
             new AutoAlignDrive(
-                m_swerveDrive,
+                m_swerveDrive, m_vision,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()), new Shoot(m_swerveDrive,
                   m_shooterRollers)));
@@ -164,7 +164,7 @@ public class RobotContainer {
         .leftBumper()
         .toggleOnTrue(
             new AutoAlignDrive(
-                m_swerveDrive,
+                m_swerveDrive, m_vision,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
     }
@@ -185,8 +185,8 @@ public class RobotContainer {
       m_driverController.y().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING), new RunIntake(m_intake, INTAKESPEED.INTAKING)));
     }
 
-    if (m_indexer != null){
-      m_driverController.b().whileTrue(new Index(m_indexer, INDEXERSPEED.INDEXING));
+    if (m_intake != null){
+      m_driverController.b().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
 
   }

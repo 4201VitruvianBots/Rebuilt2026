@@ -41,9 +41,8 @@ public class Shoot extends Command {
    );
 
     static {
-        distanceToShotMap.put(Inches.of(52.0), new Shot(2800, 0.19));
-        distanceToShotMap.put(Inches.of(149.4), new Shot(2900, 0.40));
-        distanceToShotMap.put(Inches.of(165.5), new Shot(3000, 0.48));
+        distanceToShotMap.put(Meters.of(3.42), new Shot(2800, 0.19));
+        distanceToShotMap.put(Meters.of(1.0), new Shot(2150, 0.40));
     }
   private final ShooterRollers m_shooterRollers;
 

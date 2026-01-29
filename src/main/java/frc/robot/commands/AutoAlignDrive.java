@@ -22,13 +22,14 @@ import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
+  private final Vision m_vision;
   Translation2d m_goal = new Translation2d();
 
-  public static final double kTeleP_Theta = 7.0;
+  private Double kTeleP_Theta = 7.4;
+  private Double kTeleD_Theta = 0.3;
   public static final double kTeleI_Theta = 0.0;
-  public static final double kTeleD_Theta = 0.3;
 
-  private final PIDController m_PidController =
+  private PIDController m_PidController =
       new PIDController(kTeleP_Theta, kTeleI_Theta, kTeleD_Theta);
 
   private final DoubleSupplier m_throttleInput;
@@ -36,12 +37,13 @@ public class AutoAlignDrive extends Command {
 
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
-      CommandSwerveDrivetrain commandSwerveDrivetrain,
+      CommandSwerveDrivetrain commandSwerveDrivetrain, Vision vision,
       DoubleSupplier throttleInput,
       DoubleSupplier turnInput) {
     m_swerveDrivetrain = commandSwerveDrivetrain;
     m_throttleInput = throttleInput;
     m_turnInput = turnInput;
+    m_vision = vision;
     m_PidController.setTolerance(Units.degreesToRadians(2));
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(m_swerveDrivetrain);
@@ -50,6 +52,8 @@ public class AutoAlignDrive extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
+    kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
     m_PidController.reset();
     if (Controls.isBlueAlliance()) {
       m_goal = FIELD.blueAutoHub;
