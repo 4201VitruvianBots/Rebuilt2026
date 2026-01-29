@@ -25,8 +25,8 @@ public class FIELD {
 
   public static final AprilTagFieldLayout aprilTagFieldLayout = wpilibAprilTagLayout;
 
-  public static final Translation2d redHub = new Translation2d(4.625594, 4.034536);
-  public static final Translation2d blueHub = new Translation2d(11.915394, 4.034536);
+  public static final Translation2d blueHub = new Translation2d(4.625594, 4.034536);
+  public static final Translation2d redHub = new Translation2d(11.915394, 4.034536);
 
   public static final Translation2d redAutoHub = redHub;
   public static final Translation2d blueAutoHub = blueHub;

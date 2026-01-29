@@ -55,7 +55,7 @@ public class Indexer extends SubsystemBase {
     config.MotorOutput.PeakReverseDutyCycle = INDEXERMOTORS.peakReverseOutput;
     config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
 
-    config.CurrentLimits.StatorCurrentLimit = 40;
+    config.CurrentLimits.StatorCurrentLimit = 60;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
 

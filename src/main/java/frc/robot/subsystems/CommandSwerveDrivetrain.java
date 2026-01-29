@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SWERVE;
-import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.generated.AlphaBotConstants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.CtreUtils;
 import frc.team4201.lib.utils.ModuleMap;

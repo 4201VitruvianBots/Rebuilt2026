@@ -148,7 +148,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_swerveDrive != null && m_shooterRollers != null){
+    if (m_swerveDrive != null && m_vision != null && m_shooterRollers != null){
       m_driverController
         .rightBumper()
         .toggleOnTrue(new ParallelCommandGroup(
@@ -157,6 +157,16 @@ public class RobotContainer {
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()), new Shoot(m_swerveDrive,
                   m_shooterRollers)));
+    }
+
+    if (m_swerveDrive != null && m_vision != null){
+      m_driverController
+        .leftBumper()
+        .toggleOnTrue(
+            new AutoAlignDrive(
+                m_swerveDrive,
+                () -> m_driverController.getLeftY(),
+                () -> m_driverController.getLeftX()));
     }
     
     if (m_swerveDrive != null && m_shooterRollers != null) {
@@ -169,10 +179,6 @@ public class RobotContainer {
 
     if (m_shooterRollers != null) {
       m_driverController.a().whileTrue(new ShootManualFlywheel(m_shooterRollers));
-    }
-
-    if (m_uptake != null) {
-      m_driverController.leftBumper().whileTrue(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING));
     }
 
     if (m_uptake != null && m_indexer != null) {

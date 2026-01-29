@@ -24,9 +24,9 @@ public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   Translation2d m_goal = new Translation2d();
 
-  public static final double kTeleP_Theta = 1.0;
+  public static final double kTeleP_Theta = 7.0;
   public static final double kTeleI_Theta = 0.0;
-  public static final double kTeleD_Theta = 0.0;
+  public static final double kTeleD_Theta = 0.3;
 
   private final PIDController m_PidController =
       new PIDController(kTeleP_Theta, kTeleI_Theta, kTeleD_Theta);
