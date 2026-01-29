@@ -10,7 +10,6 @@ import frc.robot.Constants.CLIMBER;
 import frc.robot.Constants.CLIMBER.CLIMBER_SETPOINT;
 import frc.robot.subsystems.Climber;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Climb extends Command {
   // Creates a new Climb Command
   private final Climber m_climber;

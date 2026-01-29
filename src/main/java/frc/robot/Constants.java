@@ -7,9 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -243,7 +241,9 @@ public final class Constants {
     public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
     public static final Distance cruiseVelocityInches = Inches.of(14.57);
 
-    public static double motionMagicCruiseVelocityNoRobot = cruiseVelocityInches.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters); // Placeholder.
+    public static double motionMagicCruiseVelocityNoRobot =
+        cruiseVelocityInches.in(Meters)
+            / CLIMBER.drumRotationsToDistance.in(Meters); // Placeholder.
     public static double motionMagicAccelerationNoRobot = 30; // Placeholder.
     public static double motionMagicJerkNoRobot = 0.0; // Placeholder.
 

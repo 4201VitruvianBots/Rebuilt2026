@@ -5,7 +5,6 @@
 // Imports:
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
@@ -48,7 +47,7 @@ public class Climber extends SubsystemBase {
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Coast: you let go, gravity lets it fall. Brake: locks it in place.
-  
+
   private MedianFilter currentFilter = new MedianFilter(20);
 
   // Climber Sim State:
@@ -155,7 +154,7 @@ public class Climber extends SubsystemBase {
   }
 
   @Logged(name = "Is in Holding Robot Mode?", importance = Importance.DEBUG)
-  public boolean isInHoldingRobotMode(){
+  public boolean isInHoldingRobotMode() {
     return m_request.Slot == 1;
   }
 
