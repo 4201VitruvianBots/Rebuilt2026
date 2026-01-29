@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -15,7 +14,6 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
 import frc.robot.Constants.SHOOTERMOTORS.Shot;
@@ -24,10 +22,11 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Vision;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-      private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap = new InterpolatingTreeMap<>(
+  private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap = new InterpolatingTreeMap<>(
         (startValue, endValue, q) -> 
             InverseInterpolator.forDouble()
                 .inverseInterpolate(startValue.in(Meters), endValue.in(Meters), q.in(Meters)),
@@ -41,10 +40,12 @@ public class Shoot extends Command {
    );
 
     static {
+        distanceToShotMap.put(Meters.of(6.00), new Shot(3000, 0.15));
         distanceToShotMap.put(Meters.of(3.42), new Shot(2800, 0.19));
         distanceToShotMap.put(Meters.of(1.0), new Shot(2150, 0.40));
     }
   private final ShooterRollers m_shooterRollers;
+  private final Vision m_vision;
 
   // private final ShooterHood m_shooterHood;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
@@ -53,8 +54,9 @@ public class Shoot extends Command {
 
 
   public Shoot(CommandSwerveDrivetrain swerve,
-      ShooterRollers shooterRollers) {
+      ShooterRollers shooterRollers, Vision vision) {
     m_shooterRollers = shooterRollers;
+    m_vision = vision;
     // m_shooterHood = shooterHood;
     m_swerveDrivetrain = swerve;
 
@@ -65,18 +67,19 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     if (Controls.isBlueAlliance()) {
-      m_goal = FIELD.blueAutoHub;
+      m_goal = FIELD.blueHub;
     } else {
-      m_goal = FIELD.redAutoHub;
+      m_goal = FIELD.redHub;
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    final Distance distanceToHub = Meters.of(m_swerveDrivetrain.getState().Pose.getTranslation().getDistance(m_goal));
-    final Shot shot = distanceToShotMap.get(distanceToHub);
-    m_shooterRollers.setRPMOutputFOC(shot.shooterRPM);
+    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
+    System.out.println(m_vision.getDistancetoHub());
+    System.out.println(shot.shooterRPM);
+    m_shooterRollers.setRPMOutputFOC(shot.shooterRPM / 3);
     // m_shooterHood.setPosition(shot.hoodPosition);
   }
 

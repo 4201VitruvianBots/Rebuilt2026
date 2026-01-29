@@ -79,10 +79,10 @@ public class Vision extends SubsystemBase {
     m_kPAutoAlignSubscriber = topickP.subscribe(7.4);
     m_kDAutoAlignSubscriber = topickD.subscribe(0.3);
 
-    m_kDAutoAlignPublisher = topickD.publish();
-    m_kDAutoAlignPublisher.set(0.3);
     m_kPAutoAlignPublisher = topickP.publish();
     m_kPAutoAlignPublisher.set(7.4);
+    m_kDAutoAlignPublisher = topickD.publish();
+    m_kDAutoAlignPublisher.set(0.3);
   }
 
   public void registerSwerveDrive(CommandSwerveDrivetrain swerveDriveTrain) {

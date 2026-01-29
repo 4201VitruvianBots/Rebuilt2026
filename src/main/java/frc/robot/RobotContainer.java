@@ -156,7 +156,7 @@ public class RobotContainer {
                 m_swerveDrive, m_vision,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()), new Shoot(m_swerveDrive,
-                  m_shooterRollers)));
+                  m_shooterRollers, m_vision)));
     }
 
     if (m_swerveDrive != null && m_vision != null){
@@ -171,14 +171,14 @@ public class RobotContainer {
     
     if (m_swerveDrive != null && m_shooterRollers != null) {
       m_driverController
-          .rightTrigger()
+          .a()
           .whileTrue(
               new Shoot(m_swerveDrive,
-                  m_shooterRollers));
+                  m_shooterRollers, m_vision));
     }
 
     if (m_shooterRollers != null) {
-      m_driverController.a().whileTrue(new ShootManualFlywheel(m_shooterRollers));
+      m_driverController.rightTrigger().whileTrue(new ShootManualFlywheel(m_shooterRollers));
     }
 
     if (m_uptake != null && m_indexer != null) {
