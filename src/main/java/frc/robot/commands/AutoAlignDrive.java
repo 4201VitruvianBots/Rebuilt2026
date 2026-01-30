@@ -55,7 +55,16 @@ public class AutoAlignDrive extends Command {
     kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
     kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
     m_PidController.reset();
-    if (Controls.isBlueAlliance()) {
+
+    // If we're outside of our own zone, then we align to pass. 
+    if (m_vision.isInOpposingAllianceZone() || m_vision.isInNeutralZone()){
+      if (Controls.isBlueAlliance()) {
+      m_goal = FIELD.blueAutoHub;
+      } else {
+      m_goal = FIELD.redAutoHub;
+      }
+    // If we're in our own zone, then we align to the hub
+    } else if (Controls.isBlueAlliance()) {
       m_goal = FIELD.blueAutoHub;
     } else {
       m_goal = FIELD.redAutoHub;

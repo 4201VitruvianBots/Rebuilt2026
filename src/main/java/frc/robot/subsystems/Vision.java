@@ -257,6 +257,41 @@ public class Vision extends SubsystemBase {
     return Math.abs(error) <= Units.degreesToRadians(1.0);
   }
 
+  @Logged(name = "Is in Neutral Zone?", importance = Importance.DEBUG)
+  public boolean isInNeutralZone(){
+    return FIELD.neutralZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Red Zone?", importance = Importance.DEBUG)
+  public boolean isInRedZone(){
+    return FIELD.redZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Blue Zone?", importance = Importance.DEBUG)
+  public boolean isInBlueZone(){
+    return FIELD.blueZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Opposing Alliance Zone?", importance = Importance.DEBUG)
+  public boolean isInOpposingAllianceZone(){
+    if (Controls.isBlueAlliance()){
+      return isInRedZone();
+    } else {
+      return isInBlueZone();
+    }
+  }
+
+  @Logged(name = "Is in Right Half?", importance = Importance.DEBUG)
+  public boolean isInRightHalf(){
+    return FIELD.rightHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Left Half?", importance = Importance.DEBUG)
+  public boolean isInLeftHalf(){
+    return FIELD.leftHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+
   public void teleopInit() {}
 
   @Logged(name = "Distance to Hub", importance = Importance.INFO)

@@ -13,7 +13,7 @@ public class Targeting2d {
 
   public static void init() {
     if (wpilibAprilTagLayout == null) {
-      wpilibAprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+      wpilibAprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
     }
     var tags = wpilibAprilTagLayout.getTags();
     for (var t : tags) {
