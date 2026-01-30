@@ -56,20 +56,28 @@ public class AutoAlignDrive extends Command {
     kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
     m_PidController.reset();
 
-    // If we're outside of our own zone, then we align to pass. 
+      // If we're outside of our own zone, then we align to pass. 
     if (m_vision.isInOpposingAllianceZone() || m_vision.isInNeutralZone()){
-      if (Controls.isBlueAlliance()) {
-      m_goal = FIELD.blueAutoHub;
+        if (Controls.isBlueAlliance()) {
+          if (m_vision.isInLeftHalf()){
+            m_goal = FIELD.blueZoneLeft.getCenter().getTranslation();
+          } else {
+            m_goal = FIELD.blueZoneRight.getCenter().getTranslation();
+          }
+        } else {
+          if (m_vision.isInLeftHalf()){
+            m_goal = FIELD.redZoneLeft.getCenter().getTranslation();
+          } else {
+            m_goal = FIELD.redZoneRight.getCenter().getTranslation();
+          }
+        }
+      // If we're in our own zone, then we align to the hub
+      } else if (Controls.isBlueAlliance()) {
+        m_goal = FIELD.blueAutoHub;
       } else {
-      m_goal = FIELD.redAutoHub;
+        m_goal = FIELD.redAutoHub;
       }
-    // If we're in our own zone, then we align to the hub
-    } else if (Controls.isBlueAlliance()) {
-      m_goal = FIELD.blueAutoHub;
-    } else {
-      m_goal = FIELD.redAutoHub;
     }
-  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
