@@ -40,9 +40,9 @@ public class Shoot extends Command {
    );
 
     static {
-        distanceToShotMap.put(Meters.of(6.00), new Shot(3000, 0.15));
+        distanceToShotMap.put(Meters.of(2.0), new Shot(2500, 0.40)); // Hood position is a placeholder 
         distanceToShotMap.put(Meters.of(3.42), new Shot(2800, 0.19));
-        distanceToShotMap.put(Meters.of(1.0), new Shot(2150, 0.40));
+        distanceToShotMap.put(Meters.of(6.00), new Shot(3000, 0.15));
     }
   private final ShooterRollers m_shooterRollers;
   private final Vision m_vision;

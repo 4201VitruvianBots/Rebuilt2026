@@ -52,7 +52,7 @@ public class ShooterRollers extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
-      new MotionMagicVelocityTorqueCurrentFOC(0).withFeedForward(0.1);
+      new MotionMagicVelocityTorqueCurrentFOC(0);
   private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0);
   private AngularVelocity m_rpmSetpoint = ManualRPM.IDLE.getRPM();
   public final DoubleSubscriber m_rpmSubscriber;
@@ -76,6 +76,7 @@ public class ShooterRollers extends SubsystemBase {
   public ShooterRollers() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = SHOOTERMOTORS.kP;
+    config.Slot0.kD = SHOOTERMOTORS.kD;
     config.Slot0.kV = SHOOTERMOTORS.kV;
     config.Slot0.kS = SHOOTERMOTORS.kS;
     // config.Slot0.kA = SHOOTERMOTORS.kA;

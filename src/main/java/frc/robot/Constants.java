@@ -38,6 +38,7 @@ public final class Constants {
   public class SHOOTERMOTORS {
     public static final double kP =
         4.8; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+    public static final double kD = 0.0;
     public static final double kV = 10.2;
     public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
@@ -238,7 +239,7 @@ public final class Constants {
 
     public enum INDEXERSPEED {
       ZERO(0),
-      INDEXING(0.8),
+      INDEXING(0.9),
       FREEING(-0.1);
 
       private final double value;
