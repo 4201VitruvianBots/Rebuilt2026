@@ -30,6 +30,7 @@ import frc.robot.Constants.USB;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.TestLEDs;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.generated.TunerConstants;
 import frc.robot.simulation.Robot2d;
@@ -139,7 +140,8 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
-    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    m_led.setDefaultCommand(new TestLEDs(m_led));
     
     if (Robot.isSimulation()) {
       m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);

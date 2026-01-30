@@ -32,8 +32,8 @@ public class LEDs extends SubsystemBase {
       return;
     }
     try {
-      InetAddress addr = InetAddress.getByName("10.42.1.2");
-      DatagramPacket packet = new DatagramPacket(data, data.length, addr, 5800);
+      InetAddress addr = InetAddress.getByName("10.42.1.12");
+      DatagramPacket packet = new DatagramPacket(data, data.length, addr, 25000);
       socket.send(packet);
     } catch (Exception e) {
       DriverStation.reportWarning("LEDs: send failed: " + e.getMessage(), false);
@@ -43,6 +43,7 @@ public class LEDs extends SubsystemBase {
   public void setState(LED_STATES newState) {
     if (newState != currentState) {
       currentState = newState;
+      System.out.println("LEDs: Changing state to " + newState.getAnimation());
       sendBytes(newState.getAnimation().getBytes(StandardCharsets.UTF_8));
     }
   }
