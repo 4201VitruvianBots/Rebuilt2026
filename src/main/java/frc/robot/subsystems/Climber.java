@@ -41,7 +41,7 @@ public class Climber extends SubsystemBase {
           .withSlot(0);
 
   // The position it's trying to reach and stabilise at.
-  @Logged(name = "Desired Position in Inches", importance = Importance.INFO)
+  @Logged(name = "Desired Position Inches", importance = Importance.INFO)
   private Distance m_desiredPosition = Inches.of(0.0);
 
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
@@ -185,6 +185,21 @@ public class Climber extends SubsystemBase {
       setPIDSlot(0);
     }
   }
+  
+  private void updateSim(ElevatorSim sim) {
+      sim.setInputVoltage(m_motorSimState.getMotorVoltage());
+
+      sim.update(0.020);
+
+      m_motorSimState.setRawRotorPosition(
+          sim.getPositionMeters()
+              * CLIMBER.gearRatio
+              / CLIMBER.drumRotationsToDistance.in(Meters));
+      m_motorSimState.setRotorVelocity(
+          sim.getVelocityMetersPerSecond()
+              * CLIMBER.gearRatio
+              / CLIMBER.drumRotationsToDistance.in(Meters));
+  }
 
   @Override
   public void periodic() {}
@@ -192,32 +207,11 @@ public class Climber extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     m_motorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    
     if (isHoldingRobot()) {
-      m_climberWeightedSim.setInputVoltage(m_motorSimState.getMotorVoltage());
-
-      m_climberWeightedSim.update(0.020);
-
-      m_motorSimState.setRawRotorPosition(
-          m_climberWeightedSim.getPositionMeters()
-              * CLIMBER.gearRatio
-              / CLIMBER.drumRotationsToDistance.in(Meters));
-      m_motorSimState.setRotorVelocity(
-          m_climberWeightedSim.getVelocityMetersPerSecond()
-              * CLIMBER.gearRatio
-              / CLIMBER.drumRotationsToDistance.in(Meters));
+      updateSim(m_climberWeightedSim);
     } else {
-      m_climberUnweightedSim.setInputVoltage(m_motorSimState.getMotorVoltage());
-
-      m_climberUnweightedSim.update(0.020);
-
-      m_motorSimState.setRawRotorPosition(
-          m_climberUnweightedSim.getPositionMeters()
-              * CLIMBER.gearRatio
-              / CLIMBER.drumRotationsToDistance.in(Meters));
-      m_motorSimState.setRotorVelocity(
-          m_climberUnweightedSim.getVelocityMetersPerSecond()
-              * CLIMBER.gearRatio
-              / CLIMBER.drumRotationsToDistance.in(Meters));
+      updateSim(m_climberUnweightedSim);
     }
   }
 }
