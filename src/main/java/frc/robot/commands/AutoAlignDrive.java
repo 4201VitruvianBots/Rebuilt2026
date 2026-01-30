@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -18,6 +19,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Vision;
 
+import java.util.ResourceBundle.Control;
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
@@ -55,29 +57,18 @@ public class AutoAlignDrive extends Command {
     kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
     kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
     m_PidController.reset();
+    Rectangle2d m_goalZone;
 
-      // If we're outside of our own zone, then we align to pass. 
+    // If we're outside of our own zone, then we align to pass. 
     if (m_vision.isInOpposingAllianceZone() || m_vision.isInNeutralZone()){
-        if (Controls.isBlueAlliance()) {
-          if (m_vision.isInLeftHalf()){
-            m_goal = FIELD.blueZoneLeft.getCenter().getTranslation();
-          } else {
-            m_goal = FIELD.blueZoneRight.getCenter().getTranslation();
-          }
-        } else {
-          if (m_vision.isInLeftHalf()){
-            m_goal = FIELD.redZoneLeft.getCenter().getTranslation();
-          } else {
-            m_goal = FIELD.redZoneRight.getCenter().getTranslation();
-          }
-        }
-      // If we're in our own zone, then we align to the hub
-      } else if (Controls.isBlueAlliance()) {
-        m_goal = FIELD.blueAutoHub;
-      } else {
-        m_goal = FIELD.redAutoHub;
-      }
+        m_goalZone = Controls.isBlueAlliance() ? (m_vision.isInLeftHalf() ? FIELD.blueZoneLeft : FIELD.blueZoneRight)
+                                              : (m_vision.isInLeftHalf() ? FIELD.redZoneLeft : FIELD.redZoneRight);
+        m_goal = m_goalZone.getCenter().getTranslation();
+    // If we're in our own zone, then we align to the hub
+    } else {
+        m_goal = Controls.isBlueAlliance() ? FIELD.blueAutoHub : FIELD.redAutoHub;
     }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
