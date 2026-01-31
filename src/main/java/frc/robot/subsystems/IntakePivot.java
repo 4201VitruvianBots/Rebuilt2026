@@ -165,10 +165,8 @@ public class IntakePivot extends SubsystemBase {
     m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
 
-    
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
-
   }
 }
