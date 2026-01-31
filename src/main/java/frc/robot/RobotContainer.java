@@ -72,7 +72,7 @@ public class RobotContainer {
       new CommandXboxController(USB.driver_xBoxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
-  public boolean isHubActive(){
+  public boolean isHubActive() {
     return HubTracker.isAllianceHubActive();
   }
 
