@@ -1,6 +1,10 @@
 package frc.team4201.lib.simulation;
 
+import static java.util.Arrays.stream;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -30,7 +34,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
      * @return List of Strings
      */
     public static List<String> keysAsStrings() {
-      return Arrays.stream(FIELD_OBJECTS.values()).map(Enum::toString).toList();
+      return stream(FIELD_OBJECTS.values()).map(Enum::toString).toList();
     }
   };
 
@@ -66,6 +70,14 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
    */
   public void initializePoses(String key, Pose2d... poses) {
     m_field2D.getObject(key).setPoses(poses);
+  }
+
+  public void addTranslations(String key, Translation2d... translation2ds) {
+    addPoses(
+        key,
+        Arrays.stream(translation2ds)
+            .map(t -> new Pose2d(t, Rotation2d.kZero))
+            .toArray(Pose2d[]::new));
   }
 
   /**

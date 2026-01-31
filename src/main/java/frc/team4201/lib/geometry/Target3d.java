@@ -28,10 +28,14 @@ public class Target3d {
   }
 
   public Target3d withTag(int id) {
+    return withTagPlusOffset(id, Translation3d.kZero);
+  }
+
+  public Target3d withTagPlusOffset(int id, Translation3d offset) {
     m_field
         .getTagPose(id)
         .ifPresentOrElse(
-            t -> m_tagToTarget.put(id, m_targetPosition.minus(t.getTranslation())),
+            t -> m_tagToTarget.put(id, m_targetPosition.plus(offset).minus(t.getTranslation())),
             () -> {
               throw new IllegalArgumentException("Invalid AprilTag ID given!");
             });
