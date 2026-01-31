@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.INTAKEMOTORS.PIVOT;
 import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
-import frc.team4201.lib.simulation.SingleJointedArmSimTest;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class IntakePivot extends SubsystemBase {
@@ -52,11 +51,11 @@ public class IntakePivot extends SubsystemBase {
   private final CANcoderSimState m_cancoderSimState = m_canCoder.getSimState();
 
   // Simulation Code
-  private final SingleJointedArmSimTest m_pivotSim =
-      new SingleJointedArmSimTest(
+  private final SingleJointedArmSim m_pivotSim =
+      new SingleJointedArmSim(
           PIVOT.gearbox,
           PIVOT.gearRatio,
-          SingleJointedArmSimTest.estimateMOI(PIVOT.baseLength.in(Meters), PIVOT.mass.in(Kilograms)),
+          SingleJointedArmSim.estimateMOI(PIVOT.baseLength.in(Meters), PIVOT.mass.in(Kilograms)),
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
