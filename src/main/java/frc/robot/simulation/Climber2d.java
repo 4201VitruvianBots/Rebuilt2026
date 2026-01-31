@@ -57,8 +57,8 @@ public class Climber2d {
         Inches.of(6.0) // Top hook starts 6 inches above the bottom of the climber
         ).withLineWidth(Inches.of(1.675).in(LineWidthInches))
         .withSuperStructureOffset(Inches.of(0)) // Idk why I needed to add this
-        .withAngleOffset(Degrees.of(90)) // Straight up
-        );
+        .withAngleOffset(Degrees.of(90)), // Straight up
+        parentRoot);
     m_climberTopHook =
         new Arm2d(new Arm2dConfig("Climber_topHook",
         topClimberColor,
@@ -73,21 +73,21 @@ public class Climber2d {
     
     // When the top carriage starts at the bottom, the top hook stays at -180 degrees. It slowly moves to -90 degrees as it goes up, reaching -90 degrees at 1.25 inches.
     double topHookAngle = -180.0;
-    if (height.in(Inches) >= 1.25) {
-      topHookAngle = -90.0;
-    } else {
-      topHookAngle = -180.0 + (90.0 * (height.in(Inches) / 1.25));
-    }
-    m_climberTopHook.setAngle(Degrees.of(topHookAngle));
-    
     // When the bottom carriage starts at the top, the bottom hook stays at -180 degrees. It slowly moves to -135 degrees as it goes down, reaching -135 degrees at 1.25 inches below max height.
     double bottomHookAngle = -180.0;
-    Distance bottomHookTriggerHeight = CLIMBER.upperLimit.minus(Inches.of(1.25));
-    if (height.in(Inches) <= bottomHookTriggerHeight.in(Inches)) {
+    if (height.in(Inches) >= 1.25) {
+      topHookAngle = -90.0;
       bottomHookAngle = -135.0;
     } else {
-      bottomHookAngle = -180.0 + (45.0 * ((CLIMBER.upperLimit.minus(height)).in(Inches) / 1.25));
+      topHookAngle = -180.0 + (90.0 * (height.in(Inches) / 1.25));
+      bottomHookAngle = -180.0 - (45.0 * ((CLIMBER.upperLimit.minus(height)).in(Inches) / 1.25));
     }
+    m_climberTopHook.setAngle(Degrees.of(topHookAngle));
     m_climberBottomHook.setAngle(Degrees.of(bottomHookAngle));
+  }
+  
+  public void generateSubDisplay() {
+    m_climberBottomCarriage.generateSubDisplay();
+    m_climberTopCarriage.generateSubDisplay();
   }
 }

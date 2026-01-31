@@ -12,10 +12,15 @@ import static frc.robot.Constants.SIM.LineWidthInches;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterFlywheel;
+import frc.robot.subsystems.ShooterHood;
+import frc.robot.subsystems.Uptake;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -143,7 +148,15 @@ public class Robot2d extends SubsystemBase {
       m_intakePivot.generateSubDisplay();
       m_flywheel.generateSubDisplay();
       m_shooterHood.generateSubDisplay();
-      // m_climber.generateSubDisplay();
+      m_climber.generateSubDisplay();
+    //   graphics = good
+    //   glitches = None
+    //   hackers = 0
+    //   exploits = only the fun ones
+    //   wasd = walk
+    //   spacebar = jump
+    //   helloWorld("print");
+    // thank you joaquin
     }
   }
   
@@ -159,6 +172,26 @@ public class Robot2d extends SubsystemBase {
   
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+    if (m_subsystemMap.containsKey("Intake")) {
+        var intakeSubsystem = (Intake) m_subsystemMap.get("Intake");
+    }
+    // if (m_subsystemMap.containsKey("IntakePivot")) {
+    //     var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
+    // }
+    if (m_subsystemMap.containsKey("Indexer")) {
+        var indexerSubsystem = (Indexer) m_subsystemMap.get("Indexer");
+    }
+    if (m_subsystemMap.containsKey("Uptake")) {
+        var uptakeSubsystem = (Uptake) m_subsystemMap.get("Uptake");
+    }
+    if (m_subsystemMap.containsKey("ShooterFlywheel")) {
+        var shooterFlywheelSubsystem = (ShooterFlywheel) m_subsystemMap.get("ShooterFlywheel");
+    }
+    if (m_subsystemMap.containsKey("ShooterHood")) {
+        var shooterHoodSubsystem = (ShooterHood) m_subsystemMap.get("ShooterHood");
+    }
+    if (m_subsystemMap.containsKey("Climber")) {
+        var climberSubsystem = (Climber) m_subsystemMap.get("Climber");
+    }
   }
 }
