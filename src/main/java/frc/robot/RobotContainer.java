@@ -97,7 +97,7 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
   @Logged(name = "AutoChooser")
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -192,9 +192,9 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
-    SmartDashboard.putData("Auto Mode", m_chooser);
-    m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    m_chooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
+    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
   }
 
   private void initSmartDashboard() {
@@ -208,6 +208,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new InstantCommand();
+    return m_autoChooser.getSelected();
   }
 }
