@@ -291,7 +291,7 @@ public final class Constants {
       public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
           GravityTypeValue
               .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
-      public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
+      public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
       public static final Distance baseLength =
           Inches.of(13.897040); /* Almost completely made up :P */
