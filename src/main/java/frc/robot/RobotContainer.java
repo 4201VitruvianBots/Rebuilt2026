@@ -30,6 +30,7 @@ import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.autos.PreloadDepotShootMiddle;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
 import frc.robot.generated.AlphaBotConstants;
@@ -37,7 +38,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
@@ -194,6 +194,7 @@ public class RobotContainer {
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    m_chooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
   }
 
   private void initSmartDashboard() {
