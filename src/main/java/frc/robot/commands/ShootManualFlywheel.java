@@ -28,7 +28,7 @@ public class ShootManualFlywheel extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double TargetRPM = m_shooterRollers.m_rpmSubscriber.get() / 3;
+    double TargetRPM = m_shooterRollers.m_rpmSubscriber.get();
     m_shooterRollers.setManualRPMOutputFOC(TargetRPM);
   }
 

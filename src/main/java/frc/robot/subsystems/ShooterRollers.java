@@ -119,13 +119,13 @@ public class ShooterRollers extends SubsystemBase {
   public void setManualRPMOutputFOC(double rpm) {
     m_rpmSetpoint = RPM.of(rpm);
     m_motor1.setControl(
-        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
+        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
   }
 
   public void setRPMOutputFOC(double rpm) {
     m_rpmSetpoint = RPM.of(rpm);
     m_motor1.setControl(
-        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)).withFeedForward(0.1));
+        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
   }
 
   public void setTorqueCurrentOutputFOC(Voltage voltage) {

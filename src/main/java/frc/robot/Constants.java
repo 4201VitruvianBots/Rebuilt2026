@@ -37,9 +37,9 @@ import java.util.Map;
 public final class Constants {
   public class SHOOTERMOTORS {
     public static final double kP =
-        4.8; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+        10.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
     public static final double kD = 0.0;
-    public static final double kV = 10.2;
+    public static final double kV = 0.0;
     public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
@@ -51,8 +51,8 @@ public final class Constants {
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity =
-        35.0; // target cruise velocity of 35 rps, so 2100 rpm
-    public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
+        60.0; // target cruise velocity of 60 rps
+    public static double motionMagicAcceleration = 30.0; // target acceleration of 30 rps/s..
     public static double motionMagicJerk = 0.0;
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
@@ -267,7 +267,7 @@ public final class Constants {
 
       public enum INTAKESPEED {
         ZERO(0),
-        INTAKING(0.6),
+        INTAKING(0.55),
         HELPSOMETHINGSSTUCK(-0.2);
 
         private final double value;
