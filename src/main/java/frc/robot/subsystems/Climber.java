@@ -66,7 +66,6 @@ public class Climber extends SubsystemBase {
           1);
   private final TalonFXSimState m_motorSimState;
 
-
   /** Creates a new Climber. */
   public Climber() {
     //Configuring the motor for the elevator:
