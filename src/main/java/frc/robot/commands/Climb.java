@@ -35,16 +35,16 @@ public class Climb extends Command {
       m_climber.setPIDSlot(1);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
-          CLIMBER.motionMagicCruiseVelocityNoRobot,
-          CLIMBER.motionMagicAccelerationNoRobot,
+          CLIMBER.HOLDING_ROBOT.motionMagicCruiseVelocity,
+          CLIMBER.HOLDING_ROBOT.motionMagicAcceleration,
           0.0);
       System.out.println("With Robot");
     } else {
       m_climber.setPIDSlot(0);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
-          CLIMBER.motionMagicCruiseVelocityRobot,
-          CLIMBER.motionMagicAccelerationRobot,
+          CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
+          CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration,
           0.0);
       System.out.println("No Robot");
     }
