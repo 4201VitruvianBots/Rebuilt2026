@@ -36,7 +36,9 @@ public class Climber extends SubsystemBase {
 
   private final DynamicMotionMagicVoltage m_request =
       new DynamicMotionMagicVoltage(
-              0.0, CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity, CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration)
+              0.0,
+              CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
+              CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration)
           .withEnableFOC(true)
           .withSlot(0);
 
@@ -98,9 +100,11 @@ public class Climber extends SubsystemBase {
 
     config.Feedback.SensorToMechanismRatio =
         CLIMBER.gearRatio; // configNoRobotures climber to gear ratio. (check if absolute cancoder)
-    config.MotionMagic.MotionMagicCruiseVelocity = CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity;
+    config.MotionMagic.MotionMagicCruiseVelocity =
+        CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration;
-    // config.MotionMagic.MotionMagicJerk = CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk; // TODO: Implement Jerk when needed.
+    // config.MotionMagic.MotionMagicJerk = CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk; // TODO:
+    // Implement Jerk when needed.
     config.CurrentLimits.StatorCurrentLimit =
         40; // Prevents Climber from moving too jerkily and also breakage. TODO: Adjust this value.
     config.CurrentLimits.StatorCurrentLimitEnable = true; // Enables previous function.
