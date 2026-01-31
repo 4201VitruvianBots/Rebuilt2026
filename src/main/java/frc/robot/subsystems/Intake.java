@@ -33,9 +33,7 @@ public class Intake extends SubsystemBase {
   private final DCMotorSim m_motor1Sim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
-              INTAKE.ROLLERS.gearbox,
-              INTAKE.ROLLERS.gearRatio,
-              INTAKE.ROLLERS.kInertia),
+              INTAKE.ROLLERS.gearbox, INTAKE.ROLLERS.gearRatio, INTAKE.ROLLERS.kInertia),
           INTAKE.ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
@@ -80,8 +78,7 @@ public class Intake extends SubsystemBase {
     m_motor1Sim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_motor1Sim.getAngularPositionRotations())
-            .times(INTAKE.ROLLERS.gearRatio));
+        Rotations.of(m_motor1Sim.getAngularPositionRotations()).times(INTAKE.ROLLERS.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_motor1Sim.getAngularVelocityRPM()).times(INTAKE.ROLLERS.gearRatio));
   }

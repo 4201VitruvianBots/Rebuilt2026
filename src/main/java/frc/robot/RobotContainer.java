@@ -8,22 +8,18 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.time.Instant;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
 import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
+import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
@@ -38,8 +34,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterFlywheel;
+import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.Telemetry;
@@ -67,7 +63,7 @@ public class RobotContainer {
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake = new Uptake();
-  
+
   @Logged(name = "Climber", importance = Logged.Importance.INFO)
   private Climber m_climber = new Climber();
 
@@ -108,7 +104,7 @@ public class RobotContainer {
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
-    
+
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
@@ -140,10 +136,11 @@ public class RobotContainer {
               return drive;
             }));
     m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
-    
+
     if (Robot.isSimulation()) {
       m_robotSim = new Robot2d();
-      m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);
+      m_robotSim.registerSubsystems(
+          m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);
     }
   }
 

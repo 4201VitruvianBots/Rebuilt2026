@@ -53,8 +53,7 @@ public class ShooterHood extends SubsystemBase {
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
+          LinearSystemId.createDCMotorSystem(HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
           HOOD.gearbox);
 
   private final TalonFXSimState m_simState;
@@ -105,9 +104,7 @@ public class ShooterHood extends SubsystemBase {
     m_hoodSetpoint =
         Degrees.of(
             MathUtil.clamp(
-                setpoint.in(Degrees),
-                HOOD.minAngle.in(Degrees),
-                HOOD.maxAngle.in(Degrees)));
+                setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 

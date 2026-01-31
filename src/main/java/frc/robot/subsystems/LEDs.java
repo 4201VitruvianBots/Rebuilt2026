@@ -4,28 +4,28 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LED.LED_STATES;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.LED.LED_STATES;
-
 public class LEDs extends SubsystemBase {
   private DatagramSocket socket;
   private LED_STATES currentState = LED_STATES.DISABLED;
-  
+
   public LEDs() {
     try {
-        socket = new DatagramSocket();
+      socket = new DatagramSocket();
     } catch (SocketException e) {
-        DriverStation.reportWarning("LEDs: Failed to create DatagramSocket on port 5800 " + e.getMessage(), false);
+      DriverStation.reportWarning(
+          "LEDs: Failed to create DatagramSocket on port 5800 " + e.getMessage(), false);
     }
   }
-  
+
   public void sendBytes(byte[] data) {
     if (socket == null || socket.isClosed()) {
       DriverStation.reportWarning("LEDs: socket is not available for sending.", false);
@@ -39,7 +39,7 @@ public class LEDs extends SubsystemBase {
       DriverStation.reportWarning("LEDs: send failed: " + e.getMessage(), false);
     }
   }
-  
+
   public void setState(LED_STATES newState) {
     if (newState != currentState) {
       currentState = newState;

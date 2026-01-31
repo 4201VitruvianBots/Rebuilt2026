@@ -37,81 +37,82 @@ import java.util.Map;
 public final class Constants {
   public class SHOOTER {
     public class FLYWHEEL {
-        public static final double kP =
-            5.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
-        public static final double kV = 0.0;
-        public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
-        public static final double kA = 0.0;
-        // The value of kS is the largest voltage applied before the mechanism begins to move)
-        public static final double gearRatio = 1.0; // Placeholder value
-        public static final double peakForwardOutput = 0.4; // Placeholder value
-        public static final double peakReverseOutput = -0.35; // Placeholder value
-        public static final double kInertia =
-            0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
+      public static final double kP =
+          5.0; // TODO: These will all need to be changed because we are attempting to reach a set
+      // rpm
+      public static final double kV = 0.0;
+      public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
+      public static final double kA = 0.0;
+      // The value of kS is the largest voltage applied before the mechanism begins to move)
+      public static final double gearRatio = 1.0; // Placeholder value
+      public static final double peakForwardOutput = 0.4; // Placeholder value
+      public static final double peakReverseOutput = -0.35; // Placeholder value
+      public static final double kInertia =
+          0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-        // These worked on wood bot. Change jerk later if further optimization is needed
-        public static double motionMagicCruiseVelocity =
-            35.0; // target cruise velocity of 35 rps, so 2100 rpm
-        public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
-        public static double motionMagicJerk = 0.0;
+      // These worked on wood bot. Change jerk later if further optimization is needed
+      public static double motionMagicCruiseVelocity =
+          35.0; // target cruise velocity of 35 rps, so 2100 rpm
+      public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
+      public static double motionMagicJerk = 0.0;
 
-        public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
+      public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
-        public enum SHOOTER_VELOCITY {
-            IDLE(0.0),
-            LOW(1000.0),
-            HIGH(2900.0);
+      public enum SHOOTER_VELOCITY {
+        IDLE(0.0),
+        LOW(1000.0),
+        HIGH(2900.0);
 
-            private final double rpm;
+        private final double rpm;
 
-            SHOOTER_VELOCITY(double rpm) {
-                this.rpm = rpm;
-            }
-
-            public AngularVelocity getRPM() {
-                return RotationsPerSecond.of(rpm / 60.0);
-            }
+        SHOOTER_VELOCITY(double rpm) {
+          this.rpm = rpm;
         }
+
+        public AngularVelocity getRPM() {
+          return RotationsPerSecond.of(rpm / 60.0);
+        }
+      }
     }
 
     public class HOOD {
-        public static final double kP = 3.0; // TODO: Change this
-        public static final double kD = 0.1;
-        public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
-        public static final double kV = 0.0;
-        public static final double kS = 0.0;
-        public static final double gearRatio =
-            1.0; // TODO: Change this later because this is confirmed not what the final thing
-        // will be
-        public static final double peakForwardOutput = 0.4; // Placeholder value
-        public static final double peakReverseOutput = -0.35; // Placeholder value
-        public static final double kInertia =
-            0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
+      public static final double kP = 3.0; // TODO: Change this
+      public static final double kD = 0.1;
+      public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+      public static final double kV = 0.0;
+      public static final double kS = 0.0;
+      public static final double gearRatio =
+          1.0; // TODO: Change this later because this is confirmed not what the final thing
+      // will be
+      public static final double peakForwardOutput = 0.4; // Placeholder value
+      public static final double peakReverseOutput = -0.35; // Placeholder value
+      public static final double kInertia =
+          0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
 
-        public static final double motionMagicCruiseVelocity = 6.0;
-        public static final double motionMagicAcceleration = 4.0;
+      public static final double motionMagicCruiseVelocity = 6.0;
+      public static final double motionMagicAcceleration = 4.0;
 
-        public static final Angle minAngle = Degrees.of(0.0);
-        public static final Angle maxAngle = Degrees.of(45.0);
+      public static final Angle minAngle = Degrees.of(0.0);
+      public static final Angle maxAngle = Degrees.of(45.0);
 
-        public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+      public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-        public enum HOOD_ANGLE {
-            // TODO: Going to stop using this because we are going to do math instead :)
-            NOTHING(Degrees.of(0.0)),
-            CLOSE(Degrees.of(30.0)),
-            FAR(Degrees.of(45.0));
+      public enum HOOD_ANGLE {
+        // TODO: Going to stop using this because we are going to do math instead :)
+        NOTHING(Degrees.of(0.0)),
+        CLOSE(Degrees.of(30.0)),
+        FAR(Degrees.of(45.0));
 
-            private final Angle angle;
+        private final Angle angle;
 
-            HOOD_ANGLE(Angle angle) {
-                this.angle = angle;
-            }
-
-            public Angle getAngle() {
-                return angle;
-            }
+        HOOD_ANGLE(Angle angle) {
+          this.angle = angle;
         }
+
+        public Angle getAngle() {
+          return angle;
+        }
+      }
     }
   }
 
@@ -153,7 +154,7 @@ public final class Constants {
 
     public static final int kUptakeMotor = 56; /* TODO: Another placeholder "Fun!" */
   }
-  
+
   public final class USB {
     public static final int driver_xBoxController = 0;
   }
@@ -218,9 +219,12 @@ public final class Constants {
 
     // Config for Motor. TODO: Change placeholder values later.
     public static double kV = 1.0; // Placeholder. Output per unit of target velocity (output/rps).
-    public static double kA = 1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
-    public static double kP = 1.0; // Placeholder. Output per unit of error in position (output/rotation).
-    public static double kD = 1.0; // Placeholder. Output per unit of error in velocity (output/rps).
+    public static double kA =
+        1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
+    public static double kP =
+        1.0; // Placeholder. Output per unit of error in position (output/rotation).
+    public static double kD =
+        1.0; // Placeholder. Output per unit of error in velocity (output/rps).
 
     public static final double gearRatio = 1.0 / 27.0; // Climber Gear ratio.
 
@@ -232,9 +236,9 @@ public final class Constants {
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
     public static Mass kCarriageMass = Pound.of(15); // TODO: Change this later.
-        /* Carriage mass will be the weight that the "carriage,"" in this case climber, is holding.
-        It might be dynamic, because you're lifting the weight of the elevator, 
-        but you also might be lifting the weight of the robot. */
+    /* Carriage mass will be the weight that the "carriage,"" in this case climber, is holding.
+    It might be dynamic, because you're lifting the weight of the elevator,
+    but you also might be lifting the weight of the robot. */
     public static final Distance kClimberDrumDiameter = Inches.of(2.2557); // Placeholder.
   }
 
@@ -331,30 +335,32 @@ public final class Constants {
       }
     }
   }
-  
+
   public class LED {
     public enum LED_STATES {
-        DISABLED("disabled"),
-        IDLE("idle"),
-        DRIVING("driving"),
-        INTAKING("intaking"),
-        SHOOTING("shooting"),
-        CLIMBING("climbing");
-        
-        private final String animation;
-        
-        LED_STATES(String animation) {
-            this.animation = animation;
-        }
-        
-        public String getAnimation() {
-            return animation;
-        }
+      DISABLED("disabled"),
+      IDLE("idle"),
+      DRIVING("driving"),
+      INTAKING("intaking"),
+      SHOOTING("shooting"),
+      CLIMBING("climbing");
+
+      private final String animation;
+
+      LED_STATES(String animation) {
+        this.animation = animation;
+      }
+
+      public String getAnimation() {
+        return animation;
+      }
     }
   }
-  
+
   public class SIM {
-    // For some reason, the line width value needs to be 2 times larger (~12 times larger in Glass) in order to actually match up with the visual thickness of lines in the Mechanism2d
-    public static final DistanceUnit LineWidthInches = derive(Inches).splitInto(2).named("LineWidthInches").symbol("lw in").make();
+    // For some reason, the line width value needs to be 2 times larger (~12 times larger in Glass)
+    // in order to actually match up with the visual thickness of lines in the Mechanism2d
+    public static final DistanceUnit LineWidthInches =
+        derive(Inches).splitInto(2).named("LineWidthInches").symbol("lw in").make();
   }
 }

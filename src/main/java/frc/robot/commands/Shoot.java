@@ -7,8 +7,8 @@ package frc.robot.commands;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterFlywheel;
+import frc.robot.subsystems.ShooterHood;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
