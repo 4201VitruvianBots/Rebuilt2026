@@ -30,6 +30,7 @@ import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.autos.PreloadDepotShootMiddle;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
 import frc.robot.generated.AlphaBotConstants;
@@ -37,7 +38,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
@@ -97,7 +97,7 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
   @Logged(name = "AutoChooser")
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -192,8 +192,9 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
-    SmartDashboard.putData("Auto Mode", m_chooser);
-    m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
+    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
   }
 
   private void initSmartDashboard() {
@@ -207,6 +208,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new InstantCommand();
+    return m_autoChooser.getSelected();
   }
 }
