@@ -8,8 +8,11 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,6 +22,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
@@ -53,18 +57,18 @@ public final class Constants {
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
     public enum ShooterVelocity {
-      IDLE(0.0),
-      LOW(1000.0),
-      HIGH(2900.0);
+      IDLE(RPM.of(0.0)),
+      LOW(RPM.of(1000.0)),
+      HIGH(RPM.of(2900.0));
 
-      private final double rpm;
+      private final AngularVelocity rpm;
 
-      ShooterVelocity(double rpm) {
+      ShooterVelocity(AngularVelocity rpm) {
         this.rpm = rpm;
       }
 
       public AngularVelocity getRPM() {
-        return RotationsPerSecond.of(rpm / 60.0);
+        return rpm;
       }
     }
   }
@@ -72,7 +76,8 @@ public final class Constants {
   public class SHOOTERHOOD {
     public static final double kP = 3.0; // TODO: Change this
     public static final double kD = 0.1;
-    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+    public static final double kA =
+        0.0; // TODO: Change these two feedforwards later, use ReCalc and SysID
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
@@ -140,11 +145,14 @@ public final class Constants {
 
     public static final int kShooterHoodMotor = 34;
     public static final int kShooterHoodCANCoder = 35;
+
     public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
     public static final int kIntakeRollerMotor2 = 54;
-    public static final int kIntakePivotMotor = 55;
 
-    public static final int kUptakeMotor = 56; /* TODO: another placeholder "Fun!" */
+    public static final int kIntakePivotMotor = 55;
+    public static final int kPivotEncoder = 56;
+
+    public static final int kUptakeMotor = 57; /* TODO: another placeholder "Fun!" */
   }
 
   // usb n swerve are like lwk copied from reefscape
@@ -260,6 +268,52 @@ public final class Constants {
 
         public double get() {
           return value;
+        }
+      }
+    }
+
+    public static class PIVOT {
+      /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
+      public static final double kP = 1000.0;
+      public static final double kD =
+          100.0; /*so basically kS kV and kA are not being used currently so they are commented out */
+      // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
+      // public static final double kV = 0; // Recalc these
+      // public static final double kA = 0;
+
+      public static final double gearRatio = 1.0; // encoder is after gear ratio
+      public static final double motionMagicAcceleration = 35.0;
+      public static final double motionMagicCruiseVelocity = 25.0;
+      public static final double motionMagicJerk = 0.0;
+
+      public static final Angle minAngle = Degrees.of(0.0);
+      public static final Angle maxAngle = Degrees.of(110.0);
+      public static final Angle startingAngle = minAngle;
+      public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
+          GravityTypeValue
+              .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
+      public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+
+      public static final Distance baseLength =
+          Inches.of(13.897040); /* Almost completely made up :P */
+      public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
+
+      public static final double encoderOffset = 0.0;
+      public static final SensorDirectionValue encoderDirection =
+          SensorDirectionValue.CounterClockwise_Positive;
+
+      public enum PIVOT_SETPOINT {
+        STOWED(Degrees.of(0.0)),
+        INTAKING(Degrees.of(90.0));
+
+        private final Angle angle;
+
+        PIVOT_SETPOINT(Angle angle) {
+          this.angle = angle;
+        }
+
+        public Angle getAngle() {
+          return angle;
         }
       }
     }
