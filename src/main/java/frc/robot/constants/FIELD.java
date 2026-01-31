@@ -41,7 +41,7 @@ public class FIELD {
   public static final Translation2d farLeftCorner = new Translation2d(aprilTagFieldLayout.getFieldLength(), aprilTagFieldLayout.getFieldWidth()); 
 
   public static final Translation2d blueWallMiddle = new Translation2d(0.0, 4.021328 );
-  public static final Translation2d redWallMiddle = new Translation2d(aprilTagFieldLayout.getFieldLength(), 4.021328 );
+  public static final Translation2d redWallMiddle = new Translation2d(aprilTagFieldLayout.getFieldLength(), 4.021328);
 
   public static final Translation2d redAutoHub = redHub;
   public static final Translation2d blueAutoHub = blueHub;
