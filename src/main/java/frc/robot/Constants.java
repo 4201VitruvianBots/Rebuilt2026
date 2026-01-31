@@ -274,7 +274,7 @@ public final class Constants {
 
     public static class PIVOT {
       /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-      public static final double kP = 1200.0;
+      public static final double kP = 1000.0;
       public static final double kD = 100.0;
       public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
       public static final double kV = 0; // Recalc these
@@ -295,7 +295,7 @@ public final class Constants {
 
       public static final Distance baseLength =
           Inches.of(13.897040); /* Almost completely made up :P */
-      public static final Mass mass = Pounds.of(20); // TODO: Consult CAD
+      public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
       public static final double encoderOffset = 0.0;
       public static final SensorDirectionValue encoderDirection =

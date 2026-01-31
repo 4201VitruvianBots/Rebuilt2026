@@ -93,8 +93,8 @@ public class IntakePivot extends SubsystemBase {
     // mode, due to the fact that an intake Pivot would not be coasting, thus we
     // chose to use brake for afformentioned pivot.
 
-    config.CurrentLimits.StatorCurrentLimit = 30;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimit = 130;
+    config.CurrentLimits.StatorCurrentLimitEnable = false;
     config.ClosedLoopGeneral.ContinuousWrap = false;
 
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
