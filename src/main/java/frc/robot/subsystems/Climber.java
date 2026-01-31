@@ -36,7 +36,7 @@ public class Climber extends SubsystemBase {
 
   private final DynamicMotionMagicVoltage m_request =
       new DynamicMotionMagicVoltage(
-              0.0, CLIMBER.motionMagicCruiseVelocityNoRobot, CLIMBER.motionMagicAccelerationNoRobot)
+              0.0, CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity, CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration)
           .withEnableFOC(true)
           .withSlot(0);
 
@@ -56,7 +56,7 @@ public class Climber extends SubsystemBase {
       new ElevatorSim(
           CLIMBER.gearbox,
           CLIMBER.gearRatio,
-          CLIMBER.kUnweightedCarriageMass.in(Kilograms),
+          CLIMBER.NOT_HOLDING_ROBOT.kUnweightedCarriageMass.in(Kilograms),
           CLIMBER.kClimberDrumDiameter.div(2).in(Meters),
           CLIMBER.lowerLimit.in(Meters),
           CLIMBER.upperLimit.in(Meters),
@@ -67,7 +67,7 @@ public class Climber extends SubsystemBase {
       new ElevatorSim(
           CLIMBER.gearbox,
           CLIMBER.gearRatio,
-          CLIMBER.kWeightedCarriageMass.in(Kilograms),
+          CLIMBER.HOLDING_ROBOT.kWeightedCarriageMass.in(Kilograms),
           CLIMBER.kClimberDrumDiameter.div(2).in(Meters),
           CLIMBER.lowerLimit.in(Meters),
           CLIMBER.upperLimit.in(Meters),
@@ -81,27 +81,26 @@ public class Climber extends SubsystemBase {
     // configuring the motor for the elevator:
     TalonFXConfiguration config = new TalonFXConfiguration();
     // Climbing No Robot PID Gains
-    config.Slot0.kP = CLIMBER.kPnoRobot;
-    // config.Slot0.kD = CLIMBER.kDnoRobot;
-    // config.Slot0.kV = CLIMBER.kVnoRobot;
-    // config.Slot0.kA = CLIMBER.kAnoRobot;
-    // config.Slot0.kG = CLIMBER.kGnoRobot;
-    config.Slot0.kS = CLIMBER.kS;
+    config.Slot0.kP = CLIMBER.NOT_HOLDING_ROBOT.kP;
+    // config.Slot0.kD = CLIMBER.NOT_HOLDING_ROBOT.kD;
+    // config.Slot0.kV = CLIMBER.NOT_HOLDING_ROBOT.kV;
+    // config.Slot0.kA = CLIMBER.NOT_HOLDING_ROBOT.kA;
+    // config.Slot0.kG = CLIMBER.NOT_HOLDING_ROBOT.kG;
+    config.Slot0.kS = CLIMBER.NOT_HOLDING_ROBOT.kS;
 
     // Climbing Robot PID Gains
-    config.Slot1.kP = CLIMBER.kPRobot;
-    // config.Slot1.kD = CLIMBER.kDRobot;
-    // config.Slot1.kV = CLIMBER.kVRobot;
-    // config.Slot1.kA = CLIMBER.kARobot;
-    // config.Slot1.kS = CLIMBER.kS;
-    config.Slot1.kG = CLIMBER.kGRobot;
+    config.Slot1.kP = CLIMBER.HOLDING_ROBOT.kP;
+    // config.Slot1.kD = CLIMBER.HOLDING_ROBOT.kD;
+    // config.Slot1.kV = CLIMBER.HOLDING_ROBOT.kV;
+    // config.Slot1.kA = CLIMBER.HOLDING_ROBOT.kA;
+    // config.Slot1.kS = CLIMBER.HOLDING_ROBOT.kS;
+    config.Slot1.kG = CLIMBER.HOLDING_ROBOT.kG;
 
     config.Feedback.SensorToMechanismRatio =
         CLIMBER.gearRatio; // configNoRobotures climber to gear ratio. (check if absolute cancoder)
-    config.MotionMagic.MotionMagicCruiseVelocity = CLIMBER.motionMagicCruiseVelocityNoRobot;
-    config.MotionMagic.MotionMagicAcceleration = CLIMBER.motionMagicAccelerationNoRobot;
-    // config.MotionMagic.MotionMagicJerk = CLIMBER.motionMagicJerk; // TODO: Implement Jerk when
-    // needed.
+    config.MotionMagic.MotionMagicCruiseVelocity = CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity;
+    config.MotionMagic.MotionMagicAcceleration = CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration;
+    // config.MotionMagic.MotionMagicJerk = CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk; // TODO: Implement Jerk when needed.
     config.CurrentLimits.StatorCurrentLimit =
         40; // Prevents Climber from moving too jerkily and also breakage. TODO: Adjust this value.
     config.CurrentLimits.StatorCurrentLimitEnable = true; // Enables previous function.
@@ -172,16 +171,16 @@ public class Climber extends SubsystemBase {
     if (isHoldingRobot()) {
       setDesiredPositionAndMotionMagicConfigs(
           getHeight(),
-          CLIMBER.motionMagicCruiseVelocityRobot,
-          CLIMBER.motionMagicAccelerationRobot,
-          0.0);
+          CLIMBER.HOLDING_ROBOT.motionMagicCruiseVelocity,
+          CLIMBER.HOLDING_ROBOT.motionMagicAcceleration,
+          CLIMBER.HOLDING_ROBOT.motionMagicJerk);
       setPIDSlot(1);
     } else {
       setDesiredPositionAndMotionMagicConfigs(
           getHeight(),
-          CLIMBER.motionMagicCruiseVelocityNoRobot,
-          CLIMBER.motionMagicAccelerationNoRobot,
-          0.0);
+          CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
+          CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration,
+          CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk);
       setPIDSlot(0);
     }
   }
