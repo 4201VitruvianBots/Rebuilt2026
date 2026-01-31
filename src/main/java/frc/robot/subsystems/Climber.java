@@ -185,20 +185,18 @@ public class Climber extends SubsystemBase {
       setPIDSlot(0);
     }
   }
-  
+
   private void updateSim(ElevatorSim sim) {
-      sim.setInputVoltage(m_motorSimState.getMotorVoltage());
+    sim.setInputVoltage(m_motorSimState.getMotorVoltage());
 
-      sim.update(0.020);
+    sim.update(0.020);
 
-      m_motorSimState.setRawRotorPosition(
-          sim.getPositionMeters()
-              * CLIMBER.gearRatio
-              / CLIMBER.drumRotationsToDistance.in(Meters));
-      m_motorSimState.setRotorVelocity(
-          sim.getVelocityMetersPerSecond()
-              * CLIMBER.gearRatio
-              / CLIMBER.drumRotationsToDistance.in(Meters));
+    m_motorSimState.setRawRotorPosition(
+        sim.getPositionMeters() * CLIMBER.gearRatio / CLIMBER.drumRotationsToDistance.in(Meters));
+    m_motorSimState.setRotorVelocity(
+        sim.getVelocityMetersPerSecond()
+            * CLIMBER.gearRatio
+            / CLIMBER.drumRotationsToDistance.in(Meters));
   }
 
   @Override
@@ -207,7 +205,7 @@ public class Climber extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     m_motorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    
+
     if (isHoldingRobot()) {
       updateSim(m_climberWeightedSim);
     } else {

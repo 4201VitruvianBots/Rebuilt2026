@@ -45,7 +45,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
   private ShooterRollers m_shooterRollers;
-  
+
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   private ShooterHood m_shooterHood;
 

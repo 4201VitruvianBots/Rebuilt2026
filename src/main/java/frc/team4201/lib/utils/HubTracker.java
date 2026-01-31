@@ -3,7 +3,7 @@ package frc.team4201.lib.utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-// Credit: Mosim Developer Oliver from team 1986 for this 
+// Credit: Mosim Developer Oliver from team 1986 for this
 public class HubTracker {
   private static String currentGameData = "";
 
