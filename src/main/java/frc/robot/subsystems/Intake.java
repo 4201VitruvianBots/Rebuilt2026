@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -66,6 +67,11 @@ public class Intake extends SubsystemBase {
   @Logged(name = "Motor Output %", importance = Logged.Importance.INFO)
   public double getPercentOutput() {
     return m_motor1.get();
+  }
+
+  @NotLogged
+  public boolean isIntaking() {
+    return m_motor1.get() != 0;
   }
 
   @Override

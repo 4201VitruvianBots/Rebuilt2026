@@ -168,9 +168,9 @@ public final class Constants {
       STEER
     }
 
-    public static final Distance kWheelBase = Inches.of(23.75);
-    public static final Distance kTrackWidth = Inches.of(23.75);
-    public static final Distance kBumperThickness = Inches.of(2.5);
+    public static final Distance kWheelBase = Inches.of(17.75);
+    public static final Distance kTrackWidth = Inches.of(24.5);
+    public static final Distance kBumperHeight = Inches.of(4.5);
 
     public static final PIDConstants kTranslationPID = new PIDConstants(10, 0, 0);
     public static final PIDConstants kRotationPID = new PIDConstants(7, 0, 0);
@@ -239,7 +239,7 @@ public final class Constants {
   }
 
   public class ROBOT {
-
+    public static int MAX_FUEL = 48;
     // Climber control mode:
     public enum CONTROL_MODE {
       OPEN_LOOP,

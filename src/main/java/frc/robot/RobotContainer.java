@@ -4,21 +4,13 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import java.time.Instant;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
@@ -32,6 +24,7 @@ import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.generated.TunerConstants;
+import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -43,6 +36,8 @@ import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.Telemetry;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -164,13 +159,17 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
-
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
   }
 
+  public void simulationPeriotic() {
+    FuelSim.getInstance().updateSim();
+  }
+
   private void initSmartDashboard() {
     initAutoChooser();
+    SmartDashboard.putData("Start Fuel Sim", new InstantCommand((this::initFuelSim)));
   }
 
   /**
@@ -181,5 +180,25 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return new InstantCommand();
+  }
+
+  public void initFuelSim() {
+    FuelSim.getInstance().spawnStartingFuel(); // spawns fuel in the depots and neutral zone
+    FuelSim.getInstance().registerRobot(
+        Constants.SWERVE.kTrackWidth.in(Meters), // from left to right
+        Constants.SWERVE.kWheelBase.in(Meters), // from front to back
+        Constants.SWERVE.kBumperHeight.in(Meters), // from floor to top of bumpers
+        ()->m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
+        ()->m_swerveDrive.getState().Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+    FuelSim.getInstance().start(); // enables the simulation to run (updateSim must still be called periodically)
+    FuelSim.getInstance().registerIntake(
+        Inches.of(13.688).in(Meters),
+        Inches.of(15.094).in(Meters),
+        Inches.of(-13.938).in(Meters),
+        Inches.of(23.388).in(Meters),
+        ()->FuelSim.getInstance().getStoredFuel()<=Constants.ROBOT.MAX_FUEL && m_intake.isIntaking(),
+        ()->{}
+    );
+    // TODO: Add fuel shooting sim
   }
 }
