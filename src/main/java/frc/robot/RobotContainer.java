@@ -36,6 +36,7 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
+import frc.team4201.lib.utils.HubTracker;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -69,6 +70,11 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
+
+  @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
+  public boolean isHubActive(){
+    return HubTracker.isAllianceHubActive();
+  }
 
   @NotLogged
   private double MaxSpeed =
