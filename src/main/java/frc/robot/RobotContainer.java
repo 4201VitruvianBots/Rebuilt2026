@@ -84,6 +84,7 @@ public class RobotContainer {
   @NotLogged
   private double MaxSpeed =
       AlphaBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+  private Boolean m_flipToRight = false;
 
   @NotLogged
   private double MaxAngularRate =
@@ -98,7 +99,7 @@ public class RobotContainer {
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
-
+  private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -197,8 +198,20 @@ public class RobotContainer {
     m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
   }
 
+  private void initSideChooser() {
+    SmartDashboard.putData("Auto Side", m_autoSide);
+    m_autoSide.setDefaultOption("No Flip", false);
+  
+    m_autoSide.addOption("Depot", false);
+    m_autoSide.addOption("Outpost", true);
+    m_autoSide.onChange((Boolean selected) -> {
+      m_flipToRight = selected;
+    });
+  }
+
   private void initSmartDashboard() {
     initAutoChooser();
+    initSideChooser();
   }
 
   /**
