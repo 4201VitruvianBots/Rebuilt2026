@@ -78,7 +78,7 @@ public class IntakePivot extends SubsystemBase {
     // config.Slot0.kA = PIVOT.kA;
     // config.Slot0.kV = PIVOT.kV;
     // config.Slot0.kS = PIVOT.kS;
-    // config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
+    config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -93,8 +93,8 @@ public class IntakePivot extends SubsystemBase {
     // mode, due to the fact that an intake Pivot would not be coasting, thus we
     // chose to use brake for afformentioned pivot.
 
-    config.CurrentLimits.StatorCurrentLimit = 130;
-    config.CurrentLimits.StatorCurrentLimitEnable = false;
+    config.CurrentLimits.StatorCurrentLimit = 175;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
 
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
