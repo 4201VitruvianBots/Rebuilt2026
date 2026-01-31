@@ -3,8 +3,11 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -113,6 +116,67 @@ public class Vision extends SubsystemBase {
       m_swerveDriveTrain.resetPose(Pose2d.kZero);
     }
   }
+
+  private VisionFieldPoseEstimate fuseEstimates(
+    VisionFieldPoseEstimate a, VisionFieldPoseEstimate b) { 
+      if (b.getTimestampSeconds() < a.getTimestampSeconds()){
+        VisionFieldPoseEstimate tmp = a; 
+        a = b;
+        b = tmp;
+      }
+  }
+
+  Transform2d a_T_b = 
+    state.getFieldToRobot(b.getTimestampSeconds))
+      .get().minus(state.getFieldToRobot(a.getTimestampSeconds()).get());
+
+  Pose2d poseA = a.getVisionRobotPoseMeters().transformBy(a_T_b);
+  Pose2d poseB = b.getVisionRobotPoseMeters().transformBy(a_T_b);
+
+
+  //inverse variance weighting 
+  var varianceA = 
+          a.getVisionMeasurementStdDevs().elementTimes(a.getVisionMeasurementStdDevs());
+  var varianceB = 
+          b.getVisionMeasurementStdDevs().elementTimes(b.getVisionMeasurementStdDevs());
+
+  
+  Rotation2d fusedHeading = poseB.getRotation();
+  if(varianceA.get(2, 0) < VisionConstants.kLargeVariance && varianceB.get(2,0) < VisionConstants.kLargeVariance) {
+    fusedHeading = new Rotation2d(
+      poseA.getRotation().getCos() / varianceA.get(2, 0) + 
+          poseB.getRotation().getCos() / varianceB.get(2, 0),
+      poseA.getRotation().getSin() / varianceA.get(2, 0) + 
+          poseB.getRotation().getSin() / varianceB.get(2, 0)); 
+  }
+
+
+double weightAx = 1.0 / varianceA.get(0, 0);
+double weightAy = 1.0 / varianceA.get(1, 0);
+double weightBx = 1.0 / varianceB.get(0, 0); 
+double weightBy = 1.0 / varianceB.get(1, 0); 
+
+
+Pose2d fusedPose = 
+  new Pose2d( 
+      new Translation2d(
+        (poseA.getTranslation().getX() * weightAx 
+          + poseB.getTranslation().getX * weightBx)
+            / (weightAx + weightBx), 
+        (poseA.getTranslation().getY() * weightAy
+          + poseB.getTranslation().getY * weightBy)),
+          fusedHeading);
+
+      Matrix<N3, N1> fusedStdDev =
+        VecBuilder.fill(
+          Math.sqrt(1.0 / (weightAx + weightBx)),
+          Math.sqrt(1.0 / (weightAy + weightBy)),
+          Math.sqrt(1.0 / (1.0 / varianceA.get(2, 0) + 1.0 / varianceB.get(2,0))));
+        
+int numTags = a.getNumTags() + b.getNumTags();
+double time = b.getTimestampSeconds();
+
+return new VisionFieldPoseEstimate(fusedPose, time, fusedStdDev, numTags);
 
   /**
    * Process measurements from a limelight. Return true if the given vision measurement is used,
