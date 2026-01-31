@@ -95,7 +95,7 @@ public class RobotContainer {
           .withDeadband(MaxSpeed * 0.1)
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
-  private final Robot2d m_robotSim = new Robot2d();
+  private Robot2d m_robotSim;
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
   private final FieldSim m_fieldSim = new FieldSim();
 
@@ -142,6 +142,7 @@ public class RobotContainer {
     m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
     
     if (Robot.isSimulation()) {
+      m_robotSim = new Robot2d();
       m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);
     }
   }

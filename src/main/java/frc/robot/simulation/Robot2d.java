@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;
 
+// Hopefully there isn't too much overhead from making this a subsystem.
 public class Robot2d extends SubsystemBase {
   private static final double pixelsPerInch = 631 / 26.5; // Non-curved edge of the drivebase in the image is 26.5 inches long and 631 pixels long
   private static final DistanceUnit Pixels = derive(Units.Inches).splitInto(pixelsPerInch).named("Pixels").symbol("px").make();
@@ -121,6 +122,8 @@ public class Robot2d extends SubsystemBase {
     m_robot.getRoot("climberRoot",
     uptakeRootX.plus(uptakeWidth).plus(Inches.of(3.35 / 2)).in(Meters), // Put the flywheel on the top left corner of the uptake
     uptakeRootY.in(Meters));
+  private final Climber2d m_climber =
+    new Climber2d(m_climberRoot);
   
   // TODO: Add hopper, Vision, LEDs?
   
