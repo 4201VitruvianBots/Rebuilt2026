@@ -274,11 +274,11 @@ public final class Constants {
 
     public static class PIVOT {
       /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-      public static final double kP = 1.0;
-      public static final double kD = 0.0;
-      public static final double kS = 0.05; // TODO: Calculate kS and kV as a feedforward.
-      public static final double kV = 1.0; // Recalc these
-      public static final double kA = 0.0;
+      public static final double kP = 1200.0;
+      public static final double kD = 100.0;
+      public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
+      public static final double kV = 0; // Recalc these
+      public static final double kA = 0;
 
       public static final double gearRatio = 1.0; // encoder is after gear ratio
       public static final double motionMagicAcceleration = 35.0;
