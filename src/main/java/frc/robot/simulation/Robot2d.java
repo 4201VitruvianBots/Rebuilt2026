@@ -151,7 +151,7 @@ public class Robot2d extends SubsystemBase {
           new Flywheel2dConfig(
               "Flywheel",
               new Color8Bit(127, 127, 127), // Grey color for flywheel
-              Inches.of(2.0) // Radius of the flywheel
+              Inches.of(2.0078125) // Radius of the flywheel
               ),
           m_flywheelRoot);
 
