@@ -202,7 +202,7 @@ public class RobotContainer {
     m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
     m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralShootClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
     m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
-    m_autoChooser.addOption("PrelodaNeutralShootTwice", new PreloadNeutralShootTwice(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
+    m_autoChooser.addOption("PreloadNeutralShootTwice", new PreloadNeutralShootTwice(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
   }
 
   private void initSideChooser() {
