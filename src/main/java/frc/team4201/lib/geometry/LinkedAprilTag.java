@@ -16,7 +16,7 @@ public class LinkedAprilTag {
     this.redId = redId;
     this.blueId = blueId;
     field.getTagPose(redId).ifPresent(p -> redPose = p);
-    field.getTagPose(redId).ifPresent(p -> bluePose = p);
+    field.getTagPose(blueId).ifPresent(p -> bluePose = p);
   }
 
   public String getName() {

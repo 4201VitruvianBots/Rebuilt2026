@@ -23,9 +23,11 @@ import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
+// import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
+import frc.robot.constants.FIELD;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -33,6 +35,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
+import frc.team4201.lib.simulation.FieldSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -60,6 +63,8 @@ public class RobotContainer {
 
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
+  private FieldSim m_fieldSim = new FieldSim();
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
@@ -85,6 +90,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    FIELD.initializeConstants();
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
@@ -116,6 +122,8 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_fieldSim = new FieldSim();
+    FIELD.plotAllPositions(m_fieldSim);
   }
 
   private void configureBindings() {

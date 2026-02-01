@@ -52,6 +52,14 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
     SmartDashboard.putData("Field2D", m_field2D);
   }
 
+  public void initializeTranslations(String key, Translation2d... translations) {
+    m_field2D.getObject(key).setPoses(
+            Arrays.stream(translations)
+                    .map(t -> new Pose2d(t, Rotation2d.kZero))
+                    .toArray(Pose2d[]::new)
+    );
+  }
+
   /**
    * Add poses once to FieldSim.
    *
@@ -72,10 +80,10 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
     m_field2D.getObject(key).setPoses(poses);
   }
 
-  public void addTranslations(String key, Translation2d... translation2ds) {
+  public void addTranslations(String key, Translation2d... translations) {
     addPoses(
         key,
-        Arrays.stream(translation2ds)
+        Arrays.stream(translations)
             .map(t -> new Pose2d(t, Rotation2d.kZero))
             .toArray(Pose2d[]::new));
   }

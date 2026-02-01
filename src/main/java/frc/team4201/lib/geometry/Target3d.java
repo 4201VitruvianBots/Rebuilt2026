@@ -35,7 +35,7 @@ public class Target3d {
     m_field
         .getTagPose(id)
         .ifPresentOrElse(
-            t -> m_tagToTarget.put(id, m_targetPosition.plus(offset).minus(t.getTranslation())),
+            t -> m_tagToTarget.put(id, m_targetPosition.minus(t.getTranslation().plus(offset))),
             () -> {
               throw new IllegalArgumentException("Invalid AprilTag ID given!");
             });
@@ -53,5 +53,12 @@ public class Target3d {
     } else {
       return m_targetPosition;
     }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof Target3d other
+            && m_targetPosition.equals(other.m_targetPosition)
+            && m_tagToTarget.equals(other.m_tagToTarget);
   }
 }
