@@ -5,7 +5,6 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
 import frc.robot.subsystems.ShooterFlywheel;
