@@ -3,8 +3,9 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "PreloadNeutralShootClimb",
-    "PreloadDepotShootMiddle"
+    "PreloadNeutralShootTwice",
+    "PreloadDepotShootMiddle",
+    "PreloadNeutralShootClimb"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

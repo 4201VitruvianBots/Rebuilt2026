@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.team4201.lib.utils.TrajectoryUtils;
 
 import java.util.function.BooleanSupplier;
-
+// The default side for a path should be the depot side, thus it is only flipped if the autoSide input is on the outpost.
 public abstract class Auto extends SequentialCommandGroup {
   protected final Command getPathCommand(TrajectoryUtils trajectoryUtils, PathPlannerPath path, BooleanSupplier flipToRight) {
     return new ProxyCommand(()->{
