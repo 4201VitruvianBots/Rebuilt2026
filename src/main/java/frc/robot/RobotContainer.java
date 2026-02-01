@@ -17,18 +17,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
 import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
-import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
-import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.RunUptake;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
@@ -44,8 +40,8 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.Uptake;
-import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
 
 /**
@@ -177,11 +173,11 @@ public class RobotContainer {
     m_driverController.leftBumper().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     m_driverController.rightBumper().whileTrue(new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING));
     if (m_intake != null) {
-      m_driverController.y().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+      m_driverController.y().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     }
 
     if (m_uptake != null) {
-      m_driverController.b().whileTrue(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING));
+      m_driverController.b().whileTrue(new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING));
     }
 
     if (m_intakePivot != null) {

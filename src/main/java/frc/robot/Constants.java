@@ -8,9 +8,9 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.derive;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -62,18 +62,18 @@ public final class Constants {
       public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
 
       public enum SHOOTER_VELOCITY {
-        IDLE(0.0),
-        LOW(1000.0),
-        HIGH(2900.0);
+        IDLE(RPM.of(0.0)),
+        LOW(RPM.of(1000.0)),
+        HIGH(RPM.of(2900.0));
 
-        private final double rpm;
+        private final AngularVelocity rpm;
 
-        SHOOTER_VELOCITY(double rpm) {
+        SHOOTER_VELOCITY(AngularVelocity rpm) {
           this.rpm = rpm;
         }
 
         public AngularVelocity getRPM() {
-          return RotationsPerSecond.of(rpm / 60.0);
+          return rpm;
         }
       }
     }
