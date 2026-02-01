@@ -136,6 +136,9 @@ public class FIELD {
     }
 
     public static class RED extends BASE_ZONE {
+      public static FieldRectangle2d ZONE;
+      public static FieldRectangle2d DEPOT;
+
       public static void init() {
         ZONE =
             new FieldRectangle2d(
@@ -168,14 +171,21 @@ public class FIELD {
                 new Translation2d(RED_HUB_X_NEAR, FIELD_WIDTH));
       }
 
-      public static class BUMP extends BASE_HUB_ELEMENTS {
+      public static class BUMP {
+        public static FieldRectangle2d LEFT;
+        public static FieldRectangle2d RIGHT;
       }
 
-      public static class TRENCH extends BASE_HUB_ELEMENTS {
+      public static class TRENCH {
+        public static FieldRectangle2d LEFT;
+        public static FieldRectangle2d RIGHT;
       }
     }
 
     public static class BLUE extends BASE_ZONE {
+      public static FieldRectangle2d ZONE;
+      public static FieldRectangle2d DEPOT;
+
       public static void init() {
         ZONE = new FieldRectangle2d(Translation2d.kZero, new Translation2d(BLUE_ZONE_LINE, FIELD_WIDTH));
 
@@ -205,10 +215,14 @@ public class FIELD {
                 new Translation2d(BLUE_HUB_X_FAR, TRENCH_WIDTH));
       }
 
-      public static class BUMP extends BASE_HUB_ELEMENTS {
+      public static class BUMP {
+        public static FieldRectangle2d LEFT;
+        public static FieldRectangle2d RIGHT;
       }
 
-      public static class TRENCH extends BASE_HUB_ELEMENTS {
+      public static class TRENCH {
+        public static FieldRectangle2d LEFT;
+        public static FieldRectangle2d RIGHT;
       }
     }
 
@@ -222,15 +236,7 @@ public class FIELD {
       }
     }
 
-    public static class BASE_ZONE {
-      public static FieldRectangle2d ZONE;
-      public static FieldRectangle2d DEPOT;
-
-    }
-
-    public static class BASE_HUB_ELEMENTS {
-      public static FieldRectangle2d LEFT;
-      public static FieldRectangle2d RIGHT;
+    private static abstract class BASE_ZONE {
     }
   }
 
@@ -286,7 +292,12 @@ public class FIELD {
       BLUE.init();
     }
 
-    public static class RED extends BASE_TOWER {
+    public static class RED {
+      public static Pose3d APRILTAG;
+      public static Target3d CENTER;
+      public static Target3d LEFT;
+      public static Target3d RIGHT;
+
       public static void init() {
         APRILTAG = aprilTagMap.get("TOWER").getPose(false);
 
@@ -325,7 +336,11 @@ public class FIELD {
       }
     }
 
-    public static class BLUE extends BASE_TOWER {
+    public static class BLUE {
+      public static Pose3d APRILTAG;
+      public static Target3d CENTER;
+      public static Target3d LEFT;
+      public static Target3d RIGHT;
 
       public static void init() {
         APRILTAG = aprilTagMap.get("TOWER").getPose(true);
@@ -374,13 +389,6 @@ public class FIELD {
         LEFT = RED.LEFT;
         RIGHT = RED.RIGHT;
       }
-    }
-
-    private static class BASE_TOWER {
-      public static Pose3d APRILTAG;
-      public static Target3d CENTER;
-      public static Target3d LEFT;
-      public static Target3d RIGHT;
     }
   }
 }

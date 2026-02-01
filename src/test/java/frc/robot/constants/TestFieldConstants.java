@@ -2,13 +2,14 @@ package frc.robot.constants;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestFieldConstants {
 
     @Test
     public void testFieldConstants() {
-        assertFalse(FIELD.TOWER.RED.CENTER.equals(FIELD.TOWER.BLUE.CENTER));
+        FIELD.initializeConstants();
+
+        assertNotEquals(FIELD.TOWER.RED.CENTER, FIELD.TOWER.BLUE.CENTER);
     }
 }
