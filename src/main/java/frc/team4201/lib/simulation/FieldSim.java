@@ -53,11 +53,12 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
   }
 
   public void initializeTranslations(String key, Translation2d... translations) {
-    m_field2D.getObject(key).setPoses(
+    m_field2D
+        .getObject(key)
+        .setPoses(
             Arrays.stream(translations)
-                    .map(t -> new Pose2d(t, Rotation2d.kZero))
-                    .toArray(Pose2d[]::new)
-    );
+                .map(t -> new Pose2d(t, Rotation2d.kZero))
+                .toArray(Pose2d[]::new));
   }
 
   /**

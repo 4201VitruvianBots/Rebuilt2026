@@ -95,6 +95,7 @@ public class FIELD {
     fieldSim.addTranslations("Blue Right Trench", ZONE.BLUE.TRENCH.RIGHT.getCorners());
   }
 
+  @SuppressWarnings("SuspiciousNameCombination")
   static class ZONE implements AllianceInterface {
     public static Class<? extends BASE_ZONE> ALLIANCE;
     public static Class<? extends BASE_ZONE> OPPONENT;
@@ -135,6 +136,7 @@ public class FIELD {
       BLUE.init();
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     public static class RED extends BASE_ZONE {
       public static FieldRectangle2d ZONE;
       public static FieldRectangle2d DEPOT;
@@ -182,12 +184,15 @@ public class FIELD {
       }
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     public static class BLUE extends BASE_ZONE {
       public static FieldRectangle2d ZONE;
       public static FieldRectangle2d DEPOT;
 
       public static void init() {
-        ZONE = new FieldRectangle2d(Translation2d.kZero, new Translation2d(BLUE_ZONE_LINE, FIELD_WIDTH));
+        ZONE =
+            new FieldRectangle2d(
+                Translation2d.kZero, new Translation2d(BLUE_ZONE_LINE, FIELD_WIDTH));
 
         DEPOT =
             new FieldRectangle2d(
@@ -236,8 +241,7 @@ public class FIELD {
       }
     }
 
-    private static abstract class BASE_ZONE {
-    }
+    public abstract static class BASE_ZONE {}
   }
 
   static class HUB implements AllianceInterface {

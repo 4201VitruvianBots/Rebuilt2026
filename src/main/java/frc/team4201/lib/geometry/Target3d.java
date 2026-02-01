@@ -58,7 +58,7 @@ public class Target3d {
   @Override
   public boolean equals(Object obj) {
     return obj instanceof Target3d other
-            && m_targetPosition.equals(other.m_targetPosition)
-            && m_tagToTarget.equals(other.m_tagToTarget);
+        && m_targetPosition.equals(other.m_targetPosition)
+        && m_tagToTarget.equals(other.m_tagToTarget);
   }
 }
