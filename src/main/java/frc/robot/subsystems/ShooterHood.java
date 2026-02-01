@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
+import frc.robot.Constants.INTAKE.PIVOT;
 import frc.robot.Constants.SHOOTER.HOOD;
 import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
@@ -53,11 +55,11 @@ public class ShooterHood extends SubsystemBase {
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
+          LinearSystemId.createDCMotorSystem(HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
           HOOD.gearbox);
 
-  private final TalonFXSimState m_simState;
+  private final TalonFXSimState m_simState = m_motor.getSimState();
+
   private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
@@ -69,6 +71,15 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public ShooterHood() {
+    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+
+    if (RobotBase.isReal()) {
+      encoderConfig.MagnetSensor.MagnetOffset = PIVOT.encoderOffset;
+      encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
+    }
+
+    CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
+
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = HOOD.kP;
     config.Slot0.kD = HOOD.kD;
@@ -80,6 +91,7 @@ public class ShooterHood extends SubsystemBase {
     config.MotorOutput.PeakReverseDutyCycle = HOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = 30;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.ClosedLoopGeneral.ContinuousWrap = false;
 
     config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -97,17 +109,13 @@ public class ShooterHood extends SubsystemBase {
     m_motor.setPosition(getHoodRotations().in(Rotations));
 
     CtreUtils.configureTalonFx(m_motor, config);
-
-    m_simState = m_motor.getSimState();
   }
 
   public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
         Degrees.of(
             MathUtil.clamp(
-                setpoint.in(Degrees),
-                HOOD.minAngle.in(Degrees),
-                HOOD.maxAngle.in(Degrees)));
+                setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
@@ -158,6 +166,7 @@ public class ShooterHood extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_shooterHoodSim.setInputVoltage(m_simState.getMotorVoltage());
 
     m_shooterHoodSim.update(0.02);

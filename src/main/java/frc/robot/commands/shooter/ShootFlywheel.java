@@ -2,29 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.shooter;
 
-import edu.wpi.first.units.measure.Angle;
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterFlywheel;
 
-public class Shoot extends Command {
+public class ShootFlywheel extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ShooterFlywheel m_shooterFlywheel;
 
-  private final ShooterHood m_shooterHood;
-
   private final SHOOTER_VELOCITY m_rpm;
-  private final Angle m_angle;
 
-  public Shoot(
-      ShooterFlywheel shooterFlywheel, ShooterHood shooterHood, SHOOTER_VELOCITY rpm, Angle angle) {
+  public ShootFlywheel(ShooterFlywheel shooterFlywheel, SHOOTER_VELOCITY rpm) {
     m_shooterFlywheel = shooterFlywheel;
     m_rpm = rpm;
-    m_shooterHood = shooterHood;
-    m_angle = angle;
 
     addRequirements(shooterFlywheel);
   }
@@ -33,7 +27,6 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     m_shooterFlywheel.setRPMOutputFOC(m_rpm.getRPM());
-    m_shooterHood.setAngle(m_angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,7 +36,7 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterFlywheel.setRPMOutputFOC(SHOOTER_VELOCITY.IDLE.getRPM());
+    m_shooterFlywheel.setVoltageOutputFOC(Volts.of(0.0));
   }
 
   // Returns true when the command should end.

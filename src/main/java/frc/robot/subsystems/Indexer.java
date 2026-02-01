@@ -37,8 +37,7 @@ public class Indexer extends SubsystemBase {
 
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+          LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
           INDEXER.gearbox);
   private final TalonFXSimState m_simState;
 
@@ -93,8 +92,7 @@ public class Indexer extends SubsystemBase {
     m_indexerMotor1Sim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations())
-            .times(INDEXER.gearRatio));
+        Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
   }

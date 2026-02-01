@@ -8,41 +8,42 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.time.Instant;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
 import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
+import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
-import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TestLEDs;
 import frc.robot.commands.UpdateLEDs;
+import frc.robot.commands.intake.IntakeSetpoint;
+import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.shooter.Shoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterFlywheel;
+import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
 
 /**
@@ -68,18 +69,26 @@ public class RobotContainer {
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake = new Uptake();
-  
+
   @Logged(name = "Climber", importance = Logged.Importance.INFO)
   private Climber m_climber = new Climber();
 
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led = new LEDs();
 
+  @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
+  private IntakePivot m_intakePivot = new IntakePivot();
+
   private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
+
+  @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
+  public boolean isHubActive() {
+    return HubTracker.isAllianceHubActive();
+  }
 
   @NotLogged
   private double MaxSpeed =
@@ -96,7 +105,7 @@ public class RobotContainer {
           .withDeadband(MaxSpeed * 0.1)
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
-  private final Robot2d m_robotSim = new Robot2d();
+  private Robot2d m_robotSim;
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
   private final FieldSim m_fieldSim = new FieldSim();
 
@@ -109,7 +118,7 @@ public class RobotContainer {
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
-    
+
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
@@ -120,6 +129,7 @@ public class RobotContainer {
     m_indexer = new Indexer();
     m_intake = new Intake();
     m_uptake = new Uptake();
+    m_intakePivot = new IntakePivot();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -144,14 +154,16 @@ public class RobotContainer {
     m_led.setDefaultCommand(new TestLEDs(m_led));
     
     if (Robot.isSimulation()) {
-      m_robotSim.registerSubsystems(m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);
+      m_robotSim = new Robot2d();
+      m_robotSim.registerSubsystems(
+          m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);
     }
   }
 
   private void configureBindings() {
     if (m_shooterFlywheel != null && m_shooterHood != null) {
       m_driverController
-          .a()
+          .x()
           .whileTrue(
               new Shoot(
                   m_shooterFlywheel,
@@ -163,10 +175,20 @@ public class RobotContainer {
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
     m_driverController.leftBumper().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     m_driverController.rightBumper().whileTrue(new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING));
+    if (m_intake != null) {
+      m_driverController.y().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+    }
+
+    if (m_uptake != null) {
+      m_driverController.b().whileTrue(new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING));
+    }
+
+    if (m_intakePivot != null) {
+      m_driverController.a().whileTrue(new IntakeSetpoint(m_intakePivot, PIVOT_SETPOINT.INTAKING));
+    }
   }
 
   private void initAutoChooser() {
-
     SmartDashboard.putData("Auto Mode", m_chooser);
     m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
   }
