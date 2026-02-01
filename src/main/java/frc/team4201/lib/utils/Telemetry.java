@@ -96,8 +96,8 @@ public class Telemetry {
     //   // pose.transformBy(m_moduleTransforms[i.ordinal()]);
     //   //            }
     //   //
-    //   m_fieldSim.addPoses("robotPose", state.Pose);
-    //   // m_fieldSim.updateSwervePoses(m_swerveModulePoses);
+    m_fieldSim.addPoses("robotPose", state.Pose);
+    // m_fieldSim.updateSwervePoses(m_swerveModulePoses);
     // }
   }
 }

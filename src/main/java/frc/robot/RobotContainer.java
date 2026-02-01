@@ -31,14 +31,17 @@ import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.autos.PreloadDepotShootMiddle;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
+import frc.robot.commands.autos.PreloadNeutralDepotClimb;
+import frc.robot.commands.autos.PreloadNeutralShootClimb;
+import frc.robot.commands.autos.PreloadNeutralShootTwice;
 import frc.robot.generated.AlphaBotConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
@@ -85,6 +88,7 @@ public class RobotContainer {
   @NotLogged
   private double MaxSpeed =
       AlphaBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+  private Boolean m_flipToRight = false;
 
   @NotLogged
   private double MaxAngularRate =
@@ -98,8 +102,8 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
   @Logged(name = "AutoChooser")
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+  private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -193,12 +197,28 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
-    SmartDashboard.putData("Auto Mode", m_chooser);
-    m_chooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
+    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
+    m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralShootClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
+    m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
+    m_autoChooser.addOption("PrelodaNeutralShootTwice", new PreloadNeutralShootTwice(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
+  }
+
+  private void initSideChooser() {
+    SmartDashboard.putData("Auto Side", m_autoSide);
+    m_autoSide.setDefaultOption("No Flip", false);
+  
+    m_autoSide.addOption("Depot", false);
+    m_autoSide.addOption("Outpost", true);
+    m_autoSide.onChange((Boolean selected) -> {
+      m_flipToRight = selected;
+    });
   }
 
   private void initSmartDashboard() {
     initAutoChooser();
+    initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
   }
 
@@ -209,6 +229,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new InstantCommand();
+    return m_autoChooser.getSelected();
   }
 }
