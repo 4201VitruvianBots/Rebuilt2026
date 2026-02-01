@@ -31,8 +31,8 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.INTAKEMOTORS.PIVOT;
-import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
+import frc.robot.Constants.INTAKE.PIVOT;
+import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class IntakePivot extends SubsystemBase {
