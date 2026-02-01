@@ -17,26 +17,36 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
+import frc.robot.Constants.SHOOTER.HOOD.HOOD_ANGLE;
 import frc.robot.Constants.INTAKEMOTORS.PIVOT.PIVOT_SETPOINT;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
 import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
 import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
-import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
+import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.RunUptake;
+import frc.robot.commands.Shoot;
+import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.generated.TunerConstants;
+import frc.robot.simulation.Robot2d;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.ShooterHood;
-import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.utils.HubTracker;
+import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.utils.Telemetry;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -47,8 +57,8 @@ import frc.team4201.lib.utils.HubTracker;
 @Logged(name = "RobotContainer", importance = Logged.Importance.CRITICAL)
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_shooterRollers;
+  @Logged(name = "ShooterFlywheel", importance = Logged.Importance.INFO)
+  private ShooterFlywheel m_shooterFlywheel;
 
   @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   private ShooterHood m_shooterHood;
@@ -61,6 +71,12 @@ public class RobotContainer {
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake = new Uptake();
+
+  @Logged(name = "Climber", importance = Logged.Importance.INFO)
+  private Climber m_climber = new Climber();
+
+  @Logged(name = "LEDs", importance = Logged.Importance.INFO)
+  private LEDs m_led = new LEDs();
 
   @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
   private IntakePivot m_intakePivot = new IntakePivot();
@@ -91,6 +107,10 @@ public class RobotContainer {
           .withDeadband(MaxSpeed * 0.1)
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
+  private Robot2d m_robotSim;
+  private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
+  private final FieldSim m_fieldSim = new FieldSim();
+
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -100,10 +120,13 @@ public class RobotContainer {
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
+
+    m_telemetry.registerFieldSim(m_fieldSim);
+    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
   private void initializeSubSystems() {
-    m_shooterRollers = new ShooterRollers();
+    m_shooterFlywheel = new ShooterFlywheel();
     m_shooterHood = new ShooterHood();
     m_indexer = new Indexer();
     m_intake = new Intake();
@@ -129,21 +152,30 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+
+    if (Robot.isSimulation()) {
+      m_robotSim = new Robot2d();
+      m_robotSim.registerSubsystems(
+          m_shooterFlywheel, m_shooterHood, m_indexer, m_intake, m_uptake);
+    }
   }
 
   private void configureBindings() {
-    if (m_shooterRollers != null && m_shooterHood != null) {
+    if (m_shooterFlywheel != null && m_shooterHood != null) {
       m_driverController
           .x()
           .whileTrue(
               new Shoot(
-                  m_shooterRollers,
+                  m_shooterFlywheel,
                   m_shooterHood,
-                  ShooterVelocity.HIGH.getRPM(),
-                  HoodAngle.FAR.getAngle()));
+                  SHOOTER_VELOCITY.HIGH,
+                  HOOD_ANGLE.CLOSE.getAngle()));
     }
-    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    // m_driverController.a().whileTrue(new Shoot(m_ShooterFlywheel, ShooterRPM.HIGH.getRPM()));
     // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController.leftBumper().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+    m_driverController.rightBumper().whileTrue(new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING));
     if (m_intake != null) {
       m_driverController.y().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
