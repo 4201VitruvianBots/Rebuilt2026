@@ -33,6 +33,7 @@ import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.autos.PreloadDepotShootMiddle;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
+import frc.robot.commands.autos.PreloadNeutralDepotClimb;
 import frc.robot.commands.autos.PreloadNeutralShootClimb;
 import frc.robot.commands.autos.PreloadNeutralShootTwice;
 import frc.robot.generated.AlphaBotConstants;
@@ -199,6 +200,7 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
     m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralShootClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
+    m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
     m_autoChooser.addOption("PrelodaNeutralShootTwice", new PreloadNeutralShootTwice(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
   }
 
