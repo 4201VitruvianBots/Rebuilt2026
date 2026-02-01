@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -221,6 +222,7 @@ public final class Constants {
             2.211024); // TODO: Find what this year's climber constants are compared to last year's
     // elevator. It should just be the gear ratio that is different from last year.
     public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
+    public static final GravityTypeValue K_GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
 
     public class NOT_HOLDING_ROBOT {
       public static double kS = 1.0;

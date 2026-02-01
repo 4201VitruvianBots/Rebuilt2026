@@ -1,8 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-// Imports:
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
@@ -89,6 +84,7 @@ public class Climber extends SubsystemBase {
     // config.Slot0.kA = CLIMBER.NOT_HOLDING_ROBOT.kA;
     // config.Slot0.kG = CLIMBER.NOT_HOLDING_ROBOT.kG;
     config.Slot0.kS = CLIMBER.NOT_HOLDING_ROBOT.kS;
+    config.Slot0.GravityType = CLIMBER.K_GRAVITY_TYPE_VALUE;
 
     // Climbing Robot PID Gains
     config.Slot1.kP = CLIMBER.HOLDING_ROBOT.kP;
@@ -97,6 +93,7 @@ public class Climber extends SubsystemBase {
     // config.Slot1.kA = CLIMBER.HOLDING_ROBOT.kA;
     // config.Slot1.kS = CLIMBER.HOLDING_ROBOT.kS;
     config.Slot1.kG = CLIMBER.HOLDING_ROBOT.kG;
+    config.Slot1.GravityType = CLIMBER.K_GRAVITY_TYPE_VALUE;
 
     config.Feedback.SensorToMechanismRatio =
         CLIMBER.gearRatio; // configNoRobotures climber to gear ratio. (check if absolute cancoder)
