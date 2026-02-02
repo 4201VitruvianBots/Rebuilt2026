@@ -25,7 +25,6 @@ import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.RunUptake;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.TestLEDs;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.intake.IntakeSetpoint;

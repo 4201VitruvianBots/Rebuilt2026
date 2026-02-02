@@ -22,6 +22,20 @@ public class LEDs extends SubsystemBase {
   public void setState(LED_STATES state) {
     if (state != currentState) {
       currentState = state;
+      switch (currentState) {
+        case DISABLED:
+            break;
+        case IDLE:
+            break;
+        case DRIVING:
+            break;
+        case INTAKING:
+            break;
+        case SHOOTING:
+            break;
+        case CLIMBING:
+            break;
+      }
     }
   }
   @Override
