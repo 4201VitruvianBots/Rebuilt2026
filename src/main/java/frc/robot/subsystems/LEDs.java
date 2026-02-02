@@ -4,50 +4,26 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.PWM;
 import frc.robot.Constants.LED.LED_STATES;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 
 public class LEDs extends SubsystemBase {
-  private DatagramSocket socket;
   private LED_STATES currentState = LED_STATES.DISABLED;
+  
+  // We'll be using a WS2812 LED strip controlled through PWM
+  private AddressableLED m_led = new AddressableLED(PWM.kLED);
 
   public LEDs() {
-    try {
-      socket = new DatagramSocket();
-    } catch (SocketException e) {
-      DriverStation.reportWarning(
-          "LEDs: Failed to create DatagramSocket on port 5800 " + e.getMessage(), false);
+    m_led.start();
+  }
+  
+  public void setState(LED_STATES state) {
+    if (state != currentState) {
+      currentState = state;
     }
   }
-
-  public void sendBytes(byte[] data) {
-    if (socket == null || socket.isClosed()) {
-      DriverStation.reportWarning("LEDs: socket is not available for sending.", false);
-      return;
-    }
-    try {
-      InetAddress addr = InetAddress.getByName("10.42.1.12");
-      DatagramPacket packet = new DatagramPacket(data, data.length, addr, 25000);
-      socket.send(packet);
-    } catch (Exception e) {
-      DriverStation.reportWarning("LEDs: send failed: " + e.getMessage(), false);
-    }
-  }
-
-  public void setState(LED_STATES newState) {
-    if (newState != currentState) {
-      currentState = newState;
-      System.out.println("LEDs: Changing state to " + newState.getAnimation());
-      sendBytes(newState.getAnimation().getBytes(StandardCharsets.UTF_8));
-    }
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

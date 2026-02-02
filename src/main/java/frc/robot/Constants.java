@@ -164,6 +164,10 @@ public final class Constants {
   public final class USB {
     public static final int driver_xBoxController = 0;
   }
+  
+  public final class PWM {
+    public static final int kLED = 0;
+  }
 
   public class SWERVE {
     // TODO: Remove unused variables.
