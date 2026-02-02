@@ -25,19 +25,10 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
-
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
   public class SHOOTERMOTORS {
     public static final double kP =
-        9.1; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+        9.1; // These worked for WoodBot but will need to be retuned
     public static final double kD = 0.05;
     public static final double kV = 0.0;
     public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
@@ -47,7 +38,7 @@ public final class Constants {
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia =
-        0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
+        0.01; 
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity =
@@ -87,7 +78,7 @@ public final class Constants {
     public static final double kP = 3.0; // TODO: Change this
     public static final double kD = 0.1;
     public static final double kA =
-        0.0; // TODO: Change these two feedforwards later, use ReCalc and SysID
+        0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
@@ -96,7 +87,7 @@ public final class Constants {
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia =
-        0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
+        0.005; 
 
     public static final double motionMagicCruiseVelocity = 6.0;
     public static final double motionMagicAcceleration = 4.0;
@@ -149,23 +140,22 @@ public final class Constants {
     public static final int kShooterRollerMotor3 = 42;
     public static final int kShooterRollerMotor4 = 43;
 
-    public static final int kIndexerMotor1 = 50; /* TODO: change values later */
+    public static final int kIndexerMotor1 = 50; 
     public static final int kIndexerMotor2 = 51;
     public static final int kIndexerMotor3 = 52;
 
     public static final int kShooterHoodMotor = 34;
     public static final int kShooterHoodCANCoder = 35;
 
-    public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
+    public static final int kIntakeRollerMotor1 = 53;
     public static final int kIntakeRollerMotor2 = 54;
 
     public static final int kIntakePivotMotor = 55;
     public static final int kPivotEncoder = 56;
 
-    public static final int kUptakeMotor = 57; /* TODO: another placeholder "Fun!" */
+    public static final int kUptakeMotor = 57;
   }
 
-  // usb n swerve are like lwk copied from reefscape
   public final class USB {
     public static final int driver_xBoxController = 0;
   }
@@ -225,7 +215,7 @@ public final class Constants {
   }
 
   public class INDEXERMOTORS {
-    /*TODO: change every value they are ALL placeholders */
+    // TODO: change values
     public static final double kP = 1.0;
     public static final double kD = 0.0;
     public static final double kV = 0.0;
@@ -256,7 +246,7 @@ public final class Constants {
 
   public class INTAKEMOTORS {
     public static class ROLLERS {
-      /* TODO: change values because these are ALSO placeholders yay fun */
+      // TODO: change values
       public static final double kP = 1.0;
       public static final double gearRatio = 1.0;
       public static final double peakForwardOutput = 0.5;
@@ -302,10 +292,10 @@ public final class Constants {
       public static final Angle startingAngle = minAngle;
       public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
           GravityTypeValue
-              .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
+              .Arm_Cosine; // Requires kG to be active
       public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
-      public static final Distance baseLength = Inches.of(7.0); /* Almost completely made up :P */
+      public static final Distance baseLength = Inches.of(7.0); 
       public static final Mass mass = Pounds.of(7.0); // TODO: Consult CAD
 
       public static final double encoderOffset = 0.0;
@@ -330,7 +320,7 @@ public final class Constants {
   }
 
   public class UPTAKEMOTORS {
-    public static final double kP = 1.0; /*more placeholders FUN*/
+    public static final double kP = 1.0; // Placeholders
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
     public static final double peakReverseOutput = -0.5;

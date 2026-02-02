@@ -10,7 +10,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -94,13 +93,11 @@ public class ShooterRollers extends SubsystemBase {
 
     m_simState = m_motor1.getSimState();
 
-    // We only need the sim state of a single motor because all the motors are doing the same
-    // thing... right???
+    // We only need the sim state of a single motor
 
     // m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    // TODO: Pls pls check if they all are actually aligned because it'd
-    // be horrible if they weren't
+    // TODO: Check if they all are  aligned 
     var topic = NetworkTableInstance.getDefault()
       .getTable("SmartDashboard") 
       .getDoubleTopic("ShooterRPMSetpoint");

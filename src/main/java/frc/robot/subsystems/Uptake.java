@@ -35,7 +35,6 @@ public class Uptake extends SubsystemBase {
 
   private final TalonFXSimState m_simState;
 
-  /** Creates a new Uptake. */
   public Uptake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = UPTAKEMOTORS.kP;

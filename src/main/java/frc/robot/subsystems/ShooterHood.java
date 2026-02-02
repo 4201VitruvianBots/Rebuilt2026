@@ -167,6 +167,8 @@ public class ShooterHood extends SubsystemBase {
     return m_sysIdRoutine.quasistatic(direction);
   }
 
+  // WARNING, ALL SYSID ROUTINES WILL NOT WORK BECAUSE IT IS USING VOLTAGE INSTEAD OF TORQUECURRENTFOC
+
   /**
    * Returns a command that will execute a dynamic test in the given direction.
    *

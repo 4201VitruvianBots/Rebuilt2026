@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Volts;
@@ -27,7 +23,6 @@ public class ShootManualFlywheel extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println(m_shooterRollers.getRPMSetpoint());
     m_shooterRollers.setManualRPMOutputFOC(m_shooterRollers.getRPMSetpoint());
   }
 

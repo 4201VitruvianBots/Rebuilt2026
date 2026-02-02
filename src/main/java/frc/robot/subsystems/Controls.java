@@ -44,7 +44,6 @@ public class Controls extends SubsystemBase {
 
   @NotLogged private final Map<String, Alert> alertMap = new HashMap<>();
 
-  /** Creates a new Controls subsystem */
   public Controls() {
     // Alerts for setting up the robot properly
     alertMap.put(
@@ -170,8 +169,6 @@ public class Controls extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-
     if (DriverStation.isDisabled()) {
       DriverStation.getAlliance()
           .ifPresent(
