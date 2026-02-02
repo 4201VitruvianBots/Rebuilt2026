@@ -223,6 +223,7 @@ public class RobotContainer {
 
   public void testInit() {
     if (m_shooterRollers != null) m_shooterRollers.testInit();
+    if (m_vision != null) m_vision.testInit();
   }
 
 
