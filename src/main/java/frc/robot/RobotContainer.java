@@ -14,14 +14,11 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
-import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
@@ -30,12 +27,9 @@ import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
-import frc.robot.commands.autos.PreloadDepotShootMiddle;
+import frc.robot.commands.autos.*;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
-import frc.robot.commands.autos.PreloadNeutralDepotClimb;
-import frc.robot.commands.autos.PreloadNeutralShootClimb;
-import frc.robot.commands.autos.PreloadNeutralShootTwice;
 import frc.robot.generated.AlphaBotConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
@@ -200,8 +194,9 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
     m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralShootClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
-    m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
-    m_autoChooser.addOption("PrelodaNeutralShootTwice", new PreloadNeutralShootTwice(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
+    m_autoChooser.addOption("PreloadNeutralDepotClimb", new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
+    m_autoChooser.addOption("PreloadNeutralShootTwice", new PreloadNeutralShootTwice(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
+    m_autoChooser.addOption("PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
   }
 
   private void initSideChooser() {
