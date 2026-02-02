@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.commands.ResetGyro;
+import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
+import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
 import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
@@ -176,15 +179,15 @@ public class RobotContainer {
     }
 
     if (m_shooterRollers != null) {
-      m_driverController.rightTrigger().whileTrue(new ShootManualFlywheel(m_shooterRollers));
+      m_driverController.y().whileTrue(new ShootManualFlywheel(m_shooterRollers));
     }
 
     if (m_uptake != null && m_indexer != null) {
-      m_driverController.y().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING), new RunIntake(m_intake, INTAKESPEED.INTAKING)));
+      m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING), new RunIntake(m_intake, INTAKESPEED.INTAKING)));
     }
 
     if (m_intake != null){
-      m_driverController.b().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
 
   }
@@ -213,6 +216,7 @@ public class RobotContainer {
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
+    SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
   }
 
   /**

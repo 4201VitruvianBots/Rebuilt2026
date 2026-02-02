@@ -37,8 +37,8 @@ import java.util.Map;
 public final class Constants {
   public class SHOOTERMOTORS {
     public static final double kP =
-        10.0; // TODO: These will all need to be changed because we are attempting to reach a set rpm
-    public static final double kD = 0.0;
+        9.1; // TODO: These will all need to be changed because we are attempting to reach a set rpm
+    public static final double kD = 0.05;
     public static final double kV = 0.0;
     public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
