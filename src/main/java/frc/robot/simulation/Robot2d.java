@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.ShooterFlywheel;
 import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.Uptake;
@@ -94,8 +95,7 @@ public class Robot2d extends SubsystemBase {
                   Inches.of(1.25).in(LineWidthInches),
                   new Color8Bit(255, 255, 255)));
   private final MechanismLigament2d m_intakeSegment2 =
-      m_intakePivot
-          .getLigament()
+      m_intakeSegment1
           .append(
               new MechanismLigament2d(
                   "Intake Segment 2",
@@ -223,9 +223,9 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("Intake")) {
       var intakeSubsystem = (Intake) m_subsystemMap.get("Intake");
     }
-    // if (m_subsystemMap.containsKey("IntakePivot")) {
-    //     var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
-    // }
+    if (m_subsystemMap.containsKey("IntakePivot")) {
+        var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
+    }
     if (m_subsystemMap.containsKey("Indexer")) {
       var indexerSubsystem = (Indexer) m_subsystemMap.get("Indexer");
     }
