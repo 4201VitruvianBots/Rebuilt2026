@@ -46,15 +46,13 @@ public class ShooterRollers extends SubsystemBase {
   // @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
 
-  // @Logged(name = "Flywheel Motor 4", importance = Importance.DEBUG)
-  // private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4);
-
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0);
   private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0);
-  private AngularVelocity m_rpmSetpoint = ManualRPM.IDLE.getRPM();
+  private static AngularVelocity m_rpmSetpoint = ManualRPM.IDLE.getRPM();
+
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
 
@@ -90,6 +88,7 @@ public class ShooterRollers extends SubsystemBase {
 
     CtreUtils.configureTalonFx(m_motor1, config);
     // CtreUtils.configureTalonFx(m_motor2, config);
+    // CtreUtils.configureTalonFx(m_motor3, config);
 
 
 
@@ -100,16 +99,13 @@ public class ShooterRollers extends SubsystemBase {
 
     // m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    // m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // TODO: Pls pls check if they all are actually aligned because it'd
     // be horrible if they weren't
-
     var topic = NetworkTableInstance.getDefault()
       .getTable("SmartDashboard") 
       .getDoubleTopic("ShooterRPMSetpoint");
     m_rpmSubscriber = topic.subscribe(0.0);
     m_rpmPublisher = topic.publish();
-    m_rpmPublisher.set(0.0);
   }
 
   public void changeNeutralMode(NeutralModeValue neutralmode) {
@@ -176,6 +172,14 @@ public class ShooterRollers extends SubsystemBase {
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public void testInit(){
+    m_rpmPublisher.set(0.0);
+  }
+
+  public void testPeriodic(){
+    m_rpmSetpoint = RPM.of(m_rpmSubscriber.get());
   }
 
   @Override

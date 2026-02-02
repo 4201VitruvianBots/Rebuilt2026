@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,7 @@ import frc.robot.commands.Index;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.autos.*;
+import frc.robot.constants.ROBOT;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
 import frc.robot.generated.AlphaBotConstants;
@@ -217,6 +219,15 @@ public class RobotContainer {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
+  }
+
+  public void testInit() {
+    if (m_shooterRollers != null) m_shooterRollers.testInit();
+  }
+
+
+  public void testPeriodic() {
+    if (m_shooterRollers != null) m_shooterRollers.testPeriodic();
   }
 
   /**

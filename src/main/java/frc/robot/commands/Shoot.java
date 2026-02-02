@@ -73,8 +73,6 @@ public class Shoot extends Command {
   @Override
   public void execute() {
     Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
-    System.out.println(m_vision.getDistancetoHub());
-    System.out.println(shot.shooterRPM);
     m_shooterRollers.setRPMOutputFOC(shot.shooterRPM);
     // m_shooterHood.setPosition(shot.hoodPosition);
   }

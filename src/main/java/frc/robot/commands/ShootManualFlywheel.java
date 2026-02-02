@@ -7,7 +7,6 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
 import frc.robot.subsystems.ShooterRollers;
 
 public class ShootManualFlywheel extends Command {
@@ -28,8 +27,8 @@ public class ShootManualFlywheel extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double TargetRPM = m_shooterRollers.m_rpmSubscriber.get();
-    m_shooterRollers.setManualRPMOutputFOC(TargetRPM);
+    System.out.println(m_shooterRollers.getRPMSetpoint());
+    m_shooterRollers.setManualRPMOutputFOC(m_shooterRollers.getRPMSetpoint());
   }
 
   // Called once the command ends or is interrupted.
