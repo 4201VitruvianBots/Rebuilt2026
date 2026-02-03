@@ -1,0 +1,24 @@
+{
+  "Connections": {
+    "open": true
+  },
+  "NetworkTables Settings": {
+    "listenAddress": "4201",
+    "mode": "Server",
+    "serverTeam": "4201"
+  },
+  "Server": {
+    "Publishers": {
+      "open": true
+    },
+    "Subscribers": {
+      "open": true
+    },
+    "open": true
+  },
+  "transitory": {
+    "SmartDashboard": {
+      "open": true
+    }
+  }
+}

@@ -29,68 +29,64 @@ import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
-  public class SHOOTER {
-    public class FLYWHEEL {
-      public static final double kP =
-          5.0; // TODO: These will all need to be changed because we are attempting to reach a set
-      // rpm
-      public static final double kV = 0.0;
-      public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
-      public static final double kA = 0.0;
-      // The value of kS is the largest voltage applied before the mechanism begins to move)
-      public static final double gearRatio = 1.0; // Placeholder value
-      public static final double peakForwardOutput = 0.4; // Placeholder value
-      public static final double peakReverseOutput = -0.35; // Placeholder value
-      public static final double kInertia =
-          0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
+  public class FLYWHEEL {
+    public static final double kP = 9.1; // These worked for WoodBot but will need to be retuned
+    public static final double kD = 0.05;
+    public static final double kV = 0.0;
+    public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
+    public static final double kA = 0.0;
+    // The value of kS is the largest voltage applied before the mechanism begins to move)
+    public static final double gearRatio = 1.0; // Placeholder value
+    public static final double peakForwardOutput = 0.4; // Placeholder value
+    public static final double peakReverseOutput = -0.35; // Placeholder value
+    public static final double kInertia = 0.01;
 
-      // These worked on wood bot. Change jerk later if further optimization is needed
-      public static double motionMagicCruiseVelocity =
-          35.0; // target cruise velocity of 35 rps, so 2100 rpm
-      public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
-      public static double motionMagicJerk = 0.0;
+    // These worked on wood bot. Change jerk later if further optimization is needed
+    public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
+    public static double motionMagicAcceleration = 30.0; // target acceleration of 30 rps/s..
+    public static double motionMagicJerk = 0.0;
+    
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
+    
+    public static class Shot {
+      public final double shooterRPM;
+      public final double hoodPosition;
 
-      public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
-
-      public enum SHOOTER_VELOCITY {
-        IDLE(RPM.of(0.0)),
-        LOW(RPM.of(1000.0)),
-        HIGH(RPM.of(2900.0));
-
-        private final AngularVelocity rpm;
-
-        SHOOTER_VELOCITY(AngularVelocity rpm) {
-          this.rpm = rpm;
-        }
-
-        public AngularVelocity getRPM() {
-          return rpm;
-        }
+      public Shot(double shooterRPM, double hoodPosition) {
+        this.shooterRPM = shooterRPM;
+        this.hoodPosition = hoodPosition;
       }
     }
 
-    public class HOOD {
-      public static final double kP = 3.0; // TODO: Change this
-      public static final double kD = 0.1;
-      public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
-      public static final double kV = 0.0;
-      public static final double kS = 0.0;
-      public static final double gearRatio =
-          1.0; // TODO: Change this later because this is confirmed not what the final thing
-      // will be
-      public static final double peakForwardOutput = 0.4; // Placeholder value
-      public static final double peakReverseOutput = -0.35; // Placeholder value
-      public static final double kInertia =
-          0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
+    public enum MANUAL_RPM {
+      IDLE(RPM.of(0.0)),
+      LOW(RPM.of(1000.0)),
+      HIGH(RPM.of(2900.0));
+
+      private final AngularVelocity rpm;
+
+      MANUAL_RPM(AngularVelocity rpm) {
+        this.rpm = rpm;
+      }
+
+      public AngularVelocity getRPM() {
+        return rpm;
+      }
+    }
+
+  public class HOOD {
+    public static final double kP = 3.0; // TODO: Change this
+    public static final double kD = 0.1;
+    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
+    public static final double gearRatio =
+        1.0; // TODO: Change this later because this is confirmed not what the final thing
+    // will be
+    public static final double peakForwardOutput = 0.4; // Placeholder value
+    public static final double peakReverseOutput = -0.35; // Placeholder value
+    public static final double kInertia = 0.005;
 
       public static final double motionMagicCruiseVelocity = 6.0;
       public static final double motionMagicAcceleration = 4.0;
@@ -100,17 +96,17 @@ public final class Constants {
 
       public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-      public enum HOOD_ANGLE {
-        // TODO: Going to stop using this because we are going to do math instead :)
-        NOTHING(Degrees.of(0.0)),
-        CLOSE(Degrees.of(30.0)),
-        FAR(Degrees.of(45.0));
+    public enum MANUAL_ANGLE {
+      // TODO: Going to stop using this because we are going to do math instead :)
+      NOTHING(Degrees.of(0.0)),
+      CLOSE(Degrees.of(30.0)),
+      FAR(Degrees.of(45.0));
 
         private final Angle angle;
 
-        HOOD_ANGLE(Angle angle) {
-          this.angle = angle;
-        }
+      MANUAL_ANGLE(Angle angle) {
+        this.angle = angle;
+      }
 
         public Angle getAngle() {
           return angle;
@@ -138,27 +134,28 @@ public final class Constants {
     public static final int backLeftTurnMotor = 25;
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
+    
+    public static final int kClimberMotor = 30;
 
-    public static final int kFlywheelMotor1 = 40;
-    public static final int kFlywheelMotor2 = 41;
-    public static final int kFlywheelMotor3 = 42;
-    public static final int kFlywheelMotor4 = 43;
-    public static final int kClimberMotor = 30; // TODO: Change this later.
+    public static final int kShooterRollerMotor1 = 40;
+    public static final int kShooterRollerMotor2 = 41;
+    public static final int kShooterRollerMotor3 = 42;
+    public static final int kShooterRollerMotor4 = 43;
 
-    public static final int kIndexerMotor1 = 50; /* TODO: Change values later. */
+    public static final int kIndexerMotor1 = 50;
     public static final int kIndexerMotor2 = 51;
     public static final int kIndexerMotor3 = 52;
 
     public static final int kShooterHoodMotor = 34;
     public static final int kShooterHoodCANCoder = 35;
 
-    public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
+    public static final int kIntakeRollerMotor1 = 53;
     public static final int kIntakeRollerMotor2 = 54;
 
     public static final int kIntakePivotMotor = 55;
     public static final int kPivotEncoder = 56;
 
-    public static final int kUptakeMotor = 57; /* TODO: another placeholder "Fun!" */
+    public static final int kUptakeMotor = 57;
   }
 
   public final class USB {
@@ -248,23 +245,11 @@ public final class Constants {
     public static final Distance kClimberDrumDiameter = Inches.of(2.2557); // Placeholder.
   }
 
-  public class ROBOT {
-
-    // Climber control mode:
-    public enum CONTROL_MODE {
-      OPEN_LOOP,
-      CLOSED_LOOP
-    }
-  }
-
   public class INDEXER {
-    /*TODO: change every value they are ALL placeholders */
+    // TODO: change values
     public static final double kP = 1.0;
-    public static final double kD = 0.0;
-    public static final double kV = 0.0;
-    public static final double kS = 0.01;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.5;
+    public static final double peakForwardOutput = 0.8;
     public static final double peakReverseOutput = -0.5;
     public static final double kInertia = 0.005;
 
@@ -272,7 +257,7 @@ public final class Constants {
 
     public enum INDEXER_SPEED {
       ZERO(0),
-      INDEXING(0.4),
+      INDEXING(0.9),
       FREEING(-0.1);
 
       private final double value;
@@ -289,7 +274,7 @@ public final class Constants {
 
   public class INTAKE {
     public static class ROLLERS {
-      /* TODO: Change values because these are ALSO placeholders yay fun. */
+      // TODO: change values
       public static final double kP = 1.0;
       public static final double gearRatio = 1.0;
       public static final double peakForwardOutput = 0.5;
@@ -300,8 +285,8 @@ public final class Constants {
 
       public enum INTAKE_SPEED {
         ZERO(0),
-        INTAKING(0.5),
-        HELPSOMETHINGSSTUCK(-0.2);
+        INTAKING(0.55),
+        REVERSE(-0.2);
 
         private final double value;
 
@@ -363,7 +348,7 @@ public final class Constants {
   }
 
   public class UPTAKE {
-    public static final double kP = 1.0; /*more placeholders FUN*/
+    public static final double kP = 1.0; // Placeholders
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
     public static final double peakReverseOutput = -0.5;
@@ -373,8 +358,8 @@ public final class Constants {
 
     public enum UPTAKE_SPEED {
       ZERO(0),
-      UPTAKING(0.6),
-      WEIRDREVERSE(-0.3);
+      UPTAKING(0.9),
+      REVERSE(-0.3);
 
       private final double value;
 
