@@ -26,7 +26,7 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {
 
-  @Logged(name = "Indexer Motor", importance = Importance.INFO)
+  @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
   private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBaseCanbus);
 
   @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
@@ -45,10 +45,7 @@ public class Indexer extends SubsystemBase {
   /** Creates a new Indexer. */
   public Indexer() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kV = INDEXERMOTORS.kV;
     config.Slot0.kP = INDEXERMOTORS.kP;
-    config.Slot0.kD = INDEXERMOTORS.kD;
-    config.Slot0.kS = INDEXERMOTORS.kS;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = INDEXERMOTORS.peakForwardOutput;
@@ -58,6 +55,7 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = 60;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
+    CtreUtils.configureTalonFx(m_indexerMotor2, config);
 
     m_indexerMotor2.setControl(
         new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));

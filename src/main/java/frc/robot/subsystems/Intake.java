@@ -25,8 +25,8 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Intake extends SubsystemBase {
 
-  @Logged(name = "Intake Motor 1", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor1 = new TalonFX(CAN.kIntakeRollerMotor1, CAN.driveBaseCanbus);
+  @Logged(name = "Intake Motor", importance = Logged.Importance.DEBUG)
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.driveBaseCanbus);
 
   // private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 
@@ -47,25 +47,25 @@ public class Intake extends SubsystemBase {
     config.Feedback.SensorToMechanismRatio = INTAKEMOTORS.ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    CtreUtils.configureTalonFx(m_motor1, config);
+    CtreUtils.configureTalonFx(m_motor, config);
     // CtreUtils.configureTalonFx(m_motor2, config);
 
-    // m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    // m_motor2.setControl(new Follower(m_motor.getDeviceID(), MotorAlignmentValue.Opposed));
 
-    m_simState = m_motor1.getSimState();
+    m_simState = m_motor.getSimState();
   }
 
   public void setOutputPercent(double speed) {
-    m_motor1.set(speed);
+    m_motor.set(speed);
   }
 
   public boolean isConnected() {
-    return m_motor1.isConnected(); // && m_motor2.isConnected();
+    return m_motor.isConnected(); // && m_motor2.isConnected();
   }
 
   @Logged(name = "Motor Output %", importance = Logged.Importance.INFO)
   public double getPercentOutput() {
-    return m_motor1.get();
+    return m_motor.get();
   }
 
   @Override

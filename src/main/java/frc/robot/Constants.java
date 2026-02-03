@@ -217,9 +217,6 @@ public final class Constants {
   public class INDEXERMOTORS {
     // TODO: change values
     public static final double kP = 1.0;
-    public static final double kD = 0.0;
-    public static final double kV = 0.0;
-    public static final double kS = 0.01;
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.8;
     public static final double peakReverseOutput = -0.5;
@@ -258,7 +255,7 @@ public final class Constants {
       public enum INTAKESPEED {
         ZERO(0),
         INTAKING(0.55),
-        HELPSOMETHINGSSTUCK(-0.2);
+        REVERSE(-0.2);
 
         private final double value;
 
@@ -331,7 +328,7 @@ public final class Constants {
     public enum UPTAKESPEED {
       ZERO(0),
       UPTAKING(0.9),
-      WEIRDREVERSE(-0.3);
+      REVERSE(-0.3);
 
       private final double value;
 

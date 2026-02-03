@@ -130,9 +130,9 @@ public class ShooterRollers extends SubsystemBase {
     return m_rpmSetpoint.in(RPM);
   }
 
-  @Logged(name = "Motor Velocity in Rotations per Minute", importance = Logged.Importance.INFO)
-  public double getMotorSpeedRotationsPerMinute() {
-    return m_motor1.getVelocity().refresh().getValue().in(RotationsPerSecond) * 60;
+  @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
+  public double getMotorSpeedRPM() {
+    return m_motor1.getVelocity().refresh().getValue().in(RPM);
   }
 
   public boolean[] isConnected() {

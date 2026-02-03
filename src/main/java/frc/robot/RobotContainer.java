@@ -35,7 +35,7 @@ import frc.robot.commands.autos.*;
 import frc.robot.constants.ROBOT;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
-import frc.robot.generated.AlphaBotConstants;
+import frc.robot.generated.WoodBotConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
@@ -61,7 +61,7 @@ public class RobotContainer {
   // @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   // private ShooterHood m_shooterHood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = AlphaBotConstants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive = WoodBotConstants.createDrivetrain();
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
 
@@ -85,7 +85,7 @@ public class RobotContainer {
 
   @NotLogged
   private double MaxSpeed =
-      AlphaBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+      WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
   private Boolean m_flipToRight = false;
 
   @NotLogged
@@ -172,7 +172,7 @@ public class RobotContainer {
                 () -> m_driverController.getLeftX()));
     }
     
-    if (m_swerveDrive != null && m_shooterRollers != null) {
+    if (m_swerveDrive != null && m_shooterRollers != null && m_vision != null) {
       m_driverController
           .a()
           .whileTrue(
@@ -184,14 +184,14 @@ public class RobotContainer {
       m_driverController.y().whileTrue(new ShootManualFlywheel(m_shooterRollers));
     }
 
-    if (m_uptake != null && m_indexer != null) {
+    // I forsee a state machine in the future... 
+    if (m_uptake != null && m_indexer != null && m_intake != null) {
       m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING), new RunIntake(m_intake, INTAKESPEED.INTAKING)));
     }
 
     if (m_intake != null){
       m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
-
   }
 
   private void initAutoChooser() {
