@@ -33,7 +33,6 @@ public class Climb extends Command {
           CLIMBER.HOLDING_ROBOT.motionMagicCruiseVelocity,
           CLIMBER.HOLDING_ROBOT.motionMagicAcceleration,
           0.0);
-      System.out.println("With Robot");
     } else {
       m_climber.setPIDSlot(0);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
@@ -41,7 +40,6 @@ public class Climb extends Command {
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration,
           0.0);
-      System.out.println("No Robot");
     }
   }
 

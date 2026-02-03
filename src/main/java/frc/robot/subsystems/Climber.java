@@ -42,7 +42,7 @@ public class Climber extends SubsystemBase {
   @Logged(name = "Desired Position Inches", importance = Importance.INFO)
   private Distance m_desiredPosition = Inches.of(0.0);
 
-  @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
+  @Logged(name = "Neutral Mode", importance = Logged.Importance.DEBUG)
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Coast: you let go, gravity lets it fall. Brake: locks it in place.
 
@@ -172,12 +172,12 @@ public class Climber extends SubsystemBase {
     return m_climberMotor.getStatorCurrent().clone().refresh().getValue();
   }
 
-  @Logged
+  @Logged(name = "Average Current", importance = Importance.DEBUG)
   public double getAverageCurrent(){
     return currentFilter.calculate(getStatorCurrent().in(Amps));
   }
 
-  @Logged(name = "Is Holding Robot", importance = Importance.DEBUG)
+  @Logged(name = "Is Holding Robot", importance = Importance.INFO)
   public boolean isHoldingRobot() {
     return getAverageCurrent() < CLIMBER.kHoldingRobotThreshold.in(Amps);
   }
