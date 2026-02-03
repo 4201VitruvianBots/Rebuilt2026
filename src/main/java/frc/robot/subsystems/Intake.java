@@ -67,7 +67,7 @@ public class Intake extends SubsystemBase {
 
   @NotLogged
   public boolean isIntaking() {
-    return m_motor1.get() != 0;
+    return m_motor.get() != 0;
   }
 
   @Override
