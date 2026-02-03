@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
@@ -13,7 +14,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -45,7 +46,7 @@ public class Climber extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Coast: you let go, gravity lets it fall. Brake: locks it in place.
 
-  private MedianFilter currentFilter = new MedianFilter(20);
+  private LinearFilter currentFilter = LinearFilter.singlePoleIIR(0.5, 0.02);
 
   // Climber Sim State:
   // Simulation classes help us simulate what's going on, including gravity.
@@ -82,7 +83,7 @@ public class Climber extends SubsystemBase {
     // config.Slot0.kD = CLIMBER.NOT_HOLDING_ROBOT.kD;
     // config.Slot0.kV = CLIMBER.NOT_HOLDING_ROBOT.kV;
     // config.Slot0.kA = CLIMBER.NOT_HOLDING_ROBOT.kA;
-    // config.Slot0.kG = CLIMBER.NOT_HOLDING_ROBOT.kG;
+    config.Slot0.kG = CLIMBER.NOT_HOLDING_ROBOT.kG;
     config.Slot0.kS = CLIMBER.NOT_HOLDING_ROBOT.kS;
     config.Slot0.GravityType = CLIMBER.K_GRAVITY_TYPE_VALUE;
 
@@ -91,7 +92,7 @@ public class Climber extends SubsystemBase {
     // config.Slot1.kD = CLIMBER.HOLDING_ROBOT.kD;
     // config.Slot1.kV = CLIMBER.HOLDING_ROBOT.kV;
     // config.Slot1.kA = CLIMBER.HOLDING_ROBOT.kA;
-    // config.Slot1.kS = CLIMBER.HOLDING_ROBOT.kS;
+    config.Slot1.kS = CLIMBER.HOLDING_ROBOT.kS;
     config.Slot1.kG = CLIMBER.HOLDING_ROBOT.kG;
     config.Slot1.GravityType = CLIMBER.K_GRAVITY_TYPE_VALUE;
 
@@ -103,12 +104,18 @@ public class Climber extends SubsystemBase {
     // config.MotionMagic.MotionMagicJerk = CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk; // TODO:
     // Implement Jerk when needed.
     config.CurrentLimits.StatorCurrentLimit =
-        40; // Prevents Climber from moving too jerkily and also breakage. TODO: Adjust this value.
+        CLIMBER.kStatorCurrentLimit.in(Amps); // Prevents Climber from moving too jerkily and also breakage. TODO: Adjust this value.
     config.CurrentLimits.StatorCurrentLimitEnable = true; // Enables previous function.
     // Sets limits on motor output. Seperate from current limits.
     config.MotorOutput.PeakReverseDutyCycle = CLIMBER.peakReverseOutput;
     config.MotorOutput.PeakForwardDutyCycle = CLIMBER.peakForwardOutput;
     config.MotorOutput.NeutralMode = m_neutralMode; // Puts the motor in Neutral mode.
+
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = convertDistancetoRotations(CLIMBER.upperLimit);
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = convertDistancetoRotations(CLIMBER.lowerLimit);
+
 
     // This is the function that applies all these configNoRoboturations to the motor.
     CtreUtils.configureTalonFx(m_climberMotor, config);
@@ -129,6 +136,10 @@ public class Climber extends SubsystemBase {
         m_climberMotor.getPosition().clone().refresh().getValue().magnitude());
   }
 
+  public double convertDistancetoRotations(Distance distance){
+    return distance.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters);
+  }
+
   public void setDesiredPositionAndMotionMagicConfigs(
       Distance desiredPosition,
       double MotionMagicVelocity,
@@ -145,8 +156,7 @@ public class Climber extends SubsystemBase {
                 CLIMBER.upperLimit.in(Meters)));
     m_climberMotor.setControl(
         m_request.withPosition(
-            m_desiredPosition.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters)));
-    System.out.println(m_desiredPosition.in(Inches));
+            convertDistancetoRotations(desiredPosition)));
   }
 
   public void setPIDSlot(int slot) {
@@ -162,10 +172,14 @@ public class Climber extends SubsystemBase {
     return m_climberMotor.getStatorCurrent().clone().refresh().getValue();
   }
 
+  @Logged
+  public double getAverageCurrent(){
+    return currentFilter.calculate(getStatorCurrent().in(Amps));
+  }
+
   @Logged(name = "Is Holding Robot", importance = Importance.DEBUG)
   public boolean isHoldingRobot() {
-    return true;
-    // currentFilter.calculate(getStatorCurrent().in(Amps)) < CLIMBER.kHoldingRobotThreshold;
+    return getAverageCurrent() < CLIMBER.kHoldingRobotThreshold.in(Amps);
   }
 
   public void holdClimber() {

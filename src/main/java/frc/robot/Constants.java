@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
@@ -223,6 +225,7 @@ public final class Constants {
     // elevator. It should just be the gear ratio that is different from last year.
     public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
+    public static final Current kStatorCurrentLimit = Amps.of(40);
 
     public class NOT_HOLDING_ROBOT {
       public static double kS = 1.0;
@@ -235,7 +238,7 @@ public final class Constants {
           200.0; // Placeholder. Output per unit of error in position (output/rotation).
       // public static double kD =
       //     0.0; // Placeholder. Output per unit of error in velocity (output/rps).
-      // public static double kG = 5.0;
+      public static double kG = 5.0;
 
       public static double motionMagicCruiseVelocity =
           cruiseVelocityInches.in(Meters)
@@ -249,7 +252,7 @@ public final class Constants {
     // This needs to be here because of the friction of the carriage... meaning the whole
     // robot
     public class HOLDING_ROBOT {
-      // public static double kS = 1.0;
+      public static double kS = 1.0;
       // public static double kV = 0.0; // For lifting the robot as well.
       // public static double kA = 0.0;
       public static double kP = 150.0;
@@ -266,14 +269,14 @@ public final class Constants {
     public static final double peakForwardOutput = 1.00; // Placeholder.
     public static final double peakReverseOutput = -0.5; // Placeholder.
 
-    public static final double kHoldingRobotThreshold =
-        20.0; // Amount of current you must be measuring to be sure that you are carrying a robot
+    public static final Current kHoldingRobotThreshold =
+       Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a robot
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
     public enum CLIMBER_SETPOINT {
       START_POSITION(Inches.of(0.0)),
-      LEVEL_ONE(Inches.of(21)),
+      LEVEL_ONE(Inches.of(22.0)),
       LEVEL_TWO_AND_THREE(Inches.of(17));
 
       private final Distance setpoint;
