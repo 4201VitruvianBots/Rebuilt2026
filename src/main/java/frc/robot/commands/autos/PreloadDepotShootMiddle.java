@@ -13,16 +13,13 @@ import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Vision;
 
 public class PreloadDepotShootMiddle extends SequentialCommandGroup {
   public PreloadDepotShootMiddle(
-      CommandSwerveDrivetrain swerveDrive,
-      Intake intake,
-      Vision vision,
-      Flywheel flywheel) {
+      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 

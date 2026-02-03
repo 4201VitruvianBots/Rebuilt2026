@@ -24,19 +24,19 @@ import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
-import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.UpdateLEDs;
+import frc.robot.commands.autos.*;
+import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
-import frc.robot.commands.autos.*;
 import frc.robot.generated.WoodBotConstants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
-import frc.team4201.lib.utils.Telemetry;
 import frc.team4201.lib.utils.HubTracker;
+import frc.team4201.lib.utils.Telemetry;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -156,8 +156,7 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
       m_robotSim = new Robot2d();
-      m_robotSim.registerSubsystems(
-          m_flywheel, m_hood, m_indexer, m_intake, m_uptake);
+      m_robotSim.registerSubsystems(m_flywheel, m_hood, m_indexer, m_intake, m_uptake);
     }
   }
 
