@@ -9,11 +9,11 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SHOOTERMOTORS.Shot;
+import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
-import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Vision;
 
 public class Shoot extends Command {
@@ -37,7 +37,7 @@ public class Shoot extends Command {
     distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15));
   }
 
-  private final ShooterRollers m_shooterRollers;
+  private final Flywheel m_shooterRollers;
   private final Vision m_vision;
 
   // private final ShooterHood m_shooterHood;
@@ -45,7 +45,7 @@ public class Shoot extends Command {
 
   Translation2d m_goal = new Translation2d();
 
-  public Shoot(CommandSwerveDrivetrain swerve, ShooterRollers shooterRollers, Vision vision) {
+  public Shoot(CommandSwerveDrivetrain swerve, Flywheel shooterRollers, Vision vision) {
     m_shooterRollers = shooterRollers;
     m_vision = vision;
     // m_shooterHood = shooterHood;

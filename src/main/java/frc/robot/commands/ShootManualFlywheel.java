@@ -3,13 +3,13 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Flywheel;
 
 public class ShootManualFlywheel extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  private final ShooterRollers m_shooterRollers;
+  private final Flywheel m_shooterRollers;
 
-  public ShootManualFlywheel(ShooterRollers shooterRollers) {
+  public ShootManualFlywheel(Flywheel shooterRollers) {
     m_shooterRollers = shooterRollers;
 
     addRequirements(shooterRollers);

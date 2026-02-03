@@ -18,10 +18,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.INDEXER.INDEXER_SPEED;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.SWERVE;
-import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
+import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
@@ -36,7 +36,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
@@ -52,7 +52,7 @@ import frc.team4201.lib.utils.Telemetry;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_shooterRollers = new ShooterRollers();
+  private Flywheel m_shooterRollers = new Flywheel();
 
   // @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   // private ShooterHood m_shooterHood;
@@ -190,13 +190,13 @@ public class RobotContainer {
           .rightTrigger()
           .whileTrue(
               new ParallelCommandGroup(
-                  new RunUptake(m_uptake, UPTAKESPEED.UPTAKING),
-                  new Index(m_indexer, INDEXERSPEED.INDEXING),
-                  new RunIntake(m_intake, INTAKESPEED.INTAKING)));
+                  new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING),
+                  new Index(m_indexer, INDEXER_SPEED.INDEXING),
+                  new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
 
     if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     }
   }
 

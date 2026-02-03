@@ -27,11 +27,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.SHOOTERMOTORS;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
+import frc.robot.Constants.FLYWHEEL;
+import frc.robot.Constants.FLYWHEEL.MANUAL_RPM;
 import frc.team4201.lib.utils.CtreUtils;
 
-public class ShooterRollers extends SubsystemBase {
+public class Flywheel extends SubsystemBase {
 
   // TODO: Check how many motors we have later
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
@@ -48,7 +48,7 @@ public class ShooterRollers extends SubsystemBase {
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0);
   private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0);
-  private static AngularVelocity m_rpmSetpoint = ManualRPM.IDLE.getRPM();
+  private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
 
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
@@ -56,8 +56,8 @@ public class ShooterRollers extends SubsystemBase {
   private final FlywheelSim m_shooterMotorSim =
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(
-              SHOOTERMOTORS.gearbox, SHOOTERMOTORS.kInertia, SHOOTERMOTORS.gearRatio),
-          SHOOTERMOTORS.gearbox);
+              FLYWHEEL.gearbox, FLYWHEEL.kInertia, FLYWHEEL.gearRatio),
+          FLYWHEEL.gearbox);
   private final TalonFXSimState m_simState;
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
@@ -68,20 +68,20 @@ public class ShooterRollers extends SubsystemBase {
             m_motor1.getVelocity().refresh().getValue()); // Units: Rotations per sec/Meters per sec
   }
 
-  public ShooterRollers() {
+  public Flywheel() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = SHOOTERMOTORS.kP;
-    config.Slot0.kD = SHOOTERMOTORS.kD;
-    config.Slot0.kV = SHOOTERMOTORS.kV;
-    config.Slot0.kS = SHOOTERMOTORS.kS;
-    // config.Slot0.kA = SHOOTERMOTORS.kA;
+    config.Slot0.kP = FLYWHEEL.kP;
+    config.Slot0.kD = FLYWHEEL.kD;
+    config.Slot0.kV = FLYWHEEL.kV;
+    config.Slot0.kS = FLYWHEEL.kS;
+    // config.Slot0.kA = FLYWHEEL.kA;
     config.MotorOutput.NeutralMode = m_neutralMode;
-    config.Feedback.SensorToMechanismRatio = SHOOTERMOTORS.gearRatio;
+    config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = 120;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    config.MotionMagic.MotionMagicCruiseVelocity = SHOOTERMOTORS.motionMagicCruiseVelocity;
-    config.MotionMagic.MotionMagicAcceleration = SHOOTERMOTORS.motionMagicAcceleration;
+    config.MotionMagic.MotionMagicCruiseVelocity = FLYWHEEL.motionMagicCruiseVelocity;
+    config.MotionMagic.MotionMagicAcceleration = FLYWHEEL.motionMagicAcceleration;
 
     CtreUtils.configureTalonFx(m_motor1, config);
     // CtreUtils.configureTalonFx(m_motor2, config);
@@ -183,8 +183,8 @@ public class ShooterRollers extends SubsystemBase {
     m_shooterMotorSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
+        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM()).times(FLYWHEEL.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(SHOOTERMOTORS.gearRatio));
+        RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(FLYWHEEL.gearRatio));
   }
 }

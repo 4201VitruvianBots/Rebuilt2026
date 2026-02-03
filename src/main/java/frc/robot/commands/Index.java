@@ -1,17 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
+import frc.robot.Constants.INDEXER.INDEXER_SPEED;
 import frc.robot.subsystems.Indexer;
 
 public class Index extends Command {
 
   private final Indexer m_indexer;
 
-  private final INDEXERSPEED m_speed;
+  private final INDEXER_SPEED m_speed;
 
   /** Creates a new Index. */
-  public Index(Indexer indexer, INDEXERSPEED speed) {
+  public Index(Indexer indexer, INDEXER_SPEED speed) {
     m_indexer = indexer;
     m_speed = speed;
 

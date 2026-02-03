@@ -14,7 +14,7 @@ import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Vision;
 
 public class PreloadDepotShootMiddle extends SequentialCommandGroup {
@@ -22,7 +22,7 @@ public class PreloadDepotShootMiddle extends SequentialCommandGroup {
       CommandSwerveDrivetrain swerveDrive,
       Intake intake,
       Vision vision,
-      ShooterRollers shooterRollers) {
+      Flywheel shooterRollers) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 

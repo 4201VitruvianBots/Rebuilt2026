@@ -27,7 +27,7 @@ import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
 public final class Constants {
-  public class SHOOTERMOTORS {
+  public class FLYWHEEL {
     public static final double kP = 9.1; // These worked for WoodBot but will need to be retuned
     public static final double kD = 0.05;
     public static final double kV = 0.0;
@@ -56,14 +56,14 @@ public final class Constants {
       }
     }
 
-    public enum ManualRPM {
+    public enum MANUAL_RPM {
       IDLE(RPM.of(0.0)),
       LOW(RPM.of(1000.0)),
       HIGH(RPM.of(2900.0));
 
       private final AngularVelocity rpm;
 
-      ManualRPM(AngularVelocity rpm) {
+      MANUAL_RPM(AngularVelocity rpm) {
         this.rpm = rpm;
       }
 
@@ -73,7 +73,7 @@ public final class Constants {
     }
   }
 
-  public class SHOOTERHOOD {
+  public class HOOD {
     public static final double kP = 3.0; // TODO: Change this
     public static final double kD = 0.1;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
@@ -94,7 +94,7 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-    public enum ManualAngle {
+    public enum MANUAL_ANGLE {
       // TODO: Going to stop using this because we are going to do math instead :)
       NOTHING(Degrees.of(0.0)),
       CLOSE(Degrees.of(30.0)),
@@ -102,7 +102,7 @@ public final class Constants {
 
       private final Angle angle;
 
-      ManualAngle(Angle angle) {
+      MANUAL_ANGLE(Angle angle) {
         this.angle = angle;
       }
 
@@ -211,7 +211,7 @@ public final class Constants {
     }
   }
 
-  public class INDEXERMOTORS {
+  public class INDEXER {
     // TODO: change values
     public static final double kP = 1.0;
     public static final double gearRatio = 1.0;
@@ -221,14 +221,14 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
 
-    public enum INDEXERSPEED {
+    public enum INDEXER_SPEED {
       ZERO(0),
       INDEXING(0.9),
       FREEING(-0.1);
 
       private final double value;
 
-      INDEXERSPEED(double value) {
+      INDEXER_SPEED(double value) {
         this.value = value;
       }
 
@@ -238,7 +238,7 @@ public final class Constants {
     }
   }
 
-  public class INTAKEMOTORS {
+  public class INTAKE {
     public static class ROLLERS {
       // TODO: change values
       public static final double kP = 1.0;
@@ -249,14 +249,14 @@ public final class Constants {
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
 
-      public enum INTAKESPEED {
+      public enum INTAKE_SPEED {
         ZERO(0),
         INTAKING(0.55),
         REVERSE(-0.2);
 
         private final double value;
 
-        INTAKESPEED(double value) {
+        INTAKE_SPEED(double value) {
           this.value = value;
         }
 
@@ -312,7 +312,7 @@ public final class Constants {
     }
   }
 
-  public class UPTAKEMOTORS {
+  public class UPTAKE {
     public static final double kP = 1.0; // Placeholders
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
@@ -321,14 +321,14 @@ public final class Constants {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(1);
 
-    public enum UPTAKESPEED {
+    public enum UPTAKE_SPEED {
       ZERO(0),
       UPTAKING(0.9),
       REVERSE(-0.3);
 
       private final double value;
 
-      UPTAKESPEED(double value) {
+      UPTAKE_SPEED(double value) {
         this.value = value;
       }
 
