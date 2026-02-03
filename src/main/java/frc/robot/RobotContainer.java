@@ -38,6 +38,8 @@ import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
 
+import static edu.wpi.first.units.Units.*;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -243,10 +245,15 @@ public class RobotContainer {
         });
   }
 
+  public void simulationPeriotic() {
+    FuelSim.getInstance().updateSim();
+  }
+
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
+    SmartDashboard.putData("Start Fuel Sim", new InstantCommand((this::initFuelSim)));
   }
 
   public void testInit() {
@@ -266,5 +273,25 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return m_autoChooser.getSelected();
+  }
+
+  public void initFuelSim() {
+    FuelSim.getInstance().spawnStartingFuel(); // spawns fuel in the depots and neutral zone
+    FuelSim.getInstance().registerRobot(
+        Constants.SWERVE.kTrackWidth.in(Meters), // from left to right
+        Constants.SWERVE.kWheelBase.in(Meters), // from front to back
+        Constants.SWERVE.kBumperHeight.in(Meters), // from floor to top of bumpers
+        ()->m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
+        ()->m_swerveDrive.getState().Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+    FuelSim.getInstance().start(); // enables the simulation to run (updateSim must still be called periodically)
+    FuelSim.getInstance().registerIntake(
+        Inches.of(13.688).in(Meters),
+        Inches.of(15.094).in(Meters),
+        Inches.of(-13.938).in(Meters),
+        Inches.of(23.388).in(Meters),
+        ()->FuelSim.getInstance().getStoredFuel()<=Constants.ROBOT.MAX_FUEL && m_intake.isIntaking(),
+        ()->{}
+    );
+    // TODO: Add fuel shooting sim
   }
 }
