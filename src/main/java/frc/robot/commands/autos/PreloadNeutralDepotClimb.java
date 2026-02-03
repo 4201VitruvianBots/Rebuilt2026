@@ -5,7 +5,6 @@
 package frc.robot.commands.autos;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -18,47 +17,48 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
-import frc.team4201.lib.utils.TrajectoryUtils;
-
-import java.util.function.BooleanSupplier;
 
 public class PreloadNeutralDepotClimb extends Auto {
   public PreloadNeutralDepotClimb(
-          CommandSwerveDrivetrain swerveDrive,
-          Intake intake,
-          Vision vision,
-          ShooterRollers shooterRollers) {
+      CommandSwerveDrivetrain swerveDrive,
+      Intake intake,
+      Vision vision,
+      ShooterRollers shooterRollers) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb1");
-      var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb2");
-      var m_path3 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb3");
-      var m_path4 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb4");
-      var m_path5 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb5");
-      var m_path6 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb6");
-      var m_path7 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb7");
+      var m_path1 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb1");
+      var m_path2 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb2");
+      var m_path3 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb3");
+      var m_path4 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb4");
+      var m_path5 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb5");
+      var m_path6 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb6");
+      var m_path7 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb7");
 
       addCommands(
-        m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-        new Shoot(swerveDrive, shooterRollers, vision).withTimeout(3),
-        m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
-        new ParallelRaceGroup(
-          new RunIntake(intake, INTAKESPEED.INTAKING),
-          m_path3.andThen(() -> swerveDrive.setControl(stopRequest))
-        ),
-        m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
-        new ParallelCommandGroup(
+          m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new Shoot(swerveDrive, shooterRollers, vision).withTimeout(3),
-          m_path5.andThen(() -> swerveDrive.setControl(stopRequest))
-        ),
-        new ParallelRaceGroup(
-          new RunIntake(intake, INTAKESPEED.INTAKING),
-          m_path6.andThen(() -> swerveDrive.setControl(stopRequest))
-        ),
-        m_path7.andThen(() -> swerveDrive.setControl(stopRequest))
-        //Todo: add climb (command not yet implemented in this branch)
-      );
+          m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
+          new ParallelRaceGroup(
+              new RunIntake(intake, INTAKESPEED.INTAKING),
+              m_path3.andThen(() -> swerveDrive.setControl(stopRequest))),
+          m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
+          new ParallelCommandGroup(
+              new Shoot(swerveDrive, shooterRollers, vision).withTimeout(3),
+              m_path5.andThen(() -> swerveDrive.setControl(stopRequest))),
+          new ParallelRaceGroup(
+              new RunIntake(intake, INTAKESPEED.INTAKING),
+              m_path6.andThen(() -> swerveDrive.setControl(stopRequest))),
+          m_path7.andThen(() -> swerveDrive.setControl(stopRequest))
+          // Todo: add climb (command not yet implemented in this branch)
+          );
     } catch (Exception e) {
       DriverStation.reportError(
           "Failed to load path for PreloadNeutralDepotClimb", e.getStackTrace());

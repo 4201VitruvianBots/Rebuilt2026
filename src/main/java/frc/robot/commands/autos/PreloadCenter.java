@@ -16,22 +16,20 @@ import frc.team4201.lib.command.Auto;
 
 public class PreloadCenter extends Auto {
   public PreloadCenter(
-          CommandSwerveDrivetrain swerveDrive,
-          Intake intake,
-          Vision vision,
-          ShooterRollers shooterRollers) {
+      CommandSwerveDrivetrain swerveDrive,
+      Intake intake,
+      Vision vision,
+      ShooterRollers shooterRollers) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadCenter1");
 
       addCommands(
-        m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-        new Shoot(swerveDrive, shooterRollers, vision).withTimeout(4)
-      );
+          m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
+          new Shoot(swerveDrive, shooterRollers, vision).withTimeout(4));
     } catch (Exception e) {
-      DriverStation.reportError(
-          "Failed to load path for PreloadCenter", e.getStackTrace());
+      DriverStation.reportError("Failed to load path for PreloadCenter", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

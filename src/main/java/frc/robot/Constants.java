@@ -25,10 +25,10 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
+
 public final class Constants {
   public class SHOOTERMOTORS {
-    public static final double kP =
-        9.1; // These worked for WoodBot but will need to be retuned
+    public static final double kP = 9.1; // These worked for WoodBot but will need to be retuned
     public static final double kD = 0.05;
     public static final double kV = 0.0;
     public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
@@ -37,24 +37,23 @@ public final class Constants {
     public static final double gearRatio = 1.0; // Placeholder value
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
-    public static final double kInertia =
-        0.01; 
+    public static final double kInertia = 0.01;
 
     // These worked on wood bot. Change jerk later if further optimization is needed
-    public static double motionMagicCruiseVelocity =
-        60.0; // target cruise velocity of 60 rps
+    public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
     public static double motionMagicAcceleration = 30.0; // target acceleration of 30 rps/s..
     public static double motionMagicJerk = 0.0;
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
-    public static class Shot {
-        public final double shooterRPM;
-        public final double hoodPosition;
 
-        public Shot(double shooterRPM, double hoodPosition) {
-            this.shooterRPM = shooterRPM;
-            this.hoodPosition = hoodPosition;
-        }
+    public static class Shot {
+      public final double shooterRPM;
+      public final double hoodPosition;
+
+      public Shot(double shooterRPM, double hoodPosition) {
+        this.shooterRPM = shooterRPM;
+        this.hoodPosition = hoodPosition;
+      }
     }
 
     public enum ManualRPM {
@@ -77,8 +76,7 @@ public final class Constants {
   public class SHOOTERHOOD {
     public static final double kP = 3.0; // TODO: Change this
     public static final double kD = 0.1;
-    public static final double kA =
-        0.0; // TODO: Change these two feedforwards later, use ReCalc
+    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
@@ -86,8 +84,7 @@ public final class Constants {
     // will be
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
-    public static final double kInertia =
-        0.005; 
+    public static final double kInertia = 0.005;
 
     public static final double motionMagicCruiseVelocity = 6.0;
     public static final double motionMagicAcceleration = 4.0;
@@ -140,7 +137,7 @@ public final class Constants {
     public static final int kShooterRollerMotor3 = 42;
     public static final int kShooterRollerMotor4 = 43;
 
-    public static final int kIndexerMotor1 = 50; 
+    public static final int kIndexerMotor1 = 50;
     public static final int kIndexerMotor2 = 51;
     public static final int kIndexerMotor3 = 52;
 
@@ -288,11 +285,10 @@ public final class Constants {
       public static final Angle maxAngle = Degrees.of(110.0);
       public static final Angle startingAngle = minAngle;
       public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
-          GravityTypeValue
-              .Arm_Cosine; // Requires kG to be active
+          GravityTypeValue.Arm_Cosine; // Requires kG to be active
       public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
-      public static final Distance baseLength = Inches.of(7.0); 
+      public static final Distance baseLength = Inches.of(7.0);
       public static final Mass mass = Pounds.of(7.0); // TODO: Consult CAD
 
       public static final double encoderOffset = 0.0;

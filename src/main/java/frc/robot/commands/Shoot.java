@@ -18,24 +18,25 @@ import frc.robot.subsystems.Vision;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap = new InterpolatingTreeMap<>(
-        (startValue, endValue, q) -> 
-            InverseInterpolator.forDouble()
-                .inverseInterpolate(startValue.in(Meters), endValue.in(Meters), q.in(Meters)),
-        (startValue, endValue, t) ->
-            new Shot(
-                Interpolator.forDouble()
-                    .interpolate(startValue.shooterRPM, endValue.shooterRPM, t),
-                Interpolator.forDouble()
-                    .interpolate(startValue.hoodPosition, endValue.hoodPosition, t)
-            )
-   );
+  private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap =
+      new InterpolatingTreeMap<>(
+          (startValue, endValue, q) ->
+              InverseInterpolator.forDouble()
+                  .inverseInterpolate(startValue.in(Meters), endValue.in(Meters), q.in(Meters)),
+          (startValue, endValue, t) ->
+              new Shot(
+                  Interpolator.forDouble()
+                      .interpolate(startValue.shooterRPM, endValue.shooterRPM, t),
+                  Interpolator.forDouble()
+                      .interpolate(startValue.hoodPosition, endValue.hoodPosition, t)));
 
-    static {
-        distanceToShotMap.put(Meters.of(1.8086638318064376), new Shot(2175, 0.40)); // Hood position is a placeholder 
-        distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19));
-        distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15));
-    }
+  static {
+    distanceToShotMap.put(
+        Meters.of(1.8086638318064376), new Shot(2175, 0.40)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15));
+  }
+
   private final ShooterRollers m_shooterRollers;
   private final Vision m_vision;
 
@@ -44,9 +45,7 @@ public class Shoot extends Command {
 
   Translation2d m_goal = new Translation2d();
 
-
-  public Shoot(CommandSwerveDrivetrain swerve,
-      ShooterRollers shooterRollers, Vision vision) {
+  public Shoot(CommandSwerveDrivetrain swerve, ShooterRollers shooterRollers, Vision vision) {
     m_shooterRollers = shooterRollers;
     m_vision = vision;
     // m_shooterHood = shooterHood;

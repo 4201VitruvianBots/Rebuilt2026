@@ -4,8 +4,6 @@
 
 package frc.robot.commands.autos;
 
-import org.ejml.interfaces.decomposition.SingularValueDecomposition;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -16,8 +14,8 @@ import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Vision;
 
 public class PreloadDepotShootMiddle extends SequentialCommandGroup {
   public PreloadDepotShootMiddle(
@@ -28,21 +26,20 @@ public class PreloadDepotShootMiddle extends SequentialCommandGroup {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle1");
-      var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle2");
-      var m_path3 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle3");
+      var m_path1 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle1");
+      var m_path2 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle2");
+      var m_path3 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle3");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new RunIntake(intake, INTAKESPEED.INTAKING).withTimeout(9),
           new ParallelCommandGroup(
-            m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
-            new Shoot(
-              swerveDrive,
-              shooterRollers,
-              vision
-            )
-          ).withTimeout(3),
+                  m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
+                  new Shoot(swerveDrive, shooterRollers, vision))
+              .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
       DriverStation.reportError(

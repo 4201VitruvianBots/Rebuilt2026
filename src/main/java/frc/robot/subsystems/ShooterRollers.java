@@ -7,11 +7,9 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
@@ -89,18 +87,17 @@ public class ShooterRollers extends SubsystemBase {
     // CtreUtils.configureTalonFx(m_motor2, config);
     // CtreUtils.configureTalonFx(m_motor3, config);
 
-
-
     m_simState = m_motor1.getSimState();
 
     // We only need the sim state of a single motor
 
     // m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    // TODO: Check if they all are  aligned 
-    var topic = NetworkTableInstance.getDefault()
-      .getTable("SmartDashboard") 
-      .getDoubleTopic("ShooterRPMSetpoint");
+    // TODO: Check if they all are  aligned
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("ShooterRPMSetpoint");
     m_rpmSubscriber = topic.subscribe(0.0);
     m_rpmPublisher = topic.publish();
   }
@@ -111,14 +108,12 @@ public class ShooterRollers extends SubsystemBase {
 
   public void setManualRPMOutputFOC(double rpm) {
     m_rpmSetpoint = RPM.of(rpm);
-    m_motor1.setControl(
-        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+    m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
   }
 
   public void setRPMOutputFOC(double rpm) {
     m_rpmSetpoint = RPM.of(rpm);
-    m_motor1.setControl(
-        m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+    m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
   }
 
   public void setTorqueCurrentOutputFOC(Voltage voltage) {
@@ -136,9 +131,7 @@ public class ShooterRollers extends SubsystemBase {
   }
 
   public boolean[] isConnected() {
-    return new boolean[] {
-      m_motor1.isConnected()
-    };
+    return new boolean[] {m_motor1.isConnected()};
   }
 
   private SysIdRoutine m_sysIdRoutine =
@@ -171,11 +164,11 @@ public class ShooterRollers extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
-  public void testInit(){
+  public void testInit() {
     m_rpmPublisher.set(0.0);
   }
 
-  public void testPeriodic(){
+  public void testPeriodic() {
     m_rpmSetpoint = RPM.of(m_rpmSubscriber.get());
   }
 

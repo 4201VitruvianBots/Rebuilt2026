@@ -11,7 +11,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,22 +18,19 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
-import frc.robot.commands.ResetGyro;
-import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
-import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
-import frc.robot.Constants.SWERVE;
-import frc.robot.Constants.USB;
 import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.SWERVE;
+import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
+import frc.robot.Constants.USB;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
-import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
-import frc.robot.commands.autos.*;
-import frc.robot.constants.ROBOT;
+import frc.robot.commands.ResetGyro;
+import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
+import frc.robot.commands.autos.*;
 import frc.robot.generated.WoodBotConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
@@ -62,6 +58,7 @@ public class RobotContainer {
   // private ShooterHood m_shooterHood;
 
   private CommandSwerveDrivetrain m_swerveDrive = WoodBotConstants.createDrivetrain();
+
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
 
@@ -79,6 +76,7 @@ public class RobotContainer {
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake = new Uptake();
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
@@ -86,6 +84,7 @@ public class RobotContainer {
   @NotLogged
   private double MaxSpeed =
       WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+
   private Boolean m_flipToRight = false;
 
   @NotLogged
@@ -101,7 +100,9 @@ public class RobotContainer {
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -151,45 +152,50 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_shooterRollers != null){
+    if (m_swerveDrive != null && m_vision != null && m_shooterRollers != null) {
       m_driverController
-        .rightBumper()
-        .toggleOnTrue(new ParallelCommandGroup(
-            new AutoAlignDrive(
-                m_swerveDrive, m_vision,
-                () -> m_driverController.getLeftY(),
-                () -> m_driverController.getLeftX()), new Shoot(m_swerveDrive,
-                  m_shooterRollers, m_vision)));
+          .rightBumper()
+          .toggleOnTrue(
+              new ParallelCommandGroup(
+                  new AutoAlignDrive(
+                      m_swerveDrive,
+                      m_vision,
+                      () -> m_driverController.getLeftY(),
+                      () -> m_driverController.getLeftX()),
+                  new Shoot(m_swerveDrive, m_shooterRollers, m_vision)));
     }
 
-    if (m_swerveDrive != null && m_vision != null){
+    if (m_swerveDrive != null && m_vision != null) {
       m_driverController
-        .leftBumper()
-        .toggleOnTrue(
-            new AutoAlignDrive(
-                m_swerveDrive, m_vision,
-                () -> m_driverController.getLeftY(),
-                () -> m_driverController.getLeftX()));
+          .leftBumper()
+          .toggleOnTrue(
+              new AutoAlignDrive(
+                  m_swerveDrive,
+                  m_vision,
+                  () -> m_driverController.getLeftY(),
+                  () -> m_driverController.getLeftX()));
     }
-    
+
     if (m_swerveDrive != null && m_shooterRollers != null && m_vision != null) {
-      m_driverController
-          .a()
-          .whileTrue(
-              new Shoot(m_swerveDrive,
-                  m_shooterRollers, m_vision));
+      m_driverController.a().whileTrue(new Shoot(m_swerveDrive, m_shooterRollers, m_vision));
     }
 
     if (m_shooterRollers != null) {
       m_driverController.y().whileTrue(new ShootManualFlywheel(m_shooterRollers));
     }
 
-    // I forsee a state machine in the future... 
+    // I forsee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
-      m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING), new RunIntake(m_intake, INTAKESPEED.INTAKING)));
+      m_driverController
+          .rightTrigger()
+          .whileTrue(
+              new ParallelCommandGroup(
+                  new RunUptake(m_uptake, UPTAKESPEED.UPTAKING),
+                  new Index(m_indexer, INDEXERSPEED.INDEXING),
+                  new RunIntake(m_intake, INTAKESPEED.INTAKING)));
     }
 
-    if (m_intake != null){
+    if (m_intake != null) {
       m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
     }
   }
@@ -197,22 +203,34 @@ public class RobotContainer {
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    m_autoChooser.addOption("PreloadDepotShootMiddle", new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
-    m_autoChooser.addOption("PreloadNeutralShootClimb", new PreloadNeutralShootClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
-    m_autoChooser.addOption("PreloadNeutralDepotClimb", new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
-    m_autoChooser.addOption("PreloadNeutralShootTwice", new PreloadNeutralShootTwice(m_swerveDrive, m_intake, m_vision, m_shooterRollers, ()->m_flipToRight));
-    m_autoChooser.addOption("PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
+    m_autoChooser.addOption(
+        "PreloadDepotShootMiddle",
+        new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
+    m_autoChooser.addOption(
+        "PreloadNeutralShootClimb",
+        new PreloadNeutralShootClimb(
+            m_swerveDrive, m_intake, m_vision, m_shooterRollers, () -> m_flipToRight));
+    m_autoChooser.addOption(
+        "PreloadNeutralDepotClimb",
+        new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
+    m_autoChooser.addOption(
+        "PreloadNeutralShootTwice",
+        new PreloadNeutralShootTwice(
+            m_swerveDrive, m_intake, m_vision, m_shooterRollers, () -> m_flipToRight));
+    m_autoChooser.addOption(
+        "PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_shooterRollers));
   }
 
   private void initSideChooser() {
     SmartDashboard.putData("Auto Side", m_autoSide);
     m_autoSide.setDefaultOption("No Flip", false);
-  
+
     m_autoSide.addOption("Depot", false);
     m_autoSide.addOption("Outpost", true);
-    m_autoSide.onChange((Boolean selected) -> {
-      m_flipToRight = selected;
-    });
+    m_autoSide.onChange(
+        (Boolean selected) -> {
+          m_flipToRight = selected;
+        });
   }
 
   private void initSmartDashboard() {
@@ -225,7 +243,6 @@ public class RobotContainer {
     if (m_shooterRollers != null) m_shooterRollers.testInit();
     if (m_vision != null) m_vision.testInit();
   }
-
 
   public void testPeriodic() {
     if (m_shooterRollers != null) m_shooterRollers.testPeriodic();
