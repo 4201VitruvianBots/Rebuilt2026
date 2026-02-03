@@ -1,37 +1,29 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands.shooter;
 
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.FLYWHEEL.MANUAL_RPM;
 import frc.robot.subsystems.Flywheel;
 
-public class ShootFlywheel extends Command {
+public class ShootManualFlywheel extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final Flywheel m_flywheel;
-  private final MANUAL_RPM m_rpm;
 
-  public ShootFlywheel(Flywheel flywheel, MANUAL_RPM rpm) {
+  public ShootManualFlywheel(Flywheel flywheel) {
     m_flywheel = flywheel;
-    m_rpm = rpm;
 
     addRequirements(flywheel);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_flywheel.setRPMOutputFOC(m_rpm.getRPM().in(RPM));
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_flywheel.setManualRPMOutputFOC(m_flywheel.getRPMSetpoint());
+  }
 
   // Called once the command ends or is interrupted.
   @Override
