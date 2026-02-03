@@ -19,12 +19,14 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INDEXER.INDEXER_SPEED;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.Constants.CLIMBER.CLIMBER_SETPOINT;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.Climb;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
@@ -37,6 +39,7 @@ import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
+import frc.robot.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
