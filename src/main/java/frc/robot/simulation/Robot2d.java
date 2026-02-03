@@ -28,6 +28,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;

@@ -89,7 +89,7 @@ public class Flywheel extends SubsystemBase {
     // CtreUtils.configureTalonFx(m_motor3, config);
 
     m_simState = m_motor1.getSimState();
-    
+
     // We only need the sim state of a single motor
 
     // m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
@@ -106,7 +106,7 @@ public class Flywheel extends SubsystemBase {
   public void changeNeutralMode(NeutralModeValue neutralmode) {
     m_neutralMode = neutralmode;
   }
-  
+
   public void setManualRPMOutputFOC(double rpm) {
     m_rpmSetpoint = RPM.of(rpm);
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));

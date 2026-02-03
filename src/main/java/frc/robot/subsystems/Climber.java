@@ -45,7 +45,8 @@ public class Climber extends SubsystemBase {
 
   @Logged(name = "Control Mode", importance = Logged.Importance.INFO)
   private CONTROL_MODE m_controlMode =
-      CONTROL_MODE.OPEN_LOOP; // Open loop is bang bang control. Closed loop is pid and motion magic.
+      CONTROL_MODE
+          .OPEN_LOOP; // Open loop is bang bang control. Closed loop is pid and motion magic.
 
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode =

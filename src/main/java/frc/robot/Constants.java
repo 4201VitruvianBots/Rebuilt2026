@@ -46,9 +46,10 @@ public final class Constants {
     public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
     public static double motionMagicAcceleration = 30.0; // target acceleration of 30 rps/s..
     public static double motionMagicJerk = 0.0;
-    
-    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
-    
+
+    public static final DCMotor gearbox =
+        DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
+
     public static class Shot {
       public final double shooterRPM;
       public final double hoodPosition;
@@ -75,18 +76,18 @@ public final class Constants {
       }
     }
 
-  public class HOOD {
-    public static final double kP = 3.0; // TODO: Change this
-    public static final double kD = 0.1;
-    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
-    public static final double kV = 0.0;
-    public static final double kS = 0.0;
-    public static final double gearRatio =
-        1.0; // TODO: Change this later because this is confirmed not what the final thing
-    // will be
-    public static final double peakForwardOutput = 0.4; // Placeholder value
-    public static final double peakReverseOutput = -0.35; // Placeholder value
-    public static final double kInertia = 0.005;
+    public class HOOD {
+      public static final double kP = 3.0; // TODO: Change this
+      public static final double kD = 0.1;
+      public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
+      public static final double kV = 0.0;
+      public static final double kS = 0.0;
+      public static final double gearRatio =
+          1.0; // TODO: Change this later because this is confirmed not what the final thing
+      // will be
+      public static final double peakForwardOutput = 0.4; // Placeholder value
+      public static final double peakReverseOutput = -0.35; // Placeholder value
+      public static final double kInertia = 0.005;
 
       public static final double motionMagicCruiseVelocity = 6.0;
       public static final double motionMagicAcceleration = 4.0;
@@ -96,17 +97,17 @@ public final class Constants {
 
       public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-    public enum MANUAL_ANGLE {
-      // TODO: Going to stop using this because we are going to do math instead :)
-      NOTHING(Degrees.of(0.0)),
-      CLOSE(Degrees.of(30.0)),
-      FAR(Degrees.of(45.0));
+      public enum MANUAL_ANGLE {
+        // TODO: Going to stop using this because we are going to do math instead :)
+        NOTHING(Degrees.of(0.0)),
+        CLOSE(Degrees.of(30.0)),
+        FAR(Degrees.of(45.0));
 
         private final Angle angle;
 
-      MANUAL_ANGLE(Angle angle) {
-        this.angle = angle;
-      }
+        MANUAL_ANGLE(Angle angle) {
+          this.angle = angle;
+        }
 
         public Angle getAngle() {
           return angle;
@@ -134,7 +135,7 @@ public final class Constants {
     public static final int backLeftTurnMotor = 25;
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
-    
+
     public static final int kClimberMotor = 30;
 
     public static final int kShooterRollerMotor1 = 40;
