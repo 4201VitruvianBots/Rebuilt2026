@@ -23,11 +23,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.CLIMBER;
-import frc.robot.Constants.ROBOT.CONTROL_MODE;
+import frc.robot.constants.ROBOT.CONTROL_MODE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Climber extends SubsystemBase {
-
   // Creates a new motor object.
   TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
 
@@ -46,8 +45,7 @@ public class Climber extends SubsystemBase {
 
   @Logged(name = "Control Mode", importance = Logged.Importance.INFO)
   private CONTROL_MODE m_controlMode =
-      CONTROL_MODE
-          .OPEN_LOOP; // Open loop is bang bang control. Closed loop is pid and motion magic.
+      CONTROL_MODE.OPEN_LOOP; // Open loop is bang bang control. Closed loop is pid and motion magic.
 
   @Logged(name = "Neutral Mode", importance = Logged.Importance.INFO)
   private NeutralModeValue m_neutralMode =

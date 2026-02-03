@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterFlywheel;
-import frc.robot.subsystems.ShooterHood;
+import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;
@@ -232,11 +232,11 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("Uptake")) {
       var uptakeSubsystem = (Uptake) m_subsystemMap.get("Uptake");
     }
-    if (m_subsystemMap.containsKey("ShooterFlywheel")) {
-      var shooterFlywheelSubsystem = (ShooterFlywheel) m_subsystemMap.get("ShooterFlywheel");
+    if (m_subsystemMap.containsKey("Flywheel")) {
+      var flywheelSubsystem = (Flywheel) m_subsystemMap.get("Flywheel");
     }
-    if (m_subsystemMap.containsKey("ShooterHood")) {
-      var shooterHoodSubsystem = (ShooterHood) m_subsystemMap.get("ShooterHood");
+    if (m_subsystemMap.containsKey("Hood")) {
+      var hoodSubsystem = (Hood) m_subsystemMap.get("Hood");
     }
     if (m_subsystemMap.containsKey("Climber")) {
       var climberSubsystem = (Climber) m_subsystemMap.get("Climber");

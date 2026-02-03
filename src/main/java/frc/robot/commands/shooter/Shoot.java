@@ -1,49 +1,79 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands.shooter;
 
-import edu.wpi.first.units.measure.Angle;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.Interpolator;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SHOOTER.FLYWHEEL.SHOOTER_VELOCITY;
-import frc.robot.subsystems.ShooterFlywheel;
-import frc.robot.subsystems.ShooterHood;
+import frc.robot.Constants.FLYWHEEL.Shot;
+import frc.robot.constants.FIELD;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
+import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Vision;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  private final ShooterFlywheel m_shooterFlywheel;
+  private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap =
+      new InterpolatingTreeMap<>(
+          (startValue, endValue, q) ->
+              InverseInterpolator.forDouble()
+                  .inverseInterpolate(startValue.in(Meters), endValue.in(Meters), q.in(Meters)),
+          (startValue, endValue, t) ->
+              new Shot(
+                  Interpolator.forDouble()
+                      .interpolate(startValue.shooterRPM, endValue.shooterRPM, t),
+                  Interpolator.forDouble()
+                      .interpolate(startValue.hoodPosition, endValue.hoodPosition, t)));
 
-  private final ShooterHood m_shooterHood;
+  static {
+    distanceToShotMap.put(
+        Meters.of(1.8086638318064376), new Shot(2175, 0.40)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15));
+  }
 
-  private final SHOOTER_VELOCITY m_rpm;
-  private final Angle m_angle;
+  private final Flywheel m_flywheel;
+  private final Vision m_vision;
 
-  public Shoot(
-      ShooterFlywheel shooterFlywheel, ShooterHood shooterHood, SHOOTER_VELOCITY rpm, Angle angle) {
-    m_shooterFlywheel = shooterFlywheel;
-    m_rpm = rpm;
-    m_shooterHood = shooterHood;
-    m_angle = angle;
+  // private final ShooterHood m_shooterHood;
 
-    addRequirements(shooterFlywheel);
+  Translation2d m_goal = new Translation2d();
+
+  public Shoot(Flywheel flywheel, Vision vision) {
+    m_flywheel = flywheel;
+    m_vision = vision;
+    // m_shooterHood = shooterHood;
+
+    addRequirements(flywheel);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooterFlywheel.setRPMOutputFOC(m_rpm.getRPM());
-    m_shooterHood.setAngle(m_angle);
+    if (Controls.isBlueAlliance()) {
+      m_goal = FIELD.blueHub;
+    } else {
+      m_goal = FIELD.redHub;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
+    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    // m_shooterHood.setPosition(shot.hoodPosition);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterFlywheel.setRPMOutputFOC(SHOOTER_VELOCITY.IDLE.getRPM());
+    m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
   }
 
   // Returns true when the command should end.
