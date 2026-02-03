@@ -257,7 +257,7 @@ public class Robot2d extends SubsystemBase {
     }
     if (m_subsystemMap.containsKey("Climber")) {
       var climberSubsystem = (Climber) m_subsystemMap.get("Climber");
-      // m_climber.update(climberSubsystem.getHeight(), climberSubsystem.getVelocity());
+      m_climber.update(climberSubsystem.getHeight(), climberSubsystem.getVelocity());
     }
   }
 }
