@@ -78,7 +78,7 @@ public class Flywheel extends SubsystemBase {
     // config.Slot0.kA = FLYWHEEL.kA;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
-    config.CurrentLimits.StatorCurrentLimit = 120;
+    config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.MotionMagic.MotionMagicCruiseVelocity = FLYWHEEL.motionMagicCruiseVelocity;

@@ -43,6 +43,7 @@ public final class Constants {
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
+    public static final double kStatorCurrentLimit = 120;
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
@@ -90,6 +91,7 @@ public final class Constants {
       public static final double peakForwardOutput = 0.4; // Placeholder value
       public static final double peakReverseOutput = -0.35; // Placeholder value
       public static final double kInertia = 0.005;
+      public static final double kStatorCurrentLimit = 30;
 
       public static final double motionMagicCruiseVelocity = 6.0;
       public static final double motionMagicAcceleration = 4.0;
@@ -235,6 +237,7 @@ public final class Constants {
     public static final Current kStatorCurrentLimit = Amps.of(40);
 
     public class NOT_HOLDING_ROBOT {
+      public static int slot = 0;
       public static double kS = 1.0;
       // Config for Motor. TODO: Change placeholder values later.
       // public static double kV =
@@ -259,6 +262,7 @@ public final class Constants {
     // This needs to be here because of the friction of the carriage... meaning the whole
     // robot
     public class HOLDING_ROBOT {
+      public static int slot = 1;
       public static double kS = 1.0;
       // public static double kV = 0.0; // For lifting the robot as well.
       // public static double kA = 0.0;
