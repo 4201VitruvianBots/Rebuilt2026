@@ -277,7 +277,8 @@ public final class Constants {
     public static final double peakReverseOutput = -0.5; // Placeholder.
 
     public static final Current kHoldingRobotThreshold =
-       Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a robot
+        Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a
+    // robot
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
