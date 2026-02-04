@@ -34,6 +34,7 @@ import frc.robot.commands.shooter.ShootManualFlywheel;
 import frc.robot.generated.WoodBotConstants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Climber;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
