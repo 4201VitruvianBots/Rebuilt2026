@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -47,14 +47,14 @@ public class PreloadNeutralDepotClimb extends Auto {
           new Shoot(swerveDrive, shooterRollers, vision).withTimeout(3),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKESPEED.INTAKING),
+              new RunIntake(intake, INTAKE_SPEED.INTAKING),
               m_path3.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
               new Shoot(swerveDrive, shooterRollers, vision).withTimeout(3),
               m_path5.andThen(() -> swerveDrive.setControl(stopRequest))),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKESPEED.INTAKING),
+              new RunIntake(intake, INTAKE_SPEED.INTAKING),
               m_path6.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path7.andThen(() -> swerveDrive.setControl(stopRequest))
           // Todo: add climb (command not yet implemented in this branch)

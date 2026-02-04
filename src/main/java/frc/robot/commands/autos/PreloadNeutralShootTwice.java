@@ -9,7 +9,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -44,7 +44,7 @@ public class PreloadNeutralShootTwice extends Auto {
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKESPEED.INTAKING),
+              new RunIntake(intake, INTAKE_SPEED.INTAKING),
               getPathCommand(trajectoryUtils, m_path3, flipPath)
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
@@ -54,7 +54,7 @@ public class PreloadNeutralShootTwice extends Auto {
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKESPEED.INTAKING),
+              new RunIntake(intake, INTAKE_SPEED.INTAKING),
               getPathCommand(trajectoryUtils, m_path3, flipPath)
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
