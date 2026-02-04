@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -30,6 +31,7 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
+import frc.robot.commands.SwitchSwerveNeutralModeState;
 import frc.robot.commands.autos.*;
 import frc.robot.generated.WoodBotConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -52,7 +54,7 @@ import frc.team4201.lib.utils.Telemetry;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private Flywheel m_shooterRollers = new Flywheel();
+  private Flywheel m_shooterRollers;
 
   // @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   // private ShooterHood m_shooterHood;
@@ -62,20 +64,20 @@ public class RobotContainer {
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
 
-  private Controls m_controls = new Controls();
+  private Controls m_controls;
 
   @Logged(name = "Vision", importance = Logged.Importance.INFO)
-  private Vision m_vision = new Vision(m_controls);
+  private Vision m_vision;
 
-  private Telemetry m_telemetry = new Telemetry();
+  private Telemetry m_telemetry;
 
-  private FieldSim m_fieldSim = new FieldSim();
+  private FieldSim m_fieldSim;
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_indexer = new Indexer();
+  private Indexer m_indexer;
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
-  private Uptake m_uptake = new Uptake();
+  private Uptake m_uptake;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -132,6 +134,11 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_shooterRollers = new Flywheel();
+    m_controls = new Controls();
+    m_fieldSim = new FieldSim();
+    m_telemetry = new Telemetry();
+    m_vision = new Vision(m_controls);
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
@@ -197,6 +204,11 @@ public class RobotContainer {
 
     if (m_intake != null) {
       m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+    }
+
+    if (m_swerveDrive != null) {
+      m_driverController.povLeft().whileTrue(new SwitchSwerveNeutralModeState(m_swerveDrive, NeutralModeValue.Coast));
+      m_driverController.povRight().whileTrue(new SwitchSwerveNeutralModeState(m_swerveDrive, NeutralModeValue.Brake));
     }
   }
 
