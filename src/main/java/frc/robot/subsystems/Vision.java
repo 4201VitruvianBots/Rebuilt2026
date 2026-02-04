@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Optional;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -9,6 +11,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -16,11 +20,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 // import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.utils.ConcurrentTimeInterpolatableBuffer;
 import frc.team4201.lib.vision.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
@@ -32,7 +38,7 @@ public class Vision extends SubsystemBase {
   private Controls m_controls;
 
   private boolean m_localized;
-
+  private final RobotState state;
   private boolean m_useLeftTarget;
 
   private Pose2d nearestObjectPose = Pose2d.kZero;
@@ -53,7 +59,6 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
-
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, CAMERA_SERVER.limelightR.toString(), port);
@@ -118,21 +123,23 @@ public class Vision extends SubsystemBase {
   }
 
 
+
+  public class VisionFieldPoseEstimate{
+    
   private final Pose2d visionRobotPoseMeters;
   private final double timestampSeconds;
   private final Matrix <N3, N1> visionMeasurementStdDevs;
-  private final int numTags;
-
-  public VisionFieldPoseEstimate(
+  private final int numTagsFuse;
+   public VisionFieldPoseEstimate(
     Pose2d visionRobotPoseMeters, 
     double timestampSeconds,
     Matrix<N3, N1> visionMeasurementStdDevs,
-    int numTags
-  ) {
+    int numTagsFuse
+    ) {
     this.visionRobotPoseMeters = visionRobotPoseMeters;
     this.timestampSeconds = timestampSeconds;
     this.visionMeasurementStdDevs = visionMeasurementStdDevs;
-    this.numTags = numTags;
+    this.numTagsFuse = numTagsFuse;
   }
 
   public Pose2d getVisionRobotPoseMeters() {
@@ -150,38 +157,56 @@ public class Vision extends SubsystemBase {
   public int getNumTags() {
     return numTags;
   }
+}
   private VisionFieldPoseEstimate fuseEstimates(
-    VisionFieldPoseEstimate a, VisionFieldPoseEstimate b) { 
-      if (b.getTimestampSeconds() < a.getTimestampSeconds()){
-        VisionFieldPoseEstimate tmp = a; 
-        a = b;
-        b = tmp;
+    VisionFieldPoseEstimate lla, VisionFieldPoseEstimate llb) { 
+      if (llb.getTimestampSeconds() < lla.getTimestampSeconds()){
+        VisionFieldPoseEstimate lltmp = lla; 
+        lla = llb;
+        llb = lltmp;
       }
+      
   }
 
-  Transform2d a_T_b = 
-    state.getFieldToRobot(b.getTimestampSeconds))
-      .get().minus(state.getFieldToRobot(a.getTimestampSeconds()).get());
+public final VisionFieldPoseEstimate lla;
+public final VisionFieldPoseEstimate llb;
 
-  Pose2d poseA = a.getVisionRobotPoseMeters().transformBy(a_T_b);
-  Pose2d poseB = b.getVisionRobotPoseMeters().transformBy(a_T_b);
+     public Optional<Pose2d> getFieldToRobot(double timestamp) {
+        return fieldToRobot.getSample(timestamp);
+    }
+
+    public static final double LOOKBACK_TIME = 1.0;
+    //TODO: find out what this is and why they need it
+
+    private final ConcurrentTimeInterpolatableBuffer<Pose2d> fieldToRobot =
+    ConcurrentTimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
+
+  Transform2d a_T_b =  
+        getFieldToRobot(llb.getTimestampSeconds())
+          .get()
+          .minus(getFieldToRobot(lla.getTimestampSeconds()).get());
+
+
+  Pose2d poseA = lla.getVisionRobotPoseMeters().transformBy(a_T_b);
+  Pose2d poseB = llb.getVisionRobotPoseMeters();
 
 
   //inverse variance weighting 
-  var varianceA = 
-          a.getVisionMeasurementStdDevs().elementTimes(a.getVisionMeasurementStdDevs());
-  var varianceB = 
-          b.getVisionMeasurementStdDevs().elementTimes(b.getVisionMeasurementStdDevs());
+  Matrix varianceA = 
+          lla.getVisionMeasurementStdDevs().elementTimes(lla.getVisionMeasurementStdDevs());
+  Matrix varianceB = 
+          llb.getVisionMeasurementStdDevs().elementTimes(llb.getVisionMeasurementStdDevs());
+  //TODO: does Matrix work here??
 
-  
   Rotation2d fusedHeading = poseB.getRotation();
+
   if(varianceA.get(2, 0) < VisionConstants.kLargeVariance && varianceB.get(2,0) < VisionConstants.kLargeVariance) {
     fusedHeading = new Rotation2d(
       poseA.getRotation().getCos() / varianceA.get(2, 0) + 
           poseB.getRotation().getCos() / varianceB.get(2, 0),
       poseA.getRotation().getSin() / varianceA.get(2, 0) + 
           poseB.getRotation().getSin() / varianceB.get(2, 0)); 
-  }
+  } 
 
 
 double weightAx = 1.0 / varianceA.get(0, 0);
@@ -189,15 +214,14 @@ double weightAy = 1.0 / varianceA.get(1, 0);
 double weightBx = 1.0 / varianceB.get(0, 0); 
 double weightBy = 1.0 / varianceB.get(1, 0); 
 
-
-Pose2d fusedPose = 
+ 
   new Pose2d( 
       new Translation2d(
         (poseA.getTranslation().getX() * weightAx 
-          + poseB.getTranslation().getX * weightBx)
+          + poseB.getTranslation().getX() * weightBx)
             / (weightAx + weightBx), 
         (poseA.getTranslation().getY() * weightAy
-          + poseB.getTranslation().getY * weightBy)),
+          + poseB.getTranslation().getY() * weightBy)),
           fusedHeading);
 
       Matrix<N3, N1> fusedStdDev =
@@ -206,8 +230,8 @@ Pose2d fusedPose =
           Math.sqrt(1.0 / (weightAy + weightBy)),
           Math.sqrt(1.0 / (1.0 / varianceA.get(2, 0) + 1.0 / varianceB.get(2,0))));
         
-int numTags = a.getNumTags() + b.getNumTags();
-double time = b.getTimestampSeconds();
+int numTags = lla.getNumTags() + llb.getNumTags();
+double time = llb.getTimestampSeconds();
 
 return new VisionFieldPoseEstimate(fusedPose, time, fusedStdDev, numTags);
 
@@ -291,7 +315,7 @@ return new VisionFieldPoseEstimate(fusedPose, time, fusedStdDev, numTags);
         m_swerveDriveTrain.setVisionMeasurementStdDevs(VecBuilder.fill(.4, .4, 9999999));
       }
     }
-
+  
     // Only good updates reach this point, so use them for updating the robot pose
     posePublisher.set(limelightMeasurement.pose);
     estTimeStamp.set(limelightMeasurement.timestampSeconds);
