@@ -57,7 +57,7 @@ public class Vision extends SubsystemBase {
   private final StructPublisher<Pose2d> estPoseLLL =
       table.getStructTopic("estPoseLLL", Pose2d.struct).publish();
 
-  public Vision(Controls controls) {
+  public Vision(Controls controls, RobotState state) {
     m_controls = controls;
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
@@ -123,13 +123,17 @@ public class Vision extends SubsystemBase {
   }
 
 
+final double LOOKBACK_TIME = 1.0;
+private final ConcurrentTimeInterpolatableBuffer<Pose2d> fieldToRobot =
+            ConcurrentTimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
+
 
   public class VisionFieldPoseEstimate{
     
   private final Pose2d visionRobotPoseMeters;
   private final double timestampSeconds;
   private final Matrix <N3, N1> visionMeasurementStdDevs;
-  private final int numTagsFuse;
+  private final int numTags;
    public VisionFieldPoseEstimate(
     Pose2d visionRobotPoseMeters, 
     double timestampSeconds,
@@ -139,7 +143,7 @@ public class Vision extends SubsystemBase {
     this.visionRobotPoseMeters = visionRobotPoseMeters;
     this.timestampSeconds = timestampSeconds;
     this.visionMeasurementStdDevs = visionMeasurementStdDevs;
-    this.numTagsFuse = numTagsFuse;
+    this.numTags = numTagsFuse;
   }
 
   public Pose2d getVisionRobotPoseMeters() {
@@ -157,7 +161,10 @@ public class Vision extends SubsystemBase {
   public int getNumTags() {
     return numTags;
   }
-}
+}  
+   public Optional<Pose2d> getFieldToRobot(double timestamp) {
+        return fieldToRobot.getSample(timestamp);
+    }
   private VisionFieldPoseEstimate fuseEstimates(
     VisionFieldPoseEstimate lla, VisionFieldPoseEstimate llb) { 
       if (llb.getTimestampSeconds() < lla.getTimestampSeconds()){
@@ -166,20 +173,14 @@ public class Vision extends SubsystemBase {
         llb = lltmp;
       }
       
-  }
+  
 
-public final VisionFieldPoseEstimate lla;
-public final VisionFieldPoseEstimate llb;
+// public final VisionFieldPoseEstimate lla;
+// public final VisionFieldPoseEstimate llb;
 
-     public Optional<Pose2d> getFieldToRobot(double timestamp) {
-        return fieldToRobot.getSample(timestamp);
-    }
 
-    public static final double LOOKBACK_TIME = 1.0;
     //TODO: find out what this is and why they need it
 
-    private final ConcurrentTimeInterpolatableBuffer<Pose2d> fieldToRobot =
-    ConcurrentTimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
 
   Transform2d a_T_b =  
         getFieldToRobot(llb.getTimestampSeconds())
@@ -192,15 +193,15 @@ public final VisionFieldPoseEstimate llb;
 
 
   //inverse variance weighting 
-  Matrix varianceA = 
+  Matrix<N3, N1> varianceA = 
           lla.getVisionMeasurementStdDevs().elementTimes(lla.getVisionMeasurementStdDevs());
-  Matrix varianceB = 
+  Matrix<N3, N1> varianceB = 
           llb.getVisionMeasurementStdDevs().elementTimes(llb.getVisionMeasurementStdDevs());
-  //TODO: does Matrix work here??
 
   Rotation2d fusedHeading = poseB.getRotation();
 
-  if(varianceA.get(2, 0) < VisionConstants.kLargeVariance && varianceB.get(2,0) < VisionConstants.kLargeVariance) {
+final double kLargeVariance = 1e6;
+  if(varianceA.get(2, 0) < kLargeVariance && varianceB.get(2,0) < kLargeVariance) {
     fusedHeading = new Rotation2d(
       poseA.getRotation().getCos() / varianceA.get(2, 0) + 
           poseB.getRotation().getCos() / varianceB.get(2, 0),
@@ -214,8 +215,13 @@ double weightAy = 1.0 / varianceA.get(1, 0);
 double weightBx = 1.0 / varianceB.get(0, 0); 
 double weightBy = 1.0 / varianceB.get(1, 0); 
 
- 
-  new Pose2d( 
+// double headingVarA = Math.max(varianceA.get(2,0), 1e-4);
+// double headingVarB = Math.max(varianceB.get(2,0), 1e-4);
+// double weightA = 1.0 / headingVarA;
+// double weightB = 1.0 / headingVarB;
+
+
+  Pose2d fusedPose = new Pose2d( 
       new Translation2d(
         (poseA.getTranslation().getX() * weightAx 
           + poseB.getTranslation().getX() * weightBx)
@@ -234,8 +240,9 @@ int numTags = lla.getNumTags() + llb.getNumTags();
 double time = llb.getTimestampSeconds();
 
 return new VisionFieldPoseEstimate(fusedPose, time, fusedStdDev, numTags);
-
+}
   /**
+   * 
    * Process measurements from a limelight. Return true if the given vision measurement is used,
    * otherwise return false to indicate that it was rejected.
    */
