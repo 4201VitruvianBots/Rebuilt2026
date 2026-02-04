@@ -8,6 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
+import frc.robot.constants.VISION;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Vision;
@@ -76,7 +77,7 @@ public class AutoAlignDrive extends Command {
         new ChassisSpeeds(
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
-            turnRate));
+            turnRate - m_swerveDrivetrain.getState().Speeds.vyMetersPerSecond * VISION.kVelocityCompensationConstant));
   }
 
   // Called once the command ends or is interrupted.
