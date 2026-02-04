@@ -402,26 +402,33 @@ public final class Constants {
   }
 
   public class UPTAKE {
-    public static final double kP = 1.0; // Placeholders
+    public static final double kP = 10.1; // Placeholders
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
     public static final double peakReverseOutput = -0.5;
-    public static final double kInertia = 0.005;
+    public static final double kInertia = 0.01;
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX60(1);
+    public static final double kMotionMagicAcceleration = 30.0;
+    public static final double kMotionMagicCruiseVelocity = 60.0;
+
+    public static final AngularVelocity minRPM = RPM.of(0.0);
+    public static final AngularVelocity maxRPM = RPM.of(1000.0);
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
     public enum UPTAKE_SPEED {
-      ZERO(0),
-      UPTAKING(0.9),
-      REVERSE(-0.3);
+      IDLE(RPM.of(0.0)),
+      UPTAKING(RPM.of(500.0));
 
-      private final double value;
+      private final AngularVelocity value;
 
-      UPTAKE_SPEED(double value) {
+      UPTAKE_SPEED(AngularVelocity value) {
         this.value = value;
       }
 
-      public double get() {
+      public AngularVelocity get() {
         return value;
       }
     }

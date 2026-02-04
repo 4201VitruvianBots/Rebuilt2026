@@ -188,7 +188,7 @@ public class RobotContainer {
     }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.a().whileTrue(new Shoot(m_flywheel, m_vision));
+      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision));
     }
 
     if (m_flywheel != null) {
@@ -198,10 +198,10 @@ public class RobotContainer {
     // I forsee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
       m_driverController
-          .rightTrigger()
+          .a()
           .whileTrue(
               new ParallelCommandGroup(
-                  new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING),
+                  new RunUptake(m_uptake),
                   new Index(m_indexer, INDEXER_SPEED.INDEXING),
                   new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
