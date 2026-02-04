@@ -39,6 +39,8 @@ public final class VISION {
   public static final Angle kLimelight4VFOV = Degrees.of(56.2);
   public static final Angle kLimelight4DFOV = Degrees.of(75.07);
 
+  public static final double kVelocityCompensationConstant = 0.5;
+
   // TODO: Update values
   // Camera offset from robot center. Camera F is positioned on the hopper
   public static final Transform3d limelightFPosition =
