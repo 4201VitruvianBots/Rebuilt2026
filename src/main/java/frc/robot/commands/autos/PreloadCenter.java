@@ -9,17 +9,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
 public class PreloadCenter extends Auto {
   public PreloadCenter(
-      CommandSwerveDrivetrain swerveDrive,
-      Intake intake,
-      Vision vision,
-      Flywheel shooterRollers) {
+      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel shooterRollers) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 

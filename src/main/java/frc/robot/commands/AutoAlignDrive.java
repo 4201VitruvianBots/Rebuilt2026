@@ -77,7 +77,9 @@ public class AutoAlignDrive extends Command {
         new ChassisSpeeds(
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
-            turnRate - m_swerveDrivetrain.getState().Speeds.vyMetersPerSecond * VISION.kVelocityCompensationConstant));
+            turnRate
+                - m_swerveDrivetrain.getState().Speeds.vyMetersPerSecond
+                    * VISION.kVelocityCompensationConstant));
   }
 
   // Called once the command ends or is interrupted.
