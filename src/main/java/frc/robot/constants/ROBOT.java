@@ -11,7 +11,10 @@ public class ROBOT {
   public static ROBOT_ID robotID = ROBOT_ID.SIM;
 
   // TODO: determine these later
-  public enum CONTROL_MODE {}
+  public enum CONTROL_MODE {
+    OPEN_LOOP,
+    CLOSED_LOOP
+  }
 
   public enum SUPERSTRUCTURE_STATES {}
 

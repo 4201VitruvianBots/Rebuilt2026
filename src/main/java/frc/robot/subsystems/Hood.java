@@ -30,18 +30,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.HOOD;
-import frc.robot.Constants.HOOD.MANUAL_ANGLE;
+import frc.robot.Constants.FLYWHEEL.HOOD;
+import frc.robot.Constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Hood extends SubsystemBase {
 
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
-      new TalonFX(CAN.kShooterHoodMotor); // Replace these device ids after motors are set up
+      new TalonFX(
+          CAN.kShooterHoodMotor,
+          CAN.driveBaseCanbus); // Replace these device ids after motors are set up
 
   private final CANcoder m_cancoder =
-      new CANcoder(CAN.kShooterHoodCANCoder); // Replace these device ids after motors are set up
+      new CANcoder(
+          CAN.kShooterHoodCANCoder,
+          CAN.driveBaseCanbus); // Replace these device ids after motors are set up
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
@@ -53,11 +57,11 @@ public class Hood extends SubsystemBase {
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
+          LinearSystemId.createDCMotorSystem(HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
           HOOD.gearbox);
 
-  private final TalonFXSimState m_simState;
+  private final TalonFXSimState m_simState = m_motor.getSimState();
+
   private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
@@ -78,8 +82,9 @@ public class Hood extends SubsystemBase {
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.MotorOutput.PeakForwardDutyCycle = HOOD.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = HOOD.peakReverseOutput;
-    config.CurrentLimits.StatorCurrentLimit = 30;
+    config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.ClosedLoopGeneral.ContinuousWrap = false;
 
     config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -97,21 +102,17 @@ public class Hood extends SubsystemBase {
     m_motor.setPosition(getHoodRotations().in(Rotations));
 
     CtreUtils.configureTalonFx(m_motor, config);
-
-    m_simState = m_motor.getSimState();
   }
 
-  public void setShooterHoodSetpoint(Angle setpoint) {
+  public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
         Degrees.of(
             MathUtil.clamp(
-                setpoint.in(Degrees),
-                HOOD.minAngle.in(Degrees),
-                HOOD.maxAngle.in(Degrees)));
+                setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
-  public Angle getShooterHoodSetpoint() {
+  public Angle getDesiredAngle() {
     return m_hoodSetpoint;
   }
 
@@ -119,6 +120,8 @@ public class Hood extends SubsystemBase {
     return m_motor.getMotorVoltage().refresh().getValue();
   }
 
+  // TODO: Delete this after testing. Only for debugging purposes
+  @Logged(name = "Hood Velocity", importance = Importance.DEBUG)
   public AngularVelocity getHoodVelocity() {
     return m_motor.getVelocity().refresh().getValue();
   }
@@ -133,7 +136,7 @@ public class Hood extends SubsystemBase {
     return getHoodRotations().in(Degrees);
   }
 
-  @Logged(name = "At Setpoint", importance = Logged.Importance.DEBUG)
+  @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
     return m_hoodSetpoint.minus(getHoodRotations()).abs(Degrees) <= 1; // Works as good as always
   }
@@ -144,6 +147,31 @@ public class Hood extends SubsystemBase {
 
   public void setVoltageOutputFOC(Voltage voltage) {
     m_motor.setControl(m_VoltageOut.withOutput(voltage.in(Volts)));
+  }
+
+  @Override
+  public void periodic() {
+    if (getHoodAngle() > HOOD.maxAngle.in(Degrees)) {
+      m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
+    }
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_shooterHoodSim.setInputVoltage(m_simState.getMotorVoltage());
+
+    m_shooterHoodSim.update(0.02);
+
+    m_simState.setRawRotorPosition(
+        Rotations.of(m_shooterHoodSim.getAngularPositionRotations()).times(HOOD.gearRatio));
+    m_simState.setRotorVelocity(
+        RPM.of(m_shooterHoodSim.getAngularVelocityRPM()).times(HOOD.gearRatio));
+    // Update the hoodEncoder simState
+    m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
+    m_cancoderSimState.setVelocity(
+        RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocityRadPerSec()));
   }
 
   private SysIdRoutine m_sysIdRoutine =
@@ -177,29 +205,5 @@ public class Hood extends SubsystemBase {
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
-  }
-
-  @Override
-  public void periodic() {
-    if (getHoodAngle() > HOOD.maxAngle.in(Degrees)) {
-      m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
-    }
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_shooterHoodSim.setInputVoltage(m_simState.getMotorVoltage());
-
-    m_shooterHoodSim.update(0.02);
-
-    m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterHoodSim.getAngularPositionRotations()).times(HOOD.gearRatio));
-    m_simState.setRotorVelocity(
-        RPM.of(m_shooterHoodSim.getAngularVelocityRPM()).times(HOOD.gearRatio));
-    // Update the pivotEncoder simState
-    m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
-    m_cancoderSimState.setVelocity(
-        RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocityRadPerSec()));
   }
 }

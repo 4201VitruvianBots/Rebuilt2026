@@ -4,23 +4,21 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.*;
 import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.simulation.visualization.SwerveModule2d;
+import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
+import java.util.Map;
 
 public class Telemetry {
-  // private final double m_maxSpeed = SWERVE.kMaxSpeedMetersPerSecond;
+  private Map<MODULE_POSITION, Translation2d> m_moduleTranslations;
 
   private FieldSim m_fieldSim;
-  // TODO: Re-implement
-  //    private final SwerveModuleVisualizer[] m_moduleVisualizer = {
-  //            new SwerveModuleVisualizer(MODULE_POSITION.FRONT_LEFT.name(), m_maxSpeed),
-  //            new SwerveModuleVisualizer(MODULE_POSITION.FRONT_RIGHT.name(), m_maxSpeed),
-  //            new SwerveModuleVisualizer(MODULE_POSITION.BACK_LEFT.name(), m_maxSpeed),
-  //            new SwerveModuleVisualizer(MODULE_POSITION.BACK_RIGHT.name(), m_maxSpeed)
-  //    };
+  private final SwerveModule2d[] m_moduleVisualizer;
 
   private final Pose2d[] m_swerveModulePoses = {
     Pose2d.kZero, Pose2d.kZero, Pose2d.kZero, Pose2d.kZero
@@ -52,7 +50,16 @@ public class Telemetry {
   private final double[] m_moduleTargetsArray = new double[8];
 
   /** Construct a telemetry object */
-  public Telemetry() {}
+  public Telemetry(double maxSpeed, Map<MODULE_POSITION, Translation2d> moduleTranslations) {
+    m_moduleTranslations = moduleTranslations;
+    m_moduleVisualizer =
+        new SwerveModule2d[] {
+          new SwerveModule2d(MODULE_POSITION.FRONT_LEFT.name(), maxSpeed),
+          new SwerveModule2d(MODULE_POSITION.FRONT_RIGHT.name(), maxSpeed),
+          new SwerveModule2d(MODULE_POSITION.BACK_LEFT.name(), maxSpeed),
+          new SwerveModule2d(MODULE_POSITION.BACK_RIGHT.name(), maxSpeed)
+        };
+  }
 
   public void registerFieldSim(FieldSim fieldSim) {
     m_fieldSim = fieldSim;
@@ -60,6 +67,8 @@ public class Telemetry {
 
   /* Accept the swerve drive state and telemeterize it to SmartDashboard */
   public void telemeterize(SwerveDriveState state) {
+    Pose2d pose = state.Pose;
+
     /* Telemeterize the swerve drive state */
     drivePose.set(state.Pose);
     driveSpeeds.set(state.Speeds);
@@ -85,19 +94,16 @@ public class Telemetry {
     SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
     SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
-    // if (m_fieldSim != null) {
-    //   // TODO: Re-implement
-    //   //            for (MODULE_POSITION i : MODULE_POSITION.values()) {
-    //   //                m_moduleVisualizer[i.ordinal()].update(state.ModuleStates[i.ordinal()]);
-    //   //                m_moduleTransforms[i.ordinal()] = new
-    //   // Transform2d(SWERVE.DRIVE.kModuleTranslations.get(i),
-    //   // state.ModuleStates[i.ordinal()].angle);
-    //   //                m_swerveModulePoses[i.ordinal()] =
-    //   // pose.transformBy(m_moduleTransforms[i.ordinal()]);
-    //   //            }
-    //   //
-    m_fieldSim.addPoses("robotPose", state.Pose);
-    // m_fieldSim.updateSwervePoses(m_swerveModulePoses);
-    // }
+    if (m_fieldSim != null) {
+      for (MODULE_POSITION i : MODULE_POSITION.values()) {
+        m_moduleVisualizer[i.ordinal()].update(state.ModuleStates[i.ordinal()]);
+        m_moduleTransforms[i.ordinal()] =
+            new Transform2d(m_moduleTranslations.get(i), state.ModuleStates[i.ordinal()].angle);
+        m_swerveModulePoses[i.ordinal()] = state.Pose.transformBy(m_moduleTransforms[i.ordinal()]);
+      }
+
+      m_fieldSim.addPoses("robotPose", state.Pose);
+      m_fieldSim.addPoses("Module", m_swerveModulePoses);
+    }
   }
 }
