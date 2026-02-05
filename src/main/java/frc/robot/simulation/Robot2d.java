@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FLYWHEEL;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -161,7 +162,7 @@ public class Robot2d extends SubsystemBase {
               new Flywheel2dConfig(
               "Flywheel",
               m_colorFlywheel, // Grey color for flywheel
-              Inches.of(2.0078125) // Radius of the flywheel
+              FLYWHEEL.radius // Radius of the flywheel
               ),
           m_flywheelRoot);
 

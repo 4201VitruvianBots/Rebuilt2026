@@ -1,13 +1,23 @@
 package frc.robot.simulation;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.Constants.ROBOT;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -17,6 +27,8 @@ public class FuelSim {
     private static final double PERIOD = 0.02; // sec
     private static int subticks = 5;
     private static final Translation3d GRAVITY = new Translation3d(0, 0, -9.81); // m/s^2
+    // Room temperature dry air density: https://en.wikipedia.org/wiki/Density_of_air#Dry_air
+    private static final double AIR_DENSITY = 1.2041; // kg/m^3
     private static final double FIELD_COR = Math.sqrt(22 / 51.5); // coefficient of restitution with the field
     private static final double FUEL_COR = 0.5; // coefficient of restitution with another fuel
     private static final double NET_COR = 0.2; // coefficient of restitution with the net
@@ -30,11 +42,13 @@ public class FuelSim {
     private static final double TRENCH_BAR_HEIGHT = 0.102;
     private static final double TRENCH_BAR_WIDTH = 0.152;
     private static final double FRICTION = 0.1; // proportion of horizontal velocity to lose per second while on ground
+    private static final double FUEL_MASS = 0.448 * 0.45392; // kgs
+    private static final double FUEL_CROSS_AREA = Math.PI * FUEL_RADIUS * FUEL_RADIUS;
+    // Drag coefficient of smooth sphere: https://en.wikipedia.org/wiki/Drag_coefficient#/media/File:14ilf1l.svg
+    private static final double DRAG_COF = 0.47; // dimensionless
+    private static final double DRAG_FORCE_FACTOR = 0.5 * AIR_DENSITY * DRAG_COF * FUEL_CROSS_AREA;
 
     private static FuelSim instance = null;
-    private StructArrayPublisher<Translation3d> fuelPublisher = NetworkTableInstance.getDefault()
-        .getStructArrayTopic("Fuel Simulation/Fuels", Translation3d.struct)
-        .publish();
 
     private static final Translation3d[] FIELD_XZ_LINE_STARTS = {
         new Translation3d(0, 0, 0),
@@ -57,7 +71,7 @@ public class FuelSim {
                 FIELD_LENGTH - 4.61 - TRENCH_BAR_WIDTH / 2, FIELD_WIDTH - 1.57, TRENCH_HEIGHT + TRENCH_BAR_HEIGHT),
     };
 
-    private static int storedFuel = 0;
+    private static int storedFuel = 8; // 8 pre-loaded fuel at start of auto
 
     private static final Translation3d[] FIELD_XZ_LINE_ENDS = {
         new Translation3d(FIELD_LENGTH, FIELD_WIDTH, 0),
@@ -99,7 +113,18 @@ public class FuelSim {
         private void update() {
             pos = pos.plus(vel.times(PERIOD / subticks));
             if (pos.getZ() > FUEL_RADIUS) {
-                vel = vel.plus(GRAVITY.times(PERIOD / subticks));
+                Translation3d Fg = GRAVITY.times(FUEL_MASS);
+                Translation3d Fd = new Translation3d();
+
+                if (simulateAirResistance) {
+                    double speed = vel.getNorm();
+                    if (speed > 1e-6) {
+                        Fd = vel.times(-DRAG_FORCE_FACTOR * speed);
+                    }
+                }
+
+                Translation3d accel = Fg.plus(Fd).div(FUEL_MASS);
+                vel = vel.plus(accel.times(PERIOD / subticks));
             }
             if (Math.abs(vel.getZ()) < 0.05 && pos.getZ() <= FUEL_RADIUS + 0.03) {
                 vel = new Translation3d(vel.getX(), vel.getY(), 0);
@@ -289,8 +314,9 @@ public class FuelSim {
 
     private ArrayList<Fuel> fuels = new ArrayList<Fuel>();
     private boolean running = false;
-    private Supplier<Pose2d> robotSupplier = null;
-    private Supplier<ChassisSpeeds> robotSpeedsSupplier = null;
+    private boolean simulateAirResistance = false;
+    private Supplier<Pose2d> robotPoseSupplier = null;
+    private Supplier<ChassisSpeeds> robotFieldSpeedsSupplier = null;
     private double robotWidth; // size along the robot's y axis
     private double robotLength; // size along the robot's x axis
     private double bumperHeight;
@@ -351,21 +377,18 @@ public class FuelSim {
         // Logger.recordOutput("Fuel Simulation/Lines (debug)", lines);
     }
 
+    private StructArrayPublisher<Translation3d> fuelPublisher = NetworkTableInstance.getDefault()
+      .getStructArrayTopic("Fuel Simulation/Fuels", Translation3d.struct)
+      .publish();
+
     /**
-     * Adds array of `Translation3d`'s to NetworkTables at "/Fuel Simulation/Fuels"
+     * Adds array of `Translation3d`'s to NetworkTables at "Fuel Simulation/Fuels"
      */
-    private Translation3d[] logArray = new Translation3d[0];
     public void logFuels() {
-      if (logArray.length != fuels.size()) logArray = new Translation3d[fuels.size()];
-      for (int i = 0; i < fuels.size(); i++) {
-        logArray[i] = fuels.get(i).pos;
-      }
-      fuelPublisher.set(logArray);
+        fuelPublisher.set(fuels.stream().map((fuel) -> fuel.pos).toArray(Translation3d[]::new));
     }
 
-
-
-  /**
+    /**
      * Start the simulation. `updateSim` must still be called every loop
      */
     public void start() {
@@ -377,6 +400,11 @@ public class FuelSim {
      */
     public void stop() {
         running = false;
+    }
+
+    /** Enables accounting for drag force in physics step **/
+    public void enableAirResistance() {
+        simulateAirResistance = true;
     }
 
     /**
@@ -401,8 +429,8 @@ public class FuelSim {
             double bumperHeight,
             Supplier<Pose2d> poseSupplier,
             Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
-        this.robotSupplier = poseSupplier;
-        this.robotSpeedsSupplier = fieldSpeedsSupplier;
+        this.robotPoseSupplier = poseSupplier;
+        this.robotFieldSpeedsSupplier = fieldSpeedsSupplier;
         this.robotWidth = width;
         this.robotLength = length;
         this.bumperHeight = bumperHeight;
@@ -437,7 +465,7 @@ public class FuelSim {
 
             handleFuelCollisions(fuels);
 
-            if (robotSupplier != null) {
+            if (robotPoseSupplier != null) {
                 handleRobotCollisions(fuels);
                 handleIntakes(fuels);
             }
@@ -453,6 +481,34 @@ public class FuelSim {
      */
     public void spawnFuel(Translation3d pos, Translation3d vel) {
         fuels.add(new Fuel(pos, vel));
+    }
+
+    /**
+     * Spawns a fuel onto the field with a specified launch velocity and angles, accounting for robot movement
+     * @param launchHeight Height of the fuel to launch at. Make sure this is higher than your robot's bumper height, or else it will collide with your robot immediately.
+     * @param launchVelocity Initial launch velocity
+     * @param hoodAngle Hood angle where 0 is launching horizontally and 90 degrees is launching straight up
+     * @param turretYaw <i>Field-relative</i> turret yaw
+     * @throws IllegalStateException if robot is not registered
+     */
+    public void launchFuel(LinearVelocity launchVelocity, Angle hoodAngle, Angle turretYaw, Distance launchHeight) {
+        if (robotPoseSupplier == null || robotFieldSpeedsSupplier == null) {
+            throw new IllegalStateException("Robot must be registered before launching fuel.");
+        }
+
+        Pose3d launchPose = new Pose3d(this.robotPoseSupplier.get())
+                .plus(new Transform3d(new Translation3d(Meters.zero(), Meters.zero(), launchHeight), Rotation3d.kZero));
+        ChassisSpeeds fieldSpeeds = this.robotFieldSpeedsSupplier.get();
+
+        double horizontalVel = Math.cos(hoodAngle.in(Radians)) * launchVelocity.in(MetersPerSecond);
+        double verticalVel = Math.sin(hoodAngle.in(Radians)) * launchVelocity.in(MetersPerSecond);
+        double xVel = horizontalVel * Math.cos(turretYaw.in(Radians));
+        double yVel = horizontalVel * Math.sin(turretYaw.in(Radians));
+
+        xVel += fieldSpeeds.vxMetersPerSecond;
+        yVel += fieldSpeeds.vyMetersPerSecond;
+
+        spawnFuel(launchPose.getTranslation(), new Translation3d(xVel, yVel, verticalVel));
     }
 
     private void handleRobotCollision(Fuel fuel, Pose2d robot, Translation2d robotVel) {
@@ -497,8 +553,8 @@ public class FuelSim {
     }
 
     private void handleRobotCollisions(ArrayList<Fuel> fuels) {
-        Pose2d robot = robotSupplier.get();
-        ChassisSpeeds speeds = robotSpeedsSupplier.get();
+        Pose2d robot = robotPoseSupplier.get();
+        ChassisSpeeds speeds = robotFieldSpeedsSupplier.get();
         Translation2d robotVel = new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
 
         for (Fuel fuel : fuels) {
@@ -507,13 +563,14 @@ public class FuelSim {
     }
 
     private void handleIntakes(ArrayList<Fuel> fuels) {
-        Pose2d robot = robotSupplier.get();
+        Pose2d robot = robotPoseSupplier.get();
         for (SimIntake intake : intakes) {
             for (int i = 0; i < fuels.size(); i++) {
-                if (intake.shouldIntake(fuels.get(i), robot)) {
+                if (intake.shouldIntake(fuels.get(i), robot) && storedFuel < ROBOT.MAX_FUEL) {
                     fuels.remove(i);
                     storedFuel++;
                     i--;
+                    System.out.println("Intaked fuel! Total stored fuel: " + storedFuel);
                 }
             }
         }

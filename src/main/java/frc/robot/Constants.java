@@ -51,6 +51,11 @@ public final class Constants {
 
     public static final DCMotor gearbox =
         DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
+    
+    public static final Distance fuelLaunchHeight = Inches.of(26.15);
+    public static final Distance radius = Inches.of(2.0);
+    
+    public static final int ballsPerSecond = 15;
 
     public static class Shot {
       public final double shooterRPM;

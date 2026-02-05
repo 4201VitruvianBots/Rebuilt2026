@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -21,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INDEXER.INDEXER_SPEED;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.CLIMBER.CLIMBER_SETPOINT;
+import frc.robot.Constants.FLYWHEEL;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
@@ -41,7 +38,6 @@ import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
-import frc.robot.subsystems.Climber;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -250,7 +246,7 @@ public class RobotContainer {
         });
   }
 
-  public void simulationPeriotic() {
+  public void simulationPeriodic() {
     FuelSim.getInstance().updateSim();
   }
 
@@ -297,6 +293,18 @@ public class RobotContainer {
         ()->FuelSim.getInstance().getStoredFuel()<=Constants.ROBOT.MAX_FUEL && m_intake.isIntaking(),
         ()->{}
     );
-    // TODO: Add fuel shooting sim
+  }
+  
+  public void updateFuelLaunchSim() {
+    // If uptake and flywheel are running, launch fuel from the sim
+    if (m_uptake != null && m_flywheel != null && m_hood != null) {
+        if (m_flywheel.getMotorSpeedRPM() > 500.0 && FuelSim.getInstance().getStoredFuel() > 0) {
+            // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
+            // vel in ft/s = 0.0111882 * RPM - 0.000174927
+            FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
+            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), m_hood.getHoodRotations(), Degrees.of(0), FLYWHEEL.fuelLaunchHeight);
+            System.out.println("Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
+        }
+    }
   }
 }
