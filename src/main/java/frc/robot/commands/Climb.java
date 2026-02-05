@@ -33,7 +33,7 @@ public class Climb extends Command {
           HOLDING_ROBOT.motionMagicAcceleration,
           HOLDING_ROBOT.motionMagicJerk);
     } else {
-      m_climber.setPIDSlot(HOLDING_ROBOT.slot);
+      m_climber.setPIDSlot(NOT_HOLDING_ROBOT.slot);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
           NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
