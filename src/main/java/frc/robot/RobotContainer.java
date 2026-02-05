@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INDEXER.INDEXER_SPEED;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.SWERVE;
-import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
