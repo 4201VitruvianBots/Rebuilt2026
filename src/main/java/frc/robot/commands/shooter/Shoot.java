@@ -8,11 +8,13 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,13 +39,14 @@ public class Shoot extends Command {
                   Interpolator.forDouble()
                       .interpolate(startValue.shooterRPM, endValue.shooterRPM, t),
                   Interpolator.forDouble()
-                      .interpolate(startValue.hoodPosition, endValue.hoodPosition, t)));
+                      .interpolate(startValue.hoodPosition, endValue.hoodPosition, t),
+                  Interpolator.forDouble().interpolate(startValue.timeOfFlight, endValue.timeOfFlight, t)));
 
   static {
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376), new Shot(2175, 0.40)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15));
+        Meters.of(1.8086638318064376), new Shot(2175, 0.40, 10.0)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19, 10.0));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15, 10.0));
   }
 
   private final Flywheel m_flywheel;
@@ -87,18 +90,35 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
     double effectiveDistance = 2.5; // meters
     Translation2d currentPose = m_swerveDrivetrain.getState().Pose.getTranslation();
+    double robotToTargetDistance = m_goal.getDistance(currentPose);
 
     double PositionY = m_swerveDrivetrain.getState().Pose.getY();
     double PositionX = m_swerveDrivetrain.getState().Pose.getX();
-    double VelocityY = m_swerveDrivetrain.getChassisSpeed().vyMetersPerSecond;
-    double VelocityX = m_swerveDrivetrain.getChassisSpeed().vxMetersPerSecond;
+
+    double VelocityY = m_swerveDrivetrain.getKinematics().toChassisSpeeds().vyMetersPerSecond;
+    double VelocityX = m_swerveDrivetrain.getKinematics().toChassisSpeeds().vxMetersPerSecond;
 
     double AccelerationX = m_swerveDrivetrain.getPigeon2().getAccelerationX().getValueAsDouble();
     double AccelerationY = m_swerveDrivetrain.getPigeon2().getAccelerationY().getValueAsDouble();
 
-    double VelocityShoot = 9.255586759; // Previously 11.1 m/s
+    // Account for imparted velocity by robot (turret) to offset
+    double timeOfFlight;
+    Pose2d lookaheadPose = m_swerveDrivetrain.getState().Pose;
+    for (int i = 0; i < 20; i++) {
+      timeOfFlight = shot.timeOfFlight;
+      double offsetX = VelocityX * timeOfFlight;
+      double offsetY = VelocityY * timeOfFlight;
+      lookaheadPose =
+          new Pose2d(
+              currentPose.plus(new Translation2d(offsetX, offsetY)),
+              m_swerveDrivetrain.getState().Pose.getRotation());
+      robotToTargetDistance = m_goal.getDistance(lookaheadPose.getTranslation());
+    }
+
+    double VelocityShoot = ; // Previously 11.1 m/s
 
     double virtualGoalX = m_goal.getX() - VelocityShoot * (VelocityX + AccelerationX);
     double virtualGoalY = m_goal.getY() - VelocityShoot * (VelocityY + AccelerationY);
@@ -119,7 +139,6 @@ public class Shoot extends Command {
 
     // all of the logic for angle is above this Comment
 
-    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     // m_shooterHood.setPosition(shot.hoodPosition);
 

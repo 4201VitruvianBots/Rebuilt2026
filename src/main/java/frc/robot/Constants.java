@@ -56,10 +56,12 @@ public final class Constants {
     public static class Shot {
       public final double shooterRPM;
       public final double hoodPosition;
+      public final double timeOfFlight;
 
-      public Shot(double shooterRPM, double hoodPosition) {
+      public Shot(double shooterRPM, double hoodPosition, double timeOfFlight) {
         this.shooterRPM = shooterRPM;
         this.hoodPosition = hoodPosition;
+        this.timeOfFlight = timeOfFlight;
       }
     }
 

@@ -26,7 +26,6 @@ import frc.robot.commands.Index;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.UpdateLEDs;
-import frc.robot.commands.autos.*;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
@@ -169,18 +168,18 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
-      m_driverController
-          .rightBumper()
-          .toggleOnTrue(
-              new ParallelCommandGroup(
-                  new AutoAlignDrive(
-                      m_swerveDrive,
-                      m_vision,
-                      () -> m_driverController.getLeftY(),
-                      () -> m_driverController.getLeftX()),
-                  new Shoot(m_flywheel, m_vision)));
-    }
+    // if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
+    //   m_driverController
+    //       .rightBumper()
+    //       .toggleOnTrue(
+    //           new ParallelCommandGroup(
+    //               new AutoAlignDrive(
+    //                   m_swerveDrive,
+    //                   m_vision,
+    //                   () -> m_driverController.getLeftY(),
+    //                   () -> m_driverController.getLeftX()),
+    //               new Shoot(m_flywheel, m_vision)));
+    // }
 
     if (m_swerveDrive != null && m_vision != null) {
       m_driverController
@@ -194,7 +193,7 @@ public class RobotContainer {
     }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision));
+      m_driverController.a().whileTrue(new Shoot(m_flywheel, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
     }
 
     if (m_flywheel != null) {
@@ -204,7 +203,7 @@ public class RobotContainer {
     // I forsee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
       m_driverController
-          .a()
+          .x()
           .whileTrue(
               new ParallelCommandGroup(
                   new RunUptake(m_uptake),
@@ -220,22 +219,22 @@ public class RobotContainer {
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    m_autoChooser.addOption(
-        "PreloadDepotShootMiddle",
-        new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_flywheel));
-    m_autoChooser.addOption(
-        "PreloadNeutralShootClimb",
-        new PreloadNeutralShootClimb(
-            m_swerveDrive, m_intake, m_vision, m_flywheel, () -> m_flipToRight));
-    m_autoChooser.addOption(
-        "PreloadNeutralDepotClimb",
-        new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_flywheel));
-    m_autoChooser.addOption(
-        "PreloadNeutralShootTwice",
-        new PreloadNeutralShootTwice(
-            m_swerveDrive, m_intake, m_vision, m_flywheel, () -> m_flipToRight));
-    m_autoChooser.addOption(
-        "PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel));
+    // m_autoChooser.addOption(
+    //     "PreloadDepotShootMiddle",
+    //     new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_flywheel));
+    // m_autoChooser.addOption(
+    //     "PreloadNeutralShootClimb",
+    //     new PreloadNeutralShootClimb(
+    //         m_swerveDrive, m_intake, m_vision, m_flywheel, () -> m_flipToRight));
+    // m_autoChooser.addOption(
+    //     "PreloadNeutralDepotClimb",
+    //     new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_flywheel));
+    // m_autoChooser.addOption(
+    //     "PreloadNeutralShootTwice",
+    //     new PreloadNeutralShootTwice(
+    //         m_swerveDrive, m_intake, m_vision, m_flywheel, () -> m_flipToRight));
+    // m_autoChooser.addOption(
+    //     "PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel));
   }
 
   private void initSideChooser() {
