@@ -1,8 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.CLIMBER;
-import frc.robot.Constants.CLIMBER.CLIMBER_SETPOINT;
+import frc.robot.Constants.CLIMBER.*;
 import frc.robot.subsystems.Climber;
 
 public class Climb extends Command {
@@ -27,19 +26,19 @@ public class Climb extends Command {
   @Override
   public void execute() {
     if (m_climber.isHoldingRobot()) {
-      m_climber.setPIDSlot(1);
+      m_climber.setPIDSlot(HOLDING_ROBOT.slot);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
-          CLIMBER.HOLDING_ROBOT.motionMagicCruiseVelocity,
-          CLIMBER.HOLDING_ROBOT.motionMagicAcceleration,
-          0.0);
+          HOLDING_ROBOT.motionMagicCruiseVelocity,
+          HOLDING_ROBOT.motionMagicAcceleration,
+          HOLDING_ROBOT.motionMagicJerk);
     } else {
-      m_climber.setPIDSlot(0);
+      m_climber.setPIDSlot(NOT_HOLDING_ROBOT.slot);
       m_climber.setDesiredPositionAndMotionMagicConfigs(
           m_setpoint.getSetpoint(),
-          CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
-          CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration,
-          0.0);
+          NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
+          NOT_HOLDING_ROBOT.motionMagicAcceleration,
+          NOT_HOLDING_ROBOT.motionMagicJerk);
     }
   }
 

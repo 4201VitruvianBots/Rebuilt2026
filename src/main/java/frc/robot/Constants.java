@@ -43,6 +43,7 @@ public final class Constants {
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
+    public static final double kStatorCurrentLimit = 120;
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
@@ -90,6 +91,7 @@ public final class Constants {
       public static final double peakForwardOutput = 0.4; // Placeholder value
       public static final double peakReverseOutput = -0.35; // Placeholder value
       public static final double kInertia = 0.005;
+      public static final double kStatorCurrentLimit = 30;
 
       public static final double motionMagicCruiseVelocity = 6.0;
       public static final double motionMagicAcceleration = 4.0;
@@ -235,6 +237,7 @@ public final class Constants {
     public static final Current kStatorCurrentLimit = Amps.of(40);
 
     public class NOT_HOLDING_ROBOT {
+      public static int slot = 0;
       public static double kS = 1.0;
       // Config for Motor. TODO: Change placeholder values later.
       // public static double kV =
@@ -259,6 +262,7 @@ public final class Constants {
     // This needs to be here because of the friction of the carriage... meaning the whole
     // robot
     public class HOLDING_ROBOT {
+      public static int slot = 1;
       public static double kS = 1.0;
       // public static double kV = 0.0; // For lifting the robot as well.
       // public static double kA = 0.0;
@@ -402,26 +406,33 @@ public final class Constants {
   }
 
   public class UPTAKE {
-    public static final double kP = 1.0; // Placeholders
+    public static final double kP = 10.1; // Placeholders
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
     public static final double peakReverseOutput = -0.5;
-    public static final double kInertia = 0.005;
+    public static final double kInertia = 0.01;
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX60(1);
+    public static final double kMotionMagicAcceleration = 30.0;
+    public static final double kMotionMagicCruiseVelocity = 60.0;
+
+    public static final AngularVelocity minRPM = RPM.of(0.0);
+    public static final AngularVelocity maxRPM = RPM.of(5000.0);
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
     public enum UPTAKE_SPEED {
-      ZERO(0),
-      UPTAKING(0.9),
-      REVERSE(-0.3);
+      IDLE(RPM.of(0.0)),
+      UPTAKING(RPM.of(500.0));
 
-      private final double value;
+      private final AngularVelocity value;
 
-      UPTAKE_SPEED(double value) {
+      UPTAKE_SPEED(AngularVelocity value) {
         this.value = value;
       }
 
-      public double get() {
+      public AngularVelocity get() {
         return value;
       }
     }

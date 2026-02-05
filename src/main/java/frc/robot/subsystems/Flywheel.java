@@ -78,7 +78,7 @@ public class Flywheel extends SubsystemBase {
     // config.Slot0.kA = FLYWHEEL.kA;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
-    config.CurrentLimits.StatorCurrentLimit = 120;
+    config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.MotionMagic.MotionMagicCruiseVelocity = FLYWHEEL.motionMagicCruiseVelocity;
@@ -105,11 +105,6 @@ public class Flywheel extends SubsystemBase {
 
   public void changeNeutralMode(NeutralModeValue neutralmode) {
     m_neutralMode = neutralmode;
-  }
-
-  public void setManualRPMOutputFOC(double rpm) {
-    m_rpmSetpoint = RPM.of(rpm);
-    m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
   }
 
   public void setRPMOutputFOC(double rpm) {

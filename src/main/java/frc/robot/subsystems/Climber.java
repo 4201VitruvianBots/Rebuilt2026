@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.CLIMBER;
+import frc.robot.Constants.CLIMBER.HOLDING_ROBOT;
+import frc.robot.Constants.CLIMBER.NOT_HOLDING_ROBOT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Climber extends SubsystemBase {
@@ -35,7 +37,7 @@ public class Climber extends SubsystemBase {
               CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
               CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration)
           .withEnableFOC(true)
-          .withSlot(0);
+          .withSlot(NOT_HOLDING_ROBOT.slot);
 
   // The position it's trying to reach and stabilise at.
   @Logged(name = "Desired Position Inches", importance = Importance.INFO)
@@ -189,14 +191,14 @@ public class Climber extends SubsystemBase {
           CLIMBER.HOLDING_ROBOT.motionMagicCruiseVelocity,
           CLIMBER.HOLDING_ROBOT.motionMagicAcceleration,
           CLIMBER.HOLDING_ROBOT.motionMagicJerk);
-      setPIDSlot(1);
+      setPIDSlot(HOLDING_ROBOT.slot);
     } else {
       setDesiredPositionAndMotionMagicConfigs(
           getHeight(),
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration,
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk);
-      setPIDSlot(0);
+      setPIDSlot(HOLDING_ROBOT.slot);
     }
   }
 
