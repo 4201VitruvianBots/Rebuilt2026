@@ -33,7 +33,7 @@ public class Uptake extends SubsystemBase {
 
   private final FlywheelSim m_motorSim =
       new FlywheelSim(
-          LinearSystemId.createFlywheelSystem(UPTAKE.gearbox, UPTAKE.gearRatio, UPTAKE.kInertia),
+          LinearSystemId.createFlywheelSystem(UPTAKE.gearbox, UPTAKE.kInertia, UPTAKE.gearRatio),
           UPTAKE.gearbox);
 
   private final TalonFXSimState m_simState;
@@ -104,6 +104,5 @@ public class Uptake extends SubsystemBase {
         Rotations.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
-    System.out.println(getMotorSpeedRPM());
   }
 }
