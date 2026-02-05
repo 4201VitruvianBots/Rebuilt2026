@@ -18,6 +18,9 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -43,6 +46,9 @@ public class Uptake extends SubsystemBase {
 
   private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
 
+  public final DoubleSubscriber m_rpmSubscriber;
+  public final DoublePublisher m_rpmPublisher;
+
   public Uptake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = UPTAKE.kP;
@@ -60,6 +66,12 @@ public class Uptake extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     m_simState = m_motor.getSimState();
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Uptake RPM Setpoint");
+    m_rpmSubscriber = topic.subscribe(0.0);
+    m_rpmPublisher = topic.publish();
   }
 
   public void setPercentOutput(double speed) {
@@ -88,6 +100,14 @@ public class Uptake extends SubsystemBase {
   @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
   public double getMotorSpeedRPM() {
     return m_motor.getVelocity().refresh().getValue().in(RPM);
+  }
+
+  public void testInit() {
+    m_rpmPublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    m_velocitySetpoint = RPM.of(m_rpmSubscriber.get());
   }
 
   @Override

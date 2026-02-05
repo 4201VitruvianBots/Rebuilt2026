@@ -22,7 +22,7 @@ public class ShootManualFlywheel extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_flywheel.setManualRPMOutputFOC(m_flywheel.getRPMSetpoint());
+    m_flywheel.setRPMOutputFOC(m_flywheel.getRPMSetpoint());
   }
 
   // Called once the command ends or is interrupted.

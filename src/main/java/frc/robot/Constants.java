@@ -418,7 +418,7 @@ public final class Constants {
     public static final double kMotionMagicCruiseVelocity = 60.0;
 
     public static final AngularVelocity minRPM = RPM.of(0.0);
-    public static final AngularVelocity maxRPM = RPM.of(1000.0);
+    public static final AngularVelocity maxRPM = RPM.of(5000.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 

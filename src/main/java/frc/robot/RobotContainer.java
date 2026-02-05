@@ -48,35 +48,35 @@ import frc.team4201.lib.utils.Telemetry;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "Flywheel", importance = Logged.Importance.INFO)
-  private Flywheel m_flywheel = new Flywheel();
+  private Flywheel m_flywheel;
 
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
-  private Hood m_hood = new Hood();
+  private Hood m_hood;
 
   private CommandSwerveDrivetrain m_swerveDrive = WoodBotConstants.createDrivetrain();
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
 
-  private Controls m_controls = new Controls();
+  private Controls m_controls;
 
   @Logged(name = "Vision", importance = Logged.Importance.INFO)
-  private Vision m_vision = new Vision(m_controls);
+  private Vision m_vision;
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_indexer = new Indexer();
+  private Indexer m_indexer;
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
-  private Uptake m_uptake = new Uptake();
+  private Uptake m_uptake;
 
   @Logged(name = "Climber", importance = Logged.Importance.INFO)
-  private Climber m_climber = new Climber();
+  private Climber m_climber;
 
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
-  private LEDs m_led = new LEDs();
+  private LEDs m_led;
 
   @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
-  private IntakePivot m_intakePivot = new IntakePivot();
+  private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -145,13 +145,20 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_flywheel = new Flywheel();
+    m_controls = new Controls();
+    m_vision = new Vision(m_controls);
+    m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
+    m_intakePivot = new IntakePivot();
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
+    m_climber = new Climber();
+    m_led = new LEDs();
     m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
@@ -252,10 +259,12 @@ public class RobotContainer {
   public void testInit() {
     if (m_flywheel != null) m_flywheel.testInit();
     if (m_vision != null) m_vision.testInit();
+    if (m_uptake != null) m_uptake.testInit();
   }
 
   public void testPeriodic() {
     if (m_flywheel != null) m_flywheel.testPeriodic();
+    if (m_uptake != null) m_uptake.testPeriodic();
   }
 
   /**
