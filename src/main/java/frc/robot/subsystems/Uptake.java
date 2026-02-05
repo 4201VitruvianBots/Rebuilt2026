@@ -37,7 +37,8 @@ public class Uptake extends SubsystemBase {
 
   private final TalonFXSimState m_simState;
 
-  private MotionMagicVelocityTorqueCurrentFOC m_request = new MotionMagicVelocityTorqueCurrentFOC(0.0);
+  private MotionMagicVelocityTorqueCurrentFOC m_request =
+      new MotionMagicVelocityTorqueCurrentFOC(0.0);
 
   private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
 
@@ -54,7 +55,7 @@ public class Uptake extends SubsystemBase {
 
     config.MotionMagic.MotionMagicAcceleration = UPTAKE.kMotionMagicAcceleration;
     config.MotionMagic.MotionMagicCruiseVelocity = UPTAKE.kMotionMagicCruiseVelocity;
-    
+
     CtreUtils.configureTalonFx(m_motor, config);
 
     m_simState = m_motor.getSimState();
@@ -64,14 +65,15 @@ public class Uptake extends SubsystemBase {
     m_motor.set(speed);
   }
 
-  // Epilogue doesn't log RPM correctly so it must be a double 
+  // Epilogue doesn't log RPM correctly so it must be a double
   @Logged(name = "RPM Setpoint", importance = Importance.DEBUG)
-  public double getRPMsetpoint(){
+  public double getRPMsetpoint() {
     return m_velocitySetpoint.in(RPM);
   }
 
-  public void setVelocitySetpoint(AngularVelocity setpoint){
-    m_velocitySetpoint = RPM.of(MathUtil.clamp(setpoint.in(RPM), UPTAKE.minRPM.in(RPM), UPTAKE.maxRPM.in(RPM)));
+  public void setVelocitySetpoint(AngularVelocity setpoint) {
+    m_velocitySetpoint =
+        RPM.of(MathUtil.clamp(setpoint.in(RPM), UPTAKE.minRPM.in(RPM), UPTAKE.maxRPM.in(RPM)));
   }
 
   public boolean isConnected() {
@@ -101,7 +103,6 @@ public class Uptake extends SubsystemBase {
 
     m_simState.setRawRotorPosition(
         Rotations.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
-    m_simState.setRotorVelocity(
-        RPM.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
+    m_simState.setRotorVelocity(RPM.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
   }
 }
