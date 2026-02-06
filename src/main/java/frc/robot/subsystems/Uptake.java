@@ -18,8 +18,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.INTAKEMOTORS;
-import frc.robot.Constants.UPTAKEMOTORS;
+import frc.robot.Constants.UPTAKE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Uptake extends SubsystemBase {
@@ -29,17 +28,15 @@ public class Uptake extends SubsystemBase {
 
   private final DCMotorSim m_motorSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              UPTAKEMOTORS.gearbox, UPTAKEMOTORS.gearRatio, UPTAKEMOTORS.kInertia),
-          UPTAKEMOTORS.gearbox);
+          LinearSystemId.createDCMotorSystem(UPTAKE.gearbox, UPTAKE.gearRatio, UPTAKE.kInertia),
+          UPTAKE.gearbox);
 
   private final TalonFXSimState m_simState;
 
-  /** Creates a new Uptake. */
   public Uptake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = UPTAKEMOTORS.kP;
-    config.Feedback.SensorToMechanismRatio = UPTAKEMOTORS.gearRatio;
+    config.Slot0.kP = UPTAKE.kP;
+    config.Feedback.SensorToMechanismRatio = UPTAKE.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     CtreUtils.configureTalonFx(m_motor, config);
@@ -72,9 +69,7 @@ public class Uptake extends SubsystemBase {
     m_motorSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_motorSim.getAngularPositionRotations())
-            .times(INTAKEMOTORS.ROLLERS.gearRatio));
-    m_simState.setRotorVelocity(
-        RPM.of(m_motorSim.getAngularVelocityRPM()).times(INTAKEMOTORS.ROLLERS.gearRatio));
+        Rotations.of(m_motorSim.getAngularPositionRotations()).times(UPTAKE.gearRatio));
+    m_simState.setRotorVelocity(RPM.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
   }
 }

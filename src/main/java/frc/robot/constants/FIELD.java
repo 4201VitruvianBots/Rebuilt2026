@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.hal.REVPHFaults;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
@@ -26,35 +25,42 @@ public class FIELD {
 
   public static final AprilTagFieldLayout aprilTagFieldLayout = wpilibAprilTagLayout;
 
-  public static final Translation2d blueHub = new Translation2d(4.625594, 4.034536); 
+  public static final Translation2d blueHub = new Translation2d(4.625594, 4.034536);
   public static final Translation2d redHub = new Translation2d(11.915394, 4.034536);
 
-  // Everything is from the perspective of the blue alliance 
+  // Everything is from the perspective of the blue alliance
   public static final Translation2d neutralBlueRightCorner = new Translation2d(4.611624, 0.0);
   public static final Translation2d neutralBlueLeftCorner = new Translation2d(4.611624, 8.069326);
   public static final Translation2d neutralRedRightCorner = new Translation2d(11.901424, 0.0);
-  public static final Translation2d neutralRedLeftCorner = new Translation2d(11.901424,8.069326); 
+  public static final Translation2d neutralRedLeftCorner = new Translation2d(11.901424, 8.069326);
 
-  public static final Translation2d nearRightCorner = new Translation2d(0.0,0.0); // Blue
-  public static final Translation2d nearLeftCorner = new Translation2d(0.0, aprilTagFieldLayout.getFieldWidth()); 
-  public static final Translation2d farRightCorner = new Translation2d(aprilTagFieldLayout.getFieldLength(),0.0); // Red
-  public static final Translation2d farLeftCorner = new Translation2d(aprilTagFieldLayout.getFieldLength(), aprilTagFieldLayout.getFieldWidth()); 
+  public static final Translation2d nearRightCorner = new Translation2d(0.0, 0.0); // Blue
+  public static final Translation2d nearLeftCorner =
+      new Translation2d(0.0, aprilTagFieldLayout.getFieldWidth());
+  public static final Translation2d farRightCorner =
+      new Translation2d(aprilTagFieldLayout.getFieldLength(), 0.0); // Red
+  public static final Translation2d farLeftCorner =
+      new Translation2d(aprilTagFieldLayout.getFieldLength(), aprilTagFieldLayout.getFieldWidth());
 
-  public static final Translation2d blueWallMiddle = new Translation2d(0.0, 4.021328 );
-  public static final Translation2d redWallMiddle = new Translation2d(aprilTagFieldLayout.getFieldLength(), 4.021328);
+  public static final Translation2d blueWallMiddle = new Translation2d(0.0, 4.021328);
+  public static final Translation2d redWallMiddle =
+      new Translation2d(aprilTagFieldLayout.getFieldLength(), 4.021328);
 
   public static final Translation2d redAutoHub = redHub;
   public static final Translation2d blueAutoHub = blueHub;
 
-  // Useful for determining quickly with little logic where we are 
-  public static final Rectangle2d neutralZone = new Rectangle2d(neutralRedLeftCorner, neutralBlueRightCorner);
+  // Useful for determining quickly with little logic where we are
+  public static final Rectangle2d neutralZone =
+      new Rectangle2d(neutralRedLeftCorner, neutralBlueRightCorner);
   public static final Rectangle2d redZone = new Rectangle2d(farLeftCorner, neutralRedRightCorner);
-  public static final Rectangle2d blueZone = new Rectangle2d(neutralBlueLeftCorner, nearRightCorner);
+  public static final Rectangle2d blueZone =
+      new Rectangle2d(neutralBlueLeftCorner, nearRightCorner);
   public static final Rectangle2d rightHalf = new Rectangle2d(redWallMiddle, nearRightCorner);
   public static final Rectangle2d leftHalf = new Rectangle2d(farLeftCorner, blueWallMiddle);
 
-  // Useful for more precisely knowing where we are 
-  public static final Rectangle2d neutralZoneRight = new Rectangle2d(redHub, neutralBlueRightCorner);
+  // Useful for more precisely knowing where we are
+  public static final Rectangle2d neutralZoneRight =
+      new Rectangle2d(redHub, neutralBlueRightCorner);
   public static final Rectangle2d neutralZoneLeft = new Rectangle2d(neutralRedLeftCorner, blueHub);
   public static final Rectangle2d redZoneRight = new Rectangle2d(farRightCorner, redHub);
   public static final Rectangle2d redZoneLeft = new Rectangle2d(farLeftCorner, redHub);

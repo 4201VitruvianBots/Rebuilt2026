@@ -8,41 +8,37 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
-import frc.robot.commands.ResetGyro;
-import frc.robot.Constants.SHOOTERHOOD.ManualAngle;
-import frc.robot.Constants.SHOOTERMOTORS.ManualRPM;
-import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
+import frc.robot.Constants.INDEXER.INDEXER_SPEED;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.SWERVE;
+import frc.robot.Constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.Constants.USB;
-import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
 import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
-import frc.robot.commands.RunUptake;
 import frc.robot.commands.Intake.RunIntake;
-import frc.robot.commands.autos.PreloadDepotShootMiddle;
+import frc.robot.commands.ResetGyro;
+import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootManualFlywheel;
-import frc.robot.commands.autos.PreloadNeutralDepotClimb;
-import frc.robot.commands.autos.PreloadNeutralShootClimb;
-import frc.robot.commands.autos.PreloadNeutralShootTwice;
-import frc.robot.generated.AlphaBotConstants;
+import frc.robot.commands.SwitchSwerveNeutralModeState;
+import frc.robot.commands.autos.*;
+import frc.robot.generated.WoodBotConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
@@ -58,36 +54,39 @@ import frc.team4201.lib.utils.Telemetry;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_shooterRollers = new ShooterRollers();
+  private Flywheel m_shooterRollers;
 
   // @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
   // private ShooterHood m_shooterHood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = AlphaBotConstants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive = WoodBotConstants.createDrivetrain();
+
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
 
-  private Controls m_controls = new Controls();
+  private Controls m_controls;
 
   @Logged(name = "Vision", importance = Logged.Importance.INFO)
-  private Vision m_vision = new Vision(m_controls);
+  private Vision m_vision;
 
-  private Telemetry m_telemetry = new Telemetry();
+  private Telemetry m_telemetry;
 
-  private FieldSim m_fieldSim = new FieldSim();
+  private FieldSim m_fieldSim;
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_indexer = new Indexer();
+  private Indexer m_indexer;
 
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
-  private Uptake m_uptake = new Uptake();
+  private Uptake m_uptake;
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
 
   @NotLogged
   private double MaxSpeed =
-      AlphaBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+      WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+
   private Boolean m_flipToRight = false;
 
   @NotLogged
@@ -103,7 +102,9 @@ public class RobotContainer {
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -133,6 +134,11 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_shooterRollers = new Flywheel();
+    m_controls = new Controls();
+    m_fieldSim = new FieldSim();
+    m_telemetry = new Telemetry();
+    m_vision = new Vision(m_controls);
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
@@ -153,47 +159,57 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_shooterRollers != null){
+    if (m_swerveDrive != null && m_vision != null && m_shooterRollers != null) {
       m_driverController
-        .rightBumper()
-        .toggleOnTrue(new ParallelCommandGroup(
-            new AutoAlignDrive(
-                m_swerveDrive, m_vision,
-                () -> m_driverController.getLeftY(),
-                () -> m_driverController.getLeftX()), new Shoot(m_swerveDrive,
-                  m_shooterRollers, m_vision)));
+          .rightBumper()
+          .toggleOnTrue(
+              new ParallelCommandGroup(
+                  new AutoAlignDrive(
+                      m_swerveDrive,
+                      m_vision,
+                      () -> m_driverController.getLeftY(),
+                      () -> m_driverController.getLeftX()),
+                  new Shoot(m_swerveDrive, m_shooterRollers, m_vision)));
     }
 
-    if (m_swerveDrive != null && m_vision != null){
+    if (m_swerveDrive != null && m_vision != null) {
       m_driverController
-        .leftBumper()
-        .toggleOnTrue(
-            new AutoAlignDrive(
-                m_swerveDrive, m_vision,
-                () -> m_driverController.getLeftY(),
-                () -> m_driverController.getLeftX()));
+          .leftBumper()
+          .toggleOnTrue(
+              new AutoAlignDrive(
+                  m_swerveDrive,
+                  m_vision,
+                  () -> m_driverController.getLeftY(),
+                  () -> m_driverController.getLeftX()));
     }
-    
-    if (m_swerveDrive != null && m_shooterRollers != null) {
-      m_driverController
-          .a()
-          .whileTrue(
-              new Shoot(m_swerveDrive,
-                  m_shooterRollers, m_vision));
+
+    if (m_swerveDrive != null && m_shooterRollers != null && m_vision != null) {
+      m_driverController.a().whileTrue(new Shoot(m_swerveDrive, m_shooterRollers, m_vision));
     }
 
     if (m_shooterRollers != null) {
       m_driverController.y().whileTrue(new ShootManualFlywheel(m_shooterRollers));
     }
 
-    if (m_uptake != null && m_indexer != null) {
-      m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(new RunUptake(m_uptake, UPTAKESPEED.UPTAKING), new Index(m_indexer, INDEXERSPEED.INDEXING), new RunIntake(m_intake, INTAKESPEED.INTAKING)));
+    // I forsee a state machine in the future...
+    if (m_uptake != null && m_indexer != null && m_intake != null) {
+      m_driverController
+          .rightTrigger()
+          .whileTrue(
+              new ParallelCommandGroup(
+                  new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING),
+                  new Index(m_indexer, INDEXER_SPEED.INDEXING),
+                  new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
 
-    if (m_intake != null){
-      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKESPEED.INTAKING));
+    if (m_intake != null) {
+      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     }
 
+    if (m_swerveDrive != null) {
+      m_driverController.povLeft().whileTrue(new SwitchSwerveNeutralModeState(m_swerveDrive, NeutralModeValue.Coast));
+      m_driverController.povRight().whileTrue(new SwitchSwerveNeutralModeState(m_swerveDrive, NeutralModeValue.Brake));
+    }
   }
 
   private void initAutoChooser() {
@@ -208,18 +224,28 @@ public class RobotContainer {
   private void initSideChooser() {
     SmartDashboard.putData("Auto Side", m_autoSide);
     m_autoSide.setDefaultOption("No Flip", false);
-  
+
     m_autoSide.addOption("Depot", false);
     m_autoSide.addOption("Outpost", true);
-    m_autoSide.onChange((Boolean selected) -> {
-      m_flipToRight = selected;
-    });
+    m_autoSide.onChange(
+        (Boolean selected) -> {
+          m_flipToRight = selected;
+        });
   }
 
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
+  }
+
+  public void testInit() {
+    if (m_shooterRollers != null) m_shooterRollers.testInit();
+    if (m_vision != null) m_vision.testInit();
+  }
+
+  public void testPeriodic() {
+    if (m_shooterRollers != null) m_shooterRollers.testPeriodic();
   }
 
   /**

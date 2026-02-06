@@ -1,25 +1,17 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
+import frc.robot.constants.VISION;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Vision;
-
-import java.util.ResourceBundle.Control;
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
@@ -39,7 +31,8 @@ public class AutoAlignDrive extends Command {
 
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
-      CommandSwerveDrivetrain commandSwerveDrivetrain, Vision vision,
+      CommandSwerveDrivetrain commandSwerveDrivetrain,
+      Vision vision,
       DoubleSupplier throttleInput,
       DoubleSupplier turnInput) {
     m_swerveDrivetrain = commandSwerveDrivetrain;
@@ -59,14 +52,16 @@ public class AutoAlignDrive extends Command {
     m_PidController.reset();
     Rectangle2d m_goalZone;
 
-    // If we're outside of our own zone, then we align to pass. 
-    if (m_vision.isInOpposingAllianceZone() || m_vision.isInNeutralZone()){
-        m_goalZone = Controls.isBlueAlliance() ? (m_vision.isInLeftHalf() ? FIELD.blueZoneLeft : FIELD.blueZoneRight)
-                                              : (m_vision.isInLeftHalf() ? FIELD.redZoneLeft : FIELD.redZoneRight);
-        m_goal = m_goalZone.getCenter().getTranslation();
-    // If we're in our own zone, then we align to the hub
+    // If we're outside of our own zone, then we align to pass.
+    if (m_vision.isInOpposingAllianceZone() || m_vision.isInNeutralZone()) {
+      m_goalZone =
+          Controls.isBlueAlliance()
+              ? (m_vision.isInLeftHalf() ? FIELD.blueZoneLeft : FIELD.blueZoneRight)
+              : (m_vision.isInLeftHalf() ? FIELD.redZoneLeft : FIELD.redZoneRight);
+      m_goal = m_goalZone.getCenter().getTranslation();
+      // If we're in our own zone, then we align to the hub
     } else {
-        m_goal = Controls.isBlueAlliance() ? FIELD.blueAutoHub : FIELD.redAutoHub;
+      m_goal = Controls.isBlueAlliance() ? FIELD.blueAutoHub : FIELD.redAutoHub;
     }
   }
 
@@ -82,13 +77,14 @@ public class AutoAlignDrive extends Command {
         new ChassisSpeeds(
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
             m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
-            turnRate));
+            turnRate
+                - m_swerveDrivetrain.getState().Speeds.vyMetersPerSecond
+                    * VISION.kVelocityCompensationConstant));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

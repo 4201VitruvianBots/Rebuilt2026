@@ -21,12 +21,12 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.INDEXERMOTORS;
+import frc.robot.Constants.INDEXER;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {
 
-  @Logged(name = "Indexer Motor", importance = Importance.INFO)
+  @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
   private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBaseCanbus);
 
   @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
@@ -37,27 +37,24 @@ public class Indexer extends SubsystemBase {
 
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              INDEXERMOTORS.gearbox, INDEXERMOTORS.kInertia, INDEXERMOTORS.gearRatio),
-          INDEXERMOTORS.gearbox);
+          LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+          INDEXER.gearbox);
   private final TalonFXSimState m_simState;
 
   /** Creates a new Indexer. */
   public Indexer() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kV = INDEXERMOTORS.kV;
-    config.Slot0.kP = INDEXERMOTORS.kP;
-    config.Slot0.kD = INDEXERMOTORS.kD;
-    config.Slot0.kS = INDEXERMOTORS.kS;
+    config.Slot0.kP = INDEXER.kP;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.PeakForwardDutyCycle = INDEXERMOTORS.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = INDEXERMOTORS.peakReverseOutput;
-    config.Feedback.SensorToMechanismRatio = INDEXERMOTORS.gearRatio;
+    config.MotorOutput.PeakForwardDutyCycle = INDEXER.peakForwardOutput;
+    config.MotorOutput.PeakReverseDutyCycle = INDEXER.peakReverseOutput;
+    config.Feedback.SensorToMechanismRatio = INDEXER.gearRatio;
 
     config.CurrentLimits.StatorCurrentLimit = 60;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
+    CtreUtils.configureTalonFx(m_indexerMotor2, config);
 
     m_indexerMotor2.setControl(
         new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
@@ -81,9 +78,7 @@ public class Indexer extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 
   @Override
   public void simulationPeriodic() {
@@ -93,9 +88,8 @@ public class Indexer extends SubsystemBase {
     m_indexerMotor1Sim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations())
-            .times(INDEXERMOTORS.gearRatio));
+        Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXERMOTORS.gearRatio));
+        RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
   }
 }

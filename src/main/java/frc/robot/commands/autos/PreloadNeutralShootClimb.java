@@ -8,28 +8,25 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.ShooterRollers;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.utils.TrajectoryUtils;
-
 import java.util.function.BooleanSupplier;
 
 public class PreloadNeutralShootClimb extends Auto {
   public PreloadNeutralShootClimb(
-          CommandSwerveDrivetrain swerveDrive,
-          Intake intake,
-          Vision vision,
-          ShooterRollers shooterRollers,
-          BooleanSupplier flipPath) {
+      CommandSwerveDrivetrain swerveDrive,
+      Intake intake,
+      Vision vision,
+      Flywheel shooterRollers,
+      BooleanSupplier flipPath) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -44,14 +41,17 @@ public class PreloadNeutralShootClimb extends Auto {
       var m_path6 = PathPlannerPath.fromPathFile("PreloadNeutralShootClimb6");
 
       addCommands(
-          getPathCommand(trajectoryUtils, m_path1, flipPath).andThen(() -> swerveDrive.setControl(stopRequest)),
+          getPathCommand(trajectoryUtils, m_path1, flipPath)
+              .andThen(() -> swerveDrive.setControl(stopRequest)),
           new Shoot(swerveDrive, shooterRollers, vision).withTimeout(3),
-          getPathCommand(trajectoryUtils, m_path2, flipPath).andThen(() -> swerveDrive.setControl(stopRequest)),
+          getPathCommand(trajectoryUtils, m_path2, flipPath)
+              .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
-            new RunIntake(intake, INTAKESPEED.INTAKING),
-            getPathCommand(trajectoryUtils, m_path3, flipPath).andThen(() -> swerveDrive.setControl(stopRequest))
-          ),
-          getPathCommand(trajectoryUtils, m_path4, flipPath).andThen(() -> swerveDrive.setControl(stopRequest)),
+              new RunIntake(intake, INTAKE_SPEED.INTAKING),
+              getPathCommand(trajectoryUtils, m_path3, flipPath)
+                  .andThen(() -> swerveDrive.setControl(stopRequest))),
+          getPathCommand(trajectoryUtils, m_path4, flipPath)
+              .andThen(() -> swerveDrive.setControl(stopRequest)),
           new Shoot(swerveDrive, shooterRollers, vision).withTimeout(3),
           getChoiceCommand(trajectoryUtils, m_path5Outpost, m_path5Depot, flipPath).andThen(() -> swerveDrive.setControl(stopRequest)),
           getPathCommand(trajectoryUtils, m_path6, flipPath).andThen(() -> swerveDrive.setControl(stopRequest))

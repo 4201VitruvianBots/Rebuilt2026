@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.AutoAlignDrive;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 // import frc.team4201.lib.simulation.LimelightSim;
@@ -70,19 +69,15 @@ public class Vision extends SubsystemBase {
       PortForwarder.add(port + 10, CAMERA_SERVER.limelightL.toString(), port);
     }
 
-    var topickP = NetworkTableInstance.getDefault()
-      .getTable("SmartDashboard") 
-      .getDoubleTopic("kPAutoAlign");
-    var topickD = NetworkTableInstance.getDefault()
-      .getTable("SmartDashboard") 
-      .getDoubleTopic("kDAutoAlign");
+    var topickP =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kPAutoAlign");
+    var topickD =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kDAutoAlign");
     m_kPAutoAlignSubscriber = topickP.subscribe(7.4);
     m_kDAutoAlignSubscriber = topickD.subscribe(0.3);
 
     m_kPAutoAlignPublisher = topickP.publish();
-    m_kPAutoAlignPublisher.set(7.4);
     m_kDAutoAlignPublisher = topickD.publish();
-    m_kDAutoAlignPublisher.set(0.3);
   }
 
   public void registerSwerveDrive(CommandSwerveDrivetrain swerveDriveTrain) {
@@ -245,11 +240,12 @@ public class Vision extends SubsystemBase {
   public void setTargetLock(boolean set) {
     lockTarget = set;
   }
-  
+
   @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
   public boolean isPointingAtGoal() {
     // bearing from robot to goal
-    var bearing = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+    var bearing =
+        m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
     // robot heading
     var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
     // smallest signed angle difference in [-pi, pi]
@@ -258,23 +254,23 @@ public class Vision extends SubsystemBase {
   }
 
   @Logged(name = "Is in Neutral Zone?", importance = Importance.DEBUG)
-  public boolean isInNeutralZone(){
+  public boolean isInNeutralZone() {
     return FIELD.neutralZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
   }
 
   @Logged(name = "Is in Red Zone?", importance = Importance.DEBUG)
-  public boolean isInRedZone(){
+  public boolean isInRedZone() {
     return FIELD.redZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
   }
 
   @Logged(name = "Is in Blue Zone?", importance = Importance.DEBUG)
-  public boolean isInBlueZone(){
+  public boolean isInBlueZone() {
     return FIELD.blueZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
   }
 
   @Logged(name = "Is in Opposing Alliance Zone?", importance = Importance.DEBUG)
-  public boolean isInOpposingAllianceZone(){
-    if (Controls.isBlueAlliance()){
+  public boolean isInOpposingAllianceZone() {
+    if (Controls.isBlueAlliance()) {
       return isInRedZone();
     } else {
       return isInBlueZone();
@@ -282,24 +278,29 @@ public class Vision extends SubsystemBase {
   }
 
   @Logged(name = "Is in Right Half?", importance = Importance.DEBUG)
-  public boolean isInRightHalf(){
+  public boolean isInRightHalf() {
     return FIELD.rightHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
   }
 
   @Logged(name = "Is in Left Half?", importance = Importance.DEBUG)
-  public boolean isInLeftHalf(){
+  public boolean isInLeftHalf() {
     return FIELD.leftHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
   }
 
+  public void testInit() {
+    m_kPAutoAlignPublisher.set(7.4);
+    m_kDAutoAlignPublisher.set(0.3);
+  }
 
   public void teleopInit() {}
 
   @Logged(name = "Distance to Hub", importance = Importance.INFO)
-  public Distance getDistancetoHub(){
-    final Distance distanceToHub = Meters.of(m_swerveDriveTrain.getState().Pose.getTranslation().getDistance(m_goal));
+  public Distance getDistancetoHub() {
+    final Distance distanceToHub =
+        Meters.of(m_swerveDriveTrain.getState().Pose.getTranslation().getDistance(m_goal));
     return distanceToHub;
   }
-  
+
   @Override
   public void periodic() {
     // limelight r

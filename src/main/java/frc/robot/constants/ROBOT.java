@@ -10,7 +10,7 @@ public class ROBOT {
   public static LOG_MODE logMode = LOG_MODE.NORMAL;
   public static ROBOT_ID robotID = ROBOT_ID.SIM;
 
-  //TODO: determine these later
+  // TODO: determine these later
   public enum CONTROL_MODE {}
 
   public enum SUPERSTRUCTURE_STATES {}
@@ -30,7 +30,7 @@ public class ROBOT {
     // 030cbd1c - 23-2 Rio 1.0 (in the green bins)
     // 0310d915 - 23-3 Rio 1.0 (Doesn't work right - Sheraz)
 
-    //TODO: rename and change serials
+    // TODO: rename and change serials
     // Robot Serial Numbers (2026)
     ALPHABOT("030cbc95"), // Rio 1.0
     V2("032381FB"), // 23-1 Rio 2.0
@@ -69,13 +69,13 @@ public class ROBOT {
     robotID = ROBOT_ID.ALPHABOT;
   }
 
-//   public static void initV2() {
-//     robotID = ROBOT_ID.V2;
-//   }
+  //   public static void initV2() {
+  //     robotID = ROBOT_ID.V2;
+  //   }
 
-//   public static void initV3() {
-//     robotID = ROBOT_ID.V3;
-//   }
+  //   public static void initV3() {
+  //     robotID = ROBOT_ID.V3;
+  //   }
 
   public static void initSim() {
     logMode = LOG_MODE.DEBUG;
@@ -88,8 +88,8 @@ public class ROBOT {
     try {
       switch (ROBOT_ID.fromSerial(RobotController.getSerialNumber())) {
         case ALPHABOT -> initAlphaBot();
-        // case V2 -> initV2();
-        // case V3 -> initV3();
+          // case V2 -> initV2();
+          // case V3 -> initV3();
         case SIM -> {
           initSim();
           System.out.print(

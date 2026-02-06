@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Meters;
@@ -13,34 +9,35 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SHOOTERMOTORS.Shot;
+import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
-import frc.robot.subsystems.ShooterRollers;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Vision;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap = new InterpolatingTreeMap<>(
-        (startValue, endValue, q) -> 
-            InverseInterpolator.forDouble()
-                .inverseInterpolate(startValue.in(Meters), endValue.in(Meters), q.in(Meters)),
-        (startValue, endValue, t) ->
-            new Shot(
-                Interpolator.forDouble()
-                    .interpolate(startValue.shooterRPM, endValue.shooterRPM, t),
-                Interpolator.forDouble()
-                    .interpolate(startValue.hoodPosition, endValue.hoodPosition, t)
-            )
-   );
+  private static final InterpolatingTreeMap<Distance, Shot> distanceToShotMap =
+      new InterpolatingTreeMap<>(
+          (startValue, endValue, q) ->
+              InverseInterpolator.forDouble()
+                  .inverseInterpolate(startValue.in(Meters), endValue.in(Meters), q.in(Meters)),
+          (startValue, endValue, t) ->
+              new Shot(
+                  Interpolator.forDouble()
+                      .interpolate(startValue.shooterRPM, endValue.shooterRPM, t),
+                  Interpolator.forDouble()
+                      .interpolate(startValue.hoodPosition, endValue.hoodPosition, t)));
 
-    static {
-        distanceToShotMap.put(Meters.of(1.8086638318064376), new Shot(2175, 0.40)); // Hood position is a placeholder 
-        distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19));
-        distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15));
-    }
-  private final ShooterRollers m_shooterRollers;
+  static {
+    distanceToShotMap.put(
+        Meters.of(1.8086638318064376), new Shot(2175, 0.40)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(2300, 0.15));
+  }
+
+  private final Flywheel m_shooterRollers;
   private final Vision m_vision;
 
   // private final ShooterHood m_shooterHood;
@@ -48,9 +45,7 @@ public class Shoot extends Command {
 
   Translation2d m_goal = new Translation2d();
 
-
-  public Shoot(CommandSwerveDrivetrain swerve,
-      ShooterRollers shooterRollers, Vision vision) {
+  public Shoot(CommandSwerveDrivetrain swerve, Flywheel shooterRollers, Vision vision) {
     m_shooterRollers = shooterRollers;
     m_vision = vision;
     // m_shooterHood = shooterHood;
@@ -73,8 +68,6 @@ public class Shoot extends Command {
   @Override
   public void execute() {
     Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
-    System.out.println(m_vision.getDistancetoHub());
-    System.out.println(shot.shooterRPM);
     m_shooterRollers.setRPMOutputFOC(shot.shooterRPM);
     // m_shooterHood.setPosition(shot.hoodPosition);
   }
