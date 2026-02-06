@@ -61,7 +61,7 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
-    m_goal = Controls.isRedAlliance() ? FIELD.blueHub : FIELD.redHub;
+    m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
     registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {

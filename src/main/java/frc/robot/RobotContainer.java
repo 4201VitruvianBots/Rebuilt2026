@@ -27,7 +27,7 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.intake.RunIntake;
-import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootOnTheMove;
 import frc.robot.commands.shooter.ShootManualFlywheel;
 import frc.robot.generated.WoodBotConstants;
 import frc.robot.simulation.Robot2d;
@@ -193,7 +193,7 @@ public class RobotContainer {
     }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.a().whileTrue(new Shoot(m_flywheel, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
+      m_driverController.a().toggleOnTrue((new ShootOnTheMove(m_flywheel, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
     }
 
     if (m_flywheel != null) {
