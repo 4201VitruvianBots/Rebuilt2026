@@ -5,7 +5,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.jni.SwerveJNI.ModuleState;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,11 +21,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
-import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Vision;
+import com.ctre.phoenix6.mechanisms.swerve.*;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -91,22 +91,22 @@ public class Shoot extends Command {
   @Override
   public void execute() {
     Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
-    double effectiveDistance = 2.5; // meters
     Translation2d currentPose = m_swerveDrivetrain.getState().Pose.getTranslation();
     double robotToTargetDistance = m_goal.getDistance(currentPose);
 
     double PositionY = m_swerveDrivetrain.getState().Pose.getY();
     double PositionX = m_swerveDrivetrain.getState().Pose.getX();
 
-    double VelocityY = m_swerveDrivetrain.getKinematics().toChassisSpeeds().vyMetersPerSecond;
-    double VelocityX = m_swerveDrivetrain.getKinematics().toChassisSpeeds().vxMetersPerSecond;
+    var chassisSpeeds = m_swerveDrivetrain.getState().Speeds;
+    double VelocityY = chassisSpeeds.vyMetersPerSecond;
+    double VelocityX = chassisSpeeds.vxMetersPerSecond;
 
     double AccelerationX = m_swerveDrivetrain.getPigeon2().getAccelerationX().getValueAsDouble();
     double AccelerationY = m_swerveDrivetrain.getPigeon2().getAccelerationY().getValueAsDouble();
 
-    // Account for imparted velocity by robot (turret) to offset
-    double timeOfFlight;
+    // Account for imparted velocity by robot to offset
     Pose2d lookaheadPose = m_swerveDrivetrain.getState().Pose;
+    double timeOfFlight;
     for (int i = 0; i < 20; i++) {
       timeOfFlight = shot.timeOfFlight;
       double offsetX = VelocityX * timeOfFlight;
@@ -118,7 +118,7 @@ public class Shoot extends Command {
       robotToTargetDistance = m_goal.getDistance(lookaheadPose.getTranslation());
     }
 
-    double VelocityShoot = ; // Previously 11.1 m/s
+    double VelocityShoot = robotToTargetDistance / shot.timeOfFlight; // Previously 11.1 m/s
 
     double virtualGoalX = m_goal.getX() - VelocityShoot * (VelocityX + AccelerationX);
     double virtualGoalY = m_goal.getY() - VelocityShoot * (VelocityY + AccelerationY);
@@ -133,7 +133,7 @@ public class Shoot extends Command {
     double newDist = toMovingGoal.getDistance(new Translation2d());
 
     double getOffsetAngleDeg =
-        Math.asin((VelocityY * PositionX + VelocityX * PositionY) / (newDist * effectiveDistance));
+        Math.asin((VelocityY * PositionX + VelocityX * PositionY) / (newDist * robotToTargetDistance));
 
     var targetDelta = (m_swerveDrivetrain.getState().Pose.getTranslation().minus(m_goal).getAngle());
 
