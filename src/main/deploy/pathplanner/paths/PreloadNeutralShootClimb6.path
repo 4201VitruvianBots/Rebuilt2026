@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 1.1826762342710015,
-        "y": 5.252444315316471
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 0.6,
-        "y": 4.5
-      },
-      "prevControl": {
-        "x": 0.6,
-        "y": 5.2
-      },
-      "nextControl": {
-        "x": 0.6,
-        "y": 4.25
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
         "x": 0.5,
         "y": 3.8
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 0.75,
+        "y": 3.8
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.7,
+        "y": 3.8
+      },
       "prevControl": {
-        "x": 0.5,
-        "y": 3.55
+        "x": 0.44999999999999996,
+        "y": 3.8
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.7,
+      "waypointRelativePos": 0.25,
       "rotationDegrees": 180.0
     }
   ],
@@ -69,7 +53,7 @@
   "folder": "PreloadNeutralShootClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

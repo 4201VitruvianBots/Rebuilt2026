@@ -38,6 +38,7 @@ public class PreloadNeutralDepotClimb extends Auto {
       var m_path5 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb5");
       var m_path6 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb6");
       var m_path7 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb7");
+      var m_path8 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb8");
 
       addCommands(
         m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
