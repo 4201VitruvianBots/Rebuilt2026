@@ -43,7 +43,7 @@ public class FIELD {
   public static final Distance TRENCH_APRILTAG_HEIGHT = Inches.of(35);
   public static final Distance TOWER_APRILTAG_HEIGHT = Inches.of(33).plus(APRILTAG_SIZE).div(2.0);
   public static final Distance OUTPOST_APRILTAG_HEIGHT = Inches.of(33).plus(APRILTAG_SIZE).div(2.0);
-
+  
   /** Enum describing all AprilTags on the field by ID and their Pose3d positions. */
   public enum APRIL_TAG {
     RED_TRENCH_NEAR_RIGHT(1),

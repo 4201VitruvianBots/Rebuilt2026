@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Collection;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -9,6 +11,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -18,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 // import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
@@ -82,7 +87,24 @@ public class Vision extends SubsystemBase {
   public boolean isTargetingRight() {
     return !m_useLeftTarget;
   }
-
+    // TODO: Create colllection for poses and function work
+ public void updateNearestScoringTarget(){
+    if (lockTarget) return;
+      robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
+        if (Controls.isBlueAlliance()) {
+          nearestObjectPose = robotToTarget[0].nearest((Collection<Pose2d>) FIELD.APRIL_TAG.getPose2d(FIELD.APRIL_TAG.BLUE_TOWER_FAR));
+        } else {
+          nearestObjectPose = robotToTarget[0].nearest(FIELD.BLUE_TOWER_FAR);
+        }  
+        else {
+          if (Controls.isRedAlliance()) {
+            nearestObjectPose = robotToTarget[0].nearest(FIELD.RED_TOWER_NEAR);
+          } else {
+            nearestObjectPose = robotToTarget[0].nearest(FIELD.RED_TOWER_FAR);
+          }  
+      }
+    }
+    
   //   private void updateAngleToHub() {
   //   if (m_swerveDriveTrain != null) {
   //     if (DriverStation.isDisabled()) {

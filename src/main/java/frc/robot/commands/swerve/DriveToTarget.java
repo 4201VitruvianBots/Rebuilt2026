@@ -38,22 +38,22 @@ public class DriveToTarget {
     m_vision = vision;
     m_controls = controls;
   }
+  // TODO: Vision subsystem updating
+  public Command generateCommand(boolean useLeft) {
+    return Commands.defer(
+        () -> {
+          // figure out where we need to drive to
+          m_vision.updateNearestScoringTarget();
+          var targetPose = m_vision.getNearestTargetPose();
 
-//   public Command generateCommand(boolean useLeft) {
-//     return Commands.defer(
-//         () -> {
-//           // figure out where we need to drive to
-//           m_vision.updateNearestScoringTarget();
-//           var targetPose = m_vision.getNearestTargetPose();
+          // publish the position we want to drive to
+          desiredTargetPublisher.accept(targetPose);
 
-//           // publish the position we want to drive to
-//           desiredTargetPublisher.accept(targetPose);
-
-//           // generate a path to the desired position
-//           return getPathToWaypoint(targetPose);
-//         },
-//         Set.of());
-//   }
+          // generate a path to the desired position
+          return getPathToWaypoint(targetPose);
+        },
+        Set.of());
+  }
 
   private Command getPathToWaypoint(Pose2d targetWaypoint) {
     List<Waypoint> waypoints =
