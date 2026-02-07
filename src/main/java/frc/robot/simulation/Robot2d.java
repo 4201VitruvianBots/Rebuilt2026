@@ -254,7 +254,7 @@ public class Robot2d extends SubsystemBase {
     }
     if (m_subsystemMap.containsKey("Hood")) {
       var hoodSubsystem = (Hood) m_subsystemMap.get("Hood");
-      m_shooterHood.update(Degrees.of(hoodSubsystem.getHoodAngle()));
+      m_shooterHood.update(Degrees.of(hoodSubsystem.getHoodAngleDegrees()).unaryMinus());
     }
     if (m_subsystemMap.containsKey("Climber")) {
       var climberSubsystem = (Climber) m_subsystemMap.get("Climber");

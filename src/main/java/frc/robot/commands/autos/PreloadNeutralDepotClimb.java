@@ -14,13 +14,14 @@ import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
 public class PreloadNeutralDepotClimb extends Auto {
   public PreloadNeutralDepotClimb(
-      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel) {
+      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel, Hood hood) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -41,14 +42,14 @@ public class PreloadNeutralDepotClimb extends Auto {
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision).withTimeout(3),
+          new Shoot(flywheel, vision, hood).withTimeout(3),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
               new RunIntake(intake, INTAKE_SPEED.INTAKING),
               m_path3.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
-              new Shoot(flywheel, vision).withTimeout(3),
+              new Shoot(flywheel, vision, hood).withTimeout(3),
               m_path5.andThen(() -> swerveDrive.setControl(stopRequest))),
           new ParallelRaceGroup(
               new RunIntake(intake, INTAKE_SPEED.INTAKING),

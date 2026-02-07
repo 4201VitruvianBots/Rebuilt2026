@@ -10,13 +10,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
 public class PreloadCenter extends Auto {
   public PreloadCenter(
-      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel) {
+      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel, Hood hood) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -24,7 +25,7 @@ public class PreloadCenter extends Auto {
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision).withTimeout(4));
+          new Shoot(flywheel, vision, hood).withTimeout(4));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for PreloadCenter", e.getStackTrace());
       addCommands(new InstantCommand());

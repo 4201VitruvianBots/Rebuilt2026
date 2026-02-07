@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.derive;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
+import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -58,12 +59,12 @@ public final class Constants {
     public static final int ballsPerSecond = 15;
 
     public static class Shot {
-      public final double shooterRPM;
-      public final double hoodPosition;
+      public final AngularVelocity shooterRPM;
+      public final Angle hoodAngle;
 
-      public Shot(double shooterRPM, double hoodPosition) {
+      public Shot(AngularVelocity shooterRPM, Angle hoodAngle) {
         this.shooterRPM = shooterRPM;
-        this.hoodPosition = hoodPosition;
+        this.hoodAngle = hoodAngle;
       }
     }
 
@@ -124,8 +125,8 @@ public final class Constants {
   }
 
   public class CAN {
-    public static final String rioCanbus = "rio";
-    public static final String driveBaseCanbus = "drivebase";
+    public static final CANBus rioCanbus = new CANBus("rio");
+    public static final CANBus driveBaseCanbus = new CANBus("drivebase");
 
     public static final int pigeon = 9;
 

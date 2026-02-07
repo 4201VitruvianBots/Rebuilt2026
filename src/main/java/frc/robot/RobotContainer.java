@@ -165,7 +165,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
+    if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
       m_driverController
           .rightBumper()
           .toggleOnTrue(
@@ -175,7 +175,7 @@ public class RobotContainer {
                       m_vision,
                       () -> m_driverController.getLeftY(),
                       () -> m_driverController.getLeftX()),
-                  new Shoot(m_flywheel, m_vision)));
+                  new Shoot(m_flywheel, m_vision, m_hood)));
     }
 
     if (m_swerveDrive != null && m_vision != null) {
@@ -189,8 +189,8 @@ public class RobotContainer {
                   () -> m_driverController.getLeftX()));
     }
 
-    if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.a().whileTrue(new Shoot(m_flywheel, m_vision));
+    if (m_swerveDrive != null && m_flywheel != null && m_vision != null && m_hood != null) {
+      m_driverController.a().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
     }
 
     if (m_flywheel != null) {
@@ -218,20 +218,20 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
         "PreloadDepotShootMiddle",
-        new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_flywheel));
+        new PreloadDepotShootMiddle(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
     m_autoChooser.addOption(
         "PreloadNeutralShootClimb",
         new PreloadNeutralShootClimb(
-            m_swerveDrive, m_intake, m_vision, m_flywheel, () -> m_flipToRight));
+            m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood, () -> m_flipToRight));
     m_autoChooser.addOption(
         "PreloadNeutralDepotClimb",
-        new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_flywheel));
+        new PreloadNeutralDepotClimb(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
     m_autoChooser.addOption(
         "PreloadNeutralShootTwice",
         new PreloadNeutralShootTwice(
-            m_swerveDrive, m_intake, m_vision, m_flywheel, () -> m_flipToRight));
+            m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood, () -> m_flipToRight));
     m_autoChooser.addOption(
-        "PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel));
+        "PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
   }
 
   private void initSideChooser() {
@@ -254,7 +254,8 @@ public class RobotContainer {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
-    SmartDashboard.putData("Start Fuel Sim", new InstantCommand((this::initFuelSim)));
+    SmartDashboard.putData("Start Fuel Sim", new InstantCommand((this::initFuelSim)).ignoringDisable(true));
+    SmartDashboard.putData("Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
   }
 
   public void testInit() {
@@ -302,9 +303,16 @@ public class RobotContainer {
             // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
             // vel in ft/s = 0.0111882 * RPM - 0.000174927
             FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
-            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), m_hood.getHoodRotations(), Degrees.of(0), FLYWHEEL.fuelLaunchHeight);
+            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), Degrees.of(180).minus(m_hood.getHoodAngle()), Degrees.of(0), FLYWHEEL.fuelLaunchHeight);
+            System.out.println("Launching fuel at velocity: " + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927) + " ft/s and angle: " + m_hood.getHoodAngleDegrees() + " degrees");
             System.out.println("Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
         }
     }
+  }
+  
+  public void resetFuelSim() {
+    FuelSim.getInstance().clearFuel();
+    FuelSim.getInstance().spawnStartingFuel();
+    FuelSim.getInstance().setStoredFuel(8); // preload
   }
 }
