@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
@@ -23,58 +24,58 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
-  public class SHOOTER {
-    public class FLYWHEEL {
-      public static final double kP =
-          5.0; // TODO: These will all need to be changed because we are attempting to reach a set
-      // rpm
-      public static final double kV = 0.0;
-      public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
-      public static final double kA = 0.0;
-      // The value of kS is the largest voltage applied before the mechanism begins to move)
-      public static final double gearRatio = 1.0; // Placeholder value
-      public static final double peakForwardOutput = 0.4; // Placeholder value
-      public static final double peakReverseOutput = -0.35; // Placeholder value
-      public static final double kInertia =
-          0.01; /* This probably doesn't matter because Krakens are stupid powerful. */
+  public class FLYWHEEL {
+    public static final double kP = 9.1; // These worked for WoodBot but will need to be retuned
+    public static final double kD = 0.05;
+    public static final double kV = 0.0;
+    public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
+    public static final double kA = 0.0;
+    // The value of kS is the largest voltage applied before the mechanism begins to move)
+    public static final double gearRatio = 1.0; // Placeholder value
+    public static final double peakForwardOutput = 0.4; // Placeholder value
+    public static final double peakReverseOutput = -0.35; // Placeholder value
+    public static final double kInertia = 0.01;
+    public static final double kStatorCurrentLimit = 120;
 
-      // These worked on wood bot. Change jerk later if further optimization is needed
-      public static double motionMagicCruiseVelocity =
-          35.0; // target cruise velocity of 35 rps, so 2100 rpm
-      public static double motionMagicAcceleration = 22.0; // target acceleration of 22 rps/s..
-      public static double motionMagicJerk = 0.0;
+    // These worked on wood bot. Change jerk later if further optimization is needed
+    public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
+    public static double motionMagicAcceleration = 30.0; // target acceleration of 30 rps/s..
+    public static double motionMagicJerk = 0.0;
 
-      public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(4);
+    public static final DCMotor gearbox =
+        DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
 
-      public enum SHOOTER_VELOCITY {
-        IDLE(RPM.of(0.0)),
-        LOW(RPM.of(1000.0)),
-        HIGH(RPM.of(2900.0));
+    public static class Shot {
+      public final double shooterRPM;
+      public final double hoodPosition;
 
-        private final AngularVelocity rpm;
+      public Shot(double shooterRPM, double hoodPosition) {
+        this.shooterRPM = shooterRPM;
+        this.hoodPosition = hoodPosition;
+      }
+    }
 
-        SHOOTER_VELOCITY(AngularVelocity rpm) {
-          this.rpm = rpm;
-        }
+    public enum MANUAL_RPM {
+      IDLE(RPM.of(0.0)),
+      LOW(RPM.of(1000.0)),
+      HIGH(RPM.of(2900.0));
 
-        public AngularVelocity getRPM() {
-          return rpm;
-        }
+      private final AngularVelocity rpm;
+
+      MANUAL_RPM(AngularVelocity rpm) {
+        this.rpm = rpm;
+      }
+
+      public AngularVelocity getRPM() {
+        return rpm;
       }
     }
 
@@ -89,8 +90,8 @@ public final class Constants {
       // will be
       public static final double peakForwardOutput = 0.4; // Placeholder value
       public static final double peakReverseOutput = -0.35; // Placeholder value
-      public static final double kInertia =
-          0.005; /* This probably doesn't matter because Krakens are stupid powerful. */
+      public static final double kInertia = 0.005;
+      public static final double kStatorCurrentLimit = 30;
 
       public static final double motionMagicCruiseVelocity = 6.0;
       public static final double motionMagicAcceleration = 4.0;
@@ -100,7 +101,7 @@ public final class Constants {
 
       public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-      public enum HOOD_ANGLE {
+      public enum MANUAL_ANGLE {
         // TODO: Going to stop using this because we are going to do math instead :)
         NOTHING(Degrees.of(0.0)),
         CLOSE(Degrees.of(30.0)),
@@ -108,7 +109,7 @@ public final class Constants {
 
         private final Angle angle;
 
-        HOOD_ANGLE(Angle angle) {
+        MANUAL_ANGLE(Angle angle) {
           this.angle = angle;
         }
 
@@ -139,26 +140,27 @@ public final class Constants {
     public static final int backRightDriveMotor = 26;
     public static final int backRightTurnMotor = 27;
 
-    public static final int kFlywheelMotor1 = 40;
-    public static final int kFlywheelMotor2 = 41;
-    public static final int kFlywheelMotor3 = 42;
-    public static final int kFlywheelMotor4 = 43;
-    public static final int kClimberMotor = 30; // TODO: Change this later.
+    public static final int kClimberMotor = 30;
 
-    public static final int kIndexerMotor1 = 50; /* TODO: Change values later. */
+    public static final int kShooterRollerMotor1 = 40;
+    public static final int kShooterRollerMotor2 = 41;
+    public static final int kShooterRollerMotor3 = 42;
+    public static final int kShooterRollerMotor4 = 43;
+
+    public static final int kIndexerMotor1 = 50;
     public static final int kIndexerMotor2 = 51;
     public static final int kIndexerMotor3 = 52;
 
     public static final int kShooterHoodMotor = 34;
     public static final int kShooterHoodCANCoder = 35;
 
-    public static final int kIntakeRollerMotor1 = 53; /*TODO: again change these values later */
+    public static final int kIntakeRollerMotor1 = 53;
     public static final int kIntakeRollerMotor2 = 54;
 
     public static final int kIntakePivotMotor = 55;
     public static final int kPivotEncoder = 56;
 
-    public static final int kUptakeMotor = 57; /* TODO: another placeholder "Fun!" */
+    public static final int kUptakeMotor = 57;
   }
 
   public final class USB {
@@ -224,51 +226,92 @@ public final class Constants {
   }
 
   public class CLIMBER {
-    public static final Distance upperLimit = Inches.of(20); // TODO: Talk to design about height.
-    public static final Distance lowerLimit = Inches.of(0);
+    public static final Distance upperLimit = Inches.of(35.0); // TODO: Talk to design about height.
+    public static final Distance lowerLimit = Inches.of(0.0);
 
-    // Config for Motor. TODO: Change placeholder values later.
-    public static double kV = 1.0; // Placeholder. Output per unit of target velocity (output/rps).
-    public static double kA =
-        1.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
-    public static double kP =
-        1.0; // Placeholder. Output per unit of error in position (output/rotation).
-    public static double kD =
-        1.0; // Placeholder. Output per unit of error in velocity (output/rps).
+    public static final Distance cruiseVelocityInches = Inches.of(14.57);
 
-    public static final double gearRatio = 1.0 / 27.0; // Climber Gear ratio.
+    public static final double gearRatio = 43.2 / 1.0; // Climber Gear ratio.
+    public static final Distance kClimberDrumDiameter =
+        Inches.of(
+            2.211024); // TODO: Find what this year's climber constants are compared to last year's
+    // elevator. It should just be the gear ratio that is different from last year.
+    public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
+    public static final GravityTypeValue K_GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
+    public static final Current kStatorCurrentLimit = Amps.of(40);
 
-    public static double motionMagicCruiseVelocity = 20; // Placeholder.
-    public static double motionMagicAcceleration = 30; // Placeholder.
+    public class NOT_HOLDING_ROBOT {
+      public static int slot = 0;
+      public static double kS = 1.0;
+      // Config for Motor. TODO: Change placeholder values later.
+      // public static double kV =
+      //     0.0; // Placeholder. Output per unit of target velocity (output/rps).
+      // public static double kA =
+      //     0.0; // Placeholder. Output per unit of target acceleration (output/(rps/s)).
+      public static double kP =
+          200.0; // Placeholder. Output per unit of error in position (output/rotation).
+      // public static double kD =
+      //     0.0; // Placeholder. Output per unit of error in velocity (output/rps).
+      public static double kG = 5.0;
+
+      public static double motionMagicCruiseVelocity =
+          cruiseVelocityInches.in(Meters)
+              / CLIMBER.drumRotationsToDistance.in(Meters); // Placeholder.
+      public static double motionMagicAcceleration = 30; // Placeholder.
+      public static double motionMagicJerk = 0.0; // Placeholder.
+
+      public static Mass kUnweightedCarriageMass = Pound.of(15); // TODO: Change this later.
+    }
+
+    // This needs to be here because of the friction of the carriage... meaning the whole
+    // robot
+    public class HOLDING_ROBOT {
+      public static int slot = 1;
+      public static double kS = 1.0;
+      // public static double kV = 0.0; // For lifting the robot as well.
+      // public static double kA = 0.0;
+      public static double kP = 150.0;
+      // public static double kD = 0.0;
+      public static double kG = 5.0;
+
+      public static Mass kWeightedCarriageMass = Pound.of(150); // TODO: Change this later.
+
+      public static double motionMagicCruiseVelocity = 20; // Placeholder.
+      public static double motionMagicAcceleration = 30;
+      public static double motionMagicJerk = 0.0; // Placeholder.
+    }
 
     public static final double peakForwardOutput = 1.00; // Placeholder.
     public static final double peakReverseOutput = -0.5; // Placeholder.
 
+    public static final Current kHoldingRobotThreshold =
+        Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a
+    // robot
+
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
-    public static Mass kCarriageMass = Pound.of(15); // TODO: Change this later.
-    /* Carriage mass will be the weight that the "carriage,"" in this case climber, is holding.
-    It might be dynamic, because you're lifting the weight of the elevator,
-    but you also might be lifting the weight of the robot. */
-    public static final Distance kClimberDrumDiameter = Inches.of(2.2557); // Placeholder.
-  }
 
-  public class ROBOT {
+    public enum CLIMBER_SETPOINT {
+      START_POSITION(Inches.of(0.0)),
+      LEVEL_ONE(Inches.of(22.0)),
+      LEVEL_TWO_AND_THREE(Inches.of(17));
 
-    // Climber control mode:
-    public enum CONTROL_MODE {
-      OPEN_LOOP,
-      CLOSED_LOOP
+      private final Distance setpoint;
+
+      CLIMBER_SETPOINT(Distance setpoint) {
+        this.setpoint = setpoint;
+      }
+
+      public Distance getSetpoint() {
+        return setpoint;
+      }
     }
   }
 
   public class INDEXER {
-    /*TODO: change every value they are ALL placeholders */
+    // TODO: change values
     public static final double kP = 1.0;
-    public static final double kD = 0.0;
-    public static final double kV = 0.0;
-    public static final double kS = 0.01;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.5;
+    public static final double peakForwardOutput = 0.8;
     public static final double peakReverseOutput = -0.5;
     public static final double kInertia = 0.005;
 
@@ -276,7 +319,7 @@ public final class Constants {
 
     public enum INDEXER_SPEED {
       ZERO(0),
-      INDEXING(0.4),
+      INDEXING(0.9),
       FREEING(-0.1);
 
       private final double value;
@@ -293,7 +336,7 @@ public final class Constants {
 
   public class INTAKE {
     public static class ROLLERS {
-      /* TODO: Change values because these are ALSO placeholders yay fun. */
+      // TODO: change values
       public static final double kP = 1.0;
       public static final double gearRatio = 1.0;
       public static final double peakForwardOutput = 0.5;
@@ -304,8 +347,8 @@ public final class Constants {
 
       public enum INTAKE_SPEED {
         ZERO(0),
-        INTAKING(0.5),
-        HELPSOMETHINGSSTUCK(-0.2);
+        INTAKING(0.55),
+        REVERSE(-0.2);
 
         private final double value;
 
@@ -367,26 +410,33 @@ public final class Constants {
   }
 
   public class UPTAKE {
-    public static final double kP = 1.0; /*more placeholders FUN*/
+    public static final double kP = 10.1; // Placeholders
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
     public static final double gearRatio = 1.0;
     public static final double peakForwardOutput = 0.5;
     public static final double peakReverseOutput = -0.5;
-    public static final double kInertia = 0.005;
+    public static final double kInertia = 0.01;
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX60(1);
+    public static final double kMotionMagicAcceleration = 30.0;
+    public static final double kMotionMagicCruiseVelocity = 60.0;
+
+    public static final AngularVelocity minRPM = RPM.of(0.0);
+    public static final AngularVelocity maxRPM = RPM.of(5000.0);
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
     public enum UPTAKE_SPEED {
-      ZERO(0),
-      UPTAKING(0.6),
-      WEIRDREVERSE(-0.3);
+      IDLE(RPM.of(0.0)),
+      UPTAKING(RPM.of(500.0));
 
-      private final double value;
+      private final AngularVelocity value;
 
-      UPTAKE_SPEED(double value) {
+      UPTAKE_SPEED(AngularVelocity value) {
         this.value = value;
       }
 
-      public double get() {
+      public AngularVelocity get() {
         return value;
       }
     }

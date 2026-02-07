@@ -26,14 +26,14 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {
 
-  @Logged(name = "Indexer Motor", importance = Importance.DEBUG)
-  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1);
+  @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBaseCanbus);
 
   @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
-  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.driveBaseCanbus);
 
-  @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
-  private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
+  // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
+  // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
 
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
@@ -44,24 +44,22 @@ public class Indexer extends SubsystemBase {
   /** Creates a new Indexer. */
   public Indexer() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kV = INDEXER.kV;
     config.Slot0.kP = INDEXER.kP;
-    config.Slot0.kD = INDEXER.kD;
-    config.Slot0.kS = INDEXER.kS;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = INDEXER.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = INDEXER.peakReverseOutput;
     config.Feedback.SensorToMechanismRatio = INDEXER.gearRatio;
 
-    config.CurrentLimits.StatorCurrentLimit = 30;
+    config.CurrentLimits.StatorCurrentLimit = 60;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
+    CtreUtils.configureTalonFx(m_indexerMotor2, config);
 
     m_indexerMotor2.setControl(
         new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    m_indexerMotor3.setControl(
-        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    // m_indexerMotor3.setControl(
+    //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
 
     m_simState = m_indexerMotor1.getSimState();
   }
@@ -80,9 +78,7 @@ public class Indexer extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 
   @Override
   public void simulationPeriodic() {
