@@ -43,9 +43,6 @@ public class DriveToTarget {
 //     return Commands.defer(
 //         () -> {
 //           // figure out where we need to drive to
-//           if (m_controls.isGamePieceCoral()) {
-//             m_vision.setLeftTarget(useLeft);
-//           }
 //           m_vision.updateNearestScoringTarget();
 //           var targetPose = m_vision.getNearestTargetPose();
 
