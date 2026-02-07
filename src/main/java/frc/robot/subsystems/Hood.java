@@ -99,7 +99,7 @@ public class Hood extends SubsystemBase {
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = HOOD.minAngle.in(Rotations);
 
     if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
-    m_motor.setPosition(getHoodRotations().in(Rotations));
+    m_motor.setPosition(getHoodAngle().in(Rotations));
 
     CtreUtils.configureTalonFx(m_motor, config);
   }
@@ -127,18 +127,18 @@ public class Hood extends SubsystemBase {
   }
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
-  public Angle getHoodRotations() {
+  public Angle getHoodAngle() {
     return m_cancoder.getAbsolutePosition().refresh().getValue();
   }
 
-  @Logged(name = "Hood Angle", importance = Importance.INFO)
-  public double getHoodAngle() {
-    return getHoodRotations().in(Degrees);
+  @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)
+  public double getHoodAngleDegrees() {
+    return getHoodAngle().in(Degrees);
   }
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
-    return m_hoodSetpoint.minus(getHoodRotations()).abs(Degrees) <= 1; // Works as good as always
+    return m_hoodSetpoint.minus(getHoodAngle()).abs(Degrees) <= 1; // Works as good as always
   }
 
   public boolean[] isConnected() {
@@ -151,7 +151,7 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getHoodAngle() > HOOD.maxAngle.in(Degrees)) {
+    if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {
       m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
     }
   }

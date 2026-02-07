@@ -7,6 +7,7 @@ package frc.robot.simulation;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.derive;
 import static frc.robot.Constants.SIM.LineWidthInches;
 
@@ -22,7 +23,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FLYWHEEL;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
@@ -46,6 +51,13 @@ public class Robot2d extends SubsystemBase {
 
   private final Mechanism2d m_robot =
       new Mechanism2d(robotCanvasX.in(Meters), robotCanvasY.in(Meters));
+
+  // Shared colors used by the robot visualization
+  private final Color8Bit m_colorIntake = new Color8Bit(255, 192, 203); // Pink
+  private final Color8Bit m_colorFlywheel = new Color8Bit(127, 127, 127); // Gray
+  private final Color8Bit m_colorHood = new Color8Bit(0, 255, 255); // Aqua
+  private final Color8Bit m_colorIndexer = new Color8Bit(255, 200, 0); // Yellow
+  private final Color8Bit m_colorUptake = new Color8Bit(0, 255, 0); // Green
 
   private final Distance chassisRootX = Pixels.of(220);
   private final Distance chassisRootY = Pixels.of(121);
@@ -72,9 +84,9 @@ public class Robot2d extends SubsystemBase {
               .in(Meters)); // Intake is ~3.5 inches above center of bumpers
   private final Arm2d m_intakePivot =
       new Arm2d(
-          new Arm2dConfig(
-                  "Intake Pivot",
-                  new Color8Bit(255, 255, 255),
+      new Arm2dConfig(
+          "Intake Pivot",
+          m_colorIntake,
                   Degrees.of(
                       159), // Angle between chassis and first segment of intake when extended
                   Inches.of(10.735) // Length of first segment of intake
@@ -92,17 +104,16 @@ public class Robot2d extends SubsystemBase {
                   Inches.of(2.0).in(Meters),
                   Degrees.of(21).in(Degrees),
                   Inches.of(1.25).in(LineWidthInches),
-                  new Color8Bit(255, 255, 255)));
+                  m_colorIntake));
   private final MechanismLigament2d m_intakeSegment2 =
-      m_intakePivot
-          .getLigament()
+      m_intakeSegment1
           .append(
               new MechanismLigament2d(
                   "Intake Segment 2",
                   Inches.of(8.27).in(Meters),
                   Degrees.of(48.5).in(Degrees),
                   Inches.of(2.679).in(LineWidthInches),
-                  new Color8Bit(255, 255, 255)));
+                  m_colorIntake));
 
   // Indexer
   private final MechanismRoot2d m_indexerRoot =
@@ -148,10 +159,10 @@ public class Robot2d extends SubsystemBase {
           uptakeRootY.plus(uptakeHeight).in(Meters));
   private final Flywheel2d m_flywheel =
       new Flywheel2d(
-          new Flywheel2dConfig(
+              new Flywheel2dConfig(
               "Flywheel",
-              new Color8Bit(127, 127, 127), // Grey color for flywheel
-              Inches.of(2.0078125) // Radius of the flywheel
+              m_colorFlywheel, // Grey color for flywheel
+              FLYWHEEL.radius // Radius of the flywheel
               ),
           m_flywheelRoot);
 
@@ -160,7 +171,7 @@ public class Robot2d extends SubsystemBase {
       new Arm2d(
           new Arm2dConfig(
               "Shooter Hood",
-              new Color8Bit(0, 255, 255), // Aqua color for shooter hood
+              m_colorHood, // Aqua color for shooter hood
               Degrees.of(35), // TODO: Find actual angle
               Inches.of(10.0) // TODO: Find actual length
               ),
@@ -187,9 +198,9 @@ public class Robot2d extends SubsystemBase {
     m_chassis.setLineWeight(Inches.of(4.5).in(LineWidthInches)); // Bumpers are 4.5 inches thick
     m_indexer.setLineWeight(
         Inches.of(1.25).in(LineWidthInches)); // Diameter of the indexer rollers is 1.25 inches
-    m_indexer.setColor(new Color8Bit(255, 200, 0)); // Yellow color for indexer
+    m_indexer.setColor(m_colorIndexer);
     m_uptake.setLineWeight(uptakeWidth.in(LineWidthInches));
-    m_uptake.setColor(new Color8Bit(0, 255, 0)); // Green color for uptake
+    m_uptake.setColor(m_colorUptake);
 
     if (RobotBase.isSimulation()) {
       SmartDashboard.putData("Robot2d", m_robot);
@@ -222,24 +233,32 @@ public class Robot2d extends SubsystemBase {
   public void simulationPeriodic() {
     if (m_subsystemMap.containsKey("Intake")) {
       var intakeSubsystem = (Intake) m_subsystemMap.get("Intake");
+      VisualizationUtils.updateMotorColor(m_intakeSegment1, intakeSubsystem.getPercentOutput(), m_colorIntake);
+      VisualizationUtils.updateMotorColor(m_intakeSegment2, intakeSubsystem.getPercentOutput(), m_colorIntake);
     }
-    // if (m_subsystemMap.containsKey("IntakePivot")) {
-    //     var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
-    // }
+    if (m_subsystemMap.containsKey("IntakePivot")) {
+      var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
+      m_intakePivot.update(intakePivotSubsystem.getAngle());
+    }
     if (m_subsystemMap.containsKey("Indexer")) {
       var indexerSubsystem = (Indexer) m_subsystemMap.get("Indexer");
+      VisualizationUtils.updateMotorColor(m_indexer, indexerSubsystem.getPercentOutput(), m_colorIndexer);
     }
     if (m_subsystemMap.containsKey("Uptake")) {
       var uptakeSubsystem = (Uptake) m_subsystemMap.get("Uptake");
+      VisualizationUtils.updateMotorColor(m_uptake, uptakeSubsystem.getPercentOutput(), m_colorUptake);
     }
     if (m_subsystemMap.containsKey("Flywheel")) {
       var flywheelSubsystem = (Flywheel) m_subsystemMap.get("Flywheel");
+      m_flywheel.update(RPM.of(flywheelSubsystem.getMotorSpeedRPM()));
     }
     if (m_subsystemMap.containsKey("Hood")) {
       var hoodSubsystem = (Hood) m_subsystemMap.get("Hood");
+      m_shooterHood.update(Degrees.of(hoodSubsystem.getHoodAngleDegrees()).unaryMinus());
     }
     if (m_subsystemMap.containsKey("Climber")) {
       var climberSubsystem = (Climber) m_subsystemMap.get("Climber");
+      m_climber.update(climberSubsystem.getHeight(), climberSubsystem.getVelocity());
     }
   }
 }

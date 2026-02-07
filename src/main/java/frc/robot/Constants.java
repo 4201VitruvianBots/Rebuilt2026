@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.derive;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
+import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -52,16 +53,21 @@ public final class Constants {
 
     public static final DCMotor gearbox =
         DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
+    
+    public static final Distance fuelLaunchHeight = Inches.of(26.15);
+    public static final Distance radius = Inches.of(2.0);
+    
+    public static final int ballsPerSecond = 15;
 
     public static class Shot {
-      public final double shooterRPM;
-      public final double hoodPosition;
+      public final AngularVelocity shooterRPM;
+      public final Angle hoodAngle;
       public final double timeOfFlight;
 
-      public Shot(double shooterRPM, double hoodPosition, double timeOfFlight) {
+      public Shot(AngularVelocity shooterRPM, Angle hoodAngle) {
         this.shooterRPM = shooterRPM;
-        this.hoodPosition = hoodPosition;
         this.timeOfFlight = timeOfFlight;
+        this.hoodAngle = hoodAngle;
       }
     }
 
@@ -123,8 +129,8 @@ public final class Constants {
   }
 
   public class CAN {
-    public static final String rioCanbus = "rio";
-    public static final String driveBaseCanbus = "drivebase";
+    public static final CANBus rioCanbus = new CANBus("rio");
+    public static final CANBus driveBaseCanbus = new CANBus("drivebase");
 
     public static final int pigeon = 9;
 
@@ -179,9 +185,9 @@ public final class Constants {
       STEER
     }
 
-    public static final Distance kWheelBase = Inches.of(23.75);
-    public static final Distance kTrackWidth = Inches.of(23.75);
-    public static final Distance kBumperThickness = Inches.of(2.5);
+    public static final Distance kWheelBase = Inches.of(17.75);
+    public static final Distance kTrackWidth = Inches.of(24.5);
+    public static final Distance kBumperHeight = Inches.of(4.5);
 
     public static final PIDConstants kTranslationPID = new PIDConstants(10, 0, 0);
     public static final PIDConstants kRotationPID = new PIDConstants(7, 0, 0);
@@ -303,6 +309,10 @@ public final class Constants {
         return setpoint;
       }
     }
+  }
+
+  public class ROBOT {
+    public static int MAX_FUEL = 48;
   }
 
   public class INDEXER {

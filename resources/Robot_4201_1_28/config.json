@@ -1,12 +1,12 @@
 {
-  "name": "Robot_4201_1_28", 
+  "name": "Robot_4201_1_28",
   "isFTC": false,
   "rotations": [
     {"axis": "x",
      "degrees": 90
     },
     {"axis": "z",
-     "degrees": 270
+     "degrees": 90
     }
   ],
   "position": [0, 0, 0],

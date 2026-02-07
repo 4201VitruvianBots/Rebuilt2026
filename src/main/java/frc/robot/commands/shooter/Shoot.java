@@ -1,6 +1,9 @@
 package frc.robot.commands.shooter;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,11 +11,14 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.constants.FIELD;
+import frc.robot.simulation.FuelSim;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
 
 public class Shoot extends Command {
@@ -39,16 +45,16 @@ public class Shoot extends Command {
   private final Flywheel m_flywheel;
   private final Vision m_vision;
 
-  // private final ShooterHood m_shooterHood;
+  private final Hood m_shooterHood;
 
   Translation2d m_goal = new Translation2d();
 
-  public Shoot(Flywheel flywheel, Vision vision) {
+  public Shoot(Flywheel flywheel, Vision vision, Hood shooterHood) {
     m_flywheel = flywheel;
     m_vision = vision;
-    // m_shooterHood = shooterHood;
+    m_shooterHood = shooterHood;
 
-    addRequirements(flywheel);
+    addRequirements(flywheel, shooterHood);
   }
 
   // Called when the command is initially scheduled.
