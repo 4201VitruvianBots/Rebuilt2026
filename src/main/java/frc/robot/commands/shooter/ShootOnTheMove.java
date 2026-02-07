@@ -1,6 +1,8 @@
 package frc.robot.commands.shooter;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.DoubleSupplier;
@@ -32,18 +34,18 @@ public class ShootOnTheMove extends Command {
                   .inverseInterpolate(startValue.in(Meters), endValue.in(Meters), q.in(Meters)),
           (startValue, endValue, t) ->
               new Shot(
-                  Interpolator.forDouble()
-                      .interpolate(startValue.shooterRPM, endValue.shooterRPM, t),
-                  Interpolator.forDouble()
-                      .interpolate(startValue.hoodPosition, endValue.hoodPosition, t),
+                  RPM.of(Interpolator.forDouble()
+                      .interpolate(startValue.shooterRPM.in(RPM), endValue.shooterRPM.in(RPM), t)),
+                  Degrees.of(Interpolator.forDouble()
+                      .interpolate(startValue.hoodAngle.in(Degrees), endValue.hoodAngle.in(Degrees), t)),
                   Interpolator.forDouble().interpolate(startValue.timeOfFlight, endValue.timeOfFlight, t)));
 
   static {
     //TODO: Make at least 20 values for this. Yes. 20.
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376), new Shot(2175, 0.40, 1.2)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.42), new Shot(2200, 0.19, 1.4));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(2900, 0.15, 1.6));
+        Meters.of(1.8086638318064376), new Shot(RPM.of(2175), Degrees.of(0.40), 1.2)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.42), new Shot(RPM.of(2200), Degrees.of(0.19), 1.4));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(0.15), 1.6));
   }
 
   private final Flywheel m_flywheel;
@@ -137,7 +139,7 @@ public class ShootOnTheMove extends Command {
 
     // all of the logic for angle is above this Comment
 
-    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    m_flywheel.setRPMOutputFOC(shot.shooterRPM.in(RPM));
     // m_shooterHood.setPosition(shot.hoodPosition);
 
     m_swerveDrivetrain.setChassisSpeedControl(
