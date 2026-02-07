@@ -208,7 +208,7 @@ public class RobotContainer {
           .whileTrue(
               new ParallelCommandGroup(
                   new RunUptake(m_uptake),
-                  new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING),
+                  new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING2),
                   new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
 

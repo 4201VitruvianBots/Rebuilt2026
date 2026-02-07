@@ -36,8 +36,10 @@ public class Indexer extends SubsystemBase {
   // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
 
-  private DoubleSubscriber m_speedSubscriber;
-  private DoublePublisher m_speedPublisher;
+  private DoubleSubscriber m_speedSubscriber1;
+  private DoublePublisher m_speedPublisher1;
+  private DoubleSubscriber m_speedSubscriber2;
+  private DoublePublisher m_speedPublisher2;
 
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
@@ -124,13 +126,21 @@ public class Indexer extends SubsystemBase {
         var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
-            .getDoubleTopic("Indexer Roller Speed Setpoint");
-    m_speedSubscriber = topic.subscribe(0.0);
-    m_speedPublisher = topic.publish();
-    m_speedPublisher.set(0.0);
+            .getDoubleTopic("Indexer Roller Speed Setpoint 1");
+    m_speedSubscriber1 = topic.subscribe(0.0);
+    m_speedPublisher1 = topic.publish();
+        var topic2 = 
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Indexer Roller Speed Setpoint 2");
+    m_speedSubscriber2 = topic2.subscribe(0.0);
+    m_speedPublisher2 = topic2.publish();
+    m_speedPublisher1.set(0.0);
+    m_speedPublisher2.set(0.0);
+
   }
 
   public void testPeriodic() {
-    setSpeeds(m_speedSubscriber.get(), m_speedSubscriber.get());
+    setSpeeds(m_speedSubscriber1.get(), m_speedSubscriber2.get());
   }
 }
