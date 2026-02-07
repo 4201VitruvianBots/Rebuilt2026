@@ -74,8 +74,6 @@ public class Indexer extends SubsystemBase {
 
     m_simState1 = m_indexerMotor1.getSimState();
     m_simState2 = m_indexerMotor2.getSimState();
-
-
   }
 
   public void setSpeeds(double speed1, double speed2) {
@@ -123,13 +121,13 @@ public class Indexer extends SubsystemBase {
   }
 
   public void testInit() {
-        var topic =
+    var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
             .getDoubleTopic("Indexer Roller Speed Setpoint 1");
     m_speedSubscriber1 = topic.subscribe(0.0);
     m_speedPublisher1 = topic.publish();
-        var topic2 = 
+    var topic2 =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
             .getDoubleTopic("Indexer Roller Speed Setpoint 2");
@@ -137,7 +135,6 @@ public class Indexer extends SubsystemBase {
     m_speedPublisher2 = topic2.publish();
     m_speedPublisher1.set(0.0);
     m_speedPublisher2.set(0.0);
-
   }
 
   public void testPeriodic() {
