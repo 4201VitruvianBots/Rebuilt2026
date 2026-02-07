@@ -40,7 +40,7 @@ public final class Constants {
     public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
-    public static final double gearRatio = 1.0; // Placeholder value
+    public static final double gearRatio = 32.0 /24.0; // Placeholder value
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
@@ -57,7 +57,7 @@ public final class Constants {
     public static final Distance fuelLaunchHeight = Inches.of(26.15);
     public static final Distance radius = Inches.of(2.0);
     
-    public static final int ballsPerSecond = 15;
+    public static final int ballsPerSecond = 15; 
 
     public static class Shot {
       public final AngularVelocity shooterRPM;
@@ -205,7 +205,7 @@ public final class Constants {
 
     public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
     public static final double kMaxRotationRadiansPerSecond =
-        Math.PI * 0.3; // Temporary to reduce speed (original value 2.0).
+        Math.PI * 1.0; // Temporary to reduce speed (original value 2.0).
 
     public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
     public static final Distance kPositionTolerance = Inches.of(0.4);

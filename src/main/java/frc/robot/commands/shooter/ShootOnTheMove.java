@@ -24,6 +24,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Hood;
 
 public class ShootOnTheMove extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -43,9 +44,9 @@ public class ShootOnTheMove extends Command {
   static {
     //TODO: Make at least 20 values for this. Yes. 20.
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376), new Shot(RPM.of(2175), Degrees.of(0.40), 1.2)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.42), new Shot(RPM.of(2200), Degrees.of(0.19), 1.4));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(0.15), 1.6));
+        Meters.of(1.8086638318064376), new Shot(RPM.of(2175), Degrees.of(0.30), 1.2)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.42), new Shot(RPM.of(2200), Degrees.of(0.35), 1.4));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(0.45), 1.6));
   }
 
   private final Flywheel m_flywheel;
@@ -61,17 +62,17 @@ public class ShootOnTheMove extends Command {
   private PIDController m_PidController =
     new PIDController(kTeleP_Theta, kTeleI_Theta, kTeleD_Theta);
 
-  // private final ShooterHood m_shooterHood;
+  private final Hood m_shooterHood;
 
   Translation2d m_goal = new Translation2d();
 
-  public ShootOnTheMove(Flywheel flywheel, Vision vision, CommandSwerveDrivetrain swerveDrive, DoubleSupplier throttleInput, DoubleSupplier turnInput) {
+  public ShootOnTheMove(Flywheel flywheel, Hood shooterHood, Vision vision, CommandSwerveDrivetrain swerveDrive, DoubleSupplier throttleInput, DoubleSupplier turnInput) {
     m_flywheel = flywheel;
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
     m_throttleInput = throttleInput;
     m_turnInput = turnInput;
-    // m_shooterHood = shooterHood;
+    m_shooterHood = shooterHood;
 
     addRequirements(flywheel);
   }
@@ -117,7 +118,7 @@ public class ShootOnTheMove extends Command {
       robotToTargetDistance = m_goal.getDistance(lookaheadPose.getTranslation());
     }
 
-    double VelocityShoot = robotToTargetDistance / shot.timeOfFlight; // Previously 11.1 m/s
+    double VelocityShoot = robotToTargetDistance / shot.timeOfFlight; 
 
     double virtualGoalX = m_goal.getX() - VelocityShoot * (VelocityX + AccelerationX);
     double virtualGoalY = m_goal.getY() - VelocityShoot * (VelocityY + AccelerationY);
@@ -140,7 +141,7 @@ public class ShootOnTheMove extends Command {
     // all of the logic for angle is above this Comment
 
     m_flywheel.setRPMOutputFOC(shot.shooterRPM.in(RPM));
-    // m_shooterHood.setPosition(shot.hoodPosition);
+    m_shooterHood.setAngle(shot.hoodAngle);
 
     m_swerveDrivetrain.setChassisSpeedControl(
         new ChassisSpeeds(
@@ -148,7 +149,7 @@ public class ShootOnTheMove extends Command {
             (m_turnInput.getAsDouble()) * SWERVE.kMaxSpeedMetersPerSecond,
             m_PidController.calculate(
                     m_swerveDrivetrain.getState().Pose.getRotation().getRadians(),
-                    targetDelta.getRadians() + getOffsetAngleDeg)));
+                    targetDelta.getRadians() - getOffsetAngleDeg)));
   }
 
   // Called once the command ends or is interrupted.

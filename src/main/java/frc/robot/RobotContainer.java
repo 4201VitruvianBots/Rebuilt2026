@@ -195,7 +195,7 @@ public class RobotContainer {
     }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.a().toggleOnTrue((new ShootOnTheMove(m_flywheel, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
+      m_driverController.a().toggleOnTrue((new ShootOnTheMove(m_flywheel, m_hood, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX())));
     }
 
     if (m_flywheel != null) {
