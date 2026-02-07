@@ -10,27 +10,35 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.INDEXERMOTORS.INDEXERSPEED;
-import frc.robot.Constants.SHOOTERMOTORS.ShooterRPM;
+import frc.robot.Constants.INTAKEMOTORS.ROLLERS.INTAKESPEED;
+import frc.robot.Constants.SHOOTERHOOD.HoodAngle;
+import frc.robot.Constants.SHOOTERMOTORS.ShooterVelocity;
 import frc.robot.Constants.SWERVE;
+import frc.robot.Constants.UPTAKEMOTORS.UPTAKESPEED;
 import frc.robot.Constants.USB;
-import frc.robot.commands.Index;
+// import frc.robot.commands.AutoAlignDrive;
+import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
+import frc.robot.constants.FIELD;
 import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterHood;
 import frc.robot.subsystems.ShooterRollers;
-import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
+import frc.robot.subsystems.Vision;
 import frc.team4201.lib.utils.Telemetry;
 
 /**
@@ -43,12 +51,23 @@ import frc.team4201.lib.utils.Telemetry;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   @Logged(name = "ShooterRollers", importance = Logged.Importance.INFO)
-  private ShooterRollers m_ShooterRollers = new ShooterRollers();
+  private ShooterRollers m_shooterRollers;
+
+  @Logged(name = "ShooterHood", importance = Logged.Importance.INFO)
+  private ShooterHood m_shooterHood;
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
-  private Indexer m_Indexer = new Indexer();
+  private Indexer m_Indexer;
 
-  private CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
+  @Logged(name = "Intake", importance = Logged.Importance.INFO)
+  private Intake m_Intake = new Intake();
+
+  @Logged(name = "Uptake", importance = Logged.Importance.INFO)
+  private Uptake m_Uptake = new Uptake();
+
+  private final CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
+
+  private FieldSim m_fieldSim = new FieldSim();
 
   private Controls m_controls = new Controls();
 
@@ -57,14 +76,15 @@ public class RobotContainer {
 
   private Telemetry m_telemetry = new Telemetry();
 
-  private FieldSim m_fieldSim = new FieldSim();
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
 
+  @NotLogged
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+
+  @NotLogged
   private double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -81,14 +101,18 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
+    FIELD.initializeConstants();
     initializeSubSystems();
+    configureBindings();
     initSmartDashboard();
   }
 
   private void initializeSubSystems() {
-    m_ShooterRollers = new ShooterRollers();
+    m_shooterRollers = new ShooterRollers();
+    m_shooterHood = new ShooterHood();
     m_Indexer = new Indexer();
+    m_Intake = new Intake();
+    m_Uptake = new Uptake();
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -109,22 +133,29 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_fieldSim = new FieldSim();
+    FIELD.plotAllPositions(m_fieldSim);
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
+    if (m_shooterRollers != null && m_shooterHood != null) {
+      m_driverController
+          .a()
+          .whileTrue(
+              new Shoot(
+                  m_shooterRollers,
+                  m_shooterHood,
+                  ShooterVelocity.HIGH,
+                  HoodAngle.CLOSE.getAngle()));
+    }
+    // m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
+    // m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
+    m_driverController.leftBumper().whileTrue(new RunIntake(m_Intake, INTAKESPEED.INTAKING));
+    m_driverController.rightBumper().whileTrue(new RunUptake(m_Uptake, UPTAKESPEED.UPTAKING));
     m_driverController.a().whileTrue(new Shoot(m_ShooterRollers, ShooterRPM.HIGH.getRPM()));
     m_driverController.b().whileTrue(new Index(m_Indexer, INDEXERSPEED.INDEXING));
 
