@@ -208,7 +208,7 @@ public class RobotContainer {
           .whileTrue(
               new ParallelCommandGroup(
                   new RunUptake(m_uptake),
-                  new Index(m_indexer, INDEXER_SPEED.INDEXING),
+                  new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING),
                   new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
 
@@ -260,11 +260,13 @@ public class RobotContainer {
     if (m_flywheel != null) m_flywheel.testInit();
     if (m_vision != null) m_vision.testInit();
     if (m_uptake != null) m_uptake.testInit();
+    if (m_indexer != null) m_indexer.testInit();
   }
 
   public void testPeriodic() {
     if (m_flywheel != null) m_flywheel.testPeriodic();
     if (m_uptake != null) m_uptake.testPeriodic();
+    if (m_indexer != null) m_indexer.testPeriodic();
   }
 
   /**
