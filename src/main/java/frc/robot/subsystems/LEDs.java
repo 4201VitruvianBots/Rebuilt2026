@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PWM;
+import frc.robot.simulation.LEDSim;
 import frc.robot.Constants.LED;
 import frc.robot.Constants.LED.LED_STATES;
 
@@ -27,6 +28,9 @@ public class LEDs extends SubsystemBase {
   
   private AddressableLEDBuffer m_ledBuffer;
   private AddressableLEDSim m_ledSim = new AddressableLEDSim(m_led);
+  private LEDPattern m_currentPattern = LEDPattern.solid(Color.kBlack);
+  
+  private LEDSim m_ledSim2d;
 
   public LEDs() {
     m_ledBuffer = new AddressableLEDBuffer(LED.numLEDs);
@@ -34,33 +38,32 @@ public class LEDs extends SubsystemBase {
     
     m_led.setData(m_ledBuffer);
     m_led.start();
+    
+    m_ledSim2d = new LEDSim(m_ledBuffer, LEDSim.Layout.HORIZONTAL);
   }
   
   public void setState(LED_STATES state) {
     if (state != currentState) {
       currentState = state;
-      LEDPattern base;
-      LEDPattern pattern;
       switch (currentState) {
         case DISABLED:
-            base = LEDPattern.steps(Map.of(0, Color.kRed, 0.5, Color.kBlack));
-            pattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
-            pattern.applyTo(m_ledBuffer);
-            m_led.setData(m_ledBuffer);
+            LEDPattern base = LEDPattern.steps(Map.of(0, Color.kRed, 0.5, Color.kBlack));
+            m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
             break;
         case IDLE:
             base = LEDPattern.steps(Map.of(0, Color.kGreen, 0.5, Color.kBlack));
-            pattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
-            pattern.applyTo(m_ledBuffer);
-            m_led.setData(m_ledBuffer);
+            m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
             break;
         case DRIVING:
+            
             break;
         case INTAKING:
             break;
         case SHOOTING:
             break;
         case CLIMBING:
+            base = LEDPattern.rainbow(255, 255);
+            m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
             break;
       }
     }
@@ -84,6 +87,12 @@ public class LEDs extends SubsystemBase {
   
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    m_currentPattern.applyTo(m_ledBuffer);
+    m_led.setData(m_ledBuffer);
+  }
+  
+  @Override
+  public void simulationPeriodic() {
+    m_ledSim2d.update();
   }
 }
