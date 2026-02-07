@@ -443,6 +443,8 @@ public final class Constants {
   }
 
   public class LED {
+    public static final int numLEDs = 60; // Placeholder value, change to actual number of LEDs on the bot
+    
     public enum LED_STATES {
       DISABLED("disabled"),
       IDLE("idle"),
