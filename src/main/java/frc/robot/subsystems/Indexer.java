@@ -65,6 +65,7 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = 60;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_indexerMotor2, config);
 
     // m_indexerMotor2.setControl(
@@ -110,7 +111,7 @@ public class Indexer extends SubsystemBase {
     m_simState1.setRotorVelocity(
         RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
     m_simState2.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_indexerMotor2Sim.setInputVoltage(m_simState1.getMotorVoltage());
+    m_indexerMotor2Sim.setInputVoltage(m_simState2.getMotorVoltage());
 
     m_indexerMotor2Sim.update(0.02);
 

@@ -316,9 +316,7 @@ public final class Constants {
     public enum INDEXER_SPEED {
       ZERO(0),
       INDEXING(0.9),
-      INDEXING2(-0.9), // for second motor (reversed)
-      FREEING(-0.1),
-      FREEING2(0.1); // for second motor (reversed)
+      FREEING(-0.1);
 
       private final double value;
 
