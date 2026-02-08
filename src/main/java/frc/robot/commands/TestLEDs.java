@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LED;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.LEDs;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -34,7 +35,7 @@ public class TestLEDs extends Command {
   public void execute() {
     // Every 2 seconds, cycle to the next LED state
     int state_index = (int)(m_time_since_led_start.get() / 2) % LED.LED_STATES.values().length;
-    m_led.setState(LED.LED_STATES.values()[state_index]);
+    m_led.setState(LED.LED_STATES.values()[state_index], () -> (m_time_since_led_start.get() % 2 / 2));
   }
 
   // Called once the command ends or is interrupted.

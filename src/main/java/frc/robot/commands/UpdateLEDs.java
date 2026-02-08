@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Uptake;
@@ -18,15 +19,17 @@ public class UpdateLEDs extends Command {
   private final Intake m_intake; // Used to track intaking state
   private final Climber m_climber; // Used to track climbing state
   private final Uptake m_uptake; // Used to track shooting state
+  private final Flywheel m_flywheel; // Used to track shooting state
 
   /** Creates a new UpdateLEDs. */
   public UpdateLEDs(
-      LEDs led, CommandSwerveDrivetrain drivetrain, Intake intake, Climber climber, Uptake uptake) {
+      LEDs led, CommandSwerveDrivetrain drivetrain, Intake intake, Climber climber, Uptake uptake, Flywheel flywheel) {
     m_led = led;
     m_drivetrain = drivetrain;
     m_intake = intake;
     m_climber = climber;
     m_uptake = uptake;
+    m_flywheel = flywheel;
 
     addRequirements(led);
   }
