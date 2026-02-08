@@ -44,9 +44,9 @@ public class ShootOnTheMove extends Command {
   static {
     //TODO: Make at least 20 values for this. Yes. 20.
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376), new Shot(RPM.of(2175), Degrees.of(0.30), 1.2)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.42), new Shot(RPM.of(2200), Degrees.of(0.35), 1.4));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(0.45), 1.6));
+        Meters.of(1.8086638318064376), new Shot(RPM.of(2175), Degrees.of(75), 1.2)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.42), new Shot(RPM.of(2200), Degrees.of(73), 1.4));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(70), 1.6));
   }
 
   private final Flywheel m_flywheel;

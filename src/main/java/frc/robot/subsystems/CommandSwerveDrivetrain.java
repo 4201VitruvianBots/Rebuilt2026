@@ -290,6 +290,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
   }
 
+  public double getYaw(){
+    return getPigeon2().getYaw().getValueAsDouble();
+  }
+
   public void resetGyro(double angle) {
     getPigeon2().setYaw(-angle);
   }

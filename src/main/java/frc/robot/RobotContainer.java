@@ -32,7 +32,6 @@ import frc.robot.generated.WoodBotConstants;
 import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Climber;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
@@ -199,7 +198,7 @@ public class RobotContainer {
     }
 
     if (m_flywheel != null) {
-      m_driverController.y().whileTrue(new ShootManualFlywheel(m_flywheel));
+      m_driverController.leftTrigger().whileTrue(new ShootManualFlywheel(m_flywheel));
     }
 
     // I forsee a state machine in the future...
@@ -214,7 +213,7 @@ public class RobotContainer {
     }
 
     if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+      m_driverController.y().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     }
   }
 
@@ -253,6 +252,8 @@ public class RobotContainer {
 
   public void simulationPeriodic() {
     FuelSim.getInstance().updateSim();
+    SmartDashboard.putNumber("Current Red Score:", FuelSim.Hub.RED_HUB.getScore());
+    SmartDashboard.putNumber("Current Blue Score:", FuelSim.Hub.BLUE_HUB.getScore());
   }
 
   private void initSmartDashboard() {
@@ -310,7 +311,7 @@ public class RobotContainer {
             // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
             // vel in ft/s = 0.0111882 * RPM - 0.000174927
             FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
-            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), Degrees.of(180).minus(m_hood.getHoodAngle()), Degrees.of(0), FLYWHEEL.fuelLaunchHeight);
+            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), Degrees.of(180).minus(m_hood.getHoodAngle()), Degrees.of(m_swerveDrive.getYaw()), FLYWHEEL.fuelLaunchHeight);
             System.out.println("Launching fuel at velocity: " + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927) + " ft/s and angle: " + m_hood.getHoodAngleDegrees() + " degrees");
             System.out.println("Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
         }

@@ -105,7 +105,7 @@ public final class Constants {
       public static final double motionMagicAcceleration = 4.0;
 
       public static final Angle minAngle = Degrees.of(0.0);
-      public static final Angle maxAngle = Degrees.of(45.0);
+      public static final Angle maxAngle = Degrees.of(180.0);
 
       public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
@@ -436,7 +436,7 @@ public final class Constants {
 
     public enum UPTAKE_SPEED {
       IDLE(RPM.of(0.0)),
-      UPTAKING(RPM.of(500.0));
+      UPTAKING(RPM.of(5400.0));
 
       private final AngularVelocity value;
 
