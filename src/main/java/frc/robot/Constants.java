@@ -45,6 +45,7 @@ public final class Constants {
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
     public static final double kStatorCurrentLimit = 120;
+    public static final double kRPMSetpointTolerance = 50.0;
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps

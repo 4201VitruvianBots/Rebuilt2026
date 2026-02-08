@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -126,6 +127,11 @@ public class Flywheel extends SubsystemBase {
   @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
   public double getMotorSpeedRPM() {
     return m_motor1.getVelocity().refresh().getValue().in(RPM);
+  }
+
+  @Logged(name = "At RPM Setpoint?", importance = Importance.DEBUG)
+  public boolean isAtRPMSetpoint(){
+    return MathUtil.isNear(getRPMSetpoint(), getMotorSpeedRPM(), FLYWHEEL.kRPMSetpointTolerance);
   }
 
   public boolean[] isConnected() {

@@ -307,7 +307,7 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-        if (m_flywheel.getMotorSpeedRPM() > 500.0 && FuelSim.getInstance().getStoredFuel() > 0) {
+        if (m_flywheel.isAtRPMSetpoint() && m_flywheel.getMotorSpeedRPM() > 500 && FuelSim.getInstance().getStoredFuel() > 0) {
             // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
             // vel in ft/s = 0.0111882 * RPM - 0.000174927
             FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
