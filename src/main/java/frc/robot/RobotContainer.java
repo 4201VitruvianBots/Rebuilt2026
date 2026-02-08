@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INDEXER.INDEXER_SPEED;
+import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
@@ -27,6 +28,7 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
+import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
@@ -209,6 +211,7 @@ public class RobotContainer {
               new ParallelCommandGroup(
                   new RunUptake(m_uptake),
                   new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING),
+                  new IntakeSetpoint(m_intakePivot, PIVOT_SETPOINT.INTAKING),
                   new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
 
@@ -261,12 +264,14 @@ public class RobotContainer {
     if (m_vision != null) m_vision.testInit();
     if (m_uptake != null) m_uptake.testInit();
     if (m_indexer != null) m_indexer.testInit();
+    if (m_intakePivot != null) m_intakePivot.testInit();
   }
 
   public void testPeriodic() {
     if (m_flywheel != null) m_flywheel.testPeriodic();
     if (m_uptake != null) m_uptake.testPeriodic();
     if (m_indexer != null) m_indexer.testPeriodic();
+    if (m_intakePivot != null) m_intakePivot.testPeriodic();
   }
 
   /**
