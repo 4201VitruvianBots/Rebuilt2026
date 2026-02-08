@@ -14,6 +14,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,8 +26,11 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Intake extends SubsystemBase {
 
-  @Logged(name = "Intake Motor", importance = Logged.Importance.DEBUG)
+  @Logged(name = "Intake Motor", importance = Logged.Importance.INFO)
   private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.driveBaseCanbus);
+
+  private DoubleSubscriber m_outputSubscriber;
+  private DoublePublisher m_outputPublisher;
 
   // private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 
@@ -43,6 +49,9 @@ public class Intake extends SubsystemBase {
     config.Feedback.SensorToMechanismRatio = INTAKE.ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.PeakForwardDutyCycle = INTAKE.ROLLERS.peakForwardOutput;
+    config.MotorOutput.PeakReverseDutyCycle = INTAKE.ROLLERS.peakReverseOutput;
+
     CtreUtils.configureTalonFx(m_motor, config);
     // CtreUtils.configureTalonFx(m_motor2, config);
 
@@ -79,5 +88,19 @@ public class Intake extends SubsystemBase {
         Rotations.of(m_motor1Sim.getAngularPositionRotations()).times(INTAKE.ROLLERS.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_motor1Sim.getAngularVelocityRPM()).times(INTAKE.ROLLERS.gearRatio));
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Intake Roller Output Setpoint");
+    m_outputSubscriber = topic.subscribe(0.0);
+    m_outputPublisher = topic.publish();
+    m_outputPublisher.set(0.0);
+  }
+  
+  public void testPeriodic() {
+      setOutputPercent(m_outputSubscriber.get());
   }
 }
