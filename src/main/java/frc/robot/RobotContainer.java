@@ -311,7 +311,7 @@ public class RobotContainer {
             // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
             // vel in ft/s = 0.0111882 * RPM - 0.000174927
             FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
-            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), Degrees.of(180).minus(m_hood.getHoodAngle()), Degrees.of(m_swerveDrive.getYaw()), FLYWHEEL.fuelLaunchHeight);
+            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), m_hood.getHoodAngle(), Degrees.of(m_swerveDrive.getYaw()), FLYWHEEL.fuelLaunchHeight);
             System.out.println("Launching fuel at velocity: " + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927) + " ft/s and angle: " + m_hood.getHoodAngleDegrees() + " degrees");
             System.out.println("Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
         }

@@ -136,7 +136,7 @@ public class ShootOnTheMove extends Command {
     double getOffsetAngleDeg =
         Math.asin((VelocityY * PositionX + VelocityX * PositionY) / (newDist * robotToTargetDistance));
 
-    var targetDelta = (m_swerveDrivetrain.getState().Pose.getTranslation().minus(m_goal).getAngle());
+    var targetDelta = m_goal.minus(m_swerveDrivetrain.getState().Pose.getTranslation()).getAngle();
 
     // all of the logic for angle is above this Comment
 
@@ -149,7 +149,7 @@ public class ShootOnTheMove extends Command {
             (m_turnInput.getAsDouble()) * SWERVE.kMaxSpeedMetersPerSecond,
             m_PidController.calculate(
                     m_swerveDrivetrain.getState().Pose.getRotation().getRadians(),
-                    targetDelta.getRadians() - getOffsetAngleDeg)));
+                    targetDelta.getRadians() + getOffsetAngleDeg)));
   }
 
   // Called once the command ends or is interrupted.
