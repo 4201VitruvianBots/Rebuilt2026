@@ -129,7 +129,7 @@ public class ShootOnTheMove extends Command {
 
     Translation2d movingGoalLocation = new Translation2d(virtualGoalX, virtualGoalY);
 
-    Translation2d toMovingGoal = movingGoalLocation.minus(currentPose);
+    Translation2d toMovingGoal = movingGoalLocation.minus(lookaheadPose.getTranslation());
 
     double newDist = toMovingGoal.getDistance(new Translation2d());
 
@@ -140,16 +140,17 @@ public class ShootOnTheMove extends Command {
 
     // all of the logic for angle is above this Comment
 
+    var turnRate = m_PidController.calculate(m_swerveDrivetrain.getState().Pose.getRotation().getRadians(),
+                    targetDelta.getRadians() + getOffsetAngleDeg);
+
     m_flywheel.setRPMOutputFOC(shot.shooterRPM.in(RPM));
     m_shooterHood.setAngle(shot.hoodAngle);
 
     m_swerveDrivetrain.setChassisSpeedControl(
         new ChassisSpeeds(
-            (m_throttleInput.getAsDouble()) * SWERVE.kMaxSpeedMetersPerSecond,
-            (m_turnInput.getAsDouble()) * SWERVE.kMaxSpeedMetersPerSecond,
-            m_PidController.calculate(
-                    m_swerveDrivetrain.getState().Pose.getRotation().getRadians(),
-                    targetDelta.getRadians() + getOffsetAngleDeg)));
+            m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
+            m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
+            turnRate));
   }
 
   // Called once the command ends or is interrupted.
