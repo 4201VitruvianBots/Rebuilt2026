@@ -47,14 +47,14 @@ public class TestFieldConstants {
     TestUtils.setPrivateField(controls, "m_allianceColor", DriverStation.Alliance.Blue);
     FIELD.updateConstants();
     Map<Pose2d, FIELD.SECTOR> blueSectors = new HashMap<>();
-    blueSectors.put(new Pose2d(1,1, Rotation2d.kZero), FIELD.SECTOR.BLUE_RIGHT);
-    blueSectors.put(new Pose2d(1,8, Rotation2d.kZero), FIELD.SECTOR.BLUE_LEFT);
-    blueSectors.put(new Pose2d(5,1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_RIGHT);
-    blueSectors.put(new Pose2d(5,8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_LEFT);
-    blueSectors.put(new Pose2d(9,1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
-    blueSectors.put(new Pose2d(9,8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_LEFT);
-    blueSectors.put(new Pose2d(13,1, Rotation2d.kZero), FIELD.SECTOR.RED_RIGHT);
-    blueSectors.put(new Pose2d(13,8, Rotation2d.kZero), FIELD.SECTOR.RED_LEFT);
+    blueSectors.put(new Pose2d(1, 1, Rotation2d.kZero), FIELD.SECTOR.BLUE_RIGHT);
+    blueSectors.put(new Pose2d(1, 8, Rotation2d.kZero), FIELD.SECTOR.BLUE_LEFT);
+    blueSectors.put(new Pose2d(5, 1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_RIGHT);
+    blueSectors.put(new Pose2d(5, 8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_LEFT);
+    blueSectors.put(new Pose2d(9, 1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
+    blueSectors.put(new Pose2d(9, 8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_LEFT);
+    blueSectors.put(new Pose2d(13, 1, Rotation2d.kZero), FIELD.SECTOR.RED_RIGHT);
+    blueSectors.put(new Pose2d(13, 8, Rotation2d.kZero), FIELD.SECTOR.RED_LEFT);
 
     blueSectors.forEach(
         (k, v) -> {
