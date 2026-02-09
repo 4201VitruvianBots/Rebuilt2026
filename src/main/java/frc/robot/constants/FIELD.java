@@ -75,6 +75,7 @@ public class FIELD {
     ZONE.init();
     HUB.init();
     TOWER.init();
+    updateConstants();
   }
 
   public static void updateConstants() {
@@ -124,10 +125,11 @@ public class FIELD {
   }
 
   static SECTOR[][] SECTOR_MAP_RED = {
+//    {SECTOR.RED_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.BLUE_LEFT},
+    {SECTOR.BLUE_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.RED_LEFT},
     {
-      SECTOR.RED_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.BLUE_RIGHT,
-    },
-    {SECTOR.RED_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.BLUE_LEFT}
+    SECTOR.BLUE_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.RED_RIGHT
+    }
   };
   static SECTOR[][] SECTOR_MAP_BLUE = {
     {SECTOR.BLUE_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.RED_RIGHT},
@@ -137,6 +139,10 @@ public class FIELD {
   static SECTOR CURRENT_SECTOR = SECTOR.UNKNOWN;
 
   public static void updateCurrentSector(Pose2d robotPose) {
+    /** Get where the robot is on the field. This will be relative to which alliance you are on,
+     *  which determines which SECTOR_MAP to use, which handles the index -> position mapping based
+     *  on the order of the sectors in each map.
+     */
     int yIdx = robotPose.getY() > CENTER.getY() ? 1 : 0;
     int xIdx = -1;
 
@@ -150,7 +156,12 @@ public class FIELD {
       xIdx = 0;
     }
 
-    CURRENT_SECTOR = SECTOR_MAP[yIdx][xIdx];
+    // May be redundant/unnecessary to check for unknown
+    if (yIdx == -1 || xIdx == -1) {
+        CURRENT_SECTOR = SECTOR.UNKNOWN;
+    } else {
+        CURRENT_SECTOR = SECTOR_MAP[yIdx][xIdx];
+    }
   }
 
   public static SECTOR getCurrentSector() {
