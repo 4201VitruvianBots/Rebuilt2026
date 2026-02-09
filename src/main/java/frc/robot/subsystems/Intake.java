@@ -99,8 +99,8 @@ public class Intake extends SubsystemBase {
     m_outputPublisher = topic.publish();
     m_outputPublisher.set(0.0);
   }
-  
+
   public void testPeriodic() {
-      setOutputPercent(m_outputSubscriber.get());
+    setOutputPercent(m_outputSubscriber.get());
   }
 }
