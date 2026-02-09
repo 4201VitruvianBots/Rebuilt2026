@@ -39,13 +39,12 @@ public class Hood extends SubsystemBase {
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
       new TalonFX(
-          CAN.kShooterHoodMotor,
-          CAN.driveBaseCanbus); // Replace these device ids after motors are set up
+          CAN.kShooterHoodMotor, CAN.driveBase); // Replace these device ids after motors are set up
 
   private final CANcoder m_cancoder =
       new CANcoder(
           CAN.kShooterHoodCANCoder,
-          CAN.driveBaseCanbus); // Replace these device ids after motors are set up
+          CAN.driveBase); // Replace these device ids after motors are set up
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.

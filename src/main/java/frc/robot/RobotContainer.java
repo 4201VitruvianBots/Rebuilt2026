@@ -30,10 +30,15 @@ import frc.robot.commands.autos.*;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
+import frc.robot.constants.FIELD;
 import frc.robot.generated.WoodBotConstants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
@@ -88,13 +93,13 @@ public class RobotContainer {
   }
 
   @NotLogged
-  private double MaxSpeed =
-      WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+  private final double MaxSpeed =
+      WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
 
   private Boolean m_flipToRight = false;
 
   @NotLogged
-  private double MaxAngularRate =
+  private final double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -106,7 +111,7 @@ public class RobotContainer {
 
   private Robot2d m_robotSim;
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
-  private final FieldSim m_fieldSim = new FieldSim();
+  private FieldSim m_fieldSim = new FieldSim();
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -116,6 +121,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    FIELD.initializeConstants();
+    FIELD.updateConstants();
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
@@ -145,6 +152,7 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_fieldSim = new FieldSim();
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -162,6 +170,8 @@ public class RobotContainer {
     m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
+      FIELD.plotAllPositions(m_fieldSim);
+
       m_robotSim = new Robot2d();
       m_robotSim.registerSubsystems(m_flywheel, m_hood, m_indexer, m_intake, m_uptake);
     }
@@ -177,8 +187,8 @@ public class RobotContainer {
                   new AutoAlignDrive(
                       m_swerveDrive,
                       m_vision,
-                      () -> m_driverController.getLeftY(),
-                      () -> m_driverController.getLeftX()),
+                      m_driverController::getLeftY,
+                      m_driverController::getLeftX),
                   new Shoot(m_flywheel, m_vision)));
     }
 
@@ -189,8 +199,8 @@ public class RobotContainer {
               new AutoAlignDrive(
                   m_swerveDrive,
                   m_vision,
-                  () -> m_driverController.getLeftY(),
-                  () -> m_driverController.getLeftX()));
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX));
     }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
@@ -201,7 +211,7 @@ public class RobotContainer {
       m_driverController.y().whileTrue(new ShootManualFlywheel(m_flywheel));
     }
 
-    // I forsee a state machine in the future...
+    // I foresee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
       m_driverController
           .a()
@@ -244,10 +254,7 @@ public class RobotContainer {
 
     m_autoSide.addOption("Depot", false);
     m_autoSide.addOption("Outpost", true);
-    m_autoSide.onChange(
-        (Boolean selected) -> {
-          m_flipToRight = selected;
-        });
+    m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
   }
 
   private void initSmartDashboard() {
@@ -277,5 +284,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return m_autoChooser.getSelected();
+  }
+
+  public void robotPeriodic() {
+    FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
   }
 }

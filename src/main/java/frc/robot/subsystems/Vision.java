@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FIELD;
+// import frc.robot.commands.AutoAlignDrive;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 // import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
@@ -61,7 +62,7 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
-    m_goal = Controls.isRedAlliance() ? FIELD.blueHub : FIELD.redHub;
+    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
@@ -253,38 +254,38 @@ public class Vision extends SubsystemBase {
     return Math.abs(error) <= Units.degreesToRadians(1.0);
   }
 
-  @Logged(name = "Is in Neutral Zone?", importance = Importance.DEBUG)
-  public boolean isInNeutralZone() {
-    return FIELD.neutralZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  @Logged(name = "Is in Neutral Sector?", importance = Importance.DEBUG)
+  public boolean isInNeutralSector() {
+    return FIELD.getCurrentSector().name().startsWith("NEUTRAL");
   }
 
-  @Logged(name = "Is in Red Zone?", importance = Importance.DEBUG)
-  public boolean isInRedZone() {
-    return FIELD.redZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  @Logged(name = "Is in Red Sector?", importance = Importance.DEBUG)
+  public boolean isInRedSector() {
+    return FIELD.getCurrentSector().name().startsWith("RED");
   }
 
-  @Logged(name = "Is in Blue Zone?", importance = Importance.DEBUG)
-  public boolean isInBlueZone() {
-    return FIELD.blueZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  @Logged(name = "Is in Blue Sector?", importance = Importance.DEBUG)
+  public boolean isInBlueSector() {
+    return FIELD.getCurrentSector().name().startsWith("BLUE");
   }
 
-  @Logged(name = "Is in Opposing Alliance Zone?", importance = Importance.DEBUG)
-  public boolean isInOpposingAllianceZone() {
+  @Logged(name = "Is in Opposing Alliance Sector?", importance = Importance.DEBUG)
+  public boolean isInOpposingAllianceSector() {
     if (Controls.isBlueAlliance()) {
-      return isInRedZone();
+      return isInRedSector();
     } else {
-      return isInBlueZone();
+      return isInBlueSector();
     }
   }
 
   @Logged(name = "Is in Right Half?", importance = Importance.DEBUG)
   public boolean isInRightHalf() {
-    return FIELD.rightHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+    return FIELD.getCurrentSector().name().endsWith("RIGHT");
   }
 
   @Logged(name = "Is in Left Half?", importance = Importance.DEBUG)
   public boolean isInLeftHalf() {
-    return FIELD.leftHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+    return FIELD.getCurrentSector().name().endsWith("LEFT");
   }
 
   public void testInit() {
@@ -295,10 +296,8 @@ public class Vision extends SubsystemBase {
   public void teleopInit() {}
 
   @Logged(name = "Distance to Hub", importance = Importance.INFO)
-  public Distance getDistancetoHub() {
-    final Distance distanceToHub =
-        Meters.of(m_swerveDriveTrain.getState().Pose.getTranslation().getDistance(m_goal));
-    return distanceToHub;
+  public Distance getDistanceToHub() {
+    return Meters.of(m_swerveDriveTrain.getState().Pose.getTranslation().getDistance(m_goal));
   }
 
   @Override

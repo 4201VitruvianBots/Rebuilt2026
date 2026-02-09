@@ -1,174 +1,460 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import java.util.Arrays;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.Controls;
+import frc.team4201.lib.geometry.FieldRectangle2d;
+import frc.team4201.lib.geometry.LinkedAprilTag;
+import frc.team4201.lib.geometry.Target3d;
+import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.wpilib.AllianceInterface;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class FIELD {
   /**
-   * FIELD
+   * Field constants to use.
    *
-   * <p>Field constants
-   *
-   * <p>Note: Values are using ideal values from WPILib TODO: Create layout from practice field.
+   * <p>The default value of the field constants should already be set based on the alliance you are
+   * on, which should be set/updated when the robot is disabled.
    */
-  public static final AprilTagFieldLayout wpilibAprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+  private static AprilTagFieldLayout fieldLayout;
 
-  // public static final AprilTagFieldLayout practiceFieldAprilTagLayout;
+  private static Map<String, LinkedAprilTag> aprilTagMap = new HashMap<>();
 
-  public static final AprilTagFieldLayout aprilTagFieldLayout = wpilibAprilTagLayout;
+  private static Distance FIELD_LENGTH;
+  private static Distance FIELD_WIDTH;
+  private static Translation2d CENTER;
+  private static DriverStation.Alliance ALLIANCE;
+  private static SECTOR[][] SECTOR_MAP;
 
-  public static final Translation2d blueHub = new Translation2d(4.625594, 4.034536);
-  public static final Translation2d redHub = new Translation2d(11.915394, 4.034536);
+  public static void initializeConstants() {
+    if (DriverStation.isFMSAttached()) {
+      fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    } else {
+      fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+    }
 
-  // Everything is from the perspective of the blue alliance
-  public static final Translation2d neutralBlueRightCorner = new Translation2d(4.611624, 0.0);
-  public static final Translation2d neutralBlueLeftCorner = new Translation2d(4.611624, 8.069326);
-  public static final Translation2d neutralRedRightCorner = new Translation2d(11.901424, 0.0);
-  public static final Translation2d neutralRedLeftCorner = new Translation2d(11.901424, 8.069326);
+    FIELD_LENGTH = Meters.of(fieldLayout.getFieldLength());
+    FIELD_WIDTH = Meters.of(fieldLayout.getFieldWidth());
+    CENTER = new Translation2d(FIELD_LENGTH.div(2.0), FIELD_WIDTH.div(2.0));
 
-  public static final Translation2d nearRightCorner = new Translation2d(0.0, 0.0); // Blue
-  public static final Translation2d nearLeftCorner =
-      new Translation2d(0.0, aprilTagFieldLayout.getFieldWidth());
-  public static final Translation2d farRightCorner =
-      new Translation2d(aprilTagFieldLayout.getFieldLength(), 0.0); // Red
-  public static final Translation2d farLeftCorner =
-      new Translation2d(aprilTagFieldLayout.getFieldLength(), aprilTagFieldLayout.getFieldWidth());
+    // Build AprilTag Map
+    List<LinkedAprilTag> list = new ArrayList<>();
+    list.add(new LinkedAprilTag("RIGHT_TRENCH_FAR", 1, 17, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_RIGHT", 2, 18, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_FAR_SECONDARY", 3, 19, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_FAR", 4, 20, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_LEFT", 5, 21, fieldLayout));
+    list.add(new LinkedAprilTag("LEFT_TRENCH_FAR", 6, 22, fieldLayout));
+    list.add(new LinkedAprilTag("LEFT_TRENCH_NEAR", 7, 23, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_RIGHT_SECONDARY", 8, 24, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_NEAR_SECONDARY", 9, 25, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_NEAR", 10, 26, fieldLayout));
+    list.add(new LinkedAprilTag("HUB_RIGHT_NEAR", 11, 27, fieldLayout));
+    list.add(new LinkedAprilTag("TRENCH_RIGHT_NEAR", 12, 28, fieldLayout));
+    list.add(new LinkedAprilTag("OUTPOST", 13, 29, fieldLayout));
+    list.add(new LinkedAprilTag("OUTPOST_SECONDARY", 14, 30, fieldLayout));
+    list.add(new LinkedAprilTag("TOWER", 15, 31, fieldLayout));
+    list.add(new LinkedAprilTag("TOWER_SECONDARY", 16, 32, fieldLayout));
+    aprilTagMap =
+        list.stream().collect(Collectors.toMap(LinkedAprilTag::getName, Function.identity()));
 
-  public static final Translation2d blueWallMiddle = new Translation2d(0.0, 4.021328);
-  public static final Translation2d redWallMiddle =
-      new Translation2d(aprilTagFieldLayout.getFieldLength(), 4.021328);
+    Target3d.loadField(fieldLayout);
 
-  public static final Translation2d redAutoHub = redHub;
-  public static final Translation2d blueAutoHub = blueHub;
+    ZONE.init();
+    HUB.init();
+    TOWER.init();
+    updateConstants();
+  }
 
-  // Useful for determining quickly with little logic where we are
-  public static final Rectangle2d neutralZone =
-      new Rectangle2d(neutralRedLeftCorner, neutralBlueRightCorner);
-  public static final Rectangle2d redZone = new Rectangle2d(farLeftCorner, neutralRedRightCorner);
-  public static final Rectangle2d blueZone =
-      new Rectangle2d(neutralBlueLeftCorner, nearRightCorner);
-  public static final Rectangle2d rightHalf = new Rectangle2d(redWallMiddle, nearRightCorner);
-  public static final Rectangle2d leftHalf = new Rectangle2d(farLeftCorner, blueWallMiddle);
+  public static void updateConstants() {
+    ZONE.updateFields();
+    HUB.updateFields();
+    TOWER.updateFields();
+    ALLIANCE = Controls.getAllianceColor();
+    if (ALLIANCE == DriverStation.Alliance.Blue) {
+      SECTOR_MAP = SECTOR_MAP_BLUE;
+    } else {
+      SECTOR_MAP = SECTOR_MAP_RED;
+    }
+  }
 
-  // Useful for more precisely knowing where we are
-  public static final Rectangle2d neutralZoneRight =
-      new Rectangle2d(redHub, neutralBlueRightCorner);
-  public static final Rectangle2d neutralZoneLeft = new Rectangle2d(neutralRedLeftCorner, blueHub);
-  public static final Rectangle2d redZoneRight = new Rectangle2d(farRightCorner, redHub);
-  public static final Rectangle2d redZoneLeft = new Rectangle2d(farLeftCorner, redHub);
-  public static final Rectangle2d blueZoneRight = new Rectangle2d(nearRightCorner, blueHub);
-  public static final Rectangle2d blueZoneLeft = new Rectangle2d(nearLeftCorner, blueHub);
+  public static void plotAllPositions(FieldSim fieldSim) {
+    fieldSim.addTranslations(
+        "Tower targets",
+        TOWER.RED.CENTER.getTargetPosition().toTranslation2d(),
+        TOWER.RED.LEFT.getTargetPosition().toTranslation2d(),
+        TOWER.RED.RIGHT.getTargetPosition().toTranslation2d(),
+        TOWER.BLUE.CENTER.getTargetPosition().toTranslation2d(),
+        TOWER.BLUE.LEFT.getTargetPosition().toTranslation2d(),
+        TOWER.BLUE.RIGHT.getTargetPosition().toTranslation2d());
 
-  /** Field X-axis */
-  public static final Distance LENGTH = Meters.of(aprilTagFieldLayout.getFieldLength());
+    fieldSim.addTranslations("Red Hub", HUB.RED.getTargetPosition().toTranslation2d());
+    fieldSim.addTranslations("Red Left Bump", ZONE.RED.BUMP.LEFT.getCorners());
+    fieldSim.addTranslations("Red Left Trench", ZONE.RED.TRENCH.LEFT.getCorners());
+    fieldSim.addTranslations("Red Right Bump", ZONE.RED.BUMP.RIGHT.getCorners());
+    fieldSim.addTranslations("Red Right Trench", ZONE.RED.TRENCH.RIGHT.getCorners());
+    fieldSim.addTranslations("Blue Hub", HUB.BLUE.getTargetPosition().toTranslation2d());
+    fieldSim.addTranslations("Blue Left Bump", ZONE.BLUE.BUMP.LEFT.getCorners());
+    fieldSim.addTranslations("Blue Left Trench", ZONE.BLUE.TRENCH.LEFT.getCorners());
+    fieldSim.addTranslations("Blue Right Bump", ZONE.BLUE.BUMP.RIGHT.getCorners());
+    fieldSim.addTranslations("Blue Right Trench", ZONE.BLUE.TRENCH.RIGHT.getCorners());
+  }
 
-  /** Field Y-axis */
-  public static final Distance WIDTH = Meters.of(aprilTagFieldLayout.getFieldWidth());
+  public enum SECTOR {
+    RED_LEFT,
+    RED_RIGHT,
+    BLUE_LEFT,
+    BLUE_RIGHT,
+    NEUTRAL_NEAR_LEFT,
+    NEUTRAL_NEAR_RIGHT,
+    NEUTRAL_FAR_LEFT,
+    NEUTRAL_FAR_RIGHT,
+    UNKNOWN
+  }
 
-  public static final Distance APRILTAG_SIZE = Inches.of(6.5);
+  static SECTOR[][] SECTOR_MAP_RED = {
+    //    {SECTOR.RED_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.BLUE_LEFT},
+    {SECTOR.BLUE_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.RED_LEFT},
+    {SECTOR.BLUE_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.RED_RIGHT}
+  };
+  static SECTOR[][] SECTOR_MAP_BLUE = {
+    {SECTOR.BLUE_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.RED_RIGHT},
+    {SECTOR.BLUE_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.RED_LEFT}
+  };
 
-  public static final Distance HUB_APRILTAG_HEIGHT = Inches.of(44.25);
-  public static final Distance TRENCH_APRILTAG_HEIGHT = Inches.of(35);
-  public static final Distance TOWER_APRILTAG_HEIGHT = Inches.of(33).plus(APRILTAG_SIZE).div(2.0);
-  public static final Distance OUTPOST_APRILTAG_HEIGHT = Inches.of(33).plus(APRILTAG_SIZE).div(2.0);
+  static SECTOR CURRENT_SECTOR = SECTOR.UNKNOWN;
 
-  /** Enum describing all AprilTags on the field by ID and their Pose3d positions. */
-  public enum APRIL_TAG {
-    RED_TRENCH_NEAR_RIGHT(1),
-    RED_HUB_NEAR_RIGHT(2),
-    RED_HUB_RIGHT_CLOSE(3),
-    RED_HUB_RIGHT_FAR(4),
-    RED_HUB_FAR_RIGHT(5),
-    RED_TRENCH_FAR_RIGHT(6),
-    RED_TRENCH_FAR_LEFT(7),
-    RED_HUB_FAR_LEFT(8),
-    RED_HUB_LEFT_AWAY(9),
-    RED_HUB_LEFT_CLOSE(10),
-    RED_HUB_NEAR_LEFT(11),
-    RED_TRENCH_NEAR_LEFT(12),
-    RED_OUTPOST_NEAR(13),
-    RED_OUTPOST_FAR(14),
-    RED_TOWER_NEAR(15),
-    RED_TOWER_FAR(16),
-    BLUE_TRENCH_FAR_LEFT(17),
-    BLUE_HUB_FAR_LEFT(18),
-    BLUE_HUB_LEFT_FAR(19),
-    BLUE_HUB_LEFT_NEAR(20),
-    BLUE_HUB_NEAR_LEFT(21),
-    BLUE_TRENCH_NEAR_LEFT(22),
-    BLUE_TRENCH_NEAR_RIGHT(23),
-    BLUE_HUB_NEAR_RIGHT(24),
-    BLUE_HUB_RIGHT_NEAR(25),
-    BLUE_HUB_RIGHT_FAR(26),
-    BLUE_HUB_FAR_RIGHT(27),
-    BLUE_TRENCH_FAR_RIGHT(28),
-    BLUE_OUTPOST_FAR(29),
-    BLUE_OUTPOST_NEAR(30),
-    BLUE_TOWER_FAR(31),
-    BLUE_TOWER_NEAR(32);
+  public static void updateCurrentSector(Pose2d robotPose) {
+    /**
+     * Get where the robot is on the field. This will be relative to which alliance you are on,
+     * which determines which SECTOR_MAP to use, which handles the index -> position mapping based
+     * on the order of the sectors in each map.
+     */
+    int yIdx = robotPose.getY() > CENTER.getY() ? 1 : 0;
+    int xIdx = -1;
 
-    private final int id;
-    private Pose3d pose;
+    if (robotPose.getX() > ZONE.RED_ZONE_LINE.in(Meters)) {
+      xIdx = 3;
+    } else if (robotPose.getX() > CENTER.getX()) {
+      xIdx = 2;
+    } else if (robotPose.getX() > ZONE.BLUE_ZONE_LINE.in(Meters)) {
+      xIdx = 1;
+    } else {
+      xIdx = 0;
+    }
 
-    APRIL_TAG(final int id) {
-      this.id = id;
-      aprilTagFieldLayout
-          .getTagPose(this.id)
-          .ifPresentOrElse(
-              pose3d -> this.pose = pose3d,
-              () -> {
-                System.out.printf(
-                    "[FIELD] Could not read AprilTag ID %s data from FieldLayout\n", this.id);
-                new Alert(
-                        String.format("[FIELD] APRIL_TAG ID %s value couldn't be read", this.id),
-                        AlertType.kError)
-                    .set(true);
-              });
+    // May be redundant/unnecessary to check for unknown
+    if (yIdx == -1 || xIdx == -1) {
+      CURRENT_SECTOR = SECTOR.UNKNOWN;
+    } else {
+      CURRENT_SECTOR = SECTOR_MAP[yIdx][xIdx];
+    }
+  }
 
-      if (this.pose == null) {
-        throw new IllegalArgumentException("AprilTag ID " + this.id + " does not have a Pose3d!");
+  public static SECTOR getCurrentSector() {
+    return CURRENT_SECTOR;
+  }
+
+  public static class ZONE implements AllianceInterface {
+    public static Class<? extends BASE_ZONE> ALLIANCE;
+    public static Class<? extends BASE_ZONE> OPPONENT;
+
+    // Constants our measurements will rely on
+    private static final Distance RED_ZONE_LINE =
+        aprilTagMap.get("HUB_NEAR").getPose(false).getMeasureX();
+    private static final Distance BLUE_ZONE_LINE =
+        aprilTagMap.get("HUB_NEAR").getPose(true).getMeasureX();
+
+    private static final Distance DEPOT_WIDTH = Inches.of(42);
+    private static final Distance DEPOT_DEPTH = Inches.of(27);
+
+    private static final Distance TRENCH_WIDTH = Inches.of(65.65);
+    private static final Distance TRENCH_DEPTH = Inches.of(47.0);
+
+    private static final Distance BUMP_WIDTH = Inches.of(73.0);
+    private static final Distance BUMP_DEPTH = Inches.of(44.4);
+
+    private static final Distance RED_HUB_X_NEAR = RED_ZONE_LINE;
+    private static final Distance RED_HUB_X_FAR =
+        aprilTagMap.get("HUB_FAR").getPose(false).getMeasureX();
+    private static final Distance RED_DEPOT_CENTER_Y = CENTER.getMeasureY().plus(Inches.of(75.93));
+
+    private static final Distance BLUE_HUB_X_NEAR = BLUE_ZONE_LINE;
+    private static final Distance BLUE_HUB_X_FAR =
+        aprilTagMap.get("HUB_FAR").getPose(true).getMeasureX();
+    private static final Distance BLUE_DEPOT_CENTER_Y =
+        CENTER.getMeasureY().minus(Inches.of(75.93));
+
+    public static final FieldRectangle2d NEUTRAL_ZONE =
+        new FieldRectangle2d(
+            new Translation2d(BLUE_ZONE_LINE, Meters.zero()),
+            new Translation2d(RED_ZONE_LINE, FIELD_WIDTH));
+
+    public static void init() {
+      RED.init();
+      BLUE.init();
+    }
+
+    public static class RED extends BASE_ZONE {
+      public static FieldRectangle2d ZONE;
+      public static FieldRectangle2d DEPOT;
+
+      public static void init() {
+        ZONE =
+            new FieldRectangle2d(
+                new Translation2d(RED_ZONE_LINE, Meters.zero()),
+                new Translation2d(FIELD_LENGTH, FIELD_WIDTH));
+
+        DEPOT =
+            new FieldRectangle2d(
+                new Translation2d(
+                    FIELD_LENGTH.minus(DEPOT_DEPTH), RED_DEPOT_CENTER_Y.minus(DEPOT_WIDTH.div(2))),
+                new Translation2d(FIELD_LENGTH, RED_DEPOT_CENTER_Y.plus(DEPOT_WIDTH.div(2))));
+
+        BUMP.LEFT =
+            new FieldRectangle2d(
+                new Translation2d(RED_HUB_X_FAR, TRENCH_WIDTH),
+                new Translation2d(RED_HUB_X_NEAR, TRENCH_WIDTH.plus(BUMP_WIDTH)));
+        BUMP.RIGHT =
+            new FieldRectangle2d(
+                new Translation2d(RED_HUB_X_FAR, FIELD_WIDTH.minus(TRENCH_WIDTH.plus(BUMP_WIDTH))),
+                new Translation2d(RED_HUB_X_NEAR, FIELD_WIDTH.minus(TRENCH_WIDTH)));
+
+        TRENCH.LEFT =
+            new FieldRectangle2d(
+                new Translation2d(RED_HUB_X_FAR, Meters.zero()),
+                new Translation2d(RED_HUB_X_NEAR, TRENCH_WIDTH));
+
+        TRENCH.RIGHT =
+            new FieldRectangle2d(
+                new Translation2d(RED_HUB_X_FAR, FIELD_WIDTH.minus(TRENCH_WIDTH)),
+                new Translation2d(RED_HUB_X_NEAR, FIELD_WIDTH));
       }
     }
 
-    public int getId() {
-      return id;
-    }
+    public static class BLUE extends BASE_ZONE {
+      public static FieldRectangle2d ZONE;
+      public static FieldRectangle2d DEPOT;
 
-    public Pose3d getPose3d() {
-      return pose;
-    }
+      public static void init() {
+        ZONE =
+            new FieldRectangle2d(
+                Translation2d.kZero, new Translation2d(BLUE_ZONE_LINE, FIELD_WIDTH));
 
-    public Pose2d getPose2d() {
-      return pose.toPose2d();
-    }
+        DEPOT =
+            new FieldRectangle2d(
+                new Translation2d(Meters.zero(), BLUE_DEPOT_CENTER_Y.minus(DEPOT_WIDTH.div(2))),
+                new Translation2d(DEPOT_DEPTH, BLUE_DEPOT_CENTER_Y.plus(DEPOT_WIDTH.div(2))));
 
-    public Translation3d getTranslation3d() {
-      return pose.getTranslation();
-    }
+        BUMP.LEFT =
+            new FieldRectangle2d(
+                new Translation2d(
+                    BLUE_HUB_X_NEAR, FIELD_WIDTH.minus(TRENCH_WIDTH.plus(BUMP_WIDTH))),
+                new Translation2d(BLUE_HUB_X_FAR, FIELD_WIDTH.minus(TRENCH_WIDTH)));
 
-    public Translation2d getTranslation2d() {
-      return getPose2d().getTranslation();
-    }
+        BUMP.RIGHT =
+            new FieldRectangle2d(
+                new Translation2d(BLUE_HUB_X_NEAR, TRENCH_WIDTH),
+                new Translation2d(BLUE_HUB_X_FAR, TRENCH_WIDTH.plus(BUMP_WIDTH)));
 
-    public static APRIL_TAG getTagById(int aprilTagId) {
-      for (var t : APRIL_TAG.values()) {
-        if (t.id == aprilTagId) {
-          return t;
-        }
+        TRENCH.LEFT =
+            new FieldRectangle2d(
+                new Translation2d(BLUE_HUB_X_NEAR, FIELD_WIDTH.minus(TRENCH_WIDTH)),
+                new Translation2d(BLUE_HUB_X_FAR, FIELD_WIDTH));
+        TRENCH.RIGHT =
+            new FieldRectangle2d(
+                new Translation2d(BLUE_HUB_X_NEAR, Meters.zero()),
+                new Translation2d(BLUE_HUB_X_FAR, TRENCH_WIDTH));
       }
-      throw new IllegalArgumentException("AprilTag ID " + aprilTagId + " does not exist!");
     }
 
-    public static Pose2d[] getAllAprilTagPoses() {
-      return Arrays.stream(APRIL_TAG.values()).map(APRIL_TAG::getPose2d).toArray(Pose2d[]::new);
+    public static void updateFields() {
+      if (AllianceInterface.isBlue()) {
+        ALLIANCE = BLUE.class;
+        OPPONENT = RED.class;
+      } else {
+        ALLIANCE = RED.class;
+        OPPONENT = BLUE.class;
+      }
+    }
+
+    public static class BASE_ZONE {
+      public static BUMP BUMP = new BUMP();
+      public static TRENCH TRENCH = new TRENCH();
+
+      public static class BUMP {
+        public FieldRectangle2d LEFT;
+        public FieldRectangle2d RIGHT;
+      }
+
+      public static class TRENCH {
+        public FieldRectangle2d LEFT;
+        public FieldRectangle2d RIGHT;
+      }
+    }
+  }
+
+  public static class HUB implements AllianceInterface {
+    public static final Distance HEIGHT = Inches.of(56.5);
+    public static final Distance WIDTH = Inches.of(47.0);
+
+    public static Target3d GOAL;
+    public static Target3d RED;
+    public static Target3d BLUE;
+
+    public static void init() {
+      RED =
+          new Target3d(
+              new Translation3d(
+                  aprilTagMap.get("HUB_NEAR").getPose(false).getMeasureX().minus(WIDTH.div(2.0)),
+                  CENTER.getMeasureY(),
+                  WIDTH),
+              aprilTagMap.entrySet().stream()
+                  .filter(e -> e.getKey().startsWith("HUB"))
+                  .mapToInt(e -> e.getValue().getId(false))
+                  .toArray());
+
+      BLUE =
+          new Target3d(
+              new Translation3d(
+                  aprilTagMap.get("HUB_NEAR").getPose(true).getMeasureX().plus(WIDTH.div(2.0)),
+                  CENTER.getMeasureY(),
+                  HEIGHT),
+              aprilTagMap.entrySet().stream()
+                  .filter(e -> e.getKey().startsWith("HUB"))
+                  .mapToInt(e -> e.getValue().getId(true))
+                  .toArray());
+    }
+
+    public static void updateFields() {
+      GOAL = AllianceInterface.isBlue() ? BLUE : RED;
+    }
+  }
+
+  static class TOWER implements AllianceInterface {
+    public static Target3d CENTER;
+    public static Target3d LEFT;
+    public static Target3d RIGHT;
+
+    private static final Distance ALLIANCE_WALL_TO_TOWER_FRONT = Inches.of(43.510);
+    private static final Distance TOWER_Y_TARGET_OFFSET = Inches.of(22.875);
+    private static final Distance TARGET_X_OFFSET =
+        ALLIANCE_WALL_TO_TOWER_FRONT.plus(ROBOT.ROBOTLENGTH.div(2.0)).plus(ROBOT.BUMPERTHICKNESS);
+
+    public static void init() {
+      RED.init();
+      BLUE.init();
+    }
+
+    public static class RED {
+      public static Pose3d APRILTAG;
+      public static Target3d CENTER;
+      public static Target3d LEFT;
+      public static Target3d RIGHT;
+
+      public static void init() {
+        APRILTAG = aprilTagMap.get("TOWER").getPose(false);
+
+        CENTER =
+            new Target3d(
+                new Translation3d(
+                    APRILTAG.getMeasureX().minus(TARGET_X_OFFSET),
+                    APRILTAG.getMeasureY(),
+                    Meters.zero()),
+                aprilTagMap.entrySet().stream()
+                    .filter(e -> e.getKey().startsWith("TOWER"))
+                    .mapToInt(e -> e.getValue().getId(false))
+                    .toArray());
+
+        LEFT =
+            new Target3d(
+                new Translation3d(
+                    APRILTAG.getMeasureX().minus(TARGET_X_OFFSET),
+                    APRILTAG.getMeasureY().minus(TOWER_Y_TARGET_OFFSET),
+                    Meters.zero()),
+                aprilTagMap.entrySet().stream()
+                    .filter(e -> e.getKey().startsWith("TOWER"))
+                    .mapToInt(e -> e.getValue().getId(false))
+                    .toArray());
+
+        RIGHT =
+            new Target3d(
+                new Translation3d(
+                    APRILTAG.getMeasureX().minus(TARGET_X_OFFSET),
+                    APRILTAG.getMeasureY().plus(TOWER_Y_TARGET_OFFSET),
+                    Meters.zero()),
+                aprilTagMap.entrySet().stream()
+                    .filter(e -> e.getKey().startsWith("TOWER"))
+                    .mapToInt(e -> e.getValue().getId(false))
+                    .toArray());
+      }
+    }
+
+    public static class BLUE {
+      public static Pose3d APRILTAG;
+      public static Target3d CENTER;
+      public static Target3d LEFT;
+      public static Target3d RIGHT;
+
+      public static void init() {
+        APRILTAG = aprilTagMap.get("TOWER").getPose(true);
+
+        CENTER =
+            new Target3d(
+                new Translation3d(
+                    APRILTAG.getMeasureX().plus(TARGET_X_OFFSET),
+                    APRILTAG.getMeasureY(),
+                    Meters.zero()),
+                aprilTagMap.entrySet().stream()
+                    .filter(e -> e.getKey().startsWith("TOWER"))
+                    .mapToInt(e -> e.getValue().getId(true))
+                    .toArray());
+        LEFT =
+            new Target3d(
+                new Translation3d(
+                    APRILTAG.getMeasureX().plus(TARGET_X_OFFSET),
+                    APRILTAG.getMeasureY().plus(TOWER_Y_TARGET_OFFSET),
+                    Meters.zero()),
+                aprilTagMap.entrySet().stream()
+                    .filter(e -> e.getKey().startsWith("TOWER"))
+                    .mapToInt(e -> e.getValue().getId(true))
+                    .toArray());
+
+        RIGHT =
+            new Target3d(
+                new Translation3d(
+                    APRILTAG.getMeasureX().plus(TARGET_X_OFFSET),
+                    APRILTAG.getMeasureY().minus(TOWER_Y_TARGET_OFFSET),
+                    Meters.zero()),
+                aprilTagMap.entrySet().stream()
+                    .filter(e -> e.getKey().startsWith("TOWER"))
+                    .mapToInt(e -> e.getValue().getId(true))
+                    .toArray());
+      }
+    }
+
+    public static void updateFields() {
+      if (AllianceInterface.isBlue()) {
+        CENTER = BLUE.CENTER;
+        LEFT = BLUE.LEFT;
+        RIGHT = BLUE.RIGHT;
+      } else {
+        CENTER = RED.CENTER;
+        LEFT = RED.LEFT;
+        RIGHT = RED.RIGHT;
+      }
     }
   }
 }
