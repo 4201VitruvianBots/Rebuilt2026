@@ -285,4 +285,8 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return m_autoChooser.getSelected();
   }
+
+  public void robotPeriodic() {
+    FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
+  }
 }

@@ -15,6 +15,7 @@ public class TestFieldConstants {
 
   @Test
   public void testFieldConstants() {
+    // Just check that the values are different. Mostly redundant now, but this was meant to debug an earlier issue
     FIELD.initializeConstants();
 
     assertNotEquals(FIELD.TOWER.RED.CENTER, FIELD.TOWER.BLUE.CENTER);
