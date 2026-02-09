@@ -11,5 +11,6 @@ public class TestFieldConstants {
     FIELD.initializeConstants();
 
     assertNotEquals(FIELD.TOWER.RED.CENTER, FIELD.TOWER.BLUE.CENTER);
+    assertNotEquals(FIELD.ZONE.BLUE.ZONE, FIELD.ZONE.RED.ZONE);
   }
 }

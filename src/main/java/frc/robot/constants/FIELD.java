@@ -95,7 +95,6 @@ public class FIELD {
     fieldSim.addTranslations("Blue Right Trench", ZONE.BLUE.TRENCH.RIGHT.getCorners());
   }
 
-  @SuppressWarnings("SuspiciousNameCombination")
   static class ZONE implements AllianceInterface {
     public static Class<? extends BASE_ZONE> ALLIANCE;
     public static Class<? extends BASE_ZONE> OPPONENT;
@@ -136,7 +135,6 @@ public class FIELD {
       BLUE.init();
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
     public static class RED extends BASE_ZONE {
       public static FieldRectangle2d ZONE;
       public static FieldRectangle2d DEPOT;
@@ -172,19 +170,8 @@ public class FIELD {
                 new Translation2d(RED_HUB_X_FAR, FIELD_WIDTH.minus(TRENCH_WIDTH)),
                 new Translation2d(RED_HUB_X_NEAR, FIELD_WIDTH));
       }
-
-      public static class BUMP {
-        public static FieldRectangle2d LEFT;
-        public static FieldRectangle2d RIGHT;
-      }
-
-      public static class TRENCH {
-        public static FieldRectangle2d LEFT;
-        public static FieldRectangle2d RIGHT;
-      }
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
     public static class BLUE extends BASE_ZONE {
       public static FieldRectangle2d ZONE;
       public static FieldRectangle2d DEPOT;
@@ -219,16 +206,6 @@ public class FIELD {
                 new Translation2d(BLUE_HUB_X_NEAR, Meters.zero()),
                 new Translation2d(BLUE_HUB_X_FAR, TRENCH_WIDTH));
       }
-
-      public static class BUMP {
-        public static FieldRectangle2d LEFT;
-        public static FieldRectangle2d RIGHT;
-      }
-
-      public static class TRENCH {
-        public static FieldRectangle2d LEFT;
-        public static FieldRectangle2d RIGHT;
-      }
     }
 
     public static void updateFields() {
@@ -241,7 +218,20 @@ public class FIELD {
       }
     }
 
-    public abstract static class BASE_ZONE {}
+    public static class BASE_ZONE {
+      public static BUMP BUMP = new BUMP();
+      public static TRENCH TRENCH = new TRENCH();
+
+      public static class BUMP {
+        public FieldRectangle2d LEFT;
+        public FieldRectangle2d RIGHT;
+      }
+
+      public static class TRENCH {
+        public FieldRectangle2d LEFT;
+        public FieldRectangle2d RIGHT;
+      }
+    }
   }
 
   static class HUB implements AllianceInterface {
