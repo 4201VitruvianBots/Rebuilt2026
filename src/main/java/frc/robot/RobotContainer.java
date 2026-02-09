@@ -31,7 +31,7 @@ import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
 import frc.robot.constants.FIELD;
-import frc.robot.generated.WoodBotConstants;
+import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Climber;
@@ -58,7 +58,7 @@ public class RobotContainer {
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
   private Hood m_hood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = WoodBotConstants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
@@ -94,7 +94,7 @@ public class RobotContainer {
 
   @NotLogged
   private final double MaxSpeed =
-      WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
+      V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
 
   private Boolean m_flipToRight = false;
 
