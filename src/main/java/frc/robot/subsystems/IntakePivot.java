@@ -41,7 +41,7 @@ import frc.team4201.lib.utils.CtreUtils;
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBaseCanbus);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBase);
 
   private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
 

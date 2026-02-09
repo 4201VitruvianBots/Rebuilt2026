@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SWERVE;
-import frc.robot.generated.WoodBotConstants.TunerSwerveDrivetrain;
+import frc.robot.generated.V1Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.CtreUtils;
 import frc.team4201.lib.utils.ModuleMap;

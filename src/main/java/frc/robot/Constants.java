@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.derive;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
@@ -121,8 +122,8 @@ public final class Constants {
   }
 
   public class CAN {
-    public static final String rioCanbus = "rio";
-    public static final String driveBaseCanbus = "drivebase";
+    public static final CANBus roboRIO = new CANBus("rio");
+    public static final CANBus driveBase = new CANBus("drivebase");
 
     public static final int pigeon = 9;
 
