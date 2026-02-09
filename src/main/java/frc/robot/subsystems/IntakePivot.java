@@ -24,6 +24,9 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -41,6 +44,9 @@ public class IntakePivot extends SubsystemBase {
   private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBase);
 
   private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
+
+  private DoubleSubscriber m_angleSubscriber;
+  private DoublePublisher m_anglePublisher;
 
   private final MotionMagicTorqueCurrentFOC m_request =
       new MotionMagicTorqueCurrentFOC(Rotations.of(0.0));
@@ -168,5 +174,19 @@ public class IntakePivot extends SubsystemBase {
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Intake Angle Setpoint");
+    m_angleSubscriber = topic.subscribe(0.0);
+    m_anglePublisher = topic.publish();
+    m_anglePublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }
