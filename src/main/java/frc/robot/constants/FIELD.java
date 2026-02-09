@@ -8,6 +8,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.Controls;
 import frc.team4201.lib.geometry.FieldRectangle2d;
 import frc.team4201.lib.geometry.LinkedAprilTag;
 import frc.team4201.lib.geometry.Target3d;
@@ -21,12 +22,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FIELD {
+  /**
+   * Field constants to use.
+   *
+   * The default value of the field constants should already be set based on the alliance you are on,
+   * which should be set/updated when the robot is disabled.
+   *
+  **/
   private static AprilTagFieldLayout fieldLayout;
   private static Map<String, LinkedAprilTag> aprilTagMap = new HashMap<>();
 
   private static Distance FIELD_LENGTH;
   private static Distance FIELD_WIDTH;
   private static Translation2d CENTER;
+  private static DriverStation.Alliance ALLIANCE;
+  private static SECTOR[][] SECTOR_MAP;
 
   public static void initializeConstants() {
     if (DriverStation.isFMSAttached()) {
@@ -71,6 +81,12 @@ public class FIELD {
     ZONE.updateFields();
     HUB.updateFields();
     TOWER.updateFields();
+    ALLIANCE = Controls.getAllianceColor();
+    if (ALLIANCE == DriverStation.Alliance.Blue) {
+      SECTOR_MAP = SECTOR_MAP_BLUE;
+    } else {
+      SECTOR_MAP = SECTOR_MAP_RED;
+    }
   }
 
   public static void plotAllPositions(FieldSim fieldSim) {
@@ -95,7 +111,53 @@ public class FIELD {
     fieldSim.addTranslations("Blue Right Trench", ZONE.BLUE.TRENCH.RIGHT.getCorners());
   }
 
-  static class ZONE implements AllianceInterface {
+  public enum SECTOR {
+    RED_LEFT,
+    RED_RIGHT,
+    BLUE_LEFT,
+    BLUE_RIGHT,
+    NEUTRAL_NEAR_LEFT,
+    NEUTRAL_NEAR_RIGHT,
+    NEUTRAL_FAR_LEFT,
+    NEUTRAL_FAR_RIGHT,
+    UNKNOWN
+  }
+
+  static SECTOR[][] SECTOR_MAP_RED = {
+    {
+      SECTOR.RED_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.BLUE_RIGHT,
+    },
+    {SECTOR.RED_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.BLUE_LEFT}
+  };
+  static SECTOR[][] SECTOR_MAP_BLUE = {
+    {SECTOR.BLUE_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.RED_RIGHT},
+    {SECTOR.BLUE_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.RED_LEFT}
+  };
+
+  static SECTOR CURRENT_SECTOR = SECTOR.UNKNOWN;
+
+  public static void updateCurrentSector(Pose2d robotPose) {
+    int yIdx = robotPose.getY() > CENTER.getY() ? 1 : 0;
+    int xIdx = -1;
+
+    if (robotPose.getX() > ZONE.RED_ZONE_LINE.in(Meters)) {
+      xIdx = 3;
+    } else if (robotPose.getX() > CENTER.getX()) {
+      xIdx = 2;
+    } else if (robotPose.getX() > ZONE.BLUE_ZONE_LINE.in(Meters)) {
+      xIdx = 1;
+    } else {
+      xIdx = 0;
+    }
+
+    CURRENT_SECTOR = SECTOR_MAP[yIdx][xIdx];
+  }
+
+  public static SECTOR getCurrentSector() {
+    return CURRENT_SECTOR;
+  }
+
+  public static class ZONE implements AllianceInterface {
     public static Class<? extends BASE_ZONE> ALLIANCE;
     public static Class<? extends BASE_ZONE> OPPONENT;
 
@@ -234,7 +296,7 @@ public class FIELD {
     }
   }
 
-  static class HUB implements AllianceInterface {
+  public static class HUB implements AllianceInterface {
     public static final Distance HEIGHT = Inches.of(56.5);
     public static final Distance WIDTH = Inches.of(47.0);
 

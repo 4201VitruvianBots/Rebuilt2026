@@ -82,6 +82,7 @@ public class ROBOT {
   public static final Distance ROBOTWIDTH = Inches.of(23.0);
   public static final Distance ROBOTLENGTH = Inches.of(33.0);
   public static final Distance BUMPERTHICKNESS = Inches.of(2.75);
+
   //   public static void initV3() {
   //     robotID = ROBOT_ID.V3;
   //   }
