@@ -25,11 +25,11 @@ public class FIELD {
   /**
    * Field constants to use.
    *
-   * The default value of the field constants should already be set based on the alliance you are on,
-   * which should be set/updated when the robot is disabled.
-   *
-  **/
+   * <p>The default value of the field constants should already be set based on the alliance you are
+   * on, which should be set/updated when the robot is disabled.
+   */
   private static AprilTagFieldLayout fieldLayout;
+
   private static Map<String, LinkedAprilTag> aprilTagMap = new HashMap<>();
 
   private static Distance FIELD_LENGTH;
