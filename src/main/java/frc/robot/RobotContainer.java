@@ -31,7 +31,7 @@ import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
 import frc.robot.constants.FIELD;
-import frc.robot.generated.WoodBotConstants;
+import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Climber;
@@ -58,7 +58,7 @@ public class RobotContainer {
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
   private Hood m_hood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = WoodBotConstants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
@@ -94,7 +94,7 @@ public class RobotContainer {
 
   @NotLogged
   private final double MaxSpeed =
-      WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
+      V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
 
   private Boolean m_flipToRight = false;
 
@@ -153,21 +153,21 @@ public class RobotContainer {
               return drive;
             }));
     m_fieldSim = new FieldSim();
-    m_flywheel = new Flywheel();
-    m_controls = new Controls();
+    // m_flywheel = new Flywheel();
+    // m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    m_hood = new Hood();
+    // m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    m_intakePivot = new IntakePivot();
-    m_intake = new Intake();
-    m_uptake = new Uptake();
-    m_indexer = new Indexer();
-    m_climber = new Climber();
-    m_led = new LEDs();
-    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    // m_intakePivot = new IntakePivot();
+    // m_intake = new Intake();
+    // m_uptake = new Uptake();
+    // m_indexer = new Indexer();
+    // m_climber = new Climber();
+    // m_led = new LEDs();
+    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
