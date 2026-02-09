@@ -90,9 +90,9 @@ public class ShootOnTheMove extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
     Translation2d currentPose = m_swerveDrivetrain.getState().Pose.getTranslation();
     double robotToTargetDistance = m_goal.getDistance(currentPose);
+    Shot shot = distanceToShotMap.get(Meters.of(robotToTargetDistance));
 
     double PositionY = m_swerveDrivetrain.getState().Pose.getY();
     double PositionX = m_swerveDrivetrain.getState().Pose.getX();
@@ -113,7 +113,7 @@ public class ShootOnTheMove extends Command {
       double offsetY = VelocityY * timeOfFlight;
       lookaheadPose =
           new Pose2d(
-              currentPose.plus(new Translation2d(offsetX, offsetY)),
+              lookaheadPose.getTranslation().plus(new Translation2d(offsetX, offsetY)),
               m_swerveDrivetrain.getState().Pose.getRotation());
       robotToTargetDistance = m_goal.getDistance(lookaheadPose.getTranslation());
     }
@@ -136,7 +136,7 @@ public class ShootOnTheMove extends Command {
     double getOffsetAngleDeg =
         Math.asin((VelocityY * PositionX + VelocityX * PositionY) / (newDist * robotToTargetDistance));
 
-    var targetDelta = m_goal.minus(m_swerveDrivetrain.getState().Pose.getTranslation()).getAngle();
+    var targetDelta = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
 
     // all of the logic for angle is above this Comment
 
@@ -148,8 +148,8 @@ public class ShootOnTheMove extends Command {
 
     m_swerveDrivetrain.setChassisSpeedControl(
         new ChassisSpeeds(
-            m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
-            m_turnInput.getAsDouble() * SWERVE.kMaxSpeedMetersPerSecond,
+            m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
+            m_turnInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
             turnRate));
   }
 

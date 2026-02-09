@@ -97,8 +97,8 @@ public final class Constants {
       public static final double gearRatio =
           1.0; // TODO: Change this later because this is confirmed not what the final thing
       // will be
-      public static final double peakForwardOutput = 0.4; // Placeholder value
-      public static final double peakReverseOutput = -0.35; // Placeholder value
+      public static final double peakForwardTorqueCurrent = 60; // Placeholder value
+      public static final double peakReverseTorqueCurrent = -0.35; // Placeholder value
       public static final double kInertia = 0.005;
       public static final double kStatorCurrentLimit = 30;
 
@@ -205,6 +205,8 @@ public final class Constants {
             new Translation2d(-kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)));
 
     public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
+    public static final double kMaxSpeedShootingMetersPerSecond = Units.feetToMeters(10);
+    
     public static final double kMaxRotationRadiansPerSecond =
         Math.PI * 1.0; // Temporary to reduce speed (original value 2.0).
 
