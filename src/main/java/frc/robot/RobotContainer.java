@@ -153,21 +153,21 @@ public class RobotContainer {
               return drive;
             }));
     m_fieldSim = new FieldSim();
-    // m_flywheel = new Flywheel();
-    // m_controls = new Controls();
+    m_flywheel = new Flywheel();
+    m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    // m_hood = new Hood();
+    m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
-    // m_intake = new Intake();
-    // m_uptake = new Uptake();
-    // m_indexer = new Indexer();
-    // m_climber = new Climber();
-    // m_led = new LEDs();
-    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    m_intakePivot = new IntakePivot();
+    m_intake = new Intake();
+    m_uptake = new Uptake();
+    m_indexer = new Indexer();
+    m_climber = new Climber();
+    m_led = new LEDs();
+    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
