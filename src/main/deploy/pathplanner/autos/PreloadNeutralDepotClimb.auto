@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreloadNeutralDepotClimb1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreloadNeutralDepotClimb2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreloadNeutralDepotClimb3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreloadNeutralDepotClimb4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreloadNeutralDepotClimb5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PreloadNeutralDepotClimb6"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

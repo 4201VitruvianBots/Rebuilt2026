@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.FIELD;
 // import frc.robot.commands.AutoAlignDrive;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 // import frc.team4201.lib.simulation.LimelightSim;
@@ -31,6 +33,7 @@ public class Vision extends SubsystemBase {
 
   // TODO: Re-add this
   //   private LimelightSim visionSim;
+  private Controls m_controls;
 
   private boolean m_localized;
 
@@ -44,7 +47,12 @@ public class Vision extends SubsystemBase {
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable table = inst.getTable("LimelightPoseEstimate");
 
+  public final DoubleSubscriber m_kPAutoAlignSubscriber;
+  public final DoubleSubscriber m_kDAutoAlignSubscriber;
+
   private final DoublePublisher estTimeStamp = table.getDoubleTopic("estTimeStamp").publish();
+  public final DoublePublisher m_kPAutoAlignPublisher;
+  public final DoublePublisher m_kDAutoAlignPublisher;
 
   private final StructPublisher<Pose2d> estPoseLLR =
       table.getStructTopic("estPoseLLR", Pose2d.struct).publish();
@@ -53,13 +61,24 @@ public class Vision extends SubsystemBase {
       table.getStructTopic("estPoseLLL", Pose2d.struct).publish();
 
   public Vision(Controls controls) {
-    // m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
+    m_controls = controls;
+    m_goal = Controls.isRedAlliance() ? FIELD.blueHub : FIELD.redHub;
     registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, CAMERA_SERVER.limelightR.toString(), port);
       PortForwarder.add(port + 10, CAMERA_SERVER.limelightL.toString(), port);
     }
+
+    var topickP =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kPAutoAlign");
+    var topickD =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kDAutoAlign");
+    m_kPAutoAlignSubscriber = topickP.subscribe(7.4);
+    m_kDAutoAlignSubscriber = topickD.subscribe(0.3);
+
+    m_kPAutoAlignPublisher = topickP.publish();
+    m_kDAutoAlignPublisher = topickD.publish();
   }
 
   public void registerSwerveDrive(CommandSwerveDrivetrain swerveDriveTrain) {
@@ -233,6 +252,45 @@ public class Vision extends SubsystemBase {
     // smallest signed angle difference in [-pi, pi]
     double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
     return Math.abs(error) <= Units.degreesToRadians(1.0);
+  }
+
+  @Logged(name = "Is in Neutral Zone?", importance = Importance.DEBUG)
+  public boolean isInNeutralZone() {
+    return FIELD.neutralZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Red Zone?", importance = Importance.DEBUG)
+  public boolean isInRedZone() {
+    return FIELD.redZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Blue Zone?", importance = Importance.DEBUG)
+  public boolean isInBlueZone() {
+    return FIELD.blueZone.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Opposing Alliance Zone?", importance = Importance.DEBUG)
+  public boolean isInOpposingAllianceZone() {
+    if (Controls.isBlueAlliance()) {
+      return isInRedZone();
+    } else {
+      return isInBlueZone();
+    }
+  }
+
+  @Logged(name = "Is in Right Half?", importance = Importance.DEBUG)
+  public boolean isInRightHalf() {
+    return FIELD.rightHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  @Logged(name = "Is in Left Half?", importance = Importance.DEBUG)
+  public boolean isInLeftHalf() {
+    return FIELD.leftHalf.contains(m_swerveDriveTrain.getState().Pose.getTranslation());
+  }
+
+  public void testInit() {
+    m_kPAutoAlignPublisher.set(7.4);
+    m_kDAutoAlignPublisher.set(0.3);
   }
 
   public void teleopInit() {}
