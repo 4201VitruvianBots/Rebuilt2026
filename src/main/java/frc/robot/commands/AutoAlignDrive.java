@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -9,20 +8,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private final Vision m_vision;
-  Translation2d m_goal = new Translation2d();
+  private Translation2d m_goal = Translation2d.kZero;
 
   private Double kTeleP_Theta = 7.4;
   private Double kTeleD_Theta = 0.3;
   public static final double kTeleI_Theta = 0.0;
 
-  private PIDController m_PidController =
+  private final PIDController m_PidController =
       new PIDController(kTeleP_Theta, kTeleI_Theta, kTeleD_Theta);
 
   private final DoubleSupplier m_throttleInput;
@@ -49,18 +47,14 @@ public class AutoAlignDrive extends Command {
     kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
     kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
     m_PidController.reset();
-    Rectangle2d m_goalZone;
 
-    // If we're outside of our own zone, then we align to pass.
-    if (m_vision.isInOpposingAllianceZone() || m_vision.isInNeutralZone()) {
-      m_goalZone =
-          Controls.isBlueAlliance()
-              ? (m_vision.isInLeftHalf() ? FIELD.blueZoneLeft : FIELD.blueZoneRight)
-              : (m_vision.isInLeftHalf() ? FIELD.redZoneLeft : FIELD.redZoneRight);
-      m_goal = m_goalZone.getCenter().getTranslation();
+    // If we're outside our own zone, then we align to pass.
+    if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
+      // TODO: Add pass position as goal
+      m_goal = Translation2d.kZero;
       // If we're in our own zone, then we align to the hub
     } else {
-      m_goal = Controls.isBlueAlliance() ? FIELD.blueAutoHub : FIELD.redAutoHub;
+      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     }
   }
 
