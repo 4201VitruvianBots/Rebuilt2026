@@ -14,10 +14,10 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.derive;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
-import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -40,7 +40,7 @@ public final class Constants {
     public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
-    public static final double gearRatio = 32.0 /24.0; // Placeholder value
+    public static final double gearRatio = 32.0 / 24.0; // Placeholder value
     public static final double peakForwardOutput = 0.4; // Placeholder value
     public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
@@ -54,11 +54,11 @@ public final class Constants {
 
     public static final DCMotor gearbox =
         DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
-    
+
     public static final Distance fuelLaunchHeight = Inches.of(26.15);
     public static final Distance radius = Inches.of(2.0);
-    
-    public static final int ballsPerSecond = 15; 
+
+    public static final int ballsPerSecond = 15;
 
     public static class Shot {
       public final AngularVelocity shooterRPM;
@@ -206,7 +206,7 @@ public final class Constants {
 
     public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
     public static final double kMaxSpeedShootingMetersPerSecond = Units.feetToMeters(10);
-    
+
     public static final double kMaxRotationRadiansPerSecond =
         Math.PI * 1.0; // Temporary to reduce speed (original value 2.0).
 

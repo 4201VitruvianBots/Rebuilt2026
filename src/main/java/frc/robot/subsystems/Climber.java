@@ -18,7 +18,6 @@ import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -77,7 +76,7 @@ public class Climber extends SubsystemBase {
           CLIMBER.upperLimit.in(Meters),
           true,
           0);
-  
+
   private final TalonFXSimState m_motorSimState;
 
   /** Creates a new Climber. */
@@ -144,15 +143,16 @@ public class Climber extends SubsystemBase {
     return CLIMBER.drumRotationsToDistance.times(
         m_climberMotor.getPosition().clone().refresh().getValue().magnitude());
   }
-  
+
   // For Robot2d Simulation
   @NotLogged
   public LinearVelocity getVelocity() {
     return InchesPerSecond.of(
-        m_climberMotor.getVelocity().clone().refresh().getValue().in(RotationsPerSecond) * CLIMBER.drumRotationsToDistance.in(Meters));
+        m_climberMotor.getVelocity().clone().refresh().getValue().in(RotationsPerSecond)
+            * CLIMBER.drumRotationsToDistance.in(Meters));
   }
-  
-  public double convertDistancetoRotations(Distance distance){
+
+  public double convertDistancetoRotations(Distance distance) {
     return distance.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters);
   }
 

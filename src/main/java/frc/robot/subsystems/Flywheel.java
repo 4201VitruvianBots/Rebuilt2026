@@ -23,7 +23,6 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -33,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.FLYWHEEL;
 import frc.robot.Constants.FLYWHEEL.MANUAL_RPM;
-import frc.robot.simulation.FuelSim;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Flywheel extends SubsystemBase {
@@ -132,7 +130,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   @Logged(name = "At RPM Setpoint?", importance = Importance.DEBUG)
-  public boolean isAtRPMSetpoint(){
+  public boolean isAtRPMSetpoint() {
     return MathUtil.isNear(getRPMSetpoint(), getMotorSpeedRPM(), FLYWHEEL.kRPMSetpointTolerance);
   }
 

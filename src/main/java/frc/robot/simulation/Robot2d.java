@@ -25,13 +25,11 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FLYWHEEL;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;
@@ -84,9 +82,9 @@ public class Robot2d extends SubsystemBase {
               .in(Meters)); // Intake is ~3.5 inches above center of bumpers
   private final Arm2d m_intakePivot =
       new Arm2d(
-      new Arm2dConfig(
-          "Intake Pivot",
-          m_colorIntake,
+          new Arm2dConfig(
+                  "Intake Pivot",
+                  m_colorIntake,
                   Degrees.of(
                       159), // Angle between chassis and first segment of intake when extended
                   Inches.of(10.735) // Length of first segment of intake
@@ -106,14 +104,13 @@ public class Robot2d extends SubsystemBase {
                   Inches.of(1.25).in(LineWidthInches),
                   m_colorIntake));
   private final MechanismLigament2d m_intakeSegment2 =
-      m_intakeSegment1
-          .append(
-              new MechanismLigament2d(
-                  "Intake Segment 2",
-                  Inches.of(8.27).in(Meters),
-                  Degrees.of(48.5).in(Degrees),
-                  Inches.of(2.679).in(LineWidthInches),
-                  m_colorIntake));
+      m_intakeSegment1.append(
+          new MechanismLigament2d(
+              "Intake Segment 2",
+              Inches.of(8.27).in(Meters),
+              Degrees.of(48.5).in(Degrees),
+              Inches.of(2.679).in(LineWidthInches),
+              m_colorIntake));
 
   // Indexer
   private final MechanismRoot2d m_indexerRoot =
@@ -159,7 +156,7 @@ public class Robot2d extends SubsystemBase {
           uptakeRootY.plus(uptakeHeight).in(Meters));
   private final Flywheel2d m_flywheel =
       new Flywheel2d(
-              new Flywheel2dConfig(
+          new Flywheel2dConfig(
               "Flywheel",
               m_colorFlywheel, // Grey color for flywheel
               FLYWHEEL.radius // Radius of the flywheel
@@ -233,8 +230,10 @@ public class Robot2d extends SubsystemBase {
   public void simulationPeriodic() {
     if (m_subsystemMap.containsKey("Intake")) {
       var intakeSubsystem = (Intake) m_subsystemMap.get("Intake");
-      VisualizationUtils.updateMotorColor(m_intakeSegment1, intakeSubsystem.getPercentOutput(), m_colorIntake);
-      VisualizationUtils.updateMotorColor(m_intakeSegment2, intakeSubsystem.getPercentOutput(), m_colorIntake);
+      VisualizationUtils.updateMotorColor(
+          m_intakeSegment1, intakeSubsystem.getPercentOutput(), m_colorIntake);
+      VisualizationUtils.updateMotorColor(
+          m_intakeSegment2, intakeSubsystem.getPercentOutput(), m_colorIntake);
     }
     if (m_subsystemMap.containsKey("IntakePivot")) {
       var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
@@ -242,11 +241,13 @@ public class Robot2d extends SubsystemBase {
     }
     if (m_subsystemMap.containsKey("Indexer")) {
       var indexerSubsystem = (Indexer) m_subsystemMap.get("Indexer");
-      VisualizationUtils.updateMotorColor(m_indexer, indexerSubsystem.getPercentOutput(), m_colorIndexer);
+      VisualizationUtils.updateMotorColor(
+          m_indexer, indexerSubsystem.getPercentOutput(), m_colorIndexer);
     }
     if (m_subsystemMap.containsKey("Uptake")) {
       var uptakeSubsystem = (Uptake) m_subsystemMap.get("Uptake");
-      VisualizationUtils.updateMotorColor(m_uptake, uptakeSubsystem.getPercentOutput(), m_colorUptake);
+      VisualizationUtils.updateMotorColor(
+          m_uptake, uptakeSubsystem.getPercentOutput(), m_colorUptake);
     }
     if (m_subsystemMap.containsKey("Flywheel")) {
       var flywheelSubsystem = (Flywheel) m_subsystemMap.get("Flywheel");
