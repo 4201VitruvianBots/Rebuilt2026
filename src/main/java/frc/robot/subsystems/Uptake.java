@@ -99,7 +99,7 @@ public class Uptake extends SubsystemBase {
     return m_motor.get();
   }
 
-  public double getRPMerror(){
+  public double getRPMerror() {
     return getRPMsetpoint() - getMotorSpeedRPM();
   }
 
@@ -118,7 +118,7 @@ public class Uptake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Math.abs(getRPMerror()) > UPTAKE.kVelocityErrorThreshold){
+    if (Math.abs(getRPMerror()) > UPTAKE.kVelocityErrorThreshold) {
       m_motor.setControl(m_DutyCycleOut.withOutput(Math.signum(getRPMerror())));
     } else {
       m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
