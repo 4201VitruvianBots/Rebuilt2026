@@ -159,7 +159,7 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
       m_robotSim = new Robot2d();
-      m_robotSim.registerSubsystems(m_flywheel, m_hood, m_indexer, m_intake, m_uptake);
+      m_robotSim.registerSubsystems(m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
     }
   }
 

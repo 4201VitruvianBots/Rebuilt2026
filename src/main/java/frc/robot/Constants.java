@@ -345,6 +345,8 @@ public final class Constants {
       public static final double kInertia = 0.005;
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
+      
+      public static final Distance radius = Inches.of(0.625);
 
       public enum INTAKE_SPEED {
         ZERO(0),

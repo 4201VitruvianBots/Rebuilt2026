@@ -15,6 +15,8 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,6 +65,12 @@ public class Intake extends SubsystemBase {
   @Logged(name = "Motor Output %", importance = Logged.Importance.INFO)
   public double getPercentOutput() {
     return m_motor.get();
+  }
+  
+  // For Robot2d simulation
+  @NotLogged
+  public AngularVelocity getVelocity() {
+    return m_motor.getVelocity().clone().refresh().getValue();
   }
 
   @NotLogged

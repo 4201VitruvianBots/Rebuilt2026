@@ -6,6 +6,7 @@ package frc.robot.simulation;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.derive;
@@ -23,15 +24,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CLIMBER;
 import frc.robot.Constants.FLYWHEEL;
+import frc.robot.Constants.INTAKE;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;
@@ -114,6 +115,14 @@ public class Robot2d extends SubsystemBase {
                   Degrees.of(48.5).in(Degrees),
                   Inches.of(2.679).in(LineWidthInches),
                   m_colorIntake));
+  private final Flywheel2d m_intakeRoller = 
+        new Flywheel2d(
+                new Flywheel2dConfig(
+                    "Intake Roller",
+                    m_colorFlywheel, // Grey color for flywheel
+                    INTAKE.ROLLERS.radius // Radius of the flywheel
+                    ),
+                m_intakeSegment2);
 
   // Indexer
   private final MechanismRoot2d m_indexerRoot =
@@ -172,7 +181,7 @@ public class Robot2d extends SubsystemBase {
           new Arm2dConfig(
               "Shooter Hood",
               m_colorHood, // Aqua color for shooter hood
-              Degrees.of(35), // TODO: Find actual angle
+              Degrees.of(0), // TODO: Find actual angle
               Inches.of(10.0) // TODO: Find actual length
               ),
           m_flywheelRoot);
@@ -229,16 +238,19 @@ public class Robot2d extends SubsystemBase {
     }
   }
 
+  // private Distance testClimberHeight = Inches.of(0);
+
   @Override
   public void simulationPeriodic() {
     if (m_subsystemMap.containsKey("Intake")) {
       var intakeSubsystem = (Intake) m_subsystemMap.get("Intake");
       VisualizationUtils.updateMotorColor(m_intakeSegment1, intakeSubsystem.getPercentOutput(), m_colorIntake);
       VisualizationUtils.updateMotorColor(m_intakeSegment2, intakeSubsystem.getPercentOutput(), m_colorIntake);
+      m_intakeRoller.update(intakeSubsystem.getVelocity());
     }
     if (m_subsystemMap.containsKey("IntakePivot")) {
       var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
-      m_intakePivot.update(intakePivotSubsystem.getAngle());
+      m_intakePivot.update(Degrees.of(-159).plus(INTAKE.PIVOT.maxAngle).minus(intakePivotSubsystem.getAngle()));
     }
     if (m_subsystemMap.containsKey("Indexer")) {
       var indexerSubsystem = (Indexer) m_subsystemMap.get("Indexer");
@@ -259,6 +271,12 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("Climber")) {
       var climberSubsystem = (Climber) m_subsystemMap.get("Climber");
       m_climber.update(climberSubsystem.getHeight(), climberSubsystem.getVelocity());
+    // // Increase the climber height by 0.1 inches every simulation tick to show the climbing animation
+    //     testClimberHeight = testClimberHeight.plus(Inches.of(0.08));
+    //     if (testClimberHeight.gt(CLIMBER.upperLimit)) {
+    //       testClimberHeight = CLIMBER.upperLimit;
+    //     }
+    //     m_climber.update(testClimberHeight, InchesPerSecond.of(4.0));
     }
   }
 }
