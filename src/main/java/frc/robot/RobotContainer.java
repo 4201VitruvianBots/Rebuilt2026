@@ -25,11 +25,12 @@ import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
-import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
+import frc.robot.commands.SysIDRotation;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.FIELD;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
@@ -152,22 +153,22 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
-    m_fieldSim = new FieldSim();
-    m_flywheel = new Flywheel();
+    // m_fieldSim = new FieldSim();
+    // m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    m_hood = new Hood();
+    // m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    m_intakePivot = new IntakePivot();
-    m_intake = new Intake();
-    m_uptake = new Uptake();
-    m_indexer = new Indexer();
-    m_climber = new Climber();
-    m_led = new LEDs();
-    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    // m_intakePivot = new IntakePivot();
+    // m_intake = new Intake();
+    // m_uptake = new Uptake();
+    // m_indexer = new Indexer();
+    // m_climber = new Climber();
+    // m_led = new LEDs();
+    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
@@ -179,51 +180,58 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
-      m_driverController
-          .rightBumper()
-          .toggleOnTrue(
-              new ParallelCommandGroup(
-                  new AutoAlignDrive(
-                      m_swerveDrive,
-                      m_vision,
-                      m_driverController::getLeftY,
-                      m_driverController::getLeftX),
-                  new Shoot(m_flywheel, m_vision)));
-    }
+    // if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
+    //   m_driverController
+    //       .rightBumper()
+    //       .toggleOnTrue(
+    //           new ParallelCommandGroup(
+    //               new AutoAlignDrive(
+    //                   m_swerveDrive,
+    //                   m_vision,
+    //                   m_driverController::getLeftY,
+    //                   m_driverController::getLeftX),
+    //               new Shoot(m_flywheel, m_vision)));
+    // }
 
-    if (m_swerveDrive != null && m_vision != null) {
-      m_driverController
-          .leftBumper()
-          .toggleOnTrue(
-              new AutoAlignDrive(
-                  m_swerveDrive,
-                  m_vision,
-                  m_driverController::getLeftY,
-                  m_driverController::getLeftX));
-    }
+    // if (m_swerveDrive != null && m_vision != null) {
+    //   m_driverController
+    //       .leftBumper()
+    //       .toggleOnTrue(
+    //           new AutoAlignDrive(
+    //               m_swerveDrive,
+    //               m_vision,
+    //               m_driverController::getLeftY,
+    //               m_driverController::getLeftX));
+    // }
 
-    if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision));
-    }
+    // if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
+    //   m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision));
+    // }
 
-    if (m_flywheel != null) {
-      m_driverController.y().whileTrue(new ShootManualFlywheel(m_flywheel));
-    }
+    // if (m_flywheel != null) {
+    //   m_driverController.y().whileTrue(new ShootManualFlywheel(m_flywheel));
+    // }
 
-    // I foresee a state machine in the future...
-    if (m_uptake != null && m_indexer != null && m_intake != null) {
-      m_driverController
-          .a()
-          .whileTrue(
-              new ParallelCommandGroup(
-                  new RunUptake(m_uptake),
-                  new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING),
-                  new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
-    }
+    // // I foresee a state machine in the future...
+    // if (m_uptake != null && m_indexer != null && m_intake != null) {
+    //   m_driverController
+    //       .a()
+    //       .whileTrue(
+    //           new ParallelCommandGroup(
+    //               new RunUptake(m_uptake),
+    //               new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING),
+    //               new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
+    // }
 
-    if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+    // if (m_intake != null) {
+    //   m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+    // }
+
+    if (m_swerveDrive != null){
+      m_driverController.a().whileTrue(new SysIDRotation(m_swerveDrive, true, Direction.kForward));
+      m_driverController.b().whileTrue(new SysIDRotation(m_swerveDrive, true, Direction.kReverse));
+      m_driverController.x().whileTrue(new SysIDRotation(m_swerveDrive, false, Direction.kForward));
+      m_driverController.y().whileTrue(new SysIDRotation(m_swerveDrive, false, Direction.kReverse));
     }
   }
 
