@@ -9,11 +9,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FLYWHEEL.Shot;
@@ -25,6 +27,8 @@ import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 public class ShootOnTheMove extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -59,7 +63,8 @@ public class ShootOnTheMove extends Command {
   private final Vision m_vision;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private final DoubleSupplier m_throttleInput;
-  private final DoubleSupplier m_turnInput;
+  private final DoubleSupplier m_strafeInput;
+  private static double phaseDelay; 
 
   private Double kTeleP_Theta = 5.0;
   private Double kTeleD_Theta = 0.0;
@@ -78,12 +83,12 @@ public class ShootOnTheMove extends Command {
       Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
-      DoubleSupplier turnInput) {
+      DoubleSupplier strafeInput) {
     m_flywheel = flywheel;
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
     m_throttleInput = throttleInput;
-    m_turnInput = turnInput;
+    m_strafeInput = strafeInput;
     m_shooterHood = shooterHood;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
@@ -98,17 +103,24 @@ public class ShootOnTheMove extends Command {
       m_goal = FIELD.redHub;
     }
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
+    m_PidController.reset();
+    phaseDelay = 0.03; // Magic number for now, figure out how to calculate this later
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
-    Translation2d currentPose = m_swerveDrivetrain.getState().Pose.getTranslation();
-
-    var chassisSpeeds = m_swerveDrivetrain.getState().Speeds;
-    double VelocityY = chassisSpeeds.vyMetersPerSecond;
-    double VelocityX = chassisSpeeds.vxMetersPerSecond;
+    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub()); // Create a shot object based on hub distance.
+    var chassisSpeeds = m_swerveDrivetrain.getState().Speeds; // Get robot relative chassis speeds
+    Pose2d estimatedPose = m_swerveDrivetrain.getState().Pose.exp( 
+            new Twist2d(
+                chassisSpeeds.vxMetersPerSecond * phaseDelay,
+                chassisSpeeds.vyMetersPerSecond * phaseDelay,
+                chassisSpeeds.omegaRadiansPerSecond * phaseDelay)); // Account for where the pose should be 
+ 
+    var fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds, estimatedPose.getRotation());
+    double VelocityY = fieldRelativeSpeeds.vyMetersPerSecond;
+    double VelocityX = fieldRelativeSpeeds.vxMetersPerSecond;
 
     double timeOfFlight = shot.timeOfFlight;
 
@@ -118,18 +130,19 @@ public class ShootOnTheMove extends Command {
     SmartDashboard.putNumber("Moving Goal Location X", movingGoalLocation.getMeasureX().in(Meters));
     SmartDashboard.putNumber("Moving Goal Location Y", movingGoalLocation.getMeasureY().in(Meters));
 
-    Translation2d toMovingGoal = movingGoalLocation.minus(currentPose);
+    Translation2d toMovingGoal = movingGoalLocation.minus(estimatedPose.getTranslation());
 
     double newDist = toMovingGoal.getDistance(new Translation2d());
 
     var targetDelta = toMovingGoal.getAngle();
     shot = distanceToShotMap.get(Meters.of(newDist));
+    timeOfFlight = shot.timeOfFlight;
 
     // all of the logic for angle is above this Comment
 
     var turnRate =
         m_PidController.calculate(
-            m_swerveDrivetrain.getState().Pose.getRotation().getRadians(),
+            estimatedPose.getRotation().getRadians(),
             targetDelta.getRadians());
 
     m_flywheel.setRPMOutputFOC(shot.shooterRPM.in(RPM));
@@ -138,7 +151,7 @@ public class ShootOnTheMove extends Command {
     m_swerveDrivetrain.setChassisSpeedControl(
         new ChassisSpeeds(
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-            m_turnInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
+            m_strafeInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
             turnRate));
   }
 
