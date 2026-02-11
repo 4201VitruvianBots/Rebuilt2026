@@ -6,12 +6,14 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
+import com.ctre.phoenix6.swerve.SwerveRequest.SysIdSwerveTranslation;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -62,10 +64,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   };
 
   private final TalonFX[] steerMotors = {
-    getModule(0).getDriveMotor(),
-    getModule(1).getDriveMotor(),
-    getModule(2).getDriveMotor(),
-    getModule(3).getDriveMotor()
+    getModule(0).getSteerMotor(),
+    getModule(1).getSteerMotor(),
+    getModule(2).getSteerMotor(),
+    getModule(3).getSteerMotor()
   };
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
@@ -131,7 +133,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   SysId.
    */
   private final SysIdRoutine m_sysIdRoutineRotation =
-      new SysIdRoutine(
+      new SysIdRoutine( 
           new SysIdRoutine.Config(
               /* This is in radians per second^2, but SysId only supports "volts per second" */
               Volts.of(Math.PI / 6).per(Second),

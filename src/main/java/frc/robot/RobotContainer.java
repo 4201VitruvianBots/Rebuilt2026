@@ -35,11 +35,6 @@ import frc.robot.constants.FIELD;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
@@ -130,6 +125,11 @@ public class RobotContainer {
 
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
+    SmartDashboard.putData("QuasiStatic Forward", new SysIDRotation(m_swerveDrive, true, Direction.kForward));
+    SmartDashboard.putData("Dynamic Forward", new SysIDRotation(m_swerveDrive, false, Direction.kForward));
+    SmartDashboard.putData("QuasiStatic Reverse", new SysIDRotation(m_swerveDrive, true, Direction.kReverse));
+    SmartDashboard.putData("Dynamic Reverse", new SysIDRotation(m_swerveDrive, false, Direction.kReverse));
+
   }
 
   private void initializeSubSystems() {
