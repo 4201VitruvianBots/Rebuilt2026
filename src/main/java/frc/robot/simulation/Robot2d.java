@@ -12,8 +12,11 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.derive;
 import static frc.robot.Constants.SIM.LineWidthInches;
 
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -237,8 +240,15 @@ public class Robot2d extends SubsystemBase {
       }
     }
   }
+  
+  // For Advantage Scope Calibration
+  @Logged(name = "ZeroedComponentPoses", importance = Logged.Importance.DEBUG)
+  public Pose3d[] getZeroedComponentPoses() {
+    return new Pose3d[] {new Pose3d(), new Pose3d()};
+  }
 
   // private Distance testClimberHeight = Inches.of(0);
+  // private Angle testIntakePivotAngle = Degrees.of(0);
 
   @Override
   public void simulationPeriodic() {
@@ -251,6 +261,12 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("IntakePivot")) {
       var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
       m_intakePivot.update(Degrees.of(-159).plus(INTAKE.PIVOT.maxAngle).minus(intakePivotSubsystem.getAngle()));
+    //   // Increase the intake pivot angle by 0.5 degrees every simulation tick to show the pivoting animation
+    //     testIntakePivotAngle = testIntakePivotAngle.plus(Degrees.of(0.5));
+    //     if (testIntakePivotAngle.gt(INTAKE.PIVOT.maxAngle)) {
+    //       testIntakePivotAngle = INTAKE.PIVOT.maxAngle;
+    //     }
+    //     m_intakePivot.update(Degrees.of(-159).plus(INTAKE.PIVOT.maxAngle).minus(testIntakePivotAngle));
     }
     if (m_subsystemMap.containsKey("Indexer")) {
       var indexerSubsystem = (Indexer) m_subsystemMap.get("Indexer");
