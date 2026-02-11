@@ -21,7 +21,6 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -170,7 +169,7 @@ public class Flywheel extends SubsystemBase {
     m_rpmSetpoint = RPM.of(m_rpmSubscriber.get());
   }
 
-  public double getRPMerror(){
+  public double getRPMerror() {
     return getRPMSetpoint() - getMotorSpeedRPM();
   }
 
