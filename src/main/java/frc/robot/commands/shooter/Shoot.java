@@ -1,6 +1,7 @@
 package frc.robot.commands.shooter;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -60,7 +61,7 @@ public class Shoot extends Command {
   @Override
   public void execute() {
     Shot shot = distanceToShotMap.get(m_vision.getDistanceToHub());
-    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    m_flywheel.setRPMOutputFOC(RPM.of(shot.shooterRPM));
     // m_shooterHood.setPosition(shot.hoodPosition);
   }
 

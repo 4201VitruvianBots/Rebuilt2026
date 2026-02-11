@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -43,6 +44,7 @@ public class Uptake extends SubsystemBase {
 
   private MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0.0);
+  private DutyCycleOut m_DutyCycleOut = new DutyCycleOut(0.0);
 
   private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
 
@@ -97,6 +99,10 @@ public class Uptake extends SubsystemBase {
     return m_motor.get();
   }
 
+  public double getRPMerror(){
+    return getRPMsetpoint() - getMotorSpeedRPM();
+  }
+
   @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
   public double getMotorSpeedRPM() {
     return m_motor.getVelocity().refresh().getValue().in(RPM);
@@ -112,7 +118,11 @@ public class Uptake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    if (Math.abs(getRPMerror()) > UPTAKE.kVelocityErrorThreshold){
+      m_motor.setControl(m_DutyCycleOut.withOutput(Math.signum(getRPMerror())));
+    } else {
+      m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    }
   }
 
   @Override

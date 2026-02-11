@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,6 +21,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -48,7 +50,8 @@ public class Flywheel extends SubsystemBase {
 
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0);
-  private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0);
+  private final DutyCycleOut m_DutyCycleOut = new DutyCycleOut(0);
+  private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0.0);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
 
   public final DoubleSubscriber m_rpmSubscriber;
@@ -79,7 +82,7 @@ public class Flywheel extends SubsystemBase {
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimitEnable = false;
 
     config.MotionMagic.MotionMagicCruiseVelocity = FLYWHEEL.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = FLYWHEEL.motionMagicAcceleration;
@@ -107,9 +110,8 @@ public class Flywheel extends SubsystemBase {
     m_neutralMode = neutralmode;
   }
 
-  public void setRPMOutputFOC(double rpm) {
-    m_rpmSetpoint = RPM.of(rpm);
-    m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+  public void setRPMOutputFOC(AngularVelocity rpm) {
+    m_rpmSetpoint = rpm;
   }
 
   public void setTorqueCurrentOutputFOC(Voltage voltage) {
@@ -168,8 +170,18 @@ public class Flywheel extends SubsystemBase {
     m_rpmSetpoint = RPM.of(m_rpmSubscriber.get());
   }
 
+  public double getRPMerror(){
+    return getRPMSetpoint() - getMotorSpeedRPM();
+  }
+
   @Override
-  public void periodic() {}
+  public void periodic() {
+    if (Math.abs(getRPMerror()) > FLYWHEEL.kVelocityErrorThreshold){
+      m_motor1.setControl(m_DutyCycleOut.withOutput(Math.signum(getRPMerror())));
+    } else {
+      m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RPM)));
+    }
+  }
 
   @Override
   public void simulationPeriodic() {
