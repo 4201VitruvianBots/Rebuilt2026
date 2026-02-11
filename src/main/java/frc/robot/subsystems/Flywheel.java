@@ -175,7 +175,7 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Math.abs(getRPMerror()) > FLYWHEEL.kVelocityErrorThreshold){
+    if (Math.abs(getRPMerror()) > FLYWHEEL.kVelocityErrorThreshold) {
       m_motor1.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
     } else {
       m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RPM)));
