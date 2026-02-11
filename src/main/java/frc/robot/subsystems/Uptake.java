@@ -44,7 +44,7 @@ public class Uptake extends SubsystemBase {
 
   private MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0.0);
-  private DutyCycleOut m_DutyCycleOut = new DutyCycleOut(0.0);
+  private DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0.0);
 
   private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
 
@@ -59,7 +59,7 @@ public class Uptake extends SubsystemBase {
 
     config.Feedback.SensorToMechanismRatio = UPTAKE.gearRatio;
 
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     config.MotionMagic.MotionMagicAcceleration = UPTAKE.kMotionMagicAcceleration;
@@ -119,7 +119,7 @@ public class Uptake extends SubsystemBase {
   @Override
   public void periodic() {
     if (Math.abs(getRPMerror()) > UPTAKE.kVelocityErrorThreshold){
-      m_motor.setControl(m_DutyCycleOut.withOutput(Math.signum(getRPMerror())));
+      m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
     } else {
       m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
     }

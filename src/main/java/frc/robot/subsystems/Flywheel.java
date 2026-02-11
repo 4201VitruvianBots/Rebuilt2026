@@ -50,8 +50,8 @@ public class Flywheel extends SubsystemBase {
 
   private final MotionMagicVelocityTorqueCurrentFOC m_request =
       new MotionMagicVelocityTorqueCurrentFOC(0);
-  private final DutyCycleOut m_DutyCycleOut = new DutyCycleOut(0);
-  private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0.0);
+  private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
+  private final TorqueCurrentFOC m_torqueCurrentFOC = new TorqueCurrentFOC(0.0);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
 
   public final DoubleSubscriber m_rpmSubscriber;
@@ -115,7 +115,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public void setTorqueCurrentOutputFOC(Voltage voltage) {
-    m_motor1.setControl(m_TorqueCurrentFOC.withOutput(voltage.abs(Volts)));
+    m_motor1.setControl(m_torqueCurrentFOC.withOutput(voltage.abs(Volts)));
   }
 
   @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
@@ -177,7 +177,7 @@ public class Flywheel extends SubsystemBase {
   @Override
   public void periodic() {
     if (Math.abs(getRPMerror()) > FLYWHEEL.kVelocityErrorThreshold){
-      m_motor1.setControl(m_DutyCycleOut.withOutput(Math.signum(getRPMerror())));
+      m_motor1.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
     } else {
       m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RPM)));
     }
