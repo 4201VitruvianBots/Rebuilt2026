@@ -15,6 +15,7 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -64,7 +65,7 @@ public class ShootOnTheMove extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private final DoubleSupplier m_throttleInput;
   private final DoubleSupplier m_strafeInput;
-  private static double phaseDelay; 
+  private static double phaseDelay = 0.0; 
 
   private Double kTeleP_Theta = 3.0;
   private Double kTeleD_Theta = 0.0;
@@ -100,7 +101,9 @@ public class ShootOnTheMove extends Command {
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
     m_PidController.reset();
-    phaseDelay = 0.03; // Magic number for now, figure out how to calculate this later
+    if (RobotBase.isReal()){
+      phaseDelay = 0.03;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -120,18 +123,21 @@ public class ShootOnTheMove extends Command {
 
     double timeOfFlight = shot.timeOfFlight;
 
-    Translation2d movingGoalLocation = m_goal.minus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));
+    Translation2d movingGoalLocation = m_goal.minus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));;
 
-    System.out.println(movingGoalLocation.getMeasureX().in(Meters));
-    System.out.println(movingGoalLocation.getMeasureY().in(Meters));
+    // Iterate to converge on correct shot and moving goal location
+    for (int i = 0; i < 2; i++) {
+      Translation2d toMovingGoal = movingGoalLocation.minus(estimatedPose.getTranslation());
+      double newDist = toMovingGoal.getDistance(new Translation2d());
+      shot = distanceToShotMap.get(Meters.of(newDist));
+    
+      timeOfFlight = shot.timeOfFlight;
+      movingGoalLocation = m_goal.minus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));
+    }
 
-    Translation2d toMovingGoal = movingGoalLocation.minus(estimatedPose.getTranslation());
+    var targetDelta = movingGoalLocation.minus(estimatedPose.getTranslation()).getAngle();    
 
-    double newDist = toMovingGoal.getDistance(new Translation2d());
-
-    var targetDelta = toMovingGoal.getAngle();
-    shot = distanceToShotMap.get(Meters.of(newDist));
-    timeOfFlight = shot.timeOfFlight;
+    movingGoalLocation = m_goal.plus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));
 
     // all of the logic for angle is above this Comment
 
