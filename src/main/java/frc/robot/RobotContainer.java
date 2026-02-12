@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.FLYWHEEL;
 import frc.robot.Constants.INDEXER.INDEXER_SPEED;
+import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.SWERVE;
 import frc.robot.Constants.USB;
@@ -26,9 +27,12 @@ import frc.robot.commands.Index;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.UpdateLEDs;
+import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.ShootManualFlywheel;
 import frc.robot.commands.shooter.ShootOnTheMove;
+import frc.robot.constants.FIELD;
+import frc.robot.generated.V1Constants;
 import frc.robot.generated.WoodBotConstants;
 import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
@@ -52,7 +56,7 @@ public class RobotContainer {
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
   private Hood m_hood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = WoodBotConstants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
@@ -87,13 +91,13 @@ public class RobotContainer {
   }
 
   @NotLogged
-  private double MaxSpeed =
-      WoodBotConstants.kSpeedAt12Volts.in(MetersPerSecond); // Kspeed at 12 volts desired top speed
+  private final double MaxSpeed =
+      V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
 
   private Boolean m_flipToRight = false;
 
   @NotLogged
-  private double MaxAngularRate =
+  private final double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -105,7 +109,7 @@ public class RobotContainer {
 
   private Robot2d m_robotSim;
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
-  private final FieldSim m_fieldSim = new FieldSim();
+  private FieldSim m_fieldSim = new FieldSim();
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -115,6 +119,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    FIELD.initializeConstants();
+    FIELD.updateConstants();
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
@@ -144,6 +150,7 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
+    m_fieldSim = new FieldSim();
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -161,6 +168,8 @@ public class RobotContainer {
     m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
+      FIELD.plotAllPositions(m_fieldSim);
+
       m_robotSim = new Robot2d();
       m_robotSim.registerSubsystems(m_flywheel, m_hood, m_indexer, m_intake, m_uptake);
     }
@@ -188,8 +197,8 @@ public class RobotContainer {
               new AutoAlignDrive(
                   m_swerveDrive,
                   m_vision,
-                  () -> m_driverController.getLeftY(),
-                  () -> m_driverController.getLeftX()));
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX));
     }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
@@ -209,14 +218,15 @@ public class RobotContainer {
       m_driverController.leftTrigger().whileTrue(new ShootManualFlywheel(m_flywheel));
     }
 
-    // I forsee a state machine in the future...
+    // I foresee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
       m_driverController
           .x()
           .whileTrue(
               new ParallelCommandGroup(
                   new RunUptake(m_uptake),
-                  new Index(m_indexer, INDEXER_SPEED.INDEXING),
+                  new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING),
+                  new IntakeSetpoint(m_intakePivot, PIVOT_SETPOINT.INTAKING),
                   new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
 
@@ -252,10 +262,7 @@ public class RobotContainer {
 
     m_autoSide.addOption("Depot", false);
     m_autoSide.addOption("Outpost", true);
-    m_autoSide.onChange(
-        (Boolean selected) -> {
-          m_flipToRight = selected;
-        });
+    m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
   }
 
   public void simulationPeriodic() {
@@ -278,11 +285,21 @@ public class RobotContainer {
     if (m_flywheel != null) m_flywheel.testInit();
     if (m_vision != null) m_vision.testInit();
     if (m_uptake != null) m_uptake.testInit();
+    if (m_indexer != null) m_indexer.testInit();
+    if (m_intakePivot != null) m_intakePivot.testInit();
+    if (m_intake != null) m_intake.testInit();
   }
 
   public void testPeriodic() {
     if (m_flywheel != null) m_flywheel.testPeriodic();
     if (m_uptake != null) m_uptake.testPeriodic();
+    if (m_indexer != null) m_indexer.testPeriodic();
+    if (m_intakePivot != null) m_intakePivot.testPeriodic();
+    if (m_intake != null) m_intakePivot.testPeriodic();
+  }
+
+  public void robotPeriodic() {
+    FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
   }
 
   /**

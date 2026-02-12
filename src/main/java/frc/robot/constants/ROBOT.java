@@ -1,5 +1,8 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.Inches;
+
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.RobotController;
@@ -75,6 +78,10 @@ public class ROBOT {
   //   public static void initV2() {
   //     robotID = ROBOT_ID.V2;
   //   }
+
+  public static final Distance ROBOTWIDTH = Inches.of(23.0);
+  public static final Distance ROBOTLENGTH = Inches.of(33.0);
+  public static final Distance BUMPERTHICKNESS = Inches.of(2.75);
 
   //   public static void initV3() {
   //     robotID = ROBOT_ID.V3;

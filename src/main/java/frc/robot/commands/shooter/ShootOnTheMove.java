@@ -66,7 +66,7 @@ public class ShootOnTheMove extends Command {
   private final DoubleSupplier m_strafeInput;
   private static double phaseDelay; 
 
-  private Double kTeleP_Theta = 5.0;
+  private Double kTeleP_Theta = 3.0;
   private Double kTeleD_Theta = 0.0;
   public static final double kTeleI_Theta = 0.0;
 
@@ -97,11 +97,7 @@ public class ShootOnTheMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (Controls.isBlueAlliance()) {
-      m_goal = FIELD.blueHub;
-    } else {
-      m_goal = FIELD.redHub;
-    }
+    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
     m_PidController.reset();
     phaseDelay = 0.03; // Magic number for now, figure out how to calculate this later
@@ -110,7 +106,7 @@ public class ShootOnTheMove extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub()); // Create a shot object based on hub distance.
+    Shot shot = distanceToShotMap.get(m_vision.getDistanceToHub()); // Create a shot object based on hub distance.
     var chassisSpeeds = m_swerveDrivetrain.getState().Speeds; // Get robot relative chassis speeds
     Pose2d estimatedPose = m_swerveDrivetrain.getState().Pose.exp( 
             new Twist2d(
@@ -126,9 +122,8 @@ public class ShootOnTheMove extends Command {
 
     Translation2d movingGoalLocation = m_goal.minus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));
 
-    SmartDashboard.putNumber("Distance to Hub", m_vision.getDistancetoHub().in(Meters));
-    SmartDashboard.putNumber("Moving Goal Location X", movingGoalLocation.getMeasureX().in(Meters));
-    SmartDashboard.putNumber("Moving Goal Location Y", movingGoalLocation.getMeasureY().in(Meters));
+    System.out.println(movingGoalLocation.getMeasureX().in(Meters));
+    System.out.println(movingGoalLocation.getMeasureY().in(Meters));
 
     Translation2d toMovingGoal = movingGoalLocation.minus(estimatedPose.getTranslation());
 
@@ -145,7 +140,7 @@ public class ShootOnTheMove extends Command {
             estimatedPose.getRotation().getRadians(),
             targetDelta.getRadians());
 
-    m_flywheel.setRPMOutputFOC(shot.shooterRPM.in(RPM));
+    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(shot.hoodAngle);
 
     m_swerveDrivetrain.setChassisSpeedControl(

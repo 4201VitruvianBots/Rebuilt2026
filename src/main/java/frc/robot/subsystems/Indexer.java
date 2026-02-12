@@ -8,15 +8,16 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,17 +30,27 @@ public class Indexer extends SubsystemBase {
   @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
   private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBaseCanbus);
 
-  @Logged(name = "Indexer Motor 2", importance = Importance.DEBUG)
+  @Logged(name = "Indexer Motor 2", importance = Importance.INFO)
   private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.driveBaseCanbus);
 
   // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
 
+  private DoubleSubscriber m_speedSubscriber1;
+  private DoublePublisher m_speedPublisher1;
+  private DoubleSubscriber m_speedSubscriber2;
+  private DoublePublisher m_speedPublisher2;
+
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
           INDEXER.gearbox);
-  private final TalonFXSimState m_simState;
+  private final DCMotorSim m_indexerMotor2Sim =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+          INDEXER.gearbox);
+  private final TalonFXSimState m_simState1;
+  private final TalonFXSimState m_simState2;
 
   /** Creates a new Indexer. */
   public Indexer() {
@@ -54,27 +65,35 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = 60;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_indexerMotor2, config);
 
-    m_indexerMotor2.setControl(
-        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    // m_indexerMotor2.setControl(
+    //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
     // m_indexerMotor3.setControl(
     //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
 
-    m_simState = m_indexerMotor1.getSimState();
+    m_simState1 = m_indexerMotor1.getSimState();
+    m_simState2 = m_indexerMotor2.getSimState();
   }
 
-  public void setSpeed(double speed) {
-    m_indexerMotor1.set(speed);
+  public void setSpeeds(double speed1, double speed2) {
+    m_indexerMotor1.set(speed1);
+    m_indexerMotor2.set(speed2);
   }
 
   public boolean isConnected() {
-    return m_indexerMotor1.isConnected();
+    return m_indexerMotor1.isConnected() && m_indexerMotor2.isConnected();
   }
 
-  @Logged(name = "Motor Output", importance = Logged.Importance.INFO)
+  @Logged(name = "Motor Output 1", importance = Logged.Importance.INFO)
   public double getPercentOutput() {
     return m_indexerMotor1.get();
+  }
+
+  @Logged(name = "Motor Output 2", importance = Logged.Importance.INFO)
+  public double getPercentOutput2() {
+    return m_indexerMotor2.get();
   }
 
   @Override
@@ -82,14 +101,44 @@ public class Indexer extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_indexerMotor1Sim.setInputVoltage(m_simState.getMotorVoltage());
+    m_simState1.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_indexerMotor1Sim.setInputVoltage(m_simState1.getMotorVoltage());
 
     m_indexerMotor1Sim.update(0.02);
 
-    m_simState.setRawRotorPosition(
+    m_simState1.setRawRotorPosition(
         Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
-    m_simState.setRotorVelocity(
+    m_simState1.setRotorVelocity(
         RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
+    m_simState2.setSupplyVoltage(RobotController.getBatteryVoltage());
+    m_indexerMotor2Sim.setInputVoltage(m_simState2.getMotorVoltage());
+
+    m_indexerMotor2Sim.update(0.02);
+
+    m_simState2.setRawRotorPosition(
+        Rotations.of(m_indexerMotor2Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
+    m_simState2.setRotorVelocity(
+        RPM.of(m_indexerMotor2Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Indexer Roller Speed Setpoint 1");
+    m_speedSubscriber1 = topic.subscribe(0.0);
+    m_speedPublisher1 = topic.publish();
+    var topic2 =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Indexer Roller Speed Setpoint 2");
+    m_speedSubscriber2 = topic2.subscribe(0.0);
+    m_speedPublisher2 = topic2.publish();
+    m_speedPublisher1.set(0.0);
+    m_speedPublisher2.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setSpeeds(m_speedSubscriber1.get(), m_speedSubscriber2.get());
   }
 }
