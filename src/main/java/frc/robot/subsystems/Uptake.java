@@ -111,7 +111,7 @@ public class Uptake extends SubsystemBase {
     return getAbsoluteRPMerror() <= UPTAKE.kVelocityErrorThreshold;
   }
 
-  public double getAbsoluteRPMerror(){
+  public double getAbsoluteRPMerror() {
     return Math.abs(getRPMerror());
   }
 
