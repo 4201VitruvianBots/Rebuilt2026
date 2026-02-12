@@ -35,7 +35,8 @@ import java.util.Map;
 public final class Constants {
   public class FLYWHEEL {
     public static final double kP = 1.0; // These worked for WoodBot but will need to be retuned
-    public static final double kD = 0.0;;
+    public static final double kD = 0.0;
+    ;
     public static final double kV = 0.0;
     public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
@@ -414,7 +415,8 @@ public final class Constants {
     public static final double kMotionMagicAcceleration = 30.0;
     public static final double kMotionMagicCruiseVelocity = 60.0;
 
-    public static final AngularVelocity minRPM = RPM.of(0.0); // Restrict uptake velocity harder than the flywheel
+    public static final AngularVelocity minRPM =
+        RPM.of(0.0); // Restrict uptake velocity harder than the flywheel
     public static final AngularVelocity maxRPM = RPM.of(5000.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);

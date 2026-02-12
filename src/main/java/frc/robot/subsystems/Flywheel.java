@@ -49,8 +49,7 @@ public class Flywheel extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
 
-  private final VelocityTorqueCurrentFOC m_request =
-      new VelocityTorqueCurrentFOC(0);
+  private final VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0);
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
   private final TorqueCurrentFOC m_torqueCurrentFOC = new TorqueCurrentFOC(0.0);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
@@ -168,7 +167,7 @@ public class Flywheel extends SubsystemBase {
     m_rpmSetpoint = RPM.of(m_rpmSubscriber.get());
   }
 
-  public boolean isAtRPMsetpoint(){
+  public boolean isAtRPMsetpoint() {
     return Math.abs(getRPMerror()) <= FLYWHEEL.kVelocityErrorThreshold;
   }
 
@@ -177,7 +176,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   @Logged(name = "RPM error", importance = Importance.DEBUG)
-  public double getAbsoluteRPMerror(){
+  public double getAbsoluteRPMerror() {
     return Math.abs(getRPMerror());
   }
 
