@@ -168,7 +168,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public boolean isAtRPMsetpoint() {
-    return Math.abs(getRPMerror()) <= FLYWHEEL.kVelocityErrorThreshold;
+    return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThreshold;
   }
 
   public double getRPMerror() {
