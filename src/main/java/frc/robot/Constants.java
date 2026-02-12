@@ -34,18 +34,16 @@ import java.util.Map;
 
 public final class Constants {
   public class FLYWHEEL {
-    public static final double kP = 9.1; // These worked for WoodBot but will need to be retuned
-    public static final double kD = 0.05;
+    public static final double kP = 1.0; // These worked for WoodBot but will need to be retuned
+    public static final double kD = 0.0;;
     public static final double kV = 0.0;
-    public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
+    public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
-    public static final double peakForwardOutput = 0.4; // Placeholder value
-    public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
     public static final double kStatorCurrentLimit = 120;
-    public static final double kVelocityErrorThreshold = 35;
+    public static final double kVelocityErrorThreshold = 40.0;
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
@@ -53,7 +51,7 @@ public final class Constants {
     public static double motionMagicJerk = 0.0;
 
     public static final DCMotor gearbox =
-        DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
+        DCMotor.getKrakenX60Foc(3); // We have more motors than this on the final bot.
 
     public static class Shot {
       public final double shooterRPM;
@@ -90,8 +88,6 @@ public final class Constants {
       public static final double gearRatio =
           1.0; // TODO: Change this later because this is confirmed not what the final thing
       // will be
-      public static final double peakForwardOutput = 0.4; // Placeholder value
-      public static final double peakReverseOutput = -0.35; // Placeholder value
       public static final double kInertia = 0.005;
       public static final double kStatorCurrentLimit = 30;
 
@@ -412,15 +408,13 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.5;
-    public static final double peakReverseOutput = -0.5;
     public static final double kInertia = 0.01;
-    public static final double kVelocityErrorThreshold = 50.0;
+    public static final double kVelocityErrorThreshold = 35.0;
 
     public static final double kMotionMagicAcceleration = 30.0;
     public static final double kMotionMagicCruiseVelocity = 60.0;
 
-    public static final AngularVelocity minRPM = RPM.of(0.0);
+    public static final AngularVelocity minRPM = RPM.of(0.0); // Restrict uptake velocity harder than the flywheel
     public static final AngularVelocity maxRPM = RPM.of(5000.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
