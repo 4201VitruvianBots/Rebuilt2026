@@ -42,8 +42,7 @@ public class Uptake extends SubsystemBase {
 
   private final TalonFXSimState m_simState;
 
-  private VelocityTorqueCurrentFOC m_request =
-      new VelocityTorqueCurrentFOC(0.0);
+  private VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0.0);
   private DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0.0);
 
   private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
