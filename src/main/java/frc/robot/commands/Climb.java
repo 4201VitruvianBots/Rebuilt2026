@@ -1,21 +1,18 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-// Imports:
 package frc.robot.commands;
 
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.CLIMBER.*;
 import frc.robot.subsystems.Climber;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Climb extends Command {
   // Creates a new Climb Command
   private final Climber m_climber;
 
-  public Climb(Climber climber, Voltage voltage) {
+  private CLIMBER_SETPOINT m_setpoint;
+
+  public Climb(Climber climber, CLIMBER_SETPOINT setpoint) {
     m_climber = climber;
+    m_setpoint = setpoint;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_climber);
@@ -27,11 +24,29 @@ public class Climb extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (m_climber.isHoldingRobot()) {
+      m_climber.setPIDSlot(HOLDING_ROBOT.slot);
+      m_climber.setDesiredPositionAndMotionMagicConfigs(
+          m_setpoint.getSetpoint(),
+          HOLDING_ROBOT.motionMagicCruiseVelocity,
+          HOLDING_ROBOT.motionMagicAcceleration,
+          HOLDING_ROBOT.motionMagicJerk);
+    } else {
+      m_climber.setPIDSlot(NOT_HOLDING_ROBOT.slot);
+      m_climber.setDesiredPositionAndMotionMagicConfigs(
+          m_setpoint.getSetpoint(),
+          NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
+          NOT_HOLDING_ROBOT.motionMagicAcceleration,
+          NOT_HOLDING_ROBOT.motionMagicJerk);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_climber.holdClimber();
+  }
 
   // Returns true when the command should end.
   @Override

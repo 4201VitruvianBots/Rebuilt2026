@@ -1,7 +1,5 @@
 package frc.team4201.lib.utils;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,10 +12,11 @@ import edu.wpi.first.networktables.*;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.simulation.visualization.SwerveModule2d;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
+import java.util.Map;
 
 public class Telemetry {
   private Map<MODULE_POSITION, Translation2d> m_moduleTranslations;
-  
+
   private FieldSim m_fieldSim;
   private final SwerveModule2d[] m_moduleVisualizer;
 
@@ -53,12 +52,13 @@ public class Telemetry {
   /** Construct a telemetry object */
   public Telemetry(double maxSpeed, Map<MODULE_POSITION, Translation2d> moduleTranslations) {
     m_moduleTranslations = moduleTranslations;
-    m_moduleVisualizer = new SwerveModule2d[] {
-                new SwerveModule2d(MODULE_POSITION.FRONT_LEFT.name(), maxSpeed),
-                new SwerveModule2d(MODULE_POSITION.FRONT_RIGHT.name(), maxSpeed),
-                new SwerveModule2d(MODULE_POSITION.BACK_LEFT.name(), maxSpeed),
-                new SwerveModule2d(MODULE_POSITION.BACK_RIGHT.name(), maxSpeed)
-    };
+    m_moduleVisualizer =
+        new SwerveModule2d[] {
+          new SwerveModule2d(MODULE_POSITION.FRONT_LEFT.name(), maxSpeed),
+          new SwerveModule2d(MODULE_POSITION.FRONT_RIGHT.name(), maxSpeed),
+          new SwerveModule2d(MODULE_POSITION.BACK_LEFT.name(), maxSpeed),
+          new SwerveModule2d(MODULE_POSITION.BACK_RIGHT.name(), maxSpeed)
+        };
   }
 
   public void registerFieldSim(FieldSim fieldSim) {
@@ -68,7 +68,7 @@ public class Telemetry {
   /* Accept the swerve drive state and telemeterize it to SmartDashboard */
   public void telemeterize(SwerveDriveState state) {
     Pose2d pose = state.Pose;
-    
+
     /* Telemeterize the swerve drive state */
     drivePose.set(state.Pose);
     driveSpeeds.set(state.Speeds);
@@ -95,15 +95,13 @@ public class Telemetry {
     SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
     if (m_fieldSim != null) {
-                 for (MODULE_POSITION i : MODULE_POSITION.values()) {
-                     m_moduleVisualizer[i.ordinal()].update(state.ModuleStates[i.ordinal()]);
-                     m_moduleTransforms[i.ordinal()] = new
-      Transform2d(m_moduleTranslations.get(i),
-      state.ModuleStates[i.ordinal()].angle);
-                     m_swerveModulePoses[i.ordinal()] =
-      state.Pose.transformBy(m_moduleTransforms[i.ordinal()]);
-                 }
-      
+      for (MODULE_POSITION i : MODULE_POSITION.values()) {
+        m_moduleVisualizer[i.ordinal()].update(state.ModuleStates[i.ordinal()]);
+        m_moduleTransforms[i.ordinal()] =
+            new Transform2d(m_moduleTranslations.get(i), state.ModuleStates[i.ordinal()].angle);
+        m_swerveModulePoses[i.ordinal()] = state.Pose.transformBy(m_moduleTransforms[i.ordinal()]);
+      }
+
       m_fieldSim.addPoses("robotPose", state.Pose);
       m_fieldSim.addPoses("Module", m_swerveModulePoses);
     }

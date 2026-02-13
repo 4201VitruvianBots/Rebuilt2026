@@ -4,7 +4,6 @@
 
 package frc.team4201.lib.simulation.visualization;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
