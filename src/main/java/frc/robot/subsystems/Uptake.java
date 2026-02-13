@@ -9,7 +9,8 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -41,8 +42,8 @@ public class Uptake extends SubsystemBase {
 
   private final TalonFXSimState m_simState;
 
-  private MotionMagicVelocityTorqueCurrentFOC m_request =
-      new MotionMagicVelocityTorqueCurrentFOC(0.0);
+  private VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0.0);
+  private DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0.0);
 
   private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
 
@@ -57,7 +58,7 @@ public class Uptake extends SubsystemBase {
 
     config.Feedback.SensorToMechanismRatio = UPTAKE.gearRatio;
 
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     config.MotionMagic.MotionMagicAcceleration = UPTAKE.kMotionMagicAcceleration;
@@ -97,9 +98,21 @@ public class Uptake extends SubsystemBase {
     return m_motor.get();
   }
 
+  public double getRPMerror() {
+    return getRPMsetpoint() - getMotorSpeedRPM();
+  }
+
   @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
   public double getMotorSpeedRPM() {
     return m_motor.getVelocity().refresh().getValue().in(RPM);
+  }
+
+  public boolean isAtRPMsetpoint() {
+    return getAbsoluteRPMerror() <= UPTAKE.kVelocityErrorThreshold;
+  }
+
+  public double getAbsoluteRPMerror() {
+    return Math.abs(getRPMerror());
   }
 
   public void testInit() {
@@ -112,7 +125,11 @@ public class Uptake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    if (!isAtRPMsetpoint()) {
+      m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
+    } else {
+      m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    }
   }
 
   @Override

@@ -79,8 +79,6 @@ public class Hood extends SubsystemBase {
     // config.Slot0.kV = HOOD.kV;
     // config.Slot0.kS = HOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
-    config.MotorOutput.PeakForwardDutyCycle = HOOD.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = HOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
