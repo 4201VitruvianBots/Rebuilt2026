@@ -33,7 +33,6 @@ import frc.robot.commands.shooter.ShootManualFlywheel;
 import frc.robot.commands.shooter.ShootOnTheMove;
 import frc.robot.constants.FIELD;
 import frc.robot.generated.V1Constants;
-import frc.robot.generated.WoodBotConstants;
 import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;

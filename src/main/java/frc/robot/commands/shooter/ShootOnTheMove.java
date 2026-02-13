@@ -3,33 +3,36 @@ package frc.robot.commands.shooter;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radian;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
-
-import com.ctre.phoenix6.hardware.Pigeon2;
 
 public class ShootOnTheMove extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -56,8 +59,8 @@ public class ShootOnTheMove extends Command {
     distanceToShotMap.put(
         Meters.of(1.8086638318064376),
         new Shot(RPM.of(2175), Degrees.of(75), 0.96399)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.048), new Shot(RPM.of(2200), Degrees.of(73), 1.16));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(70), 1.2));
+    distanceToShotMap.put(Meters.of(3.048), new Shot(RPM.of(2200), Degrees.of(73), 1.286));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(70), 1.4));
   }
 
   private final Flywheel m_flywheel;
@@ -65,7 +68,17 @@ public class ShootOnTheMove extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private final DoubleSupplier m_throttleInput;
   private final DoubleSupplier m_strafeInput;
-  private static double phaseDelay = 0.0; 
+  private static double phaseDelay = 0.0;
+  private Rotation2d lastDriveAngle;
+  private double lastHoodAngle;
+  private final LinearFilter hoodAngleFilter =
+    LinearFilter.movingAverage((int) (0.1 / 0.02));
+
+  private final LinearFilter driveAngleFilter =
+    LinearFilter.movingAverage((int) (0.1 / 0.02));
+
+  private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
+  private Transform2d robotToLauncher = new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
 
   private Double kTeleP_Theta = 3.0;
   private Double kTeleD_Theta = 0.0;
@@ -93,6 +106,7 @@ public class ShootOnTheMove extends Command {
     m_shooterHood = shooterHood;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
+    SmartDashboard.putData(this);
   }
 
   // Called when the command is initially scheduled.
@@ -100,8 +114,9 @@ public class ShootOnTheMove extends Command {
   public void initialize() {
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
+    m_PidController.setTolerance(1.0);
     m_PidController.reset();
-    if (RobotBase.isReal()){
+    if (RobotBase.isReal()) {
       phaseDelay = 0.03;
     }
   }
@@ -109,45 +124,69 @@ public class ShootOnTheMove extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shot shot = distanceToShotMap.get(m_vision.getDistanceToHub()); // Create a shot object based on hub distance.
-    var chassisSpeeds = m_swerveDrivetrain.getState().Speeds; // Get robot relative chassis speeds
-    Pose2d estimatedPose = m_swerveDrivetrain.getState().Pose.exp( 
+    // Calculate estimated pose while accounting for phase delay
+    Pose2d estimatedPose = m_swerveDrivetrain.getState().Pose;
+    ChassisSpeeds robotRelativeVelocity = m_swerveDrivetrain.getState().Speeds;
+    estimatedPose =
+        estimatedPose.exp(
             new Twist2d(
-                chassisSpeeds.vxMetersPerSecond * phaseDelay,
-                chassisSpeeds.vyMetersPerSecond * phaseDelay,
-                chassisSpeeds.omegaRadiansPerSecond * phaseDelay)); // Account for where the pose should be 
- 
-    var fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds, estimatedPose.getRotation());
-    double VelocityY = fieldRelativeSpeeds.vyMetersPerSecond;
-    double VelocityX = fieldRelativeSpeeds.vxMetersPerSecond;
+                robotRelativeVelocity.vxMetersPerSecond * phaseDelay,
+                robotRelativeVelocity.vyMetersPerSecond * phaseDelay,
+                robotRelativeVelocity.omegaRadiansPerSecond * phaseDelay));
 
+    // Calculate distance from launcher to m_goal
+    Pose2d launcherPosition = estimatedPose.transformBy(robotToLauncher);
+    double launcherToTargetDistance = m_goal.getDistance(launcherPosition.getTranslation());
+    Shot shot = distanceToShotMap.get(Meters.of(launcherToTargetDistance));
+
+    // Calculate field relative launcher velocity
+    // This isn't actually the launcherVelocity given it won't account for angular velocity of robot
+    double launcherVelocityX = robotRelativeVelocity.vxMetersPerSecond;
+    double launcherVelocityY = robotRelativeVelocity.vyMetersPerSecond;
+
+    // Account for imparted velocity by robot (launcher) to offset
     double timeOfFlight = shot.timeOfFlight;
+    Pose2d lookaheadPose = launcherPosition;
+    double lookaheadLauncherToTargetDistance = launcherToTargetDistance;
+    shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
 
-    Translation2d movingGoalLocation = m_goal.minus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));;
-
-    // Iterate to converge on correct shot and moving goal location
-    for (int i = 0; i < 2; i++) {
-      Translation2d toMovingGoal = movingGoalLocation.minus(estimatedPose.getTranslation());
-      double newDist = toMovingGoal.getDistance(new Translation2d());
-      shot = distanceToShotMap.get(Meters.of(newDist));
-    
+    for (int i = 0; i < 20; i++) {
       timeOfFlight = shot.timeOfFlight;
-      movingGoalLocation = m_goal.minus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));
+      double offsetX = launcherVelocityX * timeOfFlight;
+      double offsetY = launcherVelocityY * timeOfFlight;
+      lookaheadPose =
+          new Pose2d(
+              launcherPosition.getTranslation().plus(new Translation2d(offsetX, offsetY)),
+              launcherPosition.getRotation());
+      lookaheadLauncherToTargetDistance = m_goal.getDistance(lookaheadPose.getTranslation());
     }
 
-    var targetDelta = movingGoalLocation.minus(estimatedPose.getTranslation()).getAngle();    
+    // Calculate parameters accounted for imparted velocity
+    Rotation2d driveAngle =
+        m_goal.minus(lookaheadPose.getTranslation()).getAngle().plus(Rotation2d.kPi);
+    var robotAngle = m_swerveDrivetrain.getState().Pose.getRotation();
+    driveAngle =
+          robotAngle.getRadians() > m_goal.getAngle().getRadians() + Units.degreesToRadians(90)
+              ? driveAngle
+              : driveAngle.plus(Rotation2d.kPi);
+    double hoodAngle = shot.hoodAngle.in(Radians);
 
-    movingGoalLocation = m_goal.plus(new Translation2d(VelocityX, VelocityY).times(timeOfFlight));
-
+    if (lastDriveAngle == null) lastDriveAngle = driveAngle;
+    if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
+    lastHoodAngle = hoodAngle;
+    lastDriveAngle = driveAngle;
+    double driveVelocity =
+        driveAngleFilter.calculate(
+            driveAngle.minus(lastDriveAngle).getRadians() / 0.02);
+          
     // all of the logic for angle is above this Comment
 
     var turnRate =
         m_PidController.calculate(
-            estimatedPose.getRotation().getRadians(),
-            targetDelta.getRadians());
+            estimatedPose.getRotation().getRadians(), driveAngle.getRadians()) + driveVelocity * 0.5;
 
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
-    m_shooterHood.setAngle(shot.hoodAngle);
+    m_shooterHood.setAngle(Radians.of(hoodAngle));
 
     m_swerveDrivetrain.setChassisSpeedControl(
         new ChassisSpeeds(
