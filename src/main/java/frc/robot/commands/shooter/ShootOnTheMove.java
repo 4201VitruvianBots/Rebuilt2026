@@ -81,7 +81,7 @@ public class ShootOnTheMove extends Command {
   private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
   private Transform2d robotToLauncher = new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
 
-  private Double kTeleP_Theta = 0.1;
+  private Double kTeleP_Theta = 7.0;
   private Double kTeleD_Theta = 0.0;
   public static final double kTeleI_Theta = 0.0;
 
@@ -159,12 +159,7 @@ public class ShootOnTheMove extends Command {
 
     // Calculate parameters accounted for imparted velocity
     Rotation2d driveAngle =
-        m_goal.minus(lookaheadPose.getTranslation()).getAngle().plus(Rotation2d.kPi);
-    var robotAngle = m_swerveDrivetrain.getState().Pose.getRotation();
-    driveAngle =
-          robotAngle.getRadians() > m_goal.getAngle().getRadians() + Units.degreesToRadians(90)
-              ? driveAngle
-              : driveAngle.plus(Rotation2d.kPi);
+        m_goal.minus(lookaheadPose.getTranslation()).getAngle();
     double hoodAngle = shot.hoodAngle.in(Radians);
 
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
