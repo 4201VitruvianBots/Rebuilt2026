@@ -207,7 +207,8 @@ public final class Constants {
             new Translation2d(-kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)));
 
     public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
-    public static final double kMaxSpeedShootingMetersPerSecond = Units.feetToMeters(10);
+    public static final double kMaxSpeedShootingMetersPerSecond = Units.feetToMeters(13.1234);
+    public static final double kMaxAccelerationShootingMetersPerSecond = Units.feetToMeters(19.685);
 
     public static final double kMaxRotationRadiansPerSecond =
         Math.PI * 1.0; // Temporary to reduce speed (original value 2.0).

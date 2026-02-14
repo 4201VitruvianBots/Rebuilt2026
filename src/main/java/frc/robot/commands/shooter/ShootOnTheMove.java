@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,12 +19,15 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.Constants.SWERVE;
@@ -64,15 +68,12 @@ public class ShootOnTheMove extends Command {
   }
 
   private final Flywheel m_flywheel;
-  private final Vision m_vision;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private final DoubleSupplier m_throttleInput;
   private final DoubleSupplier m_strafeInput;
   private static double phaseDelay = 0.0;
   private Rotation2d lastDriveAngle;
   private double lastHoodAngle;
-  private final LinearFilter hoodAngleFilter =
-    LinearFilter.movingAverage((int) (0.1 / 0.02));
 
   private final LinearFilter driveAngleFilter =
     LinearFilter.movingAverage((int) (0.1 / 0.02));
@@ -80,12 +81,11 @@ public class ShootOnTheMove extends Command {
   private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
   private Transform2d robotToLauncher = new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
 
-  private Double kTeleP_Theta = 3.0;
+  private Double kTeleP_Theta = 0.1;
   private Double kTeleD_Theta = 0.0;
   public static final double kTeleI_Theta = 0.0;
 
-  private PIDController m_PidController =
-      new PIDController(kTeleP_Theta, kTeleI_Theta, kTeleD_Theta);
+  private ProfiledPIDController m_PidController; 
 
   private final Hood m_shooterHood;
 
@@ -94,12 +94,10 @@ public class ShootOnTheMove extends Command {
   public ShootOnTheMove(
       Flywheel flywheel,
       Hood shooterHood,
-      Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
     m_flywheel = flywheel;
-    m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
     m_throttleInput = throttleInput;
     m_strafeInput = strafeInput;
@@ -113,12 +111,10 @@ public class ShootOnTheMove extends Command {
   @Override
   public void initialize() {
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    m_PidController = new ProfiledPIDController(kTeleP_Theta, kTeleI_Theta, kTeleD_Theta, new Constraints(SWERVE.kMaxSpeedMetersPerSecond, SWERVE.kMaxAccelerationShootingMetersPerSecond));
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
     m_PidController.setTolerance(1.0);
-    m_PidController.reset();
-    if (RobotBase.isReal()) {
-      phaseDelay = 0.03;
-    }
+    if (RobotBase.isReal()) phaseDelay = 0.03;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -174,7 +170,6 @@ public class ShootOnTheMove extends Command {
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
-    lastDriveAngle = driveAngle;
     double driveVelocity =
         driveAngleFilter.calculate(
             driveAngle.minus(lastDriveAngle).getRadians() / 0.02);
@@ -183,16 +178,20 @@ public class ShootOnTheMove extends Command {
 
     var turnRate =
         m_PidController.calculate(
-            estimatedPose.getRotation().getRadians(), driveAngle.getRadians()) + driveVelocity * 0.5;
+            estimatedPose.getRotation().getRadians(), new State(
+                      driveAngle.getRadians(),
+                      driveVelocity));
 
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
 
+    double omegaOutput = m_PidController.getSetpoint().velocity + turnRate;
     m_swerveDrivetrain.setChassisSpeedControl(
         new ChassisSpeeds(
             m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
             m_strafeInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-            turnRate));
+            omegaOutput));
+    lastDriveAngle = driveAngle;
   }
 
   // Called once the command ends or is interrupted.
