@@ -3,11 +3,9 @@ package frc.robot.commands.shooter;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,21 +19,16 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
-import frc.robot.Constants;
 import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.Constants.SWERVE;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
 
 public class ShootOnTheMove extends Command {
@@ -75,17 +68,17 @@ public class ShootOnTheMove extends Command {
   private Rotation2d lastDriveAngle;
   private double lastHoodAngle;
 
-  private final LinearFilter driveAngleFilter =
-    LinearFilter.movingAverage((int) (0.1 / 0.02));
+  private final LinearFilter driveAngleFilter = LinearFilter.movingAverage((int) (0.1 / 0.02));
 
   private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
-  private Transform2d robotToLauncher = new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
+  private Transform2d robotToLauncher =
+      new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
 
   private Double kTeleP_Theta = 7.0;
   private Double kTeleD_Theta = 0.0;
   public static final double kTeleI_Theta = 0.0;
 
-  private ProfiledPIDController m_PidController; 
+  private ProfiledPIDController m_PidController;
 
   private final Hood m_shooterHood;
 
@@ -111,7 +104,13 @@ public class ShootOnTheMove extends Command {
   @Override
   public void initialize() {
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    m_PidController = new ProfiledPIDController(kTeleP_Theta, kTeleI_Theta, kTeleD_Theta, new Constraints(SWERVE.kMaxSpeedMetersPerSecond, SWERVE.kMaxAccelerationShootingMetersPerSecond));
+    m_PidController =
+        new ProfiledPIDController(
+            kTeleP_Theta,
+            kTeleI_Theta,
+            kTeleD_Theta,
+            new Constraints(
+                SWERVE.kMaxSpeedMetersPerSecond, SWERVE.kMaxAccelerationShootingMetersPerSecond));
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
     m_PidController.setTolerance(1.0);
     if (RobotBase.isReal()) phaseDelay = 0.03;
@@ -158,24 +157,21 @@ public class ShootOnTheMove extends Command {
     }
 
     // Calculate parameters accounted for imparted velocity
-    Rotation2d driveAngle =
-        m_goal.minus(lookaheadPose.getTranslation()).getAngle();
+    Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
     double hoodAngle = shot.hoodAngle.in(Radians);
 
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
     double driveVelocity =
-        driveAngleFilter.calculate(
-            driveAngle.minus(lastDriveAngle).getRadians() / 0.02);
-          
+        driveAngleFilter.calculate(driveAngle.minus(lastDriveAngle).getRadians() / 0.02);
+
     // all of the logic for angle is above this Comment
 
     var turnRate =
         m_PidController.calculate(
-            estimatedPose.getRotation().getRadians(), new State(
-                      driveAngle.getRadians(),
-                      driveVelocity));
+            estimatedPose.getRotation().getRadians(),
+            new State(driveAngle.getRadians(), driveVelocity));
 
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
