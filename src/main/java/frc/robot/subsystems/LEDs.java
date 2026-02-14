@@ -22,7 +22,7 @@ public class LEDs extends SubsystemBase {
       socket = new DatagramSocket();
     } catch (SocketException e) {
       DriverStation.reportWarning(
-          "LEDs: Failed to create DatagramSocket on port 5800 " + e.getMessage(), false);
+          "LEDs: Failed to create DatagramSocket on port 25000 " + e.getMessage(), false);
     }
   }
 
