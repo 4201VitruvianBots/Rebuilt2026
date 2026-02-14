@@ -385,7 +385,7 @@ public final class Constants {
       public static final double motionMagicJerk = 0.0;
 
       public static final Angle minAngle = Degrees.of(0.0);
-      public static final Angle maxAngle = Degrees.of(110.0);
+      public static final Angle maxAngle = Degrees.of(52.0);
       public static final Angle startingAngle = minAngle;
       public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
           GravityTypeValue
@@ -402,7 +402,7 @@ public final class Constants {
 
       public enum PIVOT_SETPOINT {
         STOWED(Degrees.of(0.0)),
-        INTAKING(Degrees.of(90.0));
+        INTAKING(Degrees.of(52.0));
 
         private final Angle angle;
 

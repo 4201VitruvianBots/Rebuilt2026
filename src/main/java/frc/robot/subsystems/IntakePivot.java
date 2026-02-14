@@ -65,7 +65,7 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
-          true,
+          false,
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
