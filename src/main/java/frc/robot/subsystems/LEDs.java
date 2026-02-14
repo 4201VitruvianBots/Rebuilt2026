@@ -32,7 +32,7 @@ public class LEDs extends SubsystemBase {
       return;
     }
     try {
-      InetAddress addr = InetAddress.getByName("10.42.1.12");
+      InetAddress addr = InetAddress.getByName("10.42.1.13");
       DatagramPacket packet = new DatagramPacket(data, data.length, addr, 25000);
       socket.send(packet);
     } catch (Exception e) {
