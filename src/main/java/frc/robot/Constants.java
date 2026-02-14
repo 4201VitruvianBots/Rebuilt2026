@@ -18,7 +18,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
-import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -55,10 +54,10 @@ public final class Constants {
 
     public static final DCMotor gearbox =
         DCMotor.getKrakenX60Foc(3); // We have more motors than this on the final bot.
-    
+
     public static final Distance fuelLaunchHeight = Inches.of(26.15);
     public static final Distance radius = Inches.of(2.0);
-    
+
     public static final int ballsPerSecond = 15;
 
     public static class Shot {
@@ -350,7 +349,7 @@ public final class Constants {
       public static final double kInertia = 0.005;
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
-      
+
       public static final Distance radius = Inches.of(0.625);
 
       public enum INTAKE_SPEED {
@@ -476,7 +475,7 @@ public final class Constants {
     // in order to actually match up with the visual thickness of lines in the Mechanism2d
     public static final DistanceUnit LineWidthInches =
         derive(Inches).splitInto(2).named("LineWidthInches").symbol("lw in").make();
-        
+
     public static final Translation3d intakeOrigin = new Translation3d(0.06, 0, 0.13);
     public static final Translation3d hopperOrigin = new Translation3d(0.0, 0.0, 0.0);
   }

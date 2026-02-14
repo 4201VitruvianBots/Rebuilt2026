@@ -19,7 +19,6 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -75,7 +74,7 @@ public class Intake extends SubsystemBase {
   public double getPercentOutput() {
     return m_motor.get();
   }
-  
+
   // For Robot2d simulation
   @NotLogged
   public AngularVelocity getVelocity() {

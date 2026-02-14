@@ -21,7 +21,11 @@ import frc.team4201.lib.command.Auto;
 
 public class PreloadNeutralDepotClimb extends Auto {
   public PreloadNeutralDepotClimb(
-      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel, Hood hood) {
+      CommandSwerveDrivetrain swerveDrive,
+      Intake intake,
+      Vision vision,
+      Flywheel flywheel,
+      Hood hood) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 

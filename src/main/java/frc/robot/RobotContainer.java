@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -43,8 +45,6 @@ import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
-
-import static edu.wpi.first.units.Units.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -176,7 +176,8 @@ public class RobotContainer {
       FIELD.plotAllPositions(m_fieldSim);
 
       m_robotSim = new Robot2d();
-      m_robotSim.registerSubsystems(m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
+      m_robotSim.registerSubsystems(
+          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
     }
   }
 
@@ -269,8 +270,10 @@ public class RobotContainer {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
-    SmartDashboard.putData("Start Fuel Sim", new InstantCommand((this::initFuelSim)).ignoringDisable(true));
-    SmartDashboard.putData("Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
+    SmartDashboard.putData(
+        "Start Fuel Sim", new InstantCommand((this::initFuelSim)).ignoringDisable(true));
+    SmartDashboard.putData(
+        "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
   }
 
   public void testInit() {
@@ -308,41 +311,58 @@ public class RobotContainer {
 
   public void initFuelSim() {
     FuelSim.getInstance().spawnStartingFuel(); // spawns fuel in the depots and neutral zone
-    FuelSim.getInstance().registerRobot(
-        Constants.SWERVE.kTrackWidth.in(Meters), // from left to right
-        Constants.SWERVE.kWheelBase.in(Meters), // from front to back
-        Constants.SWERVE.kBumperHeight.in(Meters), // from floor to top of bumpers
-        ()->m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
-        ()->m_swerveDrive.getState().Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
-    FuelSim.getInstance().start(); // enables the simulation to run (updateSim must still be called periodically)
-    FuelSim.getInstance().registerIntake(
-        Inches.of(13.688).in(Meters),
-        Inches.of(15.094).in(Meters),
-        Inches.of(-13.938).in(Meters),
-        Inches.of(23.388).in(Meters),
-        ()->FuelSim.getInstance().getStoredFuel()<=Constants.ROBOT.MAX_FUEL && m_intake.isIntaking(),
-        ()->{}
-    );
+    FuelSim.getInstance()
+        .registerRobot(
+            Constants.SWERVE.kTrackWidth.in(Meters), // from left to right
+            Constants.SWERVE.kWheelBase.in(Meters), // from front to back
+            Constants.SWERVE.kBumperHeight.in(Meters), // from floor to top of bumpers
+            () -> m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
+            () ->
+                m_swerveDrive.getState()
+                    .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+    FuelSim.getInstance()
+        .start(); // enables the simulation to run (updateSim must still be called periodically)
+    FuelSim.getInstance()
+        .registerIntake(
+            Inches.of(13.688).in(Meters),
+            Inches.of(15.094).in(Meters),
+            Inches.of(-13.938).in(Meters),
+            Inches.of(23.388).in(Meters),
+            () ->
+                FuelSim.getInstance().getStoredFuel() <= Constants.ROBOT.MAX_FUEL
+                    && m_intake.isIntaking(),
+            () -> {});
   }
-  
+
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-        if (m_flywheel.getMotorSpeedRPM() > 500.0 && FuelSim.getInstance().getStoredFuel() > 0) {
-            // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
-            // vel in ft/s = 0.0111882 * RPM - 0.
-            try {
-                FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
-                FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), Degrees.of(180).minus(m_hood.getHoodAngle()), Degrees.of(0), FLYWHEEL.fuelLaunchHeight);
-                System.out.println("Launching fuel at velocity: " + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927) + " ft/s and angle: " + m_hood.getHoodAngleDegrees() + " degrees");
-                System.out.println("Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
-            } catch (IllegalStateException e) {
-                return;
-            }
+      if (m_flywheel.getMotorSpeedRPM() > 500.0 && FuelSim.getInstance().getStoredFuel() > 0) {
+        // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
+        // vel in ft/s = 0.0111882 * RPM - 0.
+        try {
+          FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
+          FuelSim.getInstance()
+              .launchFuel(
+                  FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
+                  Degrees.of(180).minus(m_hood.getHoodAngle()),
+                  Degrees.of(0),
+                  FLYWHEEL.fuelLaunchHeight);
+          System.out.println(
+              "Launching fuel at velocity: "
+                  + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
+                  + " ft/s and angle: "
+                  + m_hood.getHoodAngleDegrees()
+                  + " degrees");
+          System.out.println(
+              "Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
+        } catch (IllegalStateException e) {
+          return;
         }
+      }
     }
   }
-  
+
   public void resetFuelSim() {
     FuelSim.getInstance().clearFuel();
     FuelSim.getInstance().spawnStartingFuel();

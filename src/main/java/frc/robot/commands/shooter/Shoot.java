@@ -1,6 +1,5 @@
 package frc.robot.commands.shooter;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
@@ -11,7 +10,6 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.constants.FIELD;
@@ -30,14 +28,19 @@ public class Shoot extends Command {
               new Shot(
                   RPM.of(
                       Interpolator.forDouble()
-                          .interpolate(startValue.shooterRPM.in(RPM), endValue.shooterRPM.in(RPM), t)),
+                          .interpolate(
+                              startValue.shooterRPM.in(RPM), endValue.shooterRPM.in(RPM), t)),
                   Rotations.of(
                       Interpolator.forDouble()
-                          .interpolate(startValue.hoodAngle.in(Rotations), endValue.hoodAngle.in(Rotations), t))));
+                          .interpolate(
+                              startValue.hoodAngle.in(Rotations),
+                              endValue.hoodAngle.in(Rotations),
+                              t))));
 
   static {
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376), new Shot(RPM.of(2175), Rotations.of(0.40))); // Hood position is a placeholder
+        Meters.of(1.8086638318064376),
+        new Shot(RPM.of(2175), Rotations.of(0.40))); // Hood position is a placeholder
     distanceToShotMap.put(Meters.of(3.42), new Shot(RPM.of(2200), Rotations.of(0.19)));
     distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2300), Rotations.of(0.15)));
   }

@@ -17,7 +17,11 @@ import frc.team4201.lib.command.Auto;
 
 public class PreloadCenter extends Auto {
   public PreloadCenter(
-      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel, Hood hood) {
+      CommandSwerveDrivetrain swerveDrive,
+      Intake intake,
+      Vision vision,
+      Flywheel flywheel,
+      Hood hood) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
