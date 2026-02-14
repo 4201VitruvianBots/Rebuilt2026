@@ -19,6 +19,9 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -45,6 +48,10 @@ public class Hood extends SubsystemBase {
       new CANcoder(
           CAN.kShooterHoodCANCoder,
           CAN.driveBase); // Replace these device ids after motors are set up
+
+  private DoublePublisher m_anglePublisher;
+
+  private DoubleSubscriber m_angleSubscriber;
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
@@ -204,5 +211,19 @@ public class Hood extends SubsystemBase {
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public void testInit() {
+    var topic = 
+      NetworkTableInstance.getDefault()
+          .getTable("SmartDashboard")
+          .getDoubleTopic("Hood Angle Setpoint");
+      m_angleSubscriber = topic.subscribe(0.0);
+      m_anglePublisher = topic.publish();
+      m_anglePublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }
