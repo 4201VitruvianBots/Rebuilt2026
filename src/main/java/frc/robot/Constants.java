@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.derive;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
@@ -35,16 +36,17 @@ import java.util.Map;
 
 public final class Constants {
   public class FLYWHEEL {
-    public static final double kP = 9.1; // These worked for WoodBot but will need to be retuned
-    public static final double kD = 0.05;
+    public static final double kP = 1.0; // These worked for WoodBot but will need to be retuned
+    public static final double kD = 0.0;
+    ;
     public static final double kV = 0.0;
-    public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
+    public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
-    public static final double peakForwardOutput = 0.4; // Placeholder value
-    public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
+    public static final double kStatorCurrentLimit = 120;
+    public static final double kVelocityErrorThreshold = 40.0;
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
@@ -52,7 +54,7 @@ public final class Constants {
     public static double motionMagicJerk = 0.0;
 
     public static final DCMotor gearbox =
-        DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
+        DCMotor.getKrakenX60Foc(3); // We have more motors than this on the final bot.
     
     public static final Distance fuelLaunchHeight = Inches.of(26.15);
     public static final Distance radius = Inches.of(2.0);
@@ -94,9 +96,8 @@ public final class Constants {
       public static final double gearRatio =
           1.0; // TODO: Change this later because this is confirmed not what the final thing
       // will be
-      public static final double peakForwardOutput = 0.4; // Placeholder value
-      public static final double peakReverseOutput = -0.35; // Placeholder value
       public static final double kInertia = 0.005;
+      public static final double kStatorCurrentLimit = 30;
 
       public static final double motionMagicCruiseVelocity = 6.0;
       public static final double motionMagicAcceleration = 4.0;
@@ -126,8 +127,8 @@ public final class Constants {
   }
 
   public class CAN {
-    public static final CANBus rioCanbus = new CANBus("rio");
-    public static final CANBus driveBaseCanbus = new CANBus("drivebase");
+    public static final CANBus roboRIO = new CANBus("rio");
+    public static final CANBus driveBase = new CANBus("drivebase");
 
     public static final int pigeon = 9;
 
@@ -242,6 +243,7 @@ public final class Constants {
     public static final Current kStatorCurrentLimit = Amps.of(40);
 
     public class NOT_HOLDING_ROBOT {
+      public static int slot = 0;
       public static double kS = 1.0;
       // Config for Motor. TODO: Change placeholder values later.
       // public static double kV =
@@ -266,6 +268,7 @@ public final class Constants {
     // This needs to be here because of the friction of the carriage... meaning the whole
     // robot
     public class HOLDING_ROBOT {
+      public static int slot = 1;
       public static double kS = 1.0;
       // public static double kV = 0.0; // For lifting the robot as well.
       // public static double kA = 0.0;
@@ -284,7 +287,8 @@ public final class Constants {
     public static final double peakReverseOutput = -0.5; // Placeholder.
 
     public static final Current kHoldingRobotThreshold =
-       Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a robot
+        Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a
+    // robot
 
     public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
@@ -313,8 +317,8 @@ public final class Constants {
     // TODO: change values
     public static final double kP = 1.0;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.8;
-    public static final double peakReverseOutput = -0.5;
+    public static final double peakForwardOutput = 0.9;
+    public static final double peakReverseOutput = -0.9;
     public static final double kInertia = 0.005;
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
@@ -341,8 +345,8 @@ public final class Constants {
       // TODO: change values
       public static final double kP = 1.0;
       public static final double gearRatio = 1.0;
-      public static final double peakForwardOutput = 0.5;
-      public static final double peakReverseOutput = -0.5;
+      public static final double peakForwardOutput = 0.9;
+      public static final double peakReverseOutput = -0.9;
       public static final double kInertia = 0.005;
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
@@ -414,26 +418,33 @@ public final class Constants {
   }
 
   public class UPTAKE {
-    public static final double kP = 1.0; // Placeholders
+    public static final double kP = 10.1; // Placeholders
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.5;
-    public static final double peakReverseOutput = -0.5;
-    public static final double kInertia = 0.005;
+    public static final double kInertia = 0.01;
+    public static final double kVelocityErrorThreshold = 35.0;
 
-    public static final DCMotor gearbox = DCMotor.getKrakenX60(1);
+    public static final double kMotionMagicAcceleration = 30.0;
+    public static final double kMotionMagicCruiseVelocity = 60.0;
+
+    public static final AngularVelocity minRPM =
+        RPM.of(0.0); // Restrict uptake velocity harder than the flywheel
+    public static final AngularVelocity maxRPM = RPM.of(5000.0);
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
     public enum UPTAKE_SPEED {
-      ZERO(0),
-      UPTAKING(0.9),
-      REVERSE(-0.3);
+      IDLE(RPM.of(0.0)),
+      UPTAKING(RPM.of(500.0));
 
-      private final double value;
+      private final AngularVelocity value;
 
-      UPTAKE_SPEED(double value) {
+      UPTAKE_SPEED(AngularVelocity value) {
         this.value = value;
       }
 
-      public double get() {
+      public AngularVelocity get() {
         return value;
       }
     }

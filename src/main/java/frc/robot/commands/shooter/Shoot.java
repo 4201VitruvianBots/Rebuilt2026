@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FLYWHEEL.Shot;
 import frc.robot.constants.FIELD;
-import frc.robot.simulation.FuelSim;
-import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
@@ -62,19 +60,15 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (Controls.isBlueAlliance()) {
-      m_goal = FIELD.blueHub;
-    } else {
-      m_goal = FIELD.redHub;
-    }
+    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shot shot = distanceToShotMap.get(m_vision.getDistancetoHub());
-    m_flywheel.setRPMOutputFOC(shot.shooterRPM.in(RPM));
-    m_shooterHood.setAngle(shot.hoodAngle);
+    Shot shot = distanceToShotMap.get(m_vision.getDistanceToHub());
+    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    // m_shooterHood.setPosition(shot.hoodPosition);
   }
 
   // Called once the command ends or is interrupted.

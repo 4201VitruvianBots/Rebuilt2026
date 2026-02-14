@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.CLIMBER;
+import frc.robot.Constants.CLIMBER.HOLDING_ROBOT;
+import frc.robot.Constants.CLIMBER.NOT_HOLDING_ROBOT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Climber extends SubsystemBase {
@@ -40,7 +42,7 @@ public class Climber extends SubsystemBase {
               CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
               CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration)
           .withEnableFOC(true)
-          .withSlot(0);
+          .withSlot(NOT_HOLDING_ROBOT.slot);
 
   // The position it's trying to reach and stabilise at.
   @Logged(name = "Desired Position Inches", importance = Importance.INFO)
@@ -108,7 +110,9 @@ public class Climber extends SubsystemBase {
     // config.MotionMagic.MotionMagicJerk = CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk; // TODO:
     // Implement Jerk when needed.
     config.CurrentLimits.StatorCurrentLimit =
-        CLIMBER.kStatorCurrentLimit.in(Amps); // Prevents Climber from moving too jerkily and also breakage. TODO: Adjust this value.
+        CLIMBER.kStatorCurrentLimit.in(
+            Amps); // Prevents Climber from moving too jerkily and also breakage. TODO: Adjust this
+    // value.
     config.CurrentLimits.StatorCurrentLimitEnable = true; // Enables previous function.
     // Sets limits on motor output. Seperate from current limits.
     config.MotorOutput.PeakReverseDutyCycle = CLIMBER.peakReverseOutput;
@@ -117,9 +121,10 @@ public class Climber extends SubsystemBase {
 
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = convertDistancetoRotations(CLIMBER.upperLimit);
-    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = convertDistancetoRotations(CLIMBER.lowerLimit);
-
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        convertDistancetoRotations(CLIMBER.upperLimit);
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        convertDistancetoRotations(CLIMBER.lowerLimit);
 
     // This is the function that applies all these configNoRoboturations to the motor.
     CtreUtils.configureTalonFx(m_climberMotor, config);
@@ -165,9 +170,7 @@ public class Climber extends SubsystemBase {
                 desiredPosition.in(Meters),
                 CLIMBER.lowerLimit.in(Meters),
                 CLIMBER.upperLimit.in(Meters)));
-    m_climberMotor.setControl(
-        m_request.withPosition(
-            convertDistancetoRotations(desiredPosition)));
+    m_climberMotor.setControl(m_request.withPosition(convertDistancetoRotations(desiredPosition)));
   }
 
   public void setPIDSlot(int slot) {
@@ -184,7 +187,7 @@ public class Climber extends SubsystemBase {
   }
 
   @Logged(name = "Average Current", importance = Importance.DEBUG)
-  public double getAverageCurrent(){
+  public double getAverageCurrent() {
     return currentFilter.calculate(getStatorCurrent().in(Amps));
   }
 
@@ -200,14 +203,14 @@ public class Climber extends SubsystemBase {
           CLIMBER.HOLDING_ROBOT.motionMagicCruiseVelocity,
           CLIMBER.HOLDING_ROBOT.motionMagicAcceleration,
           CLIMBER.HOLDING_ROBOT.motionMagicJerk);
-      setPIDSlot(1);
+      setPIDSlot(HOLDING_ROBOT.slot);
     } else {
       setDesiredPositionAndMotionMagicConfigs(
           getHeight(),
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicCruiseVelocity,
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicAcceleration,
           CLIMBER.NOT_HOLDING_ROBOT.motionMagicJerk);
-      setPIDSlot(0);
+      setPIDSlot(HOLDING_ROBOT.slot);
     }
   }
 
