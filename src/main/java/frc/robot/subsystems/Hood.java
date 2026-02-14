@@ -212,13 +212,13 @@ public class Hood extends SubsystemBase {
   }
 
   public void testInit() {
-    var topic = 
-      NetworkTableInstance.getDefault()
-          .getTable("SmartDashboard")
-          .getDoubleTopic("Hood Angle Setpoint");
-      m_angleSubscriber = topic.subscribe(0.0);
-      m_anglePublisher = topic.publish();
-      m_anglePublisher.set(0.0);
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Hood Angle Setpoint");
+    m_angleSubscriber = topic.subscribe(0.0);
+    m_anglePublisher = topic.publish();
+    m_anglePublisher.set(0.0);
   }
 
   public void testPeriodic() {
