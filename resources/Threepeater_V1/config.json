@@ -1,5 +1,5 @@
 {
-  "name": "Robot_4201_V1",
+  "name": "Threepeater V1",
   "isFTC": false,
   "rotations": [
     {"axis": "x",
@@ -28,9 +28,16 @@
 		  ]
 	  },
 	  {
-		  "zeroedRotations": [],
+		  "zeroedRotations": [
+			{"axis": "x",
+			 "degrees": 90
+			},
+			{"axis": "z",
+			 "degrees": 90
+			}
+		  ],
 		  "zeroedPosition": [
-			0,
+			-0.3048,
 			0,
 			0
 		  ]

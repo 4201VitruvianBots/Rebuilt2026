@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.INDEXER.INDEXER_SPEED;
+import frc.robot.Constants.INTAKE;
+import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.Constants.CLIMBER.CLIMBER_SETPOINT;
 import frc.robot.Constants.FLYWHEEL;
@@ -28,6 +30,7 @@ import frc.robot.commands.Climb;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
+import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
@@ -205,7 +208,8 @@ public class RobotContainer {
               new ParallelCommandGroup(
                   new RunUptake(m_uptake, UPTAKE_SPEED.UPTAKING),
                   new Index(m_indexer, INDEXER_SPEED.INDEXING),
-                  new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
+                  new RunIntake(m_intake, INTAKE_SPEED.INTAKING),
+                  new IntakeSetpoint(m_intakePivot, PIVOT_SETPOINT.INTAKING)));
     }
 
     if (m_intake != null) {
@@ -301,11 +305,15 @@ public class RobotContainer {
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
         if (m_flywheel.getMotorSpeedRPM() > 500.0 && FuelSim.getInstance().getStoredFuel() > 0) {
             // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
-            // vel in ft/s = 0.0111882 * RPM - 0.000174927
-            FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
-            FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), Degrees.of(180).minus(m_hood.getHoodAngle()), Degrees.of(0), FLYWHEEL.fuelLaunchHeight);
-            System.out.println("Launching fuel at velocity: " + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927) + " ft/s and angle: " + m_hood.getHoodAngleDegrees() + " degrees");
-            System.out.println("Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
+            // vel in ft/s = 0.0111882 * RPM - 0.
+            try {
+                FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
+                FuelSim.getInstance().launchFuel(FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927), Degrees.of(180).minus(m_hood.getHoodAngle()), Degrees.of(0), FLYWHEEL.fuelLaunchHeight);
+                System.out.println("Launching fuel at velocity: " + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927) + " ft/s and angle: " + m_hood.getHoodAngleDegrees() + " degrees");
+                System.out.println("Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
+            } catch (IllegalStateException e) {
+                return;
+            }
         }
     }
   }

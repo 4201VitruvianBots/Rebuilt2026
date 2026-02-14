@@ -9,11 +9,13 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.derive;
 import static frc.robot.Constants.SIM.LineWidthInches;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -30,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CLIMBER;
 import frc.robot.Constants.FLYWHEEL;
 import frc.robot.Constants.INTAKE;
+import frc.robot.Constants.SIM;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -201,6 +204,9 @@ public class Robot2d extends SubsystemBase {
   private final Climber2d m_climber = new Climber2d(m_climberRoot);
 
   // TODO: Add hopper, Vision, LEDs?
+  
+  private Pose3d intakePose = new Pose3d(SIM.intakeOrigin, new Rotation3d(0.0, -(INTAKE.PIVOT.maxAngle.in(Radians)), 0.0)); // For AdvantageScope
+  private Pose3d hopperPose = new Pose3d(SIM.hopperOrigin, new Rotation3d(0.0, 0.0, 0.0)); // For AdvantageScope
 
   /** Map of subsystems for Robot2d to update */
   private final Map<String, Subsystem> m_subsystemMap = new HashMap<>();
@@ -242,9 +248,14 @@ public class Robot2d extends SubsystemBase {
   }
   
   // For Advantage Scope Calibration
-  @Logged(name = "ZeroedComponentPoses", importance = Logged.Importance.DEBUG)
+  // @Logged(name = "ZeroedComponentPoses", importance = Logged.Importance.DEBUG)
   public Pose3d[] getZeroedComponentPoses() {
     return new Pose3d[] {new Pose3d(), new Pose3d()};
+  }
+  
+  @Logged(name = "ComponentPoses", importance = Logged.Importance.DEBUG)
+  public Pose3d[] getComponentPoses() {
+    return new Pose3d[] {intakePose, hopperPose};
   }
 
   // private Distance testClimberHeight = Inches.of(0);
@@ -261,6 +272,9 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("IntakePivot")) {
       var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
       m_intakePivot.update(Degrees.of(-159).plus(INTAKE.PIVOT.maxAngle).minus(intakePivotSubsystem.getAngle()));
+      var pivotAngle = intakePivotSubsystem.getAngle();
+      intakePose = new Pose3d(SIM.intakeOrigin, new Rotation3d(0.0, -(INTAKE.PIVOT.maxAngle.minus(pivotAngle).in(Radians)), 0.0));
+      hopperPose = new Pose3d(SIM.hopperOrigin.getMeasureX().plus(Inches.of(pivotAngle.in(Degrees) * (12.0 / INTAKE.PIVOT.maxAngle.in(Degrees)))).in(Meters), SIM.hopperOrigin.getY(), SIM.hopperOrigin.getZ(), new Rotation3d(0.0, 0.0, 0.0));
     //   // Increase the intake pivot angle by 0.5 degrees every simulation tick to show the pivoting animation
     //     testIntakePivotAngle = testIntakePivotAngle.plus(Degrees.of(0.5));
     //     if (testIntakePivotAngle.gt(INTAKE.PIVOT.maxAngle)) {
