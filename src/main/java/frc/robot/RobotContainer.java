@@ -29,7 +29,6 @@ import frc.robot.commands.autos.*;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
-import frc.robot.commands.SysIDRotation;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.FIELD;
 import frc.robot.generated.V1Constants;
@@ -125,11 +124,6 @@ public class RobotContainer {
 
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    SmartDashboard.putData("QuasiStatic Forward", new SysIDRotation(m_swerveDrive, true, Direction.kForward));
-    SmartDashboard.putData("Dynamic Forward", new SysIDRotation(m_swerveDrive, false, Direction.kForward));
-    SmartDashboard.putData("QuasiStatic Reverse", new SysIDRotation(m_swerveDrive, true, Direction.kReverse));
-    SmartDashboard.putData("Dynamic Reverse", new SysIDRotation(m_swerveDrive, false, Direction.kReverse));
-
   }
 
   private void initializeSubSystems() {
@@ -228,10 +222,10 @@ public class RobotContainer {
     // }
 
     if (m_swerveDrive != null){
-      m_driverController.a().whileTrue(new SysIDRotation(m_swerveDrive, true, Direction.kForward));
-      m_driverController.b().whileTrue(new SysIDRotation(m_swerveDrive, true, Direction.kReverse));
-      m_driverController.x().whileTrue(new SysIDRotation(m_swerveDrive, false, Direction.kForward));
-      m_driverController.y().whileTrue(new SysIDRotation(m_swerveDrive, false, Direction.kReverse));
+      m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
+      m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
+      m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
+      m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
     }
   }
 

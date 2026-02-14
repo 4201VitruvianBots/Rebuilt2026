@@ -179,20 +179,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     }
   }
 
-  public void initDriveSysid() {
-    for (ModuleMap.MODULE_POSITION i : ModuleMap.MODULE_POSITION.values()) {
-      var driveMotor = getModule(i.ordinal()).getDriveMotor();
-      var turnMotor = getModule(i.ordinal()).getSteerMotor();
-      CtreUtils.configureTalonFx(driveMotor, new TalonFXConfiguration());
-      CtreUtils.configureTalonFx(turnMotor, new TalonFXConfiguration());
-      driveMotor.setNeutralMode(NeutralModeValue.Brake);
-      BaseStatusSignal.setUpdateFrequencyForAll(
-          250, driveMotor.getPosition(), driveMotor.getVelocity(), driveMotor.getMotorVoltage());
-
-      driveMotor.optimizeBusUtilization();
-    }
-  }
-
   private Pose2d m_futurePose = new Pose2d();
   private Twist2d m_twistFromPose = new Twist2d();
   private ChassisSpeeds m_newChassisSpeeds = new ChassisSpeeds();

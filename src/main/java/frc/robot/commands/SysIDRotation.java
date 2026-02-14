@@ -21,7 +21,6 @@ public class SysIDRotation extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_swerveDrivetrain.initDriveSysid();
     if (m_isQuasiStatic) {
       m_swerveDrivetrain.sysIdQuasistatic(m_direction);
     } else {
