@@ -4,47 +4,21 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LED.LED_STATES;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 
 public class LEDs extends SubsystemBase {
-  private DatagramSocket socket;
+  private SerialPort ledPort = new SerialPort(9600, SerialPort.Port.kUSB1);
   private LED_STATES currentState = LED_STATES.DISABLED;
 
-  public LEDs() {
-    try {
-      socket = new DatagramSocket();
-    } catch (SocketException e) {
-      DriverStation.reportWarning(
-          "LEDs: Failed to create DatagramSocket on port 25000 " + e.getMessage(), false);
-    }
-  }
-
-  public void sendBytes(byte[] data) {
-    if (socket == null || socket.isClosed()) {
-      DriverStation.reportWarning("LEDs: socket is not available for sending.", false);
-      return;
-    }
-    try {
-      InetAddress addr = InetAddress.getByName("10.42.1.13");
-      DatagramPacket packet = new DatagramPacket(data, data.length, addr, 25000);
-      socket.send(packet);
-    } catch (Exception e) {
-      DriverStation.reportWarning("LEDs: send failed: " + e.getMessage(), false);
-    }
-  }
+  public LEDs() {}
 
   public void setState(LED_STATES newState) {
     if (newState != currentState) {
       currentState = newState;
       System.out.println("LEDs: Changing state to " + newState.getAnimation());
-      sendBytes(newState.getAnimation().getBytes(StandardCharsets.UTF_8));
+      ledPort.writeString(newState.getAnimation() + "\n");
     }
   }
 
