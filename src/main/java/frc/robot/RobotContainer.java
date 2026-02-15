@@ -190,16 +190,16 @@ public class RobotContainer {
                   new Shoot(m_flywheel, m_vision, m_hood)));
     }
 
-    // if (m_swerveDrive != null && m_vision != null) {
-    //   m_driverController
-    //       .leftBumper()
-    //       .toggleOnTrue(
-    //           new AutoAlignDrive(
-    //               m_swerveDrive,
-    //               m_vision,
-    //               m_driverController::getLeftY,
-    //               m_driverController::getLeftX));
-    // }
+    if (m_swerveDrive != null && m_vision != null) {
+      m_driverController
+          .leftBumper()
+          .toggleOnTrue(
+              new AutoAlignDrive(
+                  m_swerveDrive,
+                  m_vision,
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX));
+    }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
       m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
@@ -225,12 +225,12 @@ public class RobotContainer {
     //   m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     // }
 
-    if (m_swerveDrive != null) {
-      m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
-      m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
-      m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
-      m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
-    }
+    // if (m_swerveDrive != null) {
+    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
+    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
+    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
+    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    // }
   }
 
   private void initAutoChooser() {
