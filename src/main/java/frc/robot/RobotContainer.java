@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.FLYWHEEL;
 import frc.robot.Constants.INDEXER.INDEXER_SPEED;
 import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
@@ -30,8 +31,6 @@ import frc.robot.commands.autos.*;
 import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.shooter.ShootManualFlywheel;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.FIELD;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.FuelSim;
@@ -226,7 +225,7 @@ public class RobotContainer {
     //   m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
     // }
 
-    if (m_swerveDrive != null){
+    if (m_swerveDrive != null) {
       m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
       m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
       m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));

@@ -2,18 +2,14 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
-import com.ctre.phoenix6.swerve.SwerveRequest.SysIdSwerveTranslation;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -40,8 +36,6 @@ import frc.robot.Constants.CAN;
 import frc.robot.Constants.SWERVE;
 import frc.robot.generated.V1Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
-import frc.team4201.lib.utils.CtreUtils;
-import frc.team4201.lib.utils.ModuleMap;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
@@ -114,7 +108,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               (Subsystem) this));
 
   /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors.
-  */
+   */
   private final SysIdRoutine m_sysIdRoutineSteer =
       new SysIdRoutine(
           new SysIdRoutine.Config(
@@ -133,7 +127,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   SysId.
    */
   private final SysIdRoutine m_sysIdRoutineRotation =
-      new SysIdRoutine( 
+      new SysIdRoutine(
           new SysIdRoutine.Config(
               /* This is in radians per second^2, but SysId only supports "volts per second" */
               Volts.of(Math.PI / 6).per(Second),
