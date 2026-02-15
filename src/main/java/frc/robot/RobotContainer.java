@@ -32,6 +32,7 @@ import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootManualFlywheel;
+import frc.robot.commands.RunEverything;
 import frc.robot.constants.FIELD;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.FuelSim;
@@ -220,11 +221,8 @@ public class RobotContainer {
       m_driverController
           .a()
           .whileTrue(
-              new ParallelCommandGroup(
-                  new RunUptake(m_uptake),
-                  new Index(m_indexer, INDEXER_SPEED.INDEXING, INDEXER_SPEED.INDEXING),
-                  new IntakeSetpoint(m_intakePivot, PIVOT_SETPOINT.INTAKING),
-                  new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
+              new RunEverything(m_intake, m_intakePivot, m_indexer, m_uptake)
+              );
     }
 
     if (m_intake != null) {
