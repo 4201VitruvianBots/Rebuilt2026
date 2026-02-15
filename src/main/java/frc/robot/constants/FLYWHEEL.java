@@ -11,8 +11,7 @@ import edu.wpi.first.units.measure.Distance;
 
 public class FLYWHEEL {
   public static final double kP = 1.0; // These worked for WoodBot but will need to be retuned
-  public static final double kD = 0.0;
-  ;
+  public static final double kD = 0.0;;
   public static final double kV = 0.0;
   public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
   public static final double kA = 0.0;
@@ -38,9 +37,11 @@ public class FLYWHEEL {
   public static class Shot {
     public final AngularVelocity shooterRPM;
     public final Angle hoodAngle;
+    public final double timeOfFlight;
 
-    public Shot(AngularVelocity shooterRPM, Angle hoodAngle) {
+    public Shot(AngularVelocity shooterRPM, Angle hoodAngle, double timeOfFlight) {
       this.shooterRPM = shooterRPM;
+      this.timeOfFlight = timeOfFlight;
       this.hoodAngle = hoodAngle;
     }
   }

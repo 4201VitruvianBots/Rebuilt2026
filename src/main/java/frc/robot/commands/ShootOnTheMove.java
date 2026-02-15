@@ -1,4 +1,4 @@
-package frc.robot.commands.shooter;
+package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
@@ -23,8 +23,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.FLYWHEEL.Shot;
-import frc.robot.Constants.SWERVE;
+import frc.robot.constants.FLYWHEEL.Shot;
+import frc.robot.constants.SWERVE;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;

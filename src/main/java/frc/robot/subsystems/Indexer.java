@@ -31,10 +31,10 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBaseCanbus);
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBase);
 
   @Logged(name = "Indexer Motor 2", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.driveBaseCanbus);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.driveBase);
 
   // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);

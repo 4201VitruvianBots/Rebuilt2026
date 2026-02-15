@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootOnTheMove;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
@@ -230,69 +231,69 @@ public class RobotContainer {
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    m_autoChooser.addOption(
-        "Auto 0 - PreloadCenter",
-        new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
-    m_autoChooser.addOption(
-        "Auto 1 - PreloadDepotShootCenter",
-        new PreloadDepotShootCenter(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake));
-    m_autoChooser.addOption(
-        "Auto 2 - PreloadNeutralShootClimb",
-        new PreloadNeutralShootClimb(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake,
-            () -> m_flipToRight));
-    m_autoChooser.addOption(
-        "Auto 3 - PreloadNeutralDepotClimb",
-        new PreloadNeutralDepotClimb(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake));
-    m_autoChooser.addOption(
-        "Auto 4 - PreloadNeutralShootTwice",
-        new NeutralShootTwice(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake,
-            () -> m_flipToRight,
-            false));
-    m_autoChooser.addOption(
-        "Auto 5 - NeutralShootTwice - NO PRELOAD",
-        new NeutralShootTwice(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake,
-            () -> m_flipToRight,
-            true));
+    // m_autoChooser.addOption(
+    //     "Auto 0 - PreloadCenter",
+    //     new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+    // m_autoChooser.addOption(
+    //     "Auto 1 - PreloadDepotShootCenter",
+    //     new PreloadDepotShootCenter(
+    //         m_swerveDrive,
+    //         m_intake,
+    //         m_vision,
+    //         m_flywheel,
+    //         m_hood,
+    //         m_intakePivot,
+    //         m_indexer,
+    //         m_uptake));
+    // m_autoChooser.addOption(
+    //     "Auto 2 - PreloadNeutralShootClimb",
+    //     new PreloadNeutralShootClimb(
+    //         m_swerveDrive,
+    //         m_intake,
+    //         m_vision,
+    //         m_flywheel,
+    //         m_hood,
+    //         m_intakePivot,
+    //         m_indexer,
+    //         m_uptake,
+    //         () -> m_flipToRight));
+    // m_autoChooser.addOption(
+    //     "Auto 3 - PreloadNeutralDepotClimb",
+    //     new PreloadNeutralDepotClimb(
+    //         m_swerveDrive,
+    //         m_intake,
+    //         m_vision,
+    //         m_flywheel,
+    //         m_hood,
+    //         m_intakePivot,
+    //         m_indexer,
+    //         m_uptake));
+    // m_autoChooser.addOption(
+    //     "Auto 4 - PreloadNeutralShootTwice",
+    //     new NeutralShootTwice(
+    //         m_swerveDrive,
+    //         m_intake,
+    //         m_vision,
+    //         m_flywheel,
+    //         m_hood,
+    //         m_intakePivot,
+    //         m_indexer,
+    //         m_uptake,
+    //         () -> m_flipToRight,
+    //         false));
+    // m_autoChooser.addOption(
+    //     "Auto 5 - NeutralShootTwice - NO PRELOAD",
+    //     new NeutralShootTwice(
+    //         m_swerveDrive,
+    //         m_intake,
+    //         m_vision,
+    //         m_flywheel,
+    //         m_hood,
+    //         m_intakePivot,
+    //         m_indexer,
+    //         m_uptake,
+    //         () -> m_flipToRight,
+    //         true));
     // m_autoChooser.addOption(
   }
 
@@ -340,10 +341,6 @@ public class RobotContainer {
     if (m_hood != null) m_hood.testPeriodic();
   }
 
-  public void robotPeriodic() {
-    FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
-  }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -382,7 +379,7 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      if (m_flywheel.isAtRPMSetpoint()
+      if (m_flywheel.isAtRPMsetpoint()
           && m_flywheel.getMotorSpeedRPM() > 500
           && FuelSim.getInstance().getStoredFuel() > 0) {
         // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel

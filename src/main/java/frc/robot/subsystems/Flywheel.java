@@ -39,7 +39,7 @@ public class Flywheel extends SubsystemBase {
 
   // TODO: Check how many motors we have later
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
-  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.driveBaseCanbus);
+  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.driveBase);
 
   @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
   private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
@@ -124,11 +124,6 @@ public class Flywheel extends SubsystemBase {
   @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
   public double getMotorSpeedRPM() {
     return m_motor1.getVelocity().refresh().getValue().in(RPM);
-  }
-
-  @Logged(name = "At RPM Setpoint?", importance = Importance.DEBUG)
-  public boolean isAtRPMSetpoint() {
-    return MathUtil.isNear(getRPMSetpoint(), getMotorSpeedRPM(), FLYWHEEL.kRPMSetpointTolerance);
   }
 
   public boolean[] isConnected() {

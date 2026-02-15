@@ -17,6 +17,7 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -591,7 +592,7 @@ public class FuelSim {
     Pose2d robot = robotPoseSupplier.get();
     for (SimIntake intake : intakes) {
       for (int i = 0; i < fuels.size(); i++) {
-        if (intake.shouldIntake(fuels.get(i), robot) && storedFuel < ROBOT.MAX_FUEL) {
+        if (intake.shouldIntake(fuels.get(i), robot) && storedFuel < ROBOT.SIM.MAX_FUEL) {
           fuels.remove(i);
           storedFuel++;
           i--;
