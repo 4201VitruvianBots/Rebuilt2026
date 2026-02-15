@@ -205,9 +205,9 @@ public class RobotContainer {
       m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
     }
 
-    // if (m_flywheel != null) {
-    //   m_driverController.y().whileTrue(new ShootManualFlywheel(m_flywheel));
-    // }
+    if (m_flywheel != null) {
+      m_driverController.y().whileTrue(new ShootManualFlywheel(m_flywheel));
+    }
 
     // I foresee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
