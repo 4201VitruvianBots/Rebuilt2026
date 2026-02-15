@@ -20,6 +20,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.DistanceUnit;
@@ -54,13 +55,18 @@ public final class Constants {
     public static final DCMotor gearbox =
         DCMotor.getKrakenX60Foc(3); // We have more motors than this on the final bot.
 
-    public static class Shot {
-      public final double shooterRPM;
-      public final double hoodPosition;
+    public static final Distance fuelLaunchHeight = Inches.of(26.15);
+    public static final Distance radius = Inches.of(2.0);
 
-      public Shot(double shooterRPM, double hoodPosition) {
+    public static final int ballsPerSecond = 15;
+
+    public static class Shot {
+      public final AngularVelocity shooterRPM;
+      public final Angle hoodAngle;
+
+      public Shot(AngularVelocity shooterRPM, Angle hoodAngle) {
         this.shooterRPM = shooterRPM;
-        this.hoodPosition = hoodPosition;
+        this.hoodAngle = hoodAngle;
       }
     }
 
@@ -176,9 +182,9 @@ public final class Constants {
       STEER
     }
 
-    public static final Distance kWheelBase = Inches.of(23.75);
-    public static final Distance kTrackWidth = Inches.of(23.75);
-    public static final Distance kBumperThickness = Inches.of(2.5);
+    public static final Distance kWheelBase = Inches.of(17.75);
+    public static final Distance kTrackWidth = Inches.of(24.5);
+    public static final Distance kBumperHeight = Inches.of(4.5);
 
     public static final PIDConstants kTranslationPID = new PIDConstants(10, 0, 0);
     public static final PIDConstants kRotationPID = new PIDConstants(7, 0, 0);
@@ -302,6 +308,10 @@ public final class Constants {
     }
   }
 
+  public class ROBOT {
+    public static int MAX_FUEL = 48;
+  }
+
   public class INDEXER {
     // TODO: change values
     public static final double kP = 1.0;
@@ -340,6 +350,8 @@ public final class Constants {
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
 
+      public static final Distance radius = Inches.of(0.625);
+
       public enum INTAKE_SPEED {
         ZERO(0),
         INTAKING(0.55),
@@ -372,7 +384,7 @@ public final class Constants {
       public static final double motionMagicJerk = 0.0;
 
       public static final Angle minAngle = Degrees.of(0.0);
-      public static final Angle maxAngle = Degrees.of(110.0);
+      public static final Angle maxAngle = Degrees.of(52.0);
       public static final Angle startingAngle = minAngle;
       public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
           GravityTypeValue
@@ -389,7 +401,7 @@ public final class Constants {
 
       public enum PIVOT_SETPOINT {
         STOWED(Degrees.of(0.0)),
-        INTAKING(Degrees.of(90.0));
+        INTAKING(Degrees.of(52.0));
 
         private final Angle angle;
 
@@ -463,5 +475,8 @@ public final class Constants {
     // in order to actually match up with the visual thickness of lines in the Mechanism2d
     public static final DistanceUnit LineWidthInches =
         derive(Inches).splitInto(2).named("LineWidthInches").symbol("lw in").make();
+
+    public static final Translation3d intakeOrigin = new Translation3d(0.06, 0, 0.13);
+    public static final Translation3d hopperOrigin = new Translation3d(0.0, 0.0, 0.0);
   }
 }
