@@ -20,11 +20,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
+import frc.robot.Robot;
 import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
@@ -52,7 +54,7 @@ public class ShootOnTheMove extends Command {
                       .interpolate(startValue.timeOfFlight, endValue.timeOfFlight, t)));
 
   static {
-    // TODO: Make at least 20 values for this. Yes. 20.
+    // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
         Meters.of(1.8086638318064376),
         new Shot(RPM.of(2175), Degrees.of(75), 0.96399)); // Hood position is a placeholder
@@ -74,7 +76,7 @@ public class ShootOnTheMove extends Command {
   private Transform2d robotToLauncher =
       new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
 
-  private Double kTeleP_Theta = 7.0;
+  private Double kTeleP_Theta = 12.0;
   private Double kTeleD_Theta = 0.0;
   public static final double kTeleI_Theta = 0.0;
 
