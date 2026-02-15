@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
-import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
