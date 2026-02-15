@@ -20,6 +20,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.DistanceUnit;
@@ -34,17 +35,17 @@ import java.util.Map;
 
 public final class Constants {
   public class FLYWHEEL {
-    public static final double kP = 9.1; // These worked for WoodBot but will need to be retuned
-    public static final double kD = 0.05;
+    public static final double kP = 1.0; // These worked for WoodBot but will need to be retuned
+    public static final double kD = 0.0;
+    ;
     public static final double kV = 0.0;
-    public static final double kS = 2.5; // TODO: Calculate kS (hooo boy that's gonna be fun,
+    public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
     public static final double kA = 0.0;
     // The value of kS is the largest voltage applied before the mechanism begins to move)
     public static final double gearRatio = 1.0; // Placeholder value
-    public static final double peakForwardOutput = 0.4; // Placeholder value
-    public static final double peakReverseOutput = -0.35; // Placeholder value
     public static final double kInertia = 0.01;
     public static final double kStatorCurrentLimit = 120;
+    public static final double kVelocityErrorThreshold = 40.0;
 
     // These worked on wood bot. Change jerk later if further optimization is needed
     public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
@@ -52,15 +53,20 @@ public final class Constants {
     public static double motionMagicJerk = 0.0;
 
     public static final DCMotor gearbox =
-        DCMotor.getKrakenX60Foc(1); // We have more motors than this on the final bot.
+        DCMotor.getKrakenX60Foc(3); // We have more motors than this on the final bot.
+
+    public static final Distance fuelLaunchHeight = Inches.of(26.15);
+    public static final Distance radius = Inches.of(2.0);
+
+    public static final int ballsPerSecond = 15;
 
     public static class Shot {
-      public final double shooterRPM;
-      public final double hoodPosition;
+      public final AngularVelocity shooterRPM;
+      public final Angle hoodAngle;
 
-      public Shot(double shooterRPM, double hoodPosition) {
+      public Shot(AngularVelocity shooterRPM, Angle hoodAngle) {
         this.shooterRPM = shooterRPM;
-        this.hoodPosition = hoodPosition;
+        this.hoodAngle = hoodAngle;
       }
     }
 
@@ -89,8 +95,6 @@ public final class Constants {
       public static final double gearRatio =
           1.0; // TODO: Change this later because this is confirmed not what the final thing
       // will be
-      public static final double peakForwardOutput = 0.4; // Placeholder value
-      public static final double peakReverseOutput = -0.35; // Placeholder value
       public static final double kInertia = 0.005;
       public static final double kStatorCurrentLimit = 30;
 
@@ -178,9 +182,9 @@ public final class Constants {
       STEER
     }
 
-    public static final Distance kWheelBase = Inches.of(23.75);
-    public static final Distance kTrackWidth = Inches.of(23.75);
-    public static final Distance kBumperThickness = Inches.of(2.5);
+    public static final Distance kWheelBase = Inches.of(17.75);
+    public static final Distance kTrackWidth = Inches.of(24.5);
+    public static final Distance kBumperHeight = Inches.of(4.5);
 
     public static final PIDConstants kTranslationPID = new PIDConstants(10, 0, 0);
     public static final PIDConstants kRotationPID = new PIDConstants(7, 0, 0);
@@ -304,6 +308,10 @@ public final class Constants {
     }
   }
 
+  public class ROBOT {
+    public static int MAX_FUEL = 48;
+  }
+
   public class INDEXER {
     // TODO: change values
     public static final double kP = 1.0;
@@ -336,11 +344,13 @@ public final class Constants {
       // TODO: change values
       public static final double kP = 1.0;
       public static final double gearRatio = 1.0;
-      public static final double peakForwardOutput = 0.5;
-      public static final double peakReverseOutput = -0.5;
+      public static final double peakForwardOutput = 0.9;
+      public static final double peakReverseOutput = -0.9;
       public static final double kInertia = 0.005;
 
       public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
+
+      public static final Distance radius = Inches.of(0.625);
 
       public enum INTAKE_SPEED {
         ZERO(0),
@@ -374,7 +384,7 @@ public final class Constants {
       public static final double motionMagicJerk = 0.0;
 
       public static final Angle minAngle = Degrees.of(0.0);
-      public static final Angle maxAngle = Degrees.of(110.0);
+      public static final Angle maxAngle = Degrees.of(52.0);
       public static final Angle startingAngle = minAngle;
       public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
           GravityTypeValue
@@ -391,7 +401,7 @@ public final class Constants {
 
       public enum PIVOT_SETPOINT {
         STOWED(Degrees.of(0.0)),
-        INTAKING(Degrees.of(90.0));
+        INTAKING(Degrees.of(52.0));
 
         private final Angle angle;
 
@@ -411,14 +421,14 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.5;
-    public static final double peakReverseOutput = -0.5;
     public static final double kInertia = 0.01;
+    public static final double kVelocityErrorThreshold = 35.0;
 
     public static final double kMotionMagicAcceleration = 30.0;
     public static final double kMotionMagicCruiseVelocity = 60.0;
 
-    public static final AngularVelocity minRPM = RPM.of(0.0);
+    public static final AngularVelocity minRPM =
+        RPM.of(0.0); // Restrict uptake velocity harder than the flywheel
     public static final AngularVelocity maxRPM = RPM.of(5000.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
@@ -465,5 +475,8 @@ public final class Constants {
     // in order to actually match up with the visual thickness of lines in the Mechanism2d
     public static final DistanceUnit LineWidthInches =
         derive(Inches).splitInto(2).named("LineWidthInches").symbol("lw in").make();
+
+    public static final Translation3d intakeOrigin = new Translation3d(0.06, 0, 0.13);
+    public static final Translation3d hopperOrigin = new Translation3d(0.0, 0.0, 0.0);
   }
 }

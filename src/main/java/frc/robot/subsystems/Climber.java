@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
@@ -13,10 +15,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -138,6 +142,14 @@ public class Climber extends SubsystemBase {
   public Distance getHeight() {
     return CLIMBER.drumRotationsToDistance.times(
         m_climberMotor.getPosition().clone().refresh().getValue().magnitude());
+  }
+
+  // For Robot2d Simulation
+  @NotLogged
+  public LinearVelocity getVelocity() {
+    return InchesPerSecond.of(
+        m_climberMotor.getVelocity().clone().refresh().getValue().in(RotationsPerSecond)
+            * CLIMBER.drumRotationsToDistance.in(Meters));
   }
 
   public double convertDistancetoRotations(Distance distance) {

@@ -7,9 +7,12 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
@@ -37,18 +40,18 @@ public class Flywheel extends SubsystemBase {
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.driveBase);
 
-  // @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
-  // private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
+  @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
+  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
 
-  // @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
-  // private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
+  @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
+  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
 
-  private final MotionMagicVelocityTorqueCurrentFOC m_request =
-      new MotionMagicVelocityTorqueCurrentFOC(0);
-  private final TorqueCurrentFOC m_TorqueCurrentFOC = new TorqueCurrentFOC(0);
+  private final VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0);
+  private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
+  private final TorqueCurrentFOC m_torqueCurrentFOC = new TorqueCurrentFOC(0.0);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
 
   public final DoubleSubscriber m_rpmSubscriber;
@@ -79,21 +82,18 @@ public class Flywheel extends SubsystemBase {
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
-
-    config.MotionMagic.MotionMagicCruiseVelocity = FLYWHEEL.motionMagicCruiseVelocity;
-    config.MotionMagic.MotionMagicAcceleration = FLYWHEEL.motionMagicAcceleration;
+    config.CurrentLimits.StatorCurrentLimitEnable = false;
 
     CtreUtils.configureTalonFx(m_motor1, config);
-    // CtreUtils.configureTalonFx(m_motor2, config);
-    // CtreUtils.configureTalonFx(m_motor3, config);
+    CtreUtils.configureTalonFx(m_motor2, config);
+    CtreUtils.configureTalonFx(m_motor3, config);
 
     m_simState = m_motor1.getSimState();
 
     // We only need the sim state of a single motor
 
-    // m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    // m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     // TODO: Check if they all are  aligned
     var topic =
         NetworkTableInstance.getDefault()
@@ -107,13 +107,12 @@ public class Flywheel extends SubsystemBase {
     m_neutralMode = neutralmode;
   }
 
-  public void setRPMOutputFOC(double rpm) {
-    m_rpmSetpoint = RPM.of(rpm);
-    m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+  public void setRPMOutputFOC(AngularVelocity rpm) {
+    m_rpmSetpoint = rpm;
   }
 
   public void setTorqueCurrentOutputFOC(Voltage voltage) {
-    m_motor1.setControl(m_TorqueCurrentFOC.withOutput(voltage.abs(Volts)));
+    m_motor1.setControl(m_torqueCurrentFOC.withOutput(voltage.abs(Volts)));
   }
 
   @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
@@ -168,8 +167,27 @@ public class Flywheel extends SubsystemBase {
     m_rpmSetpoint = RPM.of(m_rpmSubscriber.get());
   }
 
+  public boolean isAtRPMsetpoint() {
+    return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThreshold;
+  }
+
+  public double getRPMerror() {
+    return getRPMSetpoint() - getMotorSpeedRPM();
+  }
+
+  @Logged(name = "RPM error", importance = Importance.DEBUG)
+  public double getAbsoluteRPMerror() {
+    return Math.abs(getRPMerror());
+  }
+
   @Override
-  public void periodic() {}
+  public void periodic() {
+    if (!isAtRPMsetpoint()) {
+      m_motor1.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
+    } else {
+      m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+    }
+  }
 
   @Override
   public void simulationPeriodic() {

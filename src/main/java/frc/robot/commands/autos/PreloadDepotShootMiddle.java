@@ -14,12 +14,17 @@ import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Vision;
 
 public class PreloadDepotShootMiddle extends SequentialCommandGroup {
   public PreloadDepotShootMiddle(
-      CommandSwerveDrivetrain swerveDrive, Intake intake, Vision vision, Flywheel flywheel) {
+      CommandSwerveDrivetrain swerveDrive,
+      Intake intake,
+      Vision vision,
+      Flywheel flywheel,
+      Hood hood) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -35,7 +40,7 @@ public class PreloadDepotShootMiddle extends SequentialCommandGroup {
           new RunIntake(intake, INTAKE_SPEED.INTAKING).withTimeout(9),
           new ParallelCommandGroup(
                   m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
-                  new Shoot(flywheel, vision))
+                  new Shoot(flywheel, vision, hood))
               .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
