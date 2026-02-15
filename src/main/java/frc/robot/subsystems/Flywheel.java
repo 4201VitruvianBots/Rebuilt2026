@@ -158,6 +158,13 @@ public class Flywheel extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
   }
+  
+  public Command manualCommand() {
+    return this.runEnd(
+        () -> setRPMOutputFOC(RPM.of(getRPMSetpoint())),
+        () -> setTorqueCurrentOutputFOC(Volts.of(0.0))
+    );
+  }
 
   public void testInit() {
     m_rpmPublisher.set(0.0);

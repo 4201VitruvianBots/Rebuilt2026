@@ -6,7 +6,7 @@ package frc.robot.simulation;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
-import static frc.robot.constants.SIM.LineWidthInches;
+import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;

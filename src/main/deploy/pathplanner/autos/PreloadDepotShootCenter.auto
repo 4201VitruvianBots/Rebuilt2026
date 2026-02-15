@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadDepotShootMiddle1"
+            "pathName": "PreloadDepotShootCenter1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadDepotShootMiddle2"
+            "pathName": "PreloadDepotShootCenter2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadDepotShootMiddle3"
+            "pathName": "PreloadDepotShootCenter3"
           }
         }
       ]

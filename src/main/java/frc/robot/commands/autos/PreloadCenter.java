@@ -7,7 +7,7 @@ package frc.robot.commands.autos;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;

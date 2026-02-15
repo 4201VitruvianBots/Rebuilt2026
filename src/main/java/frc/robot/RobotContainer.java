@@ -16,20 +16,19 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.AutoAlignDrive;
-import frc.robot.commands.IntakeAll;
-import frc.robot.commands.ResetGyro;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
-import frc.robot.commands.intake.RunIntake;
-import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.shooter.ShootManualFlywheel;
+import frc.robot.commands.swerve.AutoAlignDrive;
+import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.constants.SIM;
+import frc.robot.constants.ROBOT;
+import frc.robot.constants.ROBOT.SIM;
+import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.USB;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
@@ -205,16 +204,16 @@ public class RobotContainer {
     }
 
     if (m_flywheel != null) {
-      m_driverController.y().whileTrue(new ShootManualFlywheel(m_flywheel));
+      m_driverController.y().whileTrue(m_flywheel.manualCommand());
     }
 
     // I foresee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
-      m_driverController.a().whileTrue(new IntakeAll(m_intake, m_intakePivot, m_indexer, m_uptake));
+      m_driverController.a().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
     }
 
     if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+      m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
     }
   }
 
@@ -222,8 +221,10 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
-        "PreloadDepotShootMiddle",
-        new PreloadDepotShootMiddle(
+        "Auto 0 - PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+    m_autoChooser.addOption(
+        "Auto 1 - PreloadDepotShootCenter",
+        new PreloadDepotShootCenter(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -233,7 +234,7 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "PreloadNeutralShootClimb",
+        "Auto 2 - PreloadNeutralShootClimb",
         new PreloadNeutralShootClimb(
             m_swerveDrive,
             m_intake,
@@ -245,7 +246,7 @@ public class RobotContainer {
             m_uptake,
             () -> m_flipToRight));
     m_autoChooser.addOption(
-        "PreloadNeutralDepotClimb",
+        "Auto 3 - PreloadNeutralDepotClimb",
         new PreloadNeutralDepotClimb(
             m_swerveDrive,
             m_intake,
@@ -256,8 +257,8 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "PreloadNeutralShootTwice",
-        new PreloadNeutralShootTwice(
+        "Auto 4 - PreloadNeutralShootTwice",
+        new NeutralShootTwice(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -266,9 +267,21 @@ public class RobotContainer {
             m_intakePivot,
             m_indexer,
             m_uptake,
-            () -> m_flipToRight));
+            () -> m_flipToRight,
+            false));
     m_autoChooser.addOption(
-        "PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+        "Auto 5 - NeutralShootTwice - NO PRELOAD",
+        new NeutralShootTwice(
+            m_swerveDrive,
+            m_intake,
+            m_vision,
+            m_flywheel,
+            m_hood,
+            m_intakePivot,
+            m_indexer,
+            m_uptake,
+            () -> m_flipToRight,
+            true));
   }
 
   private void initSideChooser() {

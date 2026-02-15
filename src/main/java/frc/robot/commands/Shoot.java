@@ -1,4 +1,4 @@
-package frc.robot.commands.shooter;
+package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
@@ -47,7 +47,8 @@ public class Shoot extends Command {
 
   private final Flywheel m_flywheel;
   private final Vision m_vision;
-
+  
+  @SuppressWarnings("unused")
   private final Hood m_shooterHood;
 
   Translation2d m_goal = new Translation2d();

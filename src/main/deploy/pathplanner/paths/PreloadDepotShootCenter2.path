@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "PreloadDepotShootMiddle",
+  "folder": "PreloadDepotShootCenter",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

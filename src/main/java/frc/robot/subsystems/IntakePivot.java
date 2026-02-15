@@ -22,6 +22,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -32,6 +33,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
@@ -151,6 +153,11 @@ public class IntakePivot extends SubsystemBase {
 
   public boolean isConnected() {
     return m_motor.isConnected();
+  }
+  
+  @NotLogged
+  public Command command(PIVOT_SETPOINT setpoint) {
+    return this.startEnd(() -> setAngle(setpoint.getAngle()), () -> setAngle(PIVOT_SETPOINT.STOWED.getAngle()));
   }
 
   @Override

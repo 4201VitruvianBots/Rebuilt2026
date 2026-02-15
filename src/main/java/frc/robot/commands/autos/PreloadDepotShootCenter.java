@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.IntakeAll;
-import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
@@ -20,8 +20,8 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 
-public class PreloadDepotShootMiddle extends SequentialCommandGroup {
-  public PreloadDepotShootMiddle(
+public class PreloadDepotShootCenter extends SequentialCommandGroup {
+  public PreloadDepotShootCenter(
       CommandSwerveDrivetrain swerveDrive,
       Intake intake,
       Vision vision,
@@ -34,15 +34,14 @@ public class PreloadDepotShootMiddle extends SequentialCommandGroup {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle1");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootCenter1");
       var m_path2 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle2");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootCenter2");
       var m_path3 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootMiddle3");
-
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootCenter3");
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new IntakeAll(intake, intakePivot, indexer, uptake).withTimeout(9),
+          new IntakeCommand(intake, intakePivot, indexer, uptake).withTimeout(9),
           new ParallelCommandGroup(
                   m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
                   new Shoot(flywheel, vision, hood))
@@ -50,7 +49,7 @@ public class PreloadDepotShootMiddle extends SequentialCommandGroup {
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
       DriverStation.reportError(
-          "Failed to load path for PreloadDepotShootMiddle", e.getStackTrace());
+          "Failed to load path for PreloadDepotShootCenter", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

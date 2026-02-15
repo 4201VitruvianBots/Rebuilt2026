@@ -4,7 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "PreloadCenter",
-    "PreloadDepotShootMiddle",
+    "PreloadDepotShootCenter",
     "PreloadNeutralDepotClimb",
     "PreloadNeutralShootClimb",
     "PreloadNeutralShootTwice"
