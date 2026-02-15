@@ -48,7 +48,10 @@ public class NeutralShootTwice extends Auto {
       addCommands(
           getPathCommand(trajectoryUtils, m_path1, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          rushCenter ? new InstantCommand() : new Shoot(flywheel, vision, hood).withTimeout(3), // Don't shoot preload if we're trying to rush the center
+          rushCenter
+              ? new InstantCommand()
+              : new Shoot(flywheel, vision, hood)
+                  .withTimeout(3), // Don't shoot preload if we're trying to rush the center
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(

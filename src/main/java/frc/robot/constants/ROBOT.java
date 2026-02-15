@@ -120,7 +120,7 @@ public class ROBOT {
   public class USB {
     public static final int driver_xBoxController = 0;
   }
-  
+
   public class SIM {
     // For some reason, the line width value needs to be 2 times larger (~12 times larger in Glass)
     // in order to actually match up with the visual thickness of lines in the Mechanism2d

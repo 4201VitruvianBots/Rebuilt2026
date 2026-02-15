@@ -47,7 +47,7 @@ public class Shoot extends Command {
 
   private final Flywheel m_flywheel;
   private final Vision m_vision;
-  
+
   @SuppressWarnings("unused")
   private final Hood m_shooterHood;
 

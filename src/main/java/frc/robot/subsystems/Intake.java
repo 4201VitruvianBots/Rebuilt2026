@@ -87,7 +87,7 @@ public class Intake extends SubsystemBase {
   public boolean isIntaking() {
     return m_motor.get() != 0;
   }
-  
+
   @NotLogged
   public Command command(INTAKE_SPEED speed) {
     return this.startEnd(() -> m_motor.set(speed.get()), () -> m_motor.set(0));

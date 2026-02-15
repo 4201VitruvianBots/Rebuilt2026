@@ -16,8 +16,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -116,14 +116,14 @@ public class Uptake extends SubsystemBase {
   public double getAbsoluteRPMerror() {
     return Math.abs(getRPMerror());
   }
-  
+
   @NotLogged
   public Command command(UPTAKE.UPTAKE_SPEED speed) {
     return this.startEnd(
         () -> setVelocitySetpoint(speed.get()),
         () -> {
-            setPercentOutput(0.0);
-            setVelocitySetpoint(UPTAKE.UPTAKE_SPEED.IDLE.get());
+          setPercentOutput(0.0);
+          setVelocitySetpoint(UPTAKE.UPTAKE_SPEED.IDLE.get());
         });
   }
 

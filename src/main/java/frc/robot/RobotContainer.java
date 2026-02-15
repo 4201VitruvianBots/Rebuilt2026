@@ -25,7 +25,6 @@ import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
@@ -209,7 +208,9 @@ public class RobotContainer {
 
     // I foresee a state machine in the future...
     if (m_uptake != null && m_indexer != null && m_intake != null) {
-      m_driverController.a().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
+      m_driverController
+          .a()
+          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
     }
 
     if (m_intake != null) {
@@ -221,7 +222,8 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
-        "Auto 0 - PreloadCenter", new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+        "Auto 0 - PreloadCenter",
+        new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
     m_autoChooser.addOption(
         "Auto 1 - PreloadDepotShootCenter",
         new PreloadDepotShootCenter(

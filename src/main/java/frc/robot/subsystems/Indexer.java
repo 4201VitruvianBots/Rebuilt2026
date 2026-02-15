@@ -13,8 +13,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -98,7 +98,7 @@ public class Indexer extends SubsystemBase {
   public double getPercentOutput2() {
     return m_indexerMotor2.get();
   }
-  
+
   @NotLogged
   public Command command(INDEXER_SPEED speed1, INDEXER_SPEED speed2) {
     return this.startEnd(() -> setSpeeds(speed1.get(), speed2.get()), () -> setSpeeds(0.0, 0.0));
