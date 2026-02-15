@@ -9,13 +9,15 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.IntakeAll;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.utils.TrajectoryUtils;
@@ -28,6 +30,9 @@ public class PreloadNeutralShootTwice extends Auto {
       Vision vision,
       Flywheel flywheel,
       Hood hood,
+      IntakePivot intakePivot,
+      Indexer indexer,
+      Uptake uptake,
       BooleanSupplier flipPath) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
@@ -46,7 +51,7 @@ public class PreloadNeutralShootTwice extends Auto {
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKE_SPEED.INTAKING),
+              new IntakeAll(intake, intakePivot, indexer, uptake),
               getPathCommand(trajectoryUtils, m_path3, flipPath)
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
@@ -56,7 +61,7 @@ public class PreloadNeutralShootTwice extends Auto {
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKE_SPEED.INTAKING),
+              new IntakeAll(intake, intakePivot, indexer, uptake),
               getPathCommand(trajectoryUtils, m_path3, flipPath)
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)

@@ -1,7 +1,7 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.subsystems.Intake;
 
 public class RunIntake extends Command {

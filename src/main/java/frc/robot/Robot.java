@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.FLYWHEEL;
+import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.ROBOT;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -38,12 +39,7 @@ public class Robot extends TimedRobot {
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
 
-          if (RobotBase.isSimulation()) {
-            config.minimumImportance = Logged.Importance.DEBUG;
-          } else {
-            // During competition/practice
-            config.minimumImportance = Logged.Importance.INFO;
-          }
+          ROBOT.initConstants();
 
           config.root = "EpilogueTelemetry";
         });

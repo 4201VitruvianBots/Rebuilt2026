@@ -2,6 +2,7 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -9,19 +10,16 @@ import edu.wpi.first.wpilibj.RobotController;
 
 public class ROBOT {
   public static final boolean useSysID = false;
-  // TODO: Change LOG_MODE to Logged.Importance
-  public static LOG_MODE logMode = LOG_MODE.NORMAL;
+
+  public static Logged.Importance logMode = Logged.Importance.INFO;
   public static ROBOT_ID robotID = ROBOT_ID.SIM;
 
-  // TODO: determine these later
   public enum CONTROL_MODE {
     OPEN_LOOP,
     CLOSED_LOOP
   }
 
   public enum SUPERSTRUCTURE_STATES {}
-
-  public enum GAME_PIECE {}
 
   public enum ROBOT_ID {
     // Robot Serial Numbers (2023-2025)
@@ -32,15 +30,13 @@ public class ROBOT {
     // GRIDLOCK - 0306ce62
     // BOBOT - 030e6a97
 
-    // 030cbcf0 - 23-1 Rio 1.0 (in the green bins)
+    // 030cbcf0 - 23-1 Rio 2.0
     // 030cbd1c - 23-2 Rio 1.0 (in the green bins)
     // 0310d915 - 23-3 Rio 1.0 (Doesn't work right - Sheraz)
 
-    // TODO: rename and change serials
     // Robot Serial Numbers (2026)
-    ALPHABOT("030cbc95"), // Rio 1.0
-    V2("032381FB"), // 23-1 Rio 2.0
-    V3("032398ED"), // 23-2 Rio 2.0
+    WOOD_BOT("030cbc95"), // Rio 1.0
+    V1("030cbcf0"),
 
     SIM("");
 
@@ -71,25 +67,21 @@ public class ROBOT {
     }
   }
 
-  public static void initAlphaBot() {
-    robotID = ROBOT_ID.ALPHABOT;
+  public static void initWoodBot() {
+    robotID = ROBOT_ID.WOOD_BOT;
   }
-
-  //   public static void initV2() {
-  //     robotID = ROBOT_ID.V2;
-  //   }
 
   public static final Distance ROBOTWIDTH = Inches.of(23.0);
   public static final Distance ROBOTLENGTH = Inches.of(33.0);
   public static final Distance BUMPERTHICKNESS = Inches.of(2.75);
 
-  //   public static void initV3() {
-  //     robotID = ROBOT_ID.V3;
-  //   }
-
   public static void initSim() {
-    logMode = LOG_MODE.DEBUG;
+    logMode = Logged.Importance.DEBUG;
     robotID = ROBOT_ID.SIM;
+  }
+
+  public static void initV1() {
+    robotID = ROBOT_ID.V1;
   }
 
   public static void initConstants() {
@@ -97,9 +89,8 @@ public class ROBOT {
 
     try {
       switch (ROBOT_ID.fromSerial(RobotController.getSerialNumber())) {
-        case ALPHABOT -> initAlphaBot();
-          // case V2 -> initV2();
-          // case V3 -> initV3();
+        case WOOD_BOT -> initWoodBot();
+        case V1 -> initV1();
         case SIM -> {
           initSim();
           System.out.print(
@@ -121,20 +112,5 @@ public class ROBOT {
               AlertType.kWarning);
     }
     alert.set(true);
-  }
-
-  public enum LOG_MODE {
-    DEBUG(0),
-    NORMAL(1);
-
-    private final double log_level;
-
-    LOG_MODE(final double log_level) {
-      this.log_level = log_level;
-    }
-
-    public double get() {
-      return log_level;
-    }
   }
 }

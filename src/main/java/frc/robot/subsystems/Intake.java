@@ -22,8 +22,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.INTAKE;
+import frc.robot.constants.CAN;
+import frc.robot.constants.INTAKE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Intake extends SubsystemBase {

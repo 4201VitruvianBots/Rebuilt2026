@@ -6,13 +6,13 @@ package frc.robot.simulation;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
-import static frc.robot.Constants.SIM.LineWidthInches;
+import static frc.robot.constants.SIM.LineWidthInches;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.Constants.CLIMBER;
+import frc.robot.constants.CLIMBER;
 import frc.team4201.lib.simulation.visualization.Arm2d;
 import frc.team4201.lib.simulation.visualization.Elevator2d;
 import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;

@@ -24,10 +24,10 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.CLIMBER;
-import frc.robot.Constants.CLIMBER.HOLDING_ROBOT;
-import frc.robot.Constants.CLIMBER.NOT_HOLDING_ROBOT;
+import frc.robot.constants.CAN;
+import frc.robot.constants.CLIMBER;
+import frc.robot.constants.CLIMBER.HOLDING_ROBOT;
+import frc.robot.constants.CLIMBER.NOT_HOLDING_ROBOT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Climber extends SubsystemBase {

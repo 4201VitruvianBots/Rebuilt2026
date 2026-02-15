@@ -21,8 +21,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.INDEXER;
+import frc.robot.constants.CAN;
+import frc.robot.constants.INDEXER;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {

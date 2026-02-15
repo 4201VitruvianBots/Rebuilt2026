@@ -9,13 +9,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.Constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.IntakeAll;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
@@ -25,7 +27,10 @@ public class PreloadNeutralDepotClimb extends Auto {
       Intake intake,
       Vision vision,
       Flywheel flywheel,
-      Hood hood) {
+      Hood hood,
+      IntakePivot intakePivot,
+      Indexer indexer,
+      Uptake uptake) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -49,14 +54,14 @@ public class PreloadNeutralDepotClimb extends Auto {
           new Shoot(flywheel, vision, hood).withTimeout(3),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKE_SPEED.INTAKING),
+              new IntakeAll(intake, intakePivot, indexer, uptake),
               m_path3.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
               new Shoot(flywheel, vision, hood).withTimeout(3),
               m_path5.andThen(() -> swerveDrive.setControl(stopRequest))),
           new ParallelRaceGroup(
-              new RunIntake(intake, INTAKE_SPEED.INTAKING),
+              new IntakeAll(intake, intakePivot, indexer, uptake),
               m_path6.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path7.andThen(() -> swerveDrive.setControl(stopRequest))
           // Todo: add climb (command not yet implemented in this branch)
