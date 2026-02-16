@@ -45,12 +45,12 @@ public class AutoAlignDrive extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_PidController.reset();
-    if (Controls.isBlueAlliance()) {
-      m_goal = FIELD.blueAutoHub;
-    } else {
-      m_goal = FIELD.redAutoHub;
-    }
+    // m_PidController.reset();
+    // if (Controls.isBlueAlliance()) {
+    //   m_goal = FIELD.blueAutoHub;
+    // } else {
+    //   m_goal = FIELD.redAutoHub;
+    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.

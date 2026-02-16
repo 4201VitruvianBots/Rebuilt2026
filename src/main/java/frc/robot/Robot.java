@@ -34,18 +34,18 @@ public class Robot extends TimedRobot {
     enableLiveWindowInTest(true);
     Epilogue.configure(
         config -> {
-          // config.backend = new FileBackend(DataLogManager.getLog());
+          config.backend = new FileBackend(DataLogManager.getLog());
 
-    //       if (RobotBase.isSimulation()) {
-    //         config.minimumImportance = Logged.Importance.DEBUG;
-    //       } else {
-    //         // During competition/practice
-    //         config.minimumImportance = Logged.Importance.INFO;
-    //       }
+          if (RobotBase.isSimulation()) {
+            config.minimumImportance = Logged.Importance.DEBUG;
+          } else {
+            // During competition/practice
+            config.minimumImportance = Logged.Importance.INFO;
+          }
 
-    //       config.root = "EpilogueTelemetry";
-    //     });
-    // Epilogue.bind(this);
+          config.root = "EpilogueTelemetry";
+        });
+    Epilogue.bind(this);
   }
 
   /**

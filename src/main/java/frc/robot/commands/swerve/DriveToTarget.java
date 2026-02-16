@@ -43,7 +43,7 @@ public class DriveToTarget {
     return Commands.defer(
         () -> {
           // figure out where we need to drive to
-          m_vision.updateNearestScoringTarget();
+          m_vision.updateNearestClimbTarget();
           var targetPose = m_vision.getNearestTargetPose();
 
           // publish the position we want to drive to

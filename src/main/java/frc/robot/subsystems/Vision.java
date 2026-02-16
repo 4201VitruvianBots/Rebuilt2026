@@ -2,9 +2,12 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
+import frc.team4201.lib.geometry.LinkedAprilTag;
 // import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
@@ -87,23 +91,27 @@ public class Vision extends SubsystemBase {
   public boolean isTargetingRight() {
     return !m_useLeftTarget;
   }
-    // TODO: Create colllection for poses and function work
- public void updateNearestScoringTarget(){
+    // TODO: Create collection for poses and function work
+  public void updateNearestClimbTarget() {
     if (lockTarget) return;
-      robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
-        if (Controls.isBlueAlliance()) {
-          nearestObjectPose = robotToTarget[0].nearest((Collection<Pose2d>) FIELD.APRIL_TAG.getPose2d(FIELD.APRIL_TAG.BLUE_TOWER_FAR));
-        } else {
-          nearestObjectPose = robotToTarget[0].nearest(FIELD.BLUE_TOWER_FAR);
-        }  
-        else {
-          if (Controls.isRedAlliance()) {
-            nearestObjectPose = robotToTarget[0].nearest(FIELD.RED_TOWER_NEAR);
-          } else {
-            nearestObjectPose = robotToTarget[0].nearest(FIELD.RED_TOWER_FAR);
-          }  
+    robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
+      if (Controls.isBlueAlliance()) {
+          nearestObjectPose =
+              robotToTarget[0].nearest(Arrays.asList(
+                new Pose2d(FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(), FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(), new Rotation2d()),
+                new Pose2d(FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(), FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(), new Rotation2d())
+                ));
+      } else {
+          nearestObjectPose =
+              robotToTarget[0].nearest(Arrays.asList(
+                new Pose2d(FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(), FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(), new Rotation2d()),
+                new Pose2d(FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(), FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(), new Rotation2d())
+                ));
       }
-    }
+  }
+  public Pose2d getNearestTargetPose() {
+    return robotToTarget[1];
+  }
     
   //   private void updateAngleToHub() {
   //   if (m_swerveDriveTrain != null) {
@@ -139,13 +147,11 @@ public class Vision extends SubsystemBase {
     }
   }
 
-
   private final Pose2d visionRobotPoseMeters;
   private final double timestampSeconds;
   private final Matrix <N3, N1> visionMeasurementStdDevs;
-  private final int numTags;
 
-  public VisionFieldPoseEstimate(
+  public void VisionFieldPoseEstimate(
     Pose2d visionRobotPoseMeters, 
     double timestampSeconds,
     Matrix<N3, N1> visionMeasurementStdDevs,
@@ -170,7 +176,7 @@ public class Vision extends SubsystemBase {
   }
 
   public int getNumTags() {
-    return numTags;
+    return getNumTags();
   }
   private VisionFieldPoseEstimate fuseEstimates(
     VisionFieldPoseEstimate a, VisionFieldPoseEstimate b) { 
@@ -179,10 +185,10 @@ public class Vision extends SubsystemBase {
         a = b;
         b = tmp;
       }
-  }
+  
 
   Transform2d a_T_b = 
-    state.getFieldToRobot(b.getTimestampSeconds))
+    state.getFieldToRobot(b.getTimestampSeconds)
       .get().minus(state.getFieldToRobot(a.getTimestampSeconds()).get());
 
   Pose2d poseA = a.getVisionRobotPoseMeters().transformBy(a_T_b);
@@ -196,14 +202,14 @@ public class Vision extends SubsystemBase {
           b.getVisionMeasurementStdDevs().elementTimes(b.getVisionMeasurementStdDevs());
 
   
-  Rotation2d fusedHeading = poseB.getRotation();
-  if(varianceA.get(2, 0) < VisionConstants.kLargeVariance && varianceB.get(2,0) < VisionConstants.kLargeVariance) {
-    fusedHeading = new Rotation2d(
-      poseA.getRotation().getCos() / varianceA.get(2, 0) + 
-          poseB.getRotation().getCos() / varianceB.get(2, 0),
-      poseA.getRotation().getSin() / varianceA.get(2, 0) + 
-          poseB.getRotation().getSin() / varianceB.get(2, 0)); 
-  }
+          Rotation2d fusedHeading = poseB.getRotation();
+          if(varianceA.get(2, 0) < VisionConstants.kLargeVariance && varianceB.get(2,0) < VisionConstants.kLargeVariance) {
+            fusedHeading = new Rotation2d(
+              poseA.getRotation().getCos() / varianceA.get(2, 0) + 
+                  poseB.getRotation().getCos() / varianceB.get(2, 0),
+              poseA.getRotation().getSin() / varianceA.get(2, 0) + 
+                  poseB.getRotation().getSin() / varianceB.get(2, 0)); 
+          }
 
 
 double weightAx = 1.0 / varianceA.get(0, 0);
@@ -216,10 +222,10 @@ Pose2d fusedPose =
   new Pose2d( 
       new Translation2d(
         (poseA.getTranslation().getX() * weightAx 
-          + poseB.getTranslation().getX * weightBx)
+          + poseB.getTranslation().getX() * weightBx)
             / (weightAx + weightBx), 
         (poseA.getTranslation().getY() * weightAy
-          + poseB.getTranslation().getY * weightBy)),
+          + poseB.getTranslation().getY() * weightBy)),
           fusedHeading);
 
       Matrix<N3, N1> fusedStdDev =
@@ -232,7 +238,7 @@ int numTags = a.getNumTags() + b.getNumTags();
 double time = b.getTimestampSeconds();
 
 return new VisionFieldPoseEstimate(fusedPose, time, fusedStdDev, numTags);
-
+        }
   /**
    * Process measurements from a limelight. Return true if the given vision measurement is used,
    * otherwise return false to indicate that it was rejected.
