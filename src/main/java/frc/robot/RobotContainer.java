@@ -30,6 +30,7 @@ import frc.robot.commands.autos.*;
 import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootManualFlywheel;
 import frc.robot.constants.FIELD;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.FuelSim;
