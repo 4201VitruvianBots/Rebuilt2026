@@ -26,7 +26,6 @@ import frc.robot.commands.AutoAlignDrive;
 import frc.robot.commands.Index;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.RunUptake;
-import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.intake.IntakeSetpoint;
 import frc.robot.commands.intake.RunIntake;
@@ -37,11 +36,6 @@ import frc.robot.generated.V1Constants;
 import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
@@ -155,22 +149,22 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
-    m_fieldSim = new FieldSim();
-    m_flywheel = new Flywheel();
+    // m_fieldSim = new FieldSim();
+    // m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    m_hood = new Hood();
+    // m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    m_intakePivot = new IntakePivot();
-    m_intake = new Intake();
-    m_uptake = new Uptake();
-    m_indexer = new Indexer();
-    m_climber = new Climber();
-    m_led = new LEDs();
-    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    // m_intakePivot = new IntakePivot();
+    // m_intake = new Intake();
+    // m_uptake = new Uptake();
+    // m_indexer = new Indexer();
+    // m_climber = new Climber();
+    // m_led = new LEDs();
+    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
@@ -227,9 +221,16 @@ public class RobotContainer {
                   new RunIntake(m_intake, INTAKE_SPEED.INTAKING)));
     }
 
-    if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
-    }
+    // if (m_intake != null) {
+    //   m_driverController.leftTrigger().whileTrue(new RunIntake(m_intake, INTAKE_SPEED.INTAKING));
+    // }
+
+    // if (m_swerveDrive != null) {
+    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
+    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
+    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
+    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    // }
   }
 
   private void initAutoChooser() {
