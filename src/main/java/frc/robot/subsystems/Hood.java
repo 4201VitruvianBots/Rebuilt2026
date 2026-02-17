@@ -32,9 +32,9 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.FLYWHEEL.HOOD;
-import frc.robot.Constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
+import frc.robot.constants.CAN;
+import frc.robot.constants.FLYWHEEL.HOOD;
+import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Hood extends SubsystemBase {

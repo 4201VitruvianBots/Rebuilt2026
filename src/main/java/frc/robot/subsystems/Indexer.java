@@ -14,15 +14,19 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.INDEXER;
+import frc.robot.constants.CAN;
+import frc.robot.constants.INDEXER;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {
@@ -94,6 +98,11 @@ public class Indexer extends SubsystemBase {
   @Logged(name = "Motor Output 2", importance = Logged.Importance.INFO)
   public double getPercentOutput2() {
     return m_indexerMotor2.get();
+  }
+
+  @NotLogged
+  public Command command(INDEXER_SPEED_1 speed1, INDEXER_SPEED_2 speed2) {
+    return this.startEnd(() -> setSpeeds(speed1.get(), speed2.get()), () -> setSpeeds(0.0, 0.0));
   }
 
   @Override

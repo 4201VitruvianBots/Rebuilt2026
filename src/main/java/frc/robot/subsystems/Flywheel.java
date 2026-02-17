@@ -29,9 +29,9 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.FLYWHEEL;
-import frc.robot.Constants.FLYWHEEL.MANUAL_RPM;
+import frc.robot.constants.CAN;
+import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Flywheel extends SubsystemBase {
@@ -157,6 +157,12 @@ public class Flywheel extends SubsystemBase {
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public Command manualCommand() {
+    return this.runEnd(
+        () -> setRPMOutputFOC(RPM.of(getRPMSetpoint())),
+        () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
   }
 
   public void testInit() {

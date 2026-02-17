@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -25,9 +26,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.UPTAKE;
+import frc.robot.constants.CAN;
+import frc.robot.constants.UPTAKE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Uptake extends SubsystemBase {
@@ -113,6 +115,16 @@ public class Uptake extends SubsystemBase {
 
   public double getAbsoluteRPMerror() {
     return Math.abs(getRPMerror());
+  }
+
+  @NotLogged
+  public Command command(UPTAKE.UPTAKE_SPEED speed) {
+    return this.startEnd(
+        () -> setVelocitySetpoint(speed.get()),
+        () -> {
+          setPercentOutput(0.0);
+          setVelocitySetpoint(UPTAKE.UPTAKE_SPEED.IDLE.get());
+        });
   }
 
   public void testInit() {
