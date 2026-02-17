@@ -18,11 +18,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.ROBOT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
@@ -116,6 +118,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     FIELD.initializeConstants();
     FIELD.updateConstants();
+    ROBOT.initializeConstants();
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
@@ -145,22 +148,22 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
-    // m_fieldSim = new FieldSim();
-    // m_flywheel = new Flywheel();
+    m_fieldSim = new FieldSim();
+    m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    // m_hood = new Hood();
+    m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
-    // m_intake = new Intake();
-    // m_uptake = new Uptake();
-    // m_indexer = new Indexer();
-    // m_climber = new Climber();
-    // m_led = new LEDs();
-    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    m_intakePivot = new IntakePivot();
+    m_intake = new Intake();
+    m_uptake = new Uptake();
+    m_indexer = new Indexer();
+    m_climber = new Climber();
+    m_led = new LEDs();
+    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
@@ -265,7 +268,7 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "Auto 4 - PreloadSideNeutralTwice",
+        "Auto 4 - SideNeutralTwice",
         new SideNeutralTwice(
             m_swerveDrive,
             m_intake,
