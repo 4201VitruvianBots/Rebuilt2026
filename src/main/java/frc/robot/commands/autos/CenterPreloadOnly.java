@@ -15,8 +15,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
-public class PreloadCenter extends Auto {
-  public PreloadCenter(
+public class CenterPreloadOnly extends Auto {
+  public CenterPreloadOnly(
       CommandSwerveDrivetrain swerveDrive,
       Intake intake,
       Vision vision,
@@ -25,13 +25,13 @@ public class PreloadCenter extends Auto {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadCenter1");
+      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadOnly1");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new Shoot(flywheel, vision, hood).withTimeout(4));
     } catch (Exception e) {
-      DriverStation.reportError("Failed to load path for PreloadCenter", e.getStackTrace());
+      DriverStation.reportError("Failed to load path for CenterPreloadOnly", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

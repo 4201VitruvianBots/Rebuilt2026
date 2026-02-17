@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootTwice1"
+            "pathName": "SideNeutralTwice1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootTwice2"
+            "pathName": "SideNeutralTwice2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootTwice3"
+            "pathName": "SideNeutralTwice3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootTwice4"
+            "pathName": "SideNeutralTwice4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootTwice2"
+            "pathName": "SideNeutralTwice2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootTwice3"
+            "pathName": "SideNeutralTwice3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootTwice4"
+            "pathName": "SideNeutralTwice4"
           }
         }
       ]

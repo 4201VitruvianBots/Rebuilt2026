@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 4.0
+        "x": 5.8,
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.15,
-        "y": 4.0
+        "x": 3.8,
+        "y": 5.5
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.0
+        "x": 0.5,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 4.0
+        "x": 0.5,
+        "y": 8.2
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -41,14 +46,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "PreloadDepotShootCenter",
+  "folder": "SideNeutralDepotClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

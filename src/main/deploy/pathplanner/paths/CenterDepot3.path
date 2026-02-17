@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5,
-        "y": 7.0
+        "x": 1.025,
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.5,
-        "y": 6.75
+        "x": 2.625,
+        "y": 6.0
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.7,
-        "y": 4.85
+        "x": 3.5,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 0.7,
-        "y": 5.108862630358833
+        "x": 2.5,
+        "y": 4.0
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.78,
-      "rotationDegrees": -90.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -50,10 +45,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "PreloadNeutralDepotClimb",
+  "folder": "CenterDepot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

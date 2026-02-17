@@ -7,19 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadDepotShootCenter1"
+            "pathName": "SideNeutralClimb1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadDepotShootCenter2"
+            "pathName": "SideNeutralClimb2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadDepotShootCenter3"
+            "pathName": "SideNeutralClimb3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralClimb4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralClimb5Depot"
           }
         }
       ]

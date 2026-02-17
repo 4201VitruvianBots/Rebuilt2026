@@ -7,31 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootClimb1"
+            "pathName": "SideNeutralDepotClimb1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootClimb2"
+            "pathName": "SideNeutralDepotClimb2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootClimb3"
+            "pathName": "SideNeutralDepotClimb3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootClimb4"
+            "pathName": "SideNeutralDepotClimb4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PreloadNeutralShootClimb5Depot"
+            "pathName": "SideNeutralDepotClimb5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralDepotClimb6"
           }
         }
       ]

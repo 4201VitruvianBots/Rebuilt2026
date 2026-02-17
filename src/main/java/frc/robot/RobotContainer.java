@@ -222,11 +222,11 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
-        "Auto 0 - PreloadCenter",
-        new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+        "Auto 0 - CenterPreloadOnly",
+        new CenterPreloadOnly(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
     m_autoChooser.addOption(
-        "Auto 1 - PreloadDepotShootCenter",
-        new PreloadDepotShootCenter(
+        "Auto 1 - CenterDepot",
+        new CenterDepot(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -236,8 +236,8 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "Auto 2 - PreloadNeutralShootClimb",
-        new PreloadNeutralShootClimb(
+        "Auto 2 - SideNeutralClimb",
+        new SideNeutralClimb(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -248,8 +248,8 @@ public class RobotContainer {
             m_uptake,
             () -> m_flipToRight));
     m_autoChooser.addOption(
-        "Auto 3 - PreloadNeutralDepotClimb",
-        new PreloadNeutralDepotClimb(
+        "Auto 3 - SideNeutralDepotClimb",
+        new SideNeutralDepotClimb(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -259,8 +259,8 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "Auto 4 - PreloadNeutralShootTwice",
-        new NeutralShootTwice(
+        "Auto 4 - PreloadSideNeutralTwice",
+        new SideNeutralTwice(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -272,8 +272,8 @@ public class RobotContainer {
             () -> m_flipToRight,
             false));
     m_autoChooser.addOption(
-        "Auto 5 - NeutralShootTwice - NO PRELOAD",
-        new NeutralShootTwice(
+        "Auto 5 - SideNeutralTwice - NO PRELOAD",
+        new SideNeutralTwice(
             m_swerveDrive,
             m_intake,
             m_vision,

@@ -23,8 +23,8 @@ import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import java.util.function.BooleanSupplier;
 
-public class PreloadNeutralShootClimb extends Auto {
-  public PreloadNeutralShootClimb(
+public class SideNeutralTwice extends Auto {
+  public SideNeutralTwice(
       CommandSwerveDrivetrain swerveDrive,
       Intake intake,
       Vision vision,
@@ -33,23 +33,25 @@ public class PreloadNeutralShootClimb extends Auto {
       IntakePivot intakePivot,
       Indexer indexer,
       Uptake uptake,
-      BooleanSupplier flipPath) {
+      BooleanSupplier flipPath,
+      boolean rushCenter) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       TrajectoryUtils trajectoryUtils = swerveDrive.getTrajectoryUtils();
 
-      var m_path1 = PathPlannerPath.fromPathFile("PreloadNeutralShootClimb1");
-      var m_path2 = PathPlannerPath.fromPathFile("PreloadNeutralShootClimb2");
-      var m_path3 = PathPlannerPath.fromPathFile("PreloadNeutralShootClimb3");
-      var m_path4 = PathPlannerPath.fromPathFile("PreloadNeutralShootClimb4");
-      var m_path5Outpost = PathPlannerPath.fromPathFile("PreloadNeutralShootClimb5Outpost");
-      var m_path5Depot = PathPlannerPath.fromPathFile("PreloadNeutralShootClimb5Depot");
+      var m_path1 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice1");
+      var m_path2 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice2");
+      var m_path3 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice3");
+      var m_path4 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice4");
 
       addCommands(
           getPathCommand(trajectoryUtils, m_path1, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision, hood).withTimeout(3),
+          rushCenter
+              ? new InstantCommand()
+              : new Shoot(flywheel, vision, hood)
+                  .withTimeout(3), // Don't shoot preload if we're trying to rush the center
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
@@ -59,13 +61,19 @@ public class PreloadNeutralShootClimb extends Auto {
           getPathCommand(trajectoryUtils, m_path4, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new Shoot(flywheel, vision, hood).withTimeout(3),
-          getChoiceCommand(trajectoryUtils, m_path5Outpost, m_path5Depot, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest))
-          // Todo: add climb (command not yet implemented in this branch)
-          );
+          // This code just repeats the last four steps again.
+          getPathCommand(trajectoryUtils, m_path2, flipPath)
+              .andThen(() -> swerveDrive.setControl(stopRequest)),
+          new ParallelRaceGroup(
+              new IntakeCommand(intake, intakePivot, indexer, uptake),
+              getPathCommand(trajectoryUtils, m_path3, flipPath)
+                  .andThen(() -> swerveDrive.setControl(stopRequest))),
+          getPathCommand(trajectoryUtils, m_path4, flipPath)
+              .andThen(() -> swerveDrive.setControl(stopRequest)),
+          new Shoot(flywheel, vision, hood).withTimeout(3));
     } catch (Exception e) {
       DriverStation.reportError(
-          "Failed to load path for PreloadNeutralShootClimb", e.getStackTrace());
+          "Failed to load path for PreloadSideNeutralTwice", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

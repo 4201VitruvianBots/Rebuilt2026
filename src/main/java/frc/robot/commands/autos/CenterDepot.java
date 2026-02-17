@@ -20,8 +20,8 @@ import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 
-public class PreloadDepotShootCenter extends SequentialCommandGroup {
-  public PreloadDepotShootCenter(
+public class CenterDepot extends SequentialCommandGroup {
+  public CenterDepot(
       CommandSwerveDrivetrain swerveDrive,
       Intake intake,
       Vision vision,
@@ -34,11 +34,11 @@ public class PreloadDepotShootCenter extends SequentialCommandGroup {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootCenter1");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot1");
       var m_path2 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootCenter2");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot2");
       var m_path3 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadDepotShootCenter3");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot3");
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new IntakeCommand(intake, intakePivot, indexer, uptake).withTimeout(9),
@@ -49,7 +49,7 @@ public class PreloadDepotShootCenter extends SequentialCommandGroup {
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
       DriverStation.reportError(
-          "Failed to load path for PreloadDepotShootCenter", e.getStackTrace());
+          "Failed to load path for CenterDepot", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

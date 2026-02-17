@@ -21,8 +21,8 @@ import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
-public class PreloadNeutralDepotClimb extends Auto {
-  public PreloadNeutralDepotClimb(
+public class SideNeutralDepotClimb extends Auto {
+  public SideNeutralDepotClimb(
       CommandSwerveDrivetrain swerveDrive,
       Intake intake,
       Vision vision,
@@ -35,19 +35,19 @@ public class PreloadNeutralDepotClimb extends Auto {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb1");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb1");
       var m_path2 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb2");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb2");
       var m_path3 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb3");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb3");
       var m_path4 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb4");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb4");
       var m_path5 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb5");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb5");
       var m_path6 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb6");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb6");
       var m_path7 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb7");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb7");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -68,7 +68,7 @@ public class PreloadNeutralDepotClimb extends Auto {
           );
     } catch (Exception e) {
       DriverStation.reportError(
-          "Failed to load path for PreloadNeutralDepotClimb", e.getStackTrace());
+          "Failed to load path for SideNeutralDepotClimb", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }
