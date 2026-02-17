@@ -439,21 +439,32 @@ public final class Constants {
 
   public class LED {
     public enum LED_STATES {
-      DISABLED("disabled"),
-      IDLE("idle"),
-      DRIVING("driving"),
-      INTAKING("intaking"),
-      SHOOTING("shooting"),
-      CLIMBING("climbing");
+      DISABLED("disabled", 0),
+      IDLE("idle", 1),
+      DRIVING("driving", 2),
+      INTAKING("intaking", 3),
+      SHOOTING("shooting", 4),
+      CLIMBING("climbing", 5);
 
       private final String animation;
+      private final int id;
 
-      LED_STATES(String animation) {
+      LED_STATES(String animation, int id) {
         this.animation = animation;
+        this.id = id;
       }
 
       public String getAnimation() {
         return animation;
+      }
+
+      public int getId() {
+        return id;
+      }
+
+      /** Returns the nth bit (0-indexed from LSB) of the id. */
+      public boolean getBit(int n) {
+        return ((id >> n) & 1) == 1;
       }
     }
   }
