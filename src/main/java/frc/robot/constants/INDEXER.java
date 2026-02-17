@@ -5,7 +5,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 public class INDEXER {
   // TODO: change values
   public static final double kP = 1.0;
-  public static final double gearRatio = 1.0;
+  public static final double gearRatio = 16.0 / 48.0;
   public static final double peakForwardOutput = 0.9;
   public static final double peakReverseOutput = -0.9;
   public static final double kInertia = 0.005;

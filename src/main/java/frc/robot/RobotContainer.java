@@ -27,6 +27,8 @@ import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
@@ -157,7 +159,7 @@ public class RobotContainer {
     // m_intakePivot = new IntakePivot();
     // m_intake = new Intake();
     // m_uptake = new Uptake();
-    // m_indexer = new Indexer();
+    m_indexer = new Indexer();
     // m_climber = new Climber();
     // m_led = new LEDs();
     // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
@@ -214,6 +216,10 @@ public class RobotContainer {
 
     if (m_intake != null) {
       m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
+    }
+
+    if (m_indexer != null){
+      m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING));
     }
 
     // if (m_swerveDrive != null) {
