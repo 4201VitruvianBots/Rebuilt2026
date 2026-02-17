@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
@@ -24,6 +25,7 @@ import frc.team4201.lib.command.Auto;
 public class SideNeutralDepotClimb extends Auto {
   public SideNeutralDepotClimb(
       CommandSwerveDrivetrain swerveDrive,
+      Climber climber,
       Intake intake,
       Vision vision,
       Flywheel flywheel,

@@ -5,9 +5,12 @@
 package frc.robot.commands.autos;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
@@ -15,9 +18,10 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
-public class CenterPreloadOnly extends Auto {
-  public CenterPreloadOnly(
+public class CenterPreloadClimb extends Auto {
+  public CenterPreloadClimb(
       CommandSwerveDrivetrain swerveDrive,
+      Climber climber,
       Intake intake,
       Vision vision,
       Flywheel flywheel,
@@ -26,11 +30,15 @@ public class CenterPreloadOnly extends Auto {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadOnly1");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadClimb1");
+      var m_path2 = 
+        swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadClimb2");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision, hood).withTimeout(4));
+          new Shoot(flywheel, vision, hood).withTimeout(4),
+          m_path2.andThen(() -> swerveDrive.setControl(stopRequest))
+        );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterPreloadOnly", e.getStackTrace());
       addCommands(new InstantCommand());

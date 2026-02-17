@@ -3,11 +3,11 @@
   "robotLength": 0.7747,
   "holonomicMode": true,
   "pathFolders": [
-    "CenterPreloadOnly",
     "CenterDepot",
-    "SideNeutralDepotClimb",
+    "CenterPreloadClimb",
+    "PreloadSideNeutralTwice",
     "SideNeutralClimb",
-    "PreloadSideNeutralTwice"
+    "SideNeutralDepotClimb"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

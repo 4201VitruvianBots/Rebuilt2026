@@ -228,8 +228,8 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
-        "Auto 0 - CenterPreloadOnly",
-        new CenterPreloadOnly(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+        "Auto 0 - CenterPreloadClimb",
+        new CenterPreloadClimb(m_swerveDrive, m_climber, m_intake, m_vision, m_flywheel, m_hood));
     m_autoChooser.addOption(
         "Auto 1 - CenterDepot",
         new CenterDepot(
@@ -245,6 +245,7 @@ public class RobotContainer {
         "Auto 2 - SideNeutralClimb",
         new SideNeutralClimb(
             m_swerveDrive,
+            m_climber,
             m_intake,
             m_vision,
             m_flywheel,
@@ -257,6 +258,7 @@ public class RobotContainer {
         "Auto 3 - SideNeutralDepotClimb",
         new SideNeutralDepotClimb(
             m_swerveDrive,
+            m_climber,
             m_intake,
             m_vision,
             m_flywheel,
