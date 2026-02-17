@@ -64,8 +64,7 @@ public class SideNeutralClimb extends Auto {
           // Todo: add climb (command not yet implemented in this branch)
           );
     } catch (Exception e) {
-      DriverStation.reportError(
-          "Failed to load path for SideNeutralClimb", e.getStackTrace());
+      DriverStation.reportError("Failed to load path for SideNeutralClimb", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

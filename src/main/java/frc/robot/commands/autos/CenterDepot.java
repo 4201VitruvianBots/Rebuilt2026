@@ -33,12 +33,9 @@ public class CenterDepot extends SequentialCommandGroup {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot1");
-      var m_path2 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot2");
-      var m_path3 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot3");
+      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot1");
+      var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot2");
+      var m_path3 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot3");
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new IntakeCommand(intake, intakePivot, indexer, uptake).withTimeout(9),
@@ -48,8 +45,7 @@ public class CenterDepot extends SequentialCommandGroup {
               .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
-      DriverStation.reportError(
-          "Failed to load path for CenterDepot", e.getStackTrace());
+      DriverStation.reportError("Failed to load path for CenterDepot", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

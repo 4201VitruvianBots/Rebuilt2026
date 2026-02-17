@@ -16,13 +16,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.AutoAlignDrive;
-import frc.robot.commands.Index;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ResetGyro;
-import frc.robot.commands.RunUptake;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
@@ -220,7 +217,7 @@ public class RobotContainer {
     if (m_intake != null) {
       m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
     }
-    
+
     // if (m_swerveDrive != null) {
     //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
     //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));

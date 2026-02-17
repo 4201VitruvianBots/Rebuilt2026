@@ -27,7 +27,7 @@ public class INDEXER {
       return value;
     }
   }
-  
+
   public enum INDEXER_SPEED_2 {
     ZERO(0),
     INDEXING(0.9),
