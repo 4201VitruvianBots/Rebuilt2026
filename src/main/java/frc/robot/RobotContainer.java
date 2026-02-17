@@ -205,7 +205,7 @@ public class RobotContainer {
           .toggleOnTrue(
               (new ShootOnTheMove(
                   m_flywheel,
-                  m_hood,
+                  m_hood, m_vision,
                   m_swerveDrive,
                   () -> m_driverController.getLeftY(),
                   () -> m_driverController.getLeftX())));

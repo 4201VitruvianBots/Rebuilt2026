@@ -29,6 +29,8 @@ import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Vision;
+
 import java.util.function.DoubleSupplier;
 
 public class ShootOnTheMove extends Command {
@@ -60,6 +62,7 @@ public class ShootOnTheMove extends Command {
     distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(70), 1.4));
   }
 
+  private final Vision m_vision;
   private final Flywheel m_flywheel;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private final DoubleSupplier m_throttleInput;
@@ -86,7 +89,7 @@ public class ShootOnTheMove extends Command {
 
   public ShootOnTheMove(
       Flywheel flywheel,
-      Hood shooterHood,
+      Hood shooterHood, Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
@@ -95,6 +98,7 @@ public class ShootOnTheMove extends Command {
     m_throttleInput = throttleInput;
     m_strafeInput = strafeInput;
     m_shooterHood = shooterHood;
+    m_vision = vision;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
     SmartDashboard.putData(this);
@@ -103,6 +107,13 @@ public class ShootOnTheMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
+      // TODO: Add pass position as goal
+      
+      // If we're in our own zone, then we align to the hub
+    } else {
+      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    }
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     m_PidController =
         new ProfiledPIDController(
