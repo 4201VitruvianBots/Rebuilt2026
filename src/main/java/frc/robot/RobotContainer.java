@@ -158,7 +158,7 @@ public class RobotContainer {
     // m_intake = new Intake();
     // m_uptake = new Uptake();
     // m_indexer = new Indexer();
-    // m_climber = new Climber();
+    m_climber = new Climber();
     // m_led = new LEDs();
     // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
@@ -323,6 +323,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testInit();
     if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
+    if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
@@ -332,6 +333,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
+    if (m_climber != null) m_climber.testPeriodic();
   }
 
   /**
