@@ -10,9 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SWERVE;
-import frc.robot.constants.FIELD;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Controls;
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {

@@ -2,20 +2,11 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -27,10 +18,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
-import frc.team4201.lib.geometry.LinkedAprilTag;
 // import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
+import java.util.Arrays;
 
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
@@ -95,24 +86,37 @@ public class Vision extends SubsystemBase {
   public void updateNearestClimbTarget() {
     if (lockTarget) return;
     robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
-      if (Controls.isBlueAlliance()) {
-          nearestObjectPose =
-              robotToTarget[0].nearest(Arrays.asList(
-                new Pose2d(FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(), FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(), new Rotation2d()),
-                new Pose2d(FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(), FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(), new Rotation2d())
-                ));
-      } else {
-          nearestObjectPose =
-              robotToTarget[0].nearest(Arrays.asList(
-                new Pose2d(FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(), FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(), new Rotation2d()),
-                new Pose2d(FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(), FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(), new Rotation2d())
-                ));
-      }
+    if (Controls.isBlueAlliance()) {
+      nearestObjectPose =
+          robotToTarget[0].nearest(
+              Arrays.asList(
+                  new Pose2d(
+                      FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+                      FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+                      new Rotation2d()),
+                  new Pose2d(
+                      FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+                      FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+                      new Rotation2d())));
+    } else {
+      nearestObjectPose =
+          robotToTarget[0].nearest(
+              Arrays.asList(
+                  new Pose2d(
+                      FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+                      FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+                      new Rotation2d()),
+                  new Pose2d(
+                      FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+                      FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+                      new Rotation2d())));
+    }
   }
+
   public Pose2d getNearestTargetPose() {
     return robotToTarget[1];
   }
-    
+
   //   private void updateAngleToHub() {
   //   if (m_swerveDriveTrain != null) {
   //     if (DriverStation.isDisabled()) {
@@ -133,7 +137,6 @@ public class Vision extends SubsystemBase {
   //     }
   //   }
   // }
-
 
   /**
    * Process measurements from a limelight. Return true if the given vision measurement is used,

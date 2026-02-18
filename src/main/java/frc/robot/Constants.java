@@ -8,13 +8,12 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -209,16 +208,16 @@ public final class Constants {
         return lengthSeconds;
       }
     }
-    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17, 0, 0);
-  public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9, 0, 0);
-  public static final PPHolonomicDriveController kDriveController =
-      new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
-  public static final PathConstraints kAutoAlignPathConstraints =
-      new PathConstraints(
-          1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI); // The constraints for this path.
-  public static final Time kEndTriggerDebounce = Seconds.of(0.04);
-  public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
 
+    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17, 0, 0);
+    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9, 0, 0);
+    public static final PPHolonomicDriveController kDriveController =
+        new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
+    public static final PathConstraints kAutoAlignPathConstraints =
+        new PathConstraints(
+            1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+    public static final Time kEndTriggerDebounce = Seconds.of(0.04);
+    public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
   }
 
   public class INDEXERMOTORS {
