@@ -14,7 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.SWERVE;
+import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Vision;
@@ -25,7 +25,6 @@ import java.util.Set;
 public class DriveToTarget {
   private final CommandSwerveDrivetrain m_swerveDrive;
   private final Vision m_vision;
-  private final Controls m_controls;
   private final StructPublisher<Pose2d> desiredTargetPublisher =
       NetworkTableInstance.getDefault()
           .getTable("Vision")
@@ -33,10 +32,9 @@ public class DriveToTarget {
           .publish();
 
   /** Creates a new DriveToBranch. */
-  public DriveToTarget(CommandSwerveDrivetrain swerveDrivetrain, Vision vision, Controls controls) {
+  public DriveToTarget(CommandSwerveDrivetrain swerveDrivetrain, Vision vision) {
     m_swerveDrive = swerveDrivetrain;
     m_vision = vision;
-    m_controls = controls;
   }
 
   // TODO: Vision subsystem updating
@@ -70,13 +68,13 @@ public class DriveToTarget {
       return Commands.sequence(
           Commands.print("start position PID loop"),
           PositionPIDCommand.generateCommand(
-              m_swerveDrive, targetWaypoint, SWERVE.kAlignmentAdjustmentTimeout),
+              m_swerveDrive, targetWaypoint, AUTO_ALIGN.kAlignmentAdjustmentTimeout),
           Commands.print("end position PID loop"));
     }
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,
-            SWERVE.kAutoAlignPathConstraints,
+            AUTO_ALIGN.kAutoAlignPathConstraints,
             new IdealStartingState(
                 m_swerveDrive.getVelocityMagnitude(m_swerveDrive.getState().Speeds),
                 m_swerveDrive.getState().Pose.getRotation()),
@@ -91,7 +89,7 @@ public class DriveToTarget {
             () -> m_swerveDrive.getState().Pose,
             () -> m_swerveDrive.getState().Speeds,
             m_swerveDrive::setChassisSpeedsAuto,
-            SWERVE.kDriveController,
+            AUTO_ALIGN.kDriveController,
             m_swerveDrive.getAutoRobotConfig(),
             () -> false,
             m_swerveDrive)

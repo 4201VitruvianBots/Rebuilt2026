@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.USB;
+import frc.robot.constants.FIELD;
+import frc.robot.constants.ROBOT.USB;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -180,6 +181,9 @@ public class Controls extends SubsystemBase {
                 m_allianceInit = true;
               });
       alertMap.get("allianceInit").set(!m_allianceInit);
+
+      // Update field constants
+      FIELD.updateConstants();
     }
   }
 }
