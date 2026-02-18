@@ -91,7 +91,7 @@ public class Vision extends SubsystemBase {
   public boolean isTargetingRight() {
     return !m_useLeftTarget;
   }
-    // TODO: Create collection for poses and function work
+
   public void updateNearestClimbTarget() {
     if (lockTarget) return;
     robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
@@ -134,111 +134,7 @@ public class Vision extends SubsystemBase {
   //   }
   // }
 
-  public boolean getInitialLocalization() {
-    return m_localized;
-  }
 
-  public void resetInitialLocalization() {
-    m_localized = false;
-
-    // Set Swerve Pose to (0, 0) to reset it
-    if (m_swerveDriveTrain != null) {
-      m_swerveDriveTrain.resetPose(Pose2d.kZero);
-    }
-  }
-
-  private final Pose2d visionRobotPoseMeters;
-  private final double timestampSeconds;
-  private final Matrix <N3, N1> visionMeasurementStdDevs;
-
-  public void VisionFieldPoseEstimate(
-    Pose2d visionRobotPoseMeters, 
-    double timestampSeconds,
-    Matrix<N3, N1> visionMeasurementStdDevs,
-    int numTags
-  ) {
-    this.visionRobotPoseMeters = visionRobotPoseMeters;
-    this.timestampSeconds = timestampSeconds;
-    this.visionMeasurementStdDevs = visionMeasurementStdDevs;
-    this.numTags = numTags;
-  }
-
-  public Pose2d getVisionRobotPoseMeters() {
-    return visionRobotPoseMeters;
-  }
-
-  public double getTimestampSeconds() { 
-    return timestampSeconds;
-  }
-
-  public Matrix<N3, N1> getVisionMeasurementStdDevs() {
-    return visionMeasurementStdDevs;
-  }
-
-  public int getNumTags() {
-    return getNumTags();
-  }
-  private VisionFieldPoseEstimate fuseEstimates(
-    VisionFieldPoseEstimate a, VisionFieldPoseEstimate b) { 
-      if (b.getTimestampSeconds() < a.getTimestampSeconds()){
-        VisionFieldPoseEstimate tmp = a; 
-        a = b;
-        b = tmp;
-      }
-  
-
-  Transform2d a_T_b = 
-    state.getFieldToRobot(b.getTimestampSeconds)
-      .get().minus(state.getFieldToRobot(a.getTimestampSeconds()).get());
-
-  Pose2d poseA = a.getVisionRobotPoseMeters().transformBy(a_T_b);
-  Pose2d poseB = b.getVisionRobotPoseMeters().transformBy(a_T_b);
-
-
-  //inverse variance weighting 
-  var varianceA = 
-          a.getVisionMeasurementStdDevs().elementTimes(a.getVisionMeasurementStdDevs());
-  var varianceB = 
-          b.getVisionMeasurementStdDevs().elementTimes(b.getVisionMeasurementStdDevs());
-
-  
-          Rotation2d fusedHeading = poseB.getRotation();
-          if(varianceA.get(2, 0) < VisionConstants.kLargeVariance && varianceB.get(2,0) < VisionConstants.kLargeVariance) {
-            fusedHeading = new Rotation2d(
-              poseA.getRotation().getCos() / varianceA.get(2, 0) + 
-                  poseB.getRotation().getCos() / varianceB.get(2, 0),
-              poseA.getRotation().getSin() / varianceA.get(2, 0) + 
-                  poseB.getRotation().getSin() / varianceB.get(2, 0)); 
-          }
-
-
-double weightAx = 1.0 / varianceA.get(0, 0);
-double weightAy = 1.0 / varianceA.get(1, 0);
-double weightBx = 1.0 / varianceB.get(0, 0); 
-double weightBy = 1.0 / varianceB.get(1, 0); 
-
-
-Pose2d fusedPose = 
-  new Pose2d( 
-      new Translation2d(
-        (poseA.getTranslation().getX() * weightAx 
-          + poseB.getTranslation().getX() * weightBx)
-            / (weightAx + weightBx), 
-        (poseA.getTranslation().getY() * weightAy
-          + poseB.getTranslation().getY() * weightBy)),
-          fusedHeading);
-
-      Matrix<N3, N1> fusedStdDev =
-        VecBuilder.fill(
-          Math.sqrt(1.0 / (weightAx + weightBx)),
-          Math.sqrt(1.0 / (weightAy + weightBy)),
-          Math.sqrt(1.0 / (1.0 / varianceA.get(2, 0) + 1.0 / varianceB.get(2,0))));
-        
-int numTags = a.getNumTags() + b.getNumTags();
-double time = b.getTimestampSeconds();
-
-return new VisionFieldPoseEstimate(fusedPose, time, fusedStdDev, numTags);
-        }
   /**
    * Process measurements from a limelight. Return true if the given vision measurement is used,
    * otherwise return false to indicate that it was rejected.
