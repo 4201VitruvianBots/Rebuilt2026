@@ -7,18 +7,24 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
-// import frc.team4201.lib.simulation.LimelightSim;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
 import java.util.Arrays;
@@ -43,7 +49,12 @@ public class Vision extends SubsystemBase {
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable table = inst.getTable("LimelightPoseEstimate");
 
+  public final DoubleSubscriber m_kPAutoAlignSubscriber;
+  public final DoubleSubscriber m_kDAutoAlignSubscriber;
+
   private final DoublePublisher estTimeStamp = table.getDoubleTopic("estTimeStamp").publish();
+  public final DoublePublisher m_kPAutoAlignPublisher;
+  public final DoublePublisher m_kDAutoAlignPublisher;
 
   private final StructPublisher<Pose2d> estPoseLLR =
       table.getStructTopic("estPoseLLR", Pose2d.struct).publish();
@@ -53,12 +64,23 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
-
+    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, CAMERA_SERVER.limelightR.toString(), port);
       PortForwarder.add(port + 10, CAMERA_SERVER.limelightL.toString(), port);
     }
+
+    var topickP =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kPAutoAlign");
+    var topickD =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kDAutoAlign");
+    m_kPAutoAlignSubscriber = topickP.subscribe(7.4);
+    m_kDAutoAlignSubscriber = topickD.subscribe(0.3);
+
+    m_kPAutoAlignPublisher = topickP.publish();
+    m_kDAutoAlignPublisher = topickD.publish();
   }
 
   public void registerSwerveDrive(CommandSwerveDrivetrain swerveDriveTrain) {
@@ -205,7 +227,7 @@ public class Vision extends SubsystemBase {
       if (!limelightMeasurement.isMegaTag2) {
         // Filter out bad AprilTag vision estimates for MegaTag1
         // TODO: Check 1 tag from center?
-        if (limelightMeasurement.tagCount < 1) {
+        if (limelightMeasurement.tagCount < 2) {
           return false;
         }
 
@@ -258,14 +280,72 @@ public class Vision extends SubsystemBase {
             .getMeasure();
 
     var isAligned = rotationDelta.abs(Degrees) < 0.5;
-
+    
     var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
     SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
     System.out.println("The angle to the hub is " + setPoint.getAngle());
     System.out.println("The robot's angle is " + m_swerveDriveTrain.getState().Pose.getRotation());
     System.out.println("Therefore, the alignment is" + isAligned);
-
+    
     return isAligned;
+  }
+  
+  @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
+  public boolean isPointingAtGoal() {
+    // bearing from robot to goal
+    var bearing =
+        m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+    // robot heading
+    var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
+    // smallest signed angle difference in [-pi, pi]
+    double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
+    return Math.abs(error) <= Units.degreesToRadians(1.0);
+  }
+
+  @Logged(name = "Is in Neutral Sector?", importance = Importance.DEBUG)
+  public boolean isInNeutralSector() {
+    return FIELD.getCurrentSector().name().startsWith("NEUTRAL");
+  }
+
+  @Logged(name = "Is in Red Sector?", importance = Importance.DEBUG)
+  public boolean isInRedSector() {
+    return FIELD.getCurrentSector().name().startsWith("RED");
+  }
+
+  @Logged(name = "Is in Blue Sector?", importance = Importance.DEBUG)
+  public boolean isInBlueSector() {
+    return FIELD.getCurrentSector().name().startsWith("BLUE");
+  }
+
+  @Logged(name = "Is in Opposing Alliance Sector?", importance = Importance.DEBUG)
+  public boolean isInOpposingAllianceSector() {
+    if (Controls.isBlueAlliance()) {
+      return isInRedSector();
+    } else {
+      return isInBlueSector();
+    }
+  }
+
+  @Logged(name = "Is in Right Half?", importance = Importance.DEBUG)
+  public boolean isInRightHalf() {
+    return FIELD.getCurrentSector().name().endsWith("RIGHT");
+  }
+
+  @Logged(name = "Is in Left Half?", importance = Importance.DEBUG)
+  public boolean isInLeftHalf() {
+    return FIELD.getCurrentSector().name().endsWith("LEFT");
+  }
+
+  public void testInit() {
+    m_kPAutoAlignPublisher.set(7.4);
+    m_kDAutoAlignPublisher.set(0.3);
+  }
+
+  public void teleopInit() {}
+
+  @Logged(name = "Distance to Hub", importance = Importance.INFO)
+  public Distance getDistanceToHub() {
+    return Meters.of(m_swerveDriveTrain.getState().Pose.getTranslation().getDistance(m_goal));
   }
 
   @Override

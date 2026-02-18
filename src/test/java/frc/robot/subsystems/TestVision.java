@@ -6,7 +6,7 @@ import static org.mockito.Mockito.doReturn;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.generated.TunerConstants;
+import frc.robot.generated.V1Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +16,7 @@ import utils.TestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class TestVision {
-  @Spy CommandSwerveDrivetrain swerveDrive = TunerConstants.createDrivetrain();
+  @Spy CommandSwerveDrivetrain swerveDrive = V1Constants.createDrivetrain();
   Controls controls = new Controls();
   @Spy Vision vision = new Vision(controls);
 

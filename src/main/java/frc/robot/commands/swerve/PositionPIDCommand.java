@@ -15,7 +15,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.SWERVE;
+import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class PositionPIDCommand extends Command {
@@ -44,16 +44,16 @@ public class PositionPIDCommand extends Command {
                   MathUtil.isNear(
                       0.0,
                       diff.getRotation().getRotations(),
-                      SWERVE.kRotationTolerance.getRotations(),
+                      AUTO_ALIGN.kRotationTolerance.getRotations(),
                       0.0,
                       1.0);
 
-              var position = diff.getTranslation().getNorm() < SWERVE.kPositionTolerance.in(Meters);
+              var position = diff.getTranslation().getNorm() < AUTO_ALIGN.kPositionTolerance.in(Meters);
 
               var speed =
                   m_swerve
                       .getVelocityMagnitude(m_swerve.getState().Speeds)
-                      .lt(SWERVE.kSpeedTolerance);
+                      .lt(AUTO_ALIGN.kSpeedTolerance);
 
               System.out.println(
                   "end trigger conditions R: " + rotation + "\tP: " + position + "\tS: " + speed);
@@ -61,7 +61,7 @@ public class PositionPIDCommand extends Command {
               return rotation && position && speed;
             });
 
-    endTriggerDebounced = endTrigger.debounce(SWERVE.kEndTriggerDebounce.in(Seconds));
+    endTriggerDebounced = endTrigger.debounce(AUTO_ALIGN.kEndTriggerDebounce.in(Seconds));
   }
 
   public static Command generateCommand(
@@ -88,7 +88,7 @@ public class PositionPIDCommand extends Command {
     endTriggerLogger.accept(endTrigger.getAsBoolean());
 
     m_swerve.setChassisSpeeds(
-        SWERVE.kDriveController.calculateRobotRelativeSpeeds(m_swerve.getState().Pose, goalState));
+        AUTO_ALIGN.kDriveController.calculateRobotRelativeSpeeds(m_swerve.getState().Pose, goalState));
   }
 
   @Override

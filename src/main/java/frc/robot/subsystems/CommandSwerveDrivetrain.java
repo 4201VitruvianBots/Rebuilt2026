@@ -2,10 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -34,12 +32,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.SWERVE;
-import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.constants.CAN;
+import frc.robot.constants.SWERVE;
+import frc.robot.constants.SWERVE.AUTO_ALIGN;
+import frc.robot.generated.V1Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
-import frc.team4201.lib.utils.CtreUtils;
-import frc.team4201.lib.utils.ModuleMap;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
@@ -62,10 +59,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   };
 
   private final TalonFX[] steerMotors = {
-    getModule(0).getDriveMotor(),
-    getModule(1).getDriveMotor(),
-    getModule(2).getDriveMotor(),
-    getModule(3).getDriveMotor()
+    getModule(0).getSteerMotor(),
+    getModule(1).getSteerMotor(),
+    getModule(2).getSteerMotor(),
+    getModule(3).getSteerMotor()
   };
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
@@ -96,7 +93,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
 
-  /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
+  /* SysId routine for characterizing translation. This is used to find PID gains for the drive
+  motors. */
   private final SysIdRoutine m_sysIdRoutineTranslation =
       new SysIdRoutine(
           new SysIdRoutine.Config(
@@ -110,7 +108,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               null,
               (Subsystem) this));
 
-  /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
+  /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors.
+   */
   private final SysIdRoutine m_sysIdRoutineSteer =
       new SysIdRoutine(
           new SysIdRoutine.Config(
@@ -125,7 +124,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   /*
    * SysId routine for characterizing rotation.
    * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
-   * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
+   * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to
+  SysId.
    */
   private final SysIdRoutine m_sysIdRoutineRotation =
       new SysIdRoutine(
@@ -148,7 +148,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               this));
 
   /* The SysId routine to test */
-  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -168,23 +168,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
     try {
       m_trajectoryUtils =
-          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(false));
+          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
       DriverStation.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
-    }
-  }
-
-  public void initDriveSysid() {
-    for (ModuleMap.MODULE_POSITION i : ModuleMap.MODULE_POSITION.values()) {
-      var driveMotor = getModule(i.ordinal()).getDriveMotor();
-      var turnMotor = getModule(i.ordinal()).getSteerMotor();
-      CtreUtils.configureTalonFx(driveMotor, new TalonFXConfiguration());
-      CtreUtils.configureTalonFx(turnMotor, new TalonFXConfiguration());
-      driveMotor.setNeutralMode(NeutralModeValue.Brake);
-      BaseStatusSignal.setUpdateFrequencyForAll(
-          250, driveMotor.getPosition(), driveMotor.getVelocity(), driveMotor.getMotorVoltage());
-
-      driveMotor.optimizeBusUtilization();
     }
   }
 
@@ -351,12 +337,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   @Override
   public PIDConstants getAutoTranslationPIDConstants() {
-    return SWERVE.kTranslationPID;
+    return AUTO_ALIGN.kAutoAlignTranslationPID;
   }
 
   @Override
   public PIDConstants getAutoRotationPIDConstants() {
-    return SWERVE.kRotationPID;
+    return AUTO_ALIGN.kAutoAlignRotationPID;
   }
 
   /**
