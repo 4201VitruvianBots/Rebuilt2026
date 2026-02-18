@@ -87,29 +87,33 @@ public class Vision extends SubsystemBase {
     if (lockTarget) return;
     robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
     if (Controls.isBlueAlliance()) {
-      nearestObjectPose =
-          robotToTarget[0].nearest(
-              Arrays.asList(
-                  new Pose2d(
-                      FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
-                      FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-                      new Rotation2d()),
-                  new Pose2d(
-                      FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
-                      FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-                      new Rotation2d())));
+      if (m_useLeftTarget) {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      } else {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      }
     } else {
-      nearestObjectPose =
-          robotToTarget[0].nearest(
-              Arrays.asList(
-                  new Pose2d(
-                      FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
-                      FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
-                      new Rotation2d()),
-                  new Pose2d(
-                      FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
-                      FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
-                      new Rotation2d())));
+      if (m_useLeftTarget) {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      } else {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      }
     }
   }
 

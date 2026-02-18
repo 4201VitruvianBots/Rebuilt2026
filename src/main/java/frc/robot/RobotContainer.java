@@ -30,6 +30,7 @@ import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.RunUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.swerve.AutoAlignDrive;
+import frc.robot.commands.swerve.DriveToTarget;
 import frc.robot.constants.FIELD;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -170,6 +171,12 @@ public class RobotContainer {
                 m_swerveDrive,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
+    //auto climb allign
+    var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision, m_controls);
+
+    m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(true));
+    m_driverController.povRight().whileTrue(driveToTarget.generateCommand(false));
+
   }
 
   private void initAutoChooser() {
