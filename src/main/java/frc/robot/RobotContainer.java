@@ -189,6 +189,12 @@ public class RobotContainer {
                       m_driverController::getLeftX),
                   new Shoot(m_flywheel, m_vision, m_hood)));
     }
+    
+    if (m_uptake != null) {
+        m_driverController
+            .rightTrigger(0.2) // Some of the Xbox controllers struggle to reach 0.5 during normal operation, preventing us from using the right trigger.
+            .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
+    }
 
     if (m_swerveDrive != null && m_vision != null) {
       m_driverController
@@ -233,7 +239,7 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
         "Auto 0 - CenterPreloadOnly",
-        new CenterPreloadOnly(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+        new CenterPreloadOnly(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood, m_uptake));
     m_autoChooser.addOption(
         "Auto 1 - CenterDepot",
         new CenterDepot(
