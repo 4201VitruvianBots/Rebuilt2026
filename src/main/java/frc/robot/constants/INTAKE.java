@@ -26,8 +26,8 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.55),
-      REVERSE(-0.2);
+      INTAKING(0.8),
+      REVERSE(-0.6);
 
       private final double value;
 

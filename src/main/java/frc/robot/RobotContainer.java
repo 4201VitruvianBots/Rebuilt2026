@@ -156,8 +156,8 @@ public class RobotContainer {
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
-    // m_intake = new Intake();
+    m_intakePivot = new IntakePivot();
+    m_intake = new Intake();
     // m_uptake = new Uptake();
     m_indexer = new Indexer();
     // m_climber = new Climber();
