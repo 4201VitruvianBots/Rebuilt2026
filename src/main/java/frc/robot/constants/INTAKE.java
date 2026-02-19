@@ -43,9 +43,9 @@ public class INTAKE {
 
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-    public static final double kP = 100.0;
+    public static final double kP = 12.0;
     public static final double kD =
-        10.0; /*so basically kS kV and kA are not being used currently so they are commented out */
+        0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
     // public static final double kV = 0; // Recalc these
     // public static final double kA = 0;
@@ -67,9 +67,9 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.0;
+    public static final double encoderOffset = 0.47412109375;
     public static final SensorDirectionValue encoderDirection =
-        SensorDirectionValue.CounterClockwise_Positive;
+        SensorDirectionValue.Clockwise_Positive;
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),

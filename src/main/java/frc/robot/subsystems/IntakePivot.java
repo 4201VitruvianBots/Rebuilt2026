@@ -45,7 +45,7 @@ public class IntakePivot extends SubsystemBase {
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
   private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBase);
 
-  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
+  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder, CAN.driveBase);
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
