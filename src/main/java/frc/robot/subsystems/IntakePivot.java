@@ -89,7 +89,7 @@ public class IntakePivot extends SubsystemBase {
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;

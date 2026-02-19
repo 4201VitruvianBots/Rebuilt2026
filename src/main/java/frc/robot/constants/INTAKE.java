@@ -26,7 +26,8 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.8),
+      INTAKING(0.65),
+      SHOOTING(0.43),
       REVERSE(-0.6);
 
       private final double value;
@@ -56,7 +57,7 @@ public class INTAKE {
     public static final double motionMagicJerk = 0.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(52.0);
+    public static final Angle maxAngle = Degrees.of(55.0);
     public static final Angle startingAngle = minAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
