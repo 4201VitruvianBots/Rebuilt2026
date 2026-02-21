@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -198,14 +199,6 @@ public class RobotContainer {
           .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
     }
 
-    if (m_uptake != null) {
-      m_driverController
-          .rightTrigger(
-              0.2) // Some of the Xbox controllers struggle to reach 0.5 during normal operation,
-          // preventing us from using the right trigger.
-          .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
-    }
-
     if (m_vision != null) {
       m_driverController
           .leftBumper()
@@ -331,10 +324,12 @@ public class RobotContainer {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
-    SmartDashboard.putData(
-        "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
-    SmartDashboard.putData(
-        "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
+    if (RobotBase.isSimulation()) {
+      SmartDashboard.putData(
+          "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
+      SmartDashboard.putData(
+          "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
+    }
   }
 
   public void testInit() {
