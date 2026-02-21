@@ -19,18 +19,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.ROBOT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
@@ -112,6 +111,7 @@ public class RobotContainer {
 
   @Logged(name = "AutoSideChooser")
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+
   private Boolean m_flipToRight = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -189,11 +189,13 @@ public class RobotContainer {
                       m_driverController::getLeftX),
                   new Shoot(m_flywheel, m_vision, m_hood)));
     }
-    
+
     if (m_uptake != null) {
-        m_driverController
-            .rightTrigger(0.2) // Some of the Xbox controllers struggle to reach 0.5 during normal operation, preventing us from using the right trigger.
-            .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
+      m_driverController
+          .rightTrigger(
+              0.2) // Some of the Xbox controllers struggle to reach 0.5 during normal operation,
+          // preventing us from using the right trigger.
+          .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
     }
 
     if (m_swerveDrive != null && m_vision != null) {
@@ -384,7 +386,8 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.UPTAKING.get().in(RPM) * 0.90) && m_intake.getStoredFuel() > 0) {
+      if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.UPTAKING.get().in(RPM) * 0.90)
+          && m_intake.getStoredFuel() > 0) {
         // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
         // vel in ft/s = 0.0111882 * RPM - 0.
         try {

@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
           INTAKE.ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
-  
+
   private int simStoredFuel = 8; // For fuel sim - 8 preload during auto
 
   /** Creates a new Intake. */
@@ -95,22 +95,22 @@ public class Intake extends SubsystemBase {
   public Command command(INTAKE_SPEED speed) {
     return this.startEnd(() -> m_motor.set(speed.get()), () -> m_motor.set(0));
   }
-  
+
   @NotLogged
   public int getStoredFuel() {
     if (RobotBase.isSimulation()) {
       return simStoredFuel;
     } else {
-        throw new UnsupportedOperationException("Attempted to get fuel sim count on real robot");
+      throw new UnsupportedOperationException("Attempted to get fuel sim count on real robot");
     }
   }
-  
+
   @NotLogged
   public void setStoredFuel(int fuel) {
     if (RobotBase.isSimulation()) {
       simStoredFuel = fuel;
     } else {
-        throw new UnsupportedOperationException("Attempted to set fuel sim count on real robot");
+      throw new UnsupportedOperationException("Attempted to set fuel sim count on real robot");
     }
   }
 
