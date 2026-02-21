@@ -343,7 +343,7 @@ public class FIELD {
     }
   }
 
-  static class TOWER implements AllianceInterface {
+  public static class TOWER implements AllianceInterface {
     public static Target3d CENTER;
     public static Target3d LEFT;
     public static Target3d RIGHT;

@@ -3,6 +3,10 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,12 +27,12 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
+import java.util.Arrays;
 
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
   private FieldSim m_fieldSim;
-  private Translation2d m_goal;
-
+  private Translation2d m_goal = new Translation2d();
   // TODO: Re-add this
   //   private LimelightSim visionSim;
   private Controls m_controls;
@@ -101,6 +105,44 @@ public class Vision extends SubsystemBase {
     return !m_useLeftTarget;
   }
 
+  public void updateNearestClimbTarget() {
+    if (lockTarget) return;
+    robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
+    if (Controls.isBlueAlliance()) {
+      if (m_useLeftTarget) {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      } else {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      }
+    } else {
+      if (m_useLeftTarget) {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      } else {
+        nearestObjectPose =
+          new Pose2d(
+              FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+              FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+              new Rotation2d());
+      }
+    }
+  }
+
+  public Pose2d getNearestTargetPose() {
+    return robotToTarget[1];
+  }
+
   //   private void updateAngleToHub() {
   //   if (m_swerveDriveTrain != null) {
   //     if (DriverStation.isDisabled()) {
@@ -121,19 +163,6 @@ public class Vision extends SubsystemBase {
   //     }
   //   }
   // }
-
-  public boolean getInitialLocalization() {
-    return m_localized;
-  }
-
-  public void resetInitialLocalization() {
-    m_localized = false;
-
-    // Set Swerve Pose to (0, 0) to reset it
-    if (m_swerveDriveTrain != null) {
-      m_swerveDriveTrain.resetPose(Pose2d.kZero);
-    }
-  }
 
   /**
    * Process measurements from a limelight. Return true if the given vision measurement is used,
@@ -231,7 +260,7 @@ public class Vision extends SubsystemBase {
   }
 
   @Logged(name = "Has Initial Pose", importance = Logged.Importance.INFO)
-  public boolean getInitalPose() {
+  public boolean getInitialPose() {
     return this.hasInitialPose;
   }
 
@@ -240,6 +269,27 @@ public class Vision extends SubsystemBase {
     lockTarget = set;
   }
 
+  @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
+  public boolean isOnTarget() {
+    var rotationDelta =
+        m_swerveDriveTrain
+            .getState()
+            .Pose
+            .getRotation()
+            .minus(robotToTarget[1].getRotation())
+            .getMeasure();
+
+    var isAligned = rotationDelta.abs(Degrees) < 0.5;
+    
+    var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
+    SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
+    System.out.println("The angle to the hub is " + setPoint.getAngle());
+    System.out.println("The robot's angle is " + m_swerveDriveTrain.getState().Pose.getRotation());
+    System.out.println("Therefore, the alignment is" + isAligned);
+    
+    return isAligned;
+  }
+  
   @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
   public boolean isPointingAtGoal() {
     // bearing from robot to goal
@@ -312,6 +362,12 @@ public class Vision extends SubsystemBase {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
       m_localized = llaRSuccess && llaLSuccess;
     }
+
+    // if (m_swerveDriveTrain != null) {
+    //   updateAngleToHub();
+    // }
+
+    isOnTarget();
   }
 
   @Override

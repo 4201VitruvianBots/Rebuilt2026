@@ -23,6 +23,7 @@ import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
+import frc.robot.commands.swerve.DriveToTarget;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
@@ -225,16 +226,20 @@ public class RobotContainer {
           .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
     }
 
-    if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
-    }
+    // aim at target
+    m_driverController
+        .rightBumper()
+        .whileTrue(
+            new AutoAlignDrive(
+                m_swerveDrive,
+                () -> m_driverController.getLeftY(),
+                () -> m_driverController.getLeftX()));
+    //auto climb allign
+    var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision, m_controls);
 
-    // if (m_swerveDrive != null) {
-    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
-    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
-    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
-    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
-    // }
+    m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(true));
+    m_driverController.povRight().whileTrue(driveToTarget.generateCommand(false));
+
   }
 
   private void initAutoChooser() {
