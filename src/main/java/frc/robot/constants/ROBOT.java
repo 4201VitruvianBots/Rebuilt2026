@@ -87,7 +87,7 @@ public class ROBOT {
     robotID = ROBOT_ID.V1;
   }
 
-  public static void initConstants() {
+  public static void initializeConstants() {
     var alert = new Alert("Initializing Robot Constants...", AlertType.kInfo);
 
     try {

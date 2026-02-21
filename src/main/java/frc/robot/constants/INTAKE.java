@@ -43,9 +43,9 @@ public class INTAKE {
 
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-    public static final double kP = 1000.0;
+    public static final double kP = 100.0;
     public static final double kD =
-        100.0; /*so basically kS kV and kA are not being used currently so they are commented out */
+        10.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
     // public static final double kV = 0; // Recalc these
     // public static final double kA = 0;

@@ -24,6 +24,9 @@ public class CAN {
 
   public static final int kClimberMotor = 30;
 
+  public static final int kShooterHoodMotor = 34;
+  public static final int kShooterHoodCANCoder = 35;
+
   public static final int kShooterRollerMotor1 = 40;
   public static final int kShooterRollerMotor2 = 41;
   public static final int kShooterRollerMotor3 = 42;
@@ -32,9 +35,6 @@ public class CAN {
   public static final int kIndexerMotor1 = 50;
   public static final int kIndexerMotor2 = 51;
   public static final int kIndexerMotor3 = 52;
-
-  public static final int kShooterHoodMotor = 34;
-  public static final int kShooterHoodCANCoder = 35;
 
   public static final int kIntakeRollerMotor1 = 53;
   public static final int kIntakeRollerMotor2 = 54;
