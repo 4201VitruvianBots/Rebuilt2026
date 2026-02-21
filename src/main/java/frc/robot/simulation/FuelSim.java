@@ -17,7 +17,7 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import frc.robot.constants.ROBOT.SIM;
+import frc.robot.constants.ROBOT;
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -354,7 +354,7 @@ public class FuelSim {
   public void spawnStartingFuel() {
     // Center fuel
     Translation3d center = new Translation3d(FIELD_LENGTH / 2, FIELD_WIDTH / 2, FUEL_RADIUS);
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 5; i++) {
       for (int j = 0; j < 6; j++) {
         fuels.add(
             new Fuel(
@@ -373,22 +373,20 @@ public class FuelSim {
     }
 
     // Depots
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 4; j++) {
-        fuels.add(
-            new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 + 0.076 + 0.152 * i, FUEL_RADIUS)));
-        fuels.add(
-            new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 - 0.076 - 0.152 * i, FUEL_RADIUS)));
-        fuels.add(
-            new Fuel(
-                new Translation3d(
-                    FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 + 0.076 + 0.152 * i, FUEL_RADIUS)));
-        fuels.add(
-            new Fuel(
-                new Translation3d(
-                    FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 - 0.076 - 0.152 * i, FUEL_RADIUS)));
-      }
-    }
+    // for (int i = 0; i < 3; i++) {
+    //     for (int j = 0; j < 4; j++) {
+    //         fuels.add(new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 + 0.076 + 0.152 * i,
+    // FUEL_RADIUS)));
+    //         fuels.add(new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 - 0.076 - 0.152 * i,
+    // FUEL_RADIUS)));
+    //         fuels.add(new Fuel(
+    //                 new Translation3d(FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 + 0.076 + 0.152 * i,
+    // FUEL_RADIUS)));
+    //         fuels.add(new Fuel(
+    //                 new Translation3d(FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 - 0.076 - 0.152 * i,
+    // FUEL_RADIUS)));
+    //     }
+    // }
 
     // DEBUG: Log XZ lines
     // Translation3d[][] lines = new Translation3d[FIELD_XZ_LINE_STARTS.length][2];
@@ -593,7 +591,7 @@ public class FuelSim {
     Pose2d robot = robotPoseSupplier.get();
     for (SimIntake intake : intakes) {
       for (int i = 0; i < fuels.size(); i++) {
-        if (intake.shouldIntake(fuels.get(i), robot) && storedFuel < SIM.MAX_FUEL) {
+        if (intake.shouldIntake(fuels.get(i), robot) && storedFuel < ROBOT.SIM.MAX_FUEL) {
           fuels.remove(i);
           storedFuel++;
           i--;

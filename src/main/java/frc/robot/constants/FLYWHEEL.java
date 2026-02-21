@@ -38,9 +38,11 @@ public class FLYWHEEL {
   public static class Shot {
     public final AngularVelocity shooterRPM;
     public final Angle hoodAngle;
+    public final double timeOfFlight;
 
-    public Shot(AngularVelocity shooterRPM, Angle hoodAngle) {
+    public Shot(AngularVelocity shooterRPM, Angle hoodAngle, double timeOfFlight) {
       this.shooterRPM = shooterRPM;
+      this.timeOfFlight = timeOfFlight;
       this.hoodAngle = hoodAngle;
     }
   }

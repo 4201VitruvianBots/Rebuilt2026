@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootOnTheMove;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
@@ -50,7 +51,7 @@ public class RobotContainer {
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
   private Hood m_hood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
+  private final CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
@@ -104,7 +105,7 @@ public class RobotContainer {
   private Robot2d m_robotSim;
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
-  private FuelSim m_fuelSim = FuelSim.getInstance();
+  private final FuelSim m_fuelSim = FuelSim.getInstance();
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -173,7 +174,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
+    if (m_vision != null && m_flywheel != null && m_hood != null) {
       m_driverController
           .rightBumper()
           .toggleOnTrue(
@@ -186,7 +187,7 @@ public class RobotContainer {
                   new Shoot(m_flywheel, m_vision, m_hood)));
     }
 
-    if (m_swerveDrive != null && m_vision != null) {
+    if (m_vision != null) {
       m_driverController
           .leftBumper()
           .toggleOnTrue(
@@ -197,8 +198,18 @@ public class RobotContainer {
                   m_driverController::getLeftX));
     }
 
-    if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
+    if (m_flywheel != null && m_vision != null) {
       m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
+      m_driverController
+          .a()
+          .toggleOnTrue(
+              (new ShootOnTheMove(
+                  m_flywheel,
+                  m_hood,
+                  m_vision,
+                  m_swerveDrive,
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX)));
     }
 
     if (m_flywheel != null) {
@@ -302,7 +313,9 @@ public class RobotContainer {
   }
 
   public void simulationPeriodic() {
-    m_fuelSim.updateSim();
+    FuelSim.getInstance().updateSim();
+    SmartDashboard.putNumber("Current Red Score:", FuelSim.Hub.RED_HUB.getScore());
+    SmartDashboard.putNumber("Current Blue Score:", FuelSim.Hub.BLUE_HUB.getScore());
   }
 
   private void initSmartDashboard() {
@@ -374,26 +387,26 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      if (m_uptake.getMotorSpeedRPM() > 100.0 && m_fuelSim.getStoredFuel() > 0) {
+      if (m_flywheel.isAtRPMsetpoint()
+          && m_flywheel.getMotorSpeedRPM() > 500
+          && FuelSim.getInstance().getStoredFuel() > 0) {
         // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
-        // vel in ft/s = 0.0111882 * RPM - 0.
-        try {
-          m_fuelSim.setStoredFuel(m_fuelSim.getStoredFuel() - 1);
-          m_fuelSim.launchFuel(
-              FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-              Degrees.of(180).minus(m_hood.getHoodAngle()),
-              Degrees.of(0),
-              FLYWHEEL.fuelLaunchHeight);
-          System.out.println(
-              "Launching fuel at velocity: "
-                  + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
-                  + " ft/s and angle: "
-                  + m_hood.getHoodAngleDegrees()
-                  + " degrees");
-          System.out.println("Launched fuel! Remaining fuel: " + m_fuelSim.getStoredFuel());
-        } catch (IllegalStateException e) {
-          return;
-        }
+        // vel in ft/s = 0.0111882 * RPM - 0.000174927
+        FuelSim.getInstance().setStoredFuel(FuelSim.getInstance().getStoredFuel() - 1);
+        FuelSim.getInstance()
+            .launchFuel(
+                FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
+                m_hood.getHoodAngle(),
+                Degrees.of(m_swerveDrive.getYaw()),
+                FLYWHEEL.fuelLaunchHeight);
+        System.out.println(
+            "Launching fuel at velocity: "
+                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
+                + " ft/s and angle: "
+                + m_hood.getHoodAngleDegrees()
+                + " degrees");
+        System.out.println(
+            "Launched fuel! Remaining fuel: " + FuelSim.getInstance().getStoredFuel());
       }
     }
   }
