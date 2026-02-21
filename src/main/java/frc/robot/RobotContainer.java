@@ -116,8 +116,6 @@ public class RobotContainer {
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
   private Boolean m_flipToRight = false;
 
-  private Boolean m_flipToRight = false;
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
