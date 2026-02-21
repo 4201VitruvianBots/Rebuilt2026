@@ -370,7 +370,7 @@ public class FuelSim {
   public void spawnStartingFuel() {
     // Center fuel
     Translation3d center = new Translation3d(FIELD_LENGTH / 2, FIELD_WIDTH / 2, FUEL_RADIUS);
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 5; i++) {
       for (int j = 0; j < 6; j++) {
         fuels.add(
             new Fuel(
@@ -389,22 +389,20 @@ public class FuelSim {
     }
 
     // Depots
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 4; j++) {
-        fuels.add(
-            new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 + 0.076 + 0.152 * i, FUEL_RADIUS)));
-        fuels.add(
-            new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 - 0.076 - 0.152 * i, FUEL_RADIUS)));
-        fuels.add(
-            new Fuel(
-                new Translation3d(
-                    FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 + 0.076 + 0.152 * i, FUEL_RADIUS)));
-        fuels.add(
-            new Fuel(
-                new Translation3d(
-                    FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 - 0.076 - 0.152 * i, FUEL_RADIUS)));
-      }
-    }
+    // for (int i = 0; i < 3; i++) {
+    //     for (int j = 0; j < 4; j++) {
+    //         fuels.add(new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 + 0.076 + 0.152 * i,
+    // FUEL_RADIUS)));
+    //         fuels.add(new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 - 0.076 - 0.152 * i,
+    // FUEL_RADIUS)));
+    //         fuels.add(new Fuel(
+    //                 new Translation3d(FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 + 0.076 + 0.152 * i,
+    // FUEL_RADIUS)));
+    //         fuels.add(new Fuel(
+    //                 new Translation3d(FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 - 0.076 - 0.152 * i,
+    // FUEL_RADIUS)));
+    //     }
+    // }
 
     // DEBUG: Log XZ lines
     // Translation3d[][] lines = new Translation3d[FIELD_XZ_LINE_STARTS.length][2];
