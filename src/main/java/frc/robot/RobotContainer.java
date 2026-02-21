@@ -329,6 +329,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testInit();
     if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
+    if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
@@ -338,6 +339,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
+    if (m_climber != null) m_climber.testPeriodic();
   }
 
   /**
