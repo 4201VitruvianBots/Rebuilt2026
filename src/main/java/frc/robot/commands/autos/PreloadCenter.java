@@ -25,8 +25,7 @@ public class PreloadCenter extends Auto {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var m_path1 =
-swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadCenter1");
+      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadCenter1");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.IntakeCommand;
@@ -174,18 +175,18 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    // if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
-    //   m_driverController
-    //       .rightBumper()
-    //       .toggleOnTrue(
-    //           new ParallelCommandGroup(
-    //               new AutoAlignDrive(
-    //                   m_swerveDrive,
-    //                   m_vision,
-    //                   () -> m_driverController.getLeftY(),
-    //                   () -> m_driverController.getLeftX()),
-    //               new Shoot(m_flywheel, m_vision)));
-    // }
+    if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
+      m_driverController
+          .rightBumper()
+          .toggleOnTrue(
+              new ParallelCommandGroup(
+                  new AutoAlignDrive(
+                      m_swerveDrive,
+                      m_vision,
+                      () -> m_driverController.getLeftY(),
+                      () -> m_driverController.getLeftX()),
+                  new Shoot(m_flywheel, m_vision, m_hood)));
+    }
 
     if (m_swerveDrive != null && m_vision != null) {
       m_driverController
@@ -205,10 +206,11 @@ public class RobotContainer {
           .toggleOnTrue(
               (new ShootOnTheMove(
                   m_flywheel,
-                  m_hood, m_vision,
+                  m_hood,
+                  m_vision,
                   m_swerveDrive,
-                  () -> m_driverController.getLeftY(),
-                  () -> m_driverController.getLeftX())));
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX)));
     }
 
     if (m_flywheel != null) {
@@ -230,70 +232,69 @@ public class RobotContainer {
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    // m_autoChooser.addOption(
-    //     "Auto 0 - PreloadCenter",
-    //     new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
-    // m_autoChooser.addOption(
-    //     "Auto 1 - PreloadDepotShootCenter",
-    //     new PreloadDepotShootCenter(
-    //         m_swerveDrive,
-    //         m_intake,
-    //         m_vision,
-    //         m_flywheel,
-    //         m_hood,
-    //         m_intakePivot,
-    //         m_indexer,
-    //         m_uptake));
-    // m_autoChooser.addOption(
-    //     "Auto 2 - PreloadNeutralShootClimb",
-    //     new PreloadNeutralShootClimb(
-    //         m_swerveDrive,
-    //         m_intake,
-    //         m_vision,
-    //         m_flywheel,
-    //         m_hood,
-    //         m_intakePivot,
-    //         m_indexer,
-    //         m_uptake,
-    //         () -> m_flipToRight));
-    // m_autoChooser.addOption(
-    //     "Auto 3 - PreloadNeutralDepotClimb",
-    //     new PreloadNeutralDepotClimb(
-    //         m_swerveDrive,
-    //         m_intake,
-    //         m_vision,
-    //         m_flywheel,
-    //         m_hood,
-    //         m_intakePivot,
-    //         m_indexer,
-    //         m_uptake));
-    // m_autoChooser.addOption(
-    //     "Auto 4 - PreloadNeutralShootTwice",
-    //     new NeutralShootTwice(
-    //         m_swerveDrive,
-    //         m_intake,
-    //         m_vision,
-    //         m_flywheel,
-    //         m_hood,
-    //         m_intakePivot,
-    //         m_indexer,
-    //         m_uptake,
-    //         () -> m_flipToRight,
-    //         false));
-    // m_autoChooser.addOption(
-    //     "Auto 5 - NeutralShootTwice - NO PRELOAD",
-    //     new NeutralShootTwice(
-    //         m_swerveDrive,
-    //         m_intake,
-    //         m_vision,
-    //         m_flywheel,
-    //         m_hood,
-    //         m_intakePivot,
-    //         m_indexer,
-    //         m_uptake,
-    //         () -> m_flipToRight,
-    //         true));
-    // m_autoChooser.addOption(
+    m_autoChooser.addOption(
+        "Auto 0 - PreloadCenter",
+        new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+    m_autoChooser.addOption(
+        "Auto 1 - PreloadDepotShootCenter",
+        new PreloadDepotShootCenter(
+            m_swerveDrive,
+            m_intake,
+            m_vision,
+            m_flywheel,
+            m_hood,
+            m_intakePivot,
+            m_indexer,
+            m_uptake));
+    m_autoChooser.addOption(
+        "Auto 2 - PreloadNeutralShootClimb",
+        new PreloadNeutralShootClimb(
+            m_swerveDrive,
+            m_intake,
+            m_vision,
+            m_flywheel,
+            m_hood,
+            m_intakePivot,
+            m_indexer,
+            m_uptake,
+            () -> m_flipToRight));
+    m_autoChooser.addOption(
+        "Auto 3 - PreloadNeutralDepotClimb",
+        new PreloadNeutralDepotClimb(
+            m_swerveDrive,
+            m_intake,
+            m_vision,
+            m_flywheel,
+            m_hood,
+            m_intakePivot,
+            m_indexer,
+            m_uptake));
+    m_autoChooser.addOption(
+        "Auto 4 - PreloadNeutralShootTwice",
+        new NeutralShootTwice(
+            m_swerveDrive,
+            m_intake,
+            m_vision,
+            m_flywheel,
+            m_hood,
+            m_intakePivot,
+            m_indexer,
+            m_uptake,
+            () -> m_flipToRight,
+            false));
+    m_autoChooser.addOption(
+        "Auto 5 - NeutralShootTwice - NO PRELOAD",
+        new NeutralShootTwice(
+            m_swerveDrive,
+            m_intake,
+            m_vision,
+            m_flywheel,
+            m_hood,
+            m_intakePivot,
+            m_indexer,
+            m_uptake,
+            () -> m_flipToRight,
+            true));
   }
 
   private void initSideChooser() {

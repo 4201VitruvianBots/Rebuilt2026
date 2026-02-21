@@ -30,7 +30,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
-
 import java.util.function.DoubleSupplier;
 
 public class ShootOnTheMove extends Command {
@@ -89,7 +88,8 @@ public class ShootOnTheMove extends Command {
 
   public ShootOnTheMove(
       Flywheel flywheel,
-      Hood shooterHood, Vision vision,
+      Hood shooterHood,
+      Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
@@ -109,7 +109,7 @@ public class ShootOnTheMove extends Command {
   public void initialize() {
     if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
       // TODO: Add pass position as goal
-      
+
       // If we're in our own zone, then we align to the hub
     } else {
       m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
