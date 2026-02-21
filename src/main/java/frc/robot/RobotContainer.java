@@ -181,13 +181,7 @@ public class RobotContainer {
       m_driverController
           .rightBumper()
           .toggleOnTrue(
-              new ParallelCommandGroup(
-                  new AutoAlignDrive(
-                      m_swerveDrive,
-                      m_vision,
-                      m_driverController::getLeftY,
-                      m_driverController::getLeftX),
-                  new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive)));
+                  new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
     }
     
     if (m_uptake != null) {
@@ -209,15 +203,6 @@ public class RobotContainer {
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
       m_driverController.x().whileTrue(new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive));
-      m_driverController
-          .a()
-          .toggleOnTrue(
-              (new Shoot(
-                  m_flywheel,
-                  m_hood, m_vision,
-                  m_swerveDrive,
-                  () -> m_driverController.getLeftY(),
-                  () -> m_driverController.getLeftX())));
     }
 
     if (m_flywheel != null) {

@@ -86,8 +86,6 @@ public class Shoot extends Command {
   private final Hood m_shooterHood;
 
   Translation2d m_goal = new Translation2d();
-  
-  private boolean m_shootOnTheMove = true;
 
   /** 
   * Shoot on the move command
@@ -104,23 +102,19 @@ public class Shoot extends Command {
     m_strafeInput = strafeInput;
     m_shooterHood = shooterHood;
     m_vision = vision;
-    
-    m_shootOnTheMove = true;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
     SmartDashboard.putData(this);
   }
   
   /** 
-  * Standard shooting without shoot on the move capabilities.
+  * Standard shooting without shoot on the move capabilities. Used only in auto.
   */
   public Shoot(Flywheel flywheel, Hood shooterHood, Vision vision, CommandSwerveDrivetrain swerveDrive) {
     m_flywheel = flywheel;
     m_shooterHood = shooterHood;
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
-    
-    m_shootOnTheMove = false;
 
     addRequirements(flywheel, shooterHood);
     SmartDashboard.putData(this);
@@ -210,16 +204,14 @@ public class Shoot extends Command {
     m_shooterHood.setAngle(Radians.of(hoodAngle));
 
     double omegaOutput = m_PidController.getSetpoint().velocity + turnRate;
-    if (m_shootOnTheMove) { // Don't set chassis speeds if not doing shoot on the move
-      m_swerveDrivetrain.setChassisSpeedControl(
-          new ChassisSpeeds(
-              m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-              m_strafeInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-              omegaOutput));
-    }
+    m_swerveDrivetrain.setChassisSpeedControl(
+        new ChassisSpeeds(
+            m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
+            m_strafeInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
+            omegaOutput));
     lastDriveAngle = driveAngle;
   }
-
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {

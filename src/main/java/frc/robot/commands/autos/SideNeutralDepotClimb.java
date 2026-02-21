@@ -50,8 +50,6 @@ public class SideNeutralDepotClimb extends Auto {
       var m_path7 =
           swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb7");
 
-swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepotClimb7");
-
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
