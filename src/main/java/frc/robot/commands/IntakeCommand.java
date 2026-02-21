@@ -21,7 +21,7 @@ public class IntakeCommand extends ParallelCommandGroup {
     addCommands(
         intake.command(INTAKE_SPEED.INTAKING),
         indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
-        uptake.command(UPTAKE_SPEED.UPTAKING),
+        uptake.command(UPTAKE_SPEED.INTAKE_RUN),
         intakePivot.command(PIVOT_SETPOINT.INTAKING));
   }
 }

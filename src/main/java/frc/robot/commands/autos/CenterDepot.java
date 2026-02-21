@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
@@ -41,7 +42,8 @@ public class CenterDepot extends SequentialCommandGroup {
           new IntakeCommand(intake, intakePivot, indexer, uptake).withTimeout(9),
           new ParallelCommandGroup(
                   m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
-                  new Shoot(flywheel, vision, hood))
+                  new Shoot(flywheel, vision, hood),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
