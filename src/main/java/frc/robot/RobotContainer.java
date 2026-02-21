@@ -52,7 +52,7 @@ public class RobotContainer {
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
   private Hood m_hood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
+  private final CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
@@ -106,7 +106,7 @@ public class RobotContainer {
   private Robot2d m_robotSim;
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
-  private FuelSim m_fuelSim = FuelSim.getInstance();
+  private final FuelSim m_fuelSim = FuelSim.getInstance();
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -175,7 +175,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
+    if (m_vision != null && m_flywheel != null && m_hood != null) {
       m_driverController
           .rightBumper()
           .toggleOnTrue(
@@ -183,12 +183,12 @@ public class RobotContainer {
                   new AutoAlignDrive(
                       m_swerveDrive,
                       m_vision,
-                      () -> m_driverController.getLeftY(),
-                      () -> m_driverController.getLeftX()),
+                          m_driverController::getLeftY,
+                          m_driverController::getLeftX),
                   new Shoot(m_flywheel, m_vision, m_hood)));
     }
 
-    if (m_swerveDrive != null && m_vision != null) {
+    if (m_vision != null) {
       m_driverController
           .leftBumper()
           .toggleOnTrue(
@@ -199,7 +199,7 @@ public class RobotContainer {
                   m_driverController::getLeftX));
     }
 
-    if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
+    if (m_flywheel != null && m_vision != null) {
       m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
       m_driverController
           .a()
