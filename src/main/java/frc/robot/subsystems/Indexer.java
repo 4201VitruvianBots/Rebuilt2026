@@ -25,7 +25,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INDEXER;
-import frc.robot.constants.INDEXER.INDEXER_SPEED;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Indexer extends SubsystemBase {
@@ -100,7 +101,7 @@ public class Indexer extends SubsystemBase {
   }
 
   @NotLogged
-  public Command command(INDEXER_SPEED speed1, INDEXER_SPEED speed2) {
+  public Command command(INDEXER_SPEED_1 speed1, INDEXER_SPEED_2 speed2) {
     return this.startEnd(() -> setSpeeds(speed1.get(), speed2.get()), () -> setSpeeds(0.0, 0.0));
   }
 

@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootOnTheMove;
-import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
@@ -147,22 +146,22 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
-    m_fieldSim = new FieldSim();
-    m_flywheel = new Flywheel();
+    // m_fieldSim = new FieldSim();
+    // m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    m_hood = new Hood();
+    // m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    m_intakePivot = new IntakePivot();
-    m_intake = new Intake();
-    m_uptake = new Uptake();
-    m_indexer = new Indexer();
+    // m_intakePivot = new IntakePivot();
+    // m_intake = new Intake();
+    // m_uptake = new Uptake();
+    // m_indexer = new Indexer();
     m_climber = new Climber();
-    m_led = new LEDs();
-    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    // m_led = new LEDs();
+    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
@@ -183,8 +182,8 @@ public class RobotContainer {
                   new AutoAlignDrive(
                       m_swerveDrive,
                       m_vision,
-                          m_driverController::getLeftY,
-                          m_driverController::getLeftX),
+                      m_driverController::getLeftY,
+                      m_driverController::getLeftX),
                   new Shoot(m_flywheel, m_vision, m_hood)));
     }
 
@@ -227,17 +226,24 @@ public class RobotContainer {
     if (m_intake != null) {
       m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
     }
+
+    // if (m_swerveDrive != null) {
+    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
+    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
+    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
+    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    // }
   }
 
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
-        "Auto 0 - PreloadCenter",
-        new PreloadCenter(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+        "Auto 0 - CenterPreloadOnly",
+        new CenterPreloadOnly(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
     m_autoChooser.addOption(
-        "Auto 1 - PreloadDepotShootCenter",
-        new PreloadDepotShootCenter(
+        "Auto 1 - CenterDepot",
+        new CenterDepot(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -247,8 +253,8 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "Auto 2 - PreloadNeutralShootClimb",
-        new PreloadNeutralShootClimb(
+        "Auto 2 - SideNeutralClimb",
+        new SideNeutralClimb(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -259,8 +265,8 @@ public class RobotContainer {
             m_uptake,
             () -> m_flipToRight));
     m_autoChooser.addOption(
-        "Auto 3 - PreloadNeutralDepotClimb",
-        new PreloadNeutralDepotClimb(
+        "Auto 3 - SideNeutralDepotClimb",
+        new SideNeutralDepotClimb(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -270,8 +276,8 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "Auto 4 - PreloadNeutralShootTwice",
-        new NeutralShootTwice(
+        "Auto 4 - PreloadSideNeutralTwice",
+        new SideNeutralTwice(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -283,8 +289,8 @@ public class RobotContainer {
             () -> m_flipToRight,
             false));
     m_autoChooser.addOption(
-        "Auto 5 - NeutralShootTwice - NO PRELOAD",
-        new NeutralShootTwice(
+        "Auto 5 - SideNeutralTwice - NO PRELOAD",
+        new SideNeutralTwice(
             m_swerveDrive,
             m_intake,
             m_vision,
@@ -330,6 +336,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testInit();
     if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
+    if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
@@ -339,6 +346,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
+    if (m_climber != null) m_climber.testPeriodic();
   }
 
   /**
