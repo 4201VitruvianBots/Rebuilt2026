@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.ShootOnTheMove;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
@@ -188,7 +187,7 @@ public class RobotContainer {
                       m_vision,
                       m_driverController::getLeftY,
                       m_driverController::getLeftX),
-                  new Shoot(m_flywheel, m_vision, m_hood)));
+                  new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive)));
     }
     
     if (m_uptake != null) {
@@ -209,11 +208,11 @@ public class RobotContainer {
     }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
+      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive));
       m_driverController
           .a()
           .toggleOnTrue(
-              (new ShootOnTheMove(
+              (new Shoot(
                   m_flywheel,
                   m_hood, m_vision,
                   m_swerveDrive,
@@ -388,7 +387,10 @@ public class RobotContainer {
         Inches.of(-13.938).in(Meters),
         Inches.of(23.388).in(Meters),
         () -> m_intake.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
-        () -> {});
+        () -> {
+            m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
+            System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
+        });
   }
 
   public void updateFuelLaunchSim() {
@@ -401,7 +403,7 @@ public class RobotContainer {
           m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
           m_fuelSim.launchFuel(
               FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-              Degrees.of(180).minus(m_hood.getHoodAngle()),
+              m_hood.getHoodAngle(),
               Degrees.of(0),
               FLYWHEEL.fuelLaunchHeight);
           System.out.println(

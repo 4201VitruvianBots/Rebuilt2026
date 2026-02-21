@@ -52,7 +52,7 @@ public class SideNeutralTwice extends Auto {
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           rushCenter
               ? new InstantCommand()
-              : new ParallelCommandGroup(new Shoot(flywheel, vision, hood), uptake.command(UPTAKE_SPEED.UPTAKING))
+              : new ParallelCommandGroup(new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING))
                   .withTimeout(3), // Don't shoot preload if we're trying to rush the center
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -62,7 +62,7 @@ public class SideNeutralTwice extends Auto {
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(new Shoot(flywheel, vision, hood), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
+          new ParallelCommandGroup(new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
           // This code just repeats the last four steps again.
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -72,7 +72,7 @@ public class SideNeutralTwice extends Auto {
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(new Shoot(flywheel, vision, hood), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3));
+          new ParallelCommandGroup(new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3));
     } catch (Exception e) {
       DriverStation.reportError(
           "Failed to load path for SideNeutralTwice", e.getStackTrace());

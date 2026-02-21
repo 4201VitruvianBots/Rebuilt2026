@@ -54,14 +54,14 @@ swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("PreloadNeutralDepot
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(new Shoot(flywheel, vision, hood), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
+          new ParallelCommandGroup(new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
               new IntakeCommand(intake, intakePivot, indexer, uptake),
               m_path3.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
-              new Shoot(flywheel, vision, hood), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
+              new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
               m_path5.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
               new IntakeCommand(intake, intakePivot, indexer, uptake),
