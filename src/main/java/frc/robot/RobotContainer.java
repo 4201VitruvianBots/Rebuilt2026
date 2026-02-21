@@ -175,7 +175,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_flywheel != null) {
+    if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
       m_driverController
           .rightBumper()
           .toggleOnTrue(
