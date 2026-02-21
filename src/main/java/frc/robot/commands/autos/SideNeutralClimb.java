@@ -51,7 +51,10 @@ public class SideNeutralClimb extends Auto {
       addCommands(
           getPathCommand(trajectoryUtils, m_path1, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
+          new ParallelCommandGroup(
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(3),
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
@@ -60,7 +63,10 @@ public class SideNeutralClimb extends Auto {
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(new Shoot(flywheel, hood, vision, swerveDrive), uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
+          new ParallelCommandGroup(
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(3),
           getChoiceCommand(trajectoryUtils, m_path5Outpost, m_path5Depot, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest))
           // Todo: add climb (command not yet implemented in this branch)

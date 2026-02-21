@@ -42,8 +42,9 @@ public class CenterDepot extends SequentialCommandGroup {
           new IntakeCommand(intake, intakePivot, indexer, uptake).withTimeout(9),
           new ParallelCommandGroup(
                   m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
-                  new Shoot(flywheel, hood, vision, swerveDrive), 
-                  uptake.command(UPTAKE_SPEED.UPTAKING)).withTimeout(3),
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterDepot", e.getStackTrace());

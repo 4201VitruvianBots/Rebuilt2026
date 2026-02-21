@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
           INTAKE.ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
-  
+
   private int simStoredFuel = 8; // For fuel sim - 8 preload during auto
 
   /** Creates a new Intake. */

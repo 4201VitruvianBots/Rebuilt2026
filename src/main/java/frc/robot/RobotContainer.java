@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
@@ -25,12 +24,10 @@ import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.ROBOT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.generated.V1Constants;
@@ -114,6 +111,7 @@ public class RobotContainer {
 
   @Logged(name = "AutoSideChooser")
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+
   private Boolean m_flipToRight = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -183,13 +181,21 @@ public class RobotContainer {
       m_driverController
           .rightBumper()
           .toggleOnTrue(
-                  new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
+              new Shoot(
+                  m_flywheel,
+                  m_hood,
+                  m_vision,
+                  m_swerveDrive,
+                  () -> m_driverController.getLeftY(),
+                  () -> m_driverController.getLeftX()));
     }
-    
+
     if (m_uptake != null) {
-        m_driverController
-            .rightTrigger(0.2) // Some of the Xbox controllers struggle to reach 0.5 during normal operation, preventing us from using the right trigger.
-            .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
+      m_driverController
+          .rightTrigger(
+              0.2) // Some of the Xbox controllers struggle to reach 0.5 during normal operation,
+          // preventing us from using the right trigger.
+          .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
     }
 
     if (m_uptake != null) {
@@ -385,8 +391,8 @@ public class RobotContainer {
         Inches.of(23.388).in(Meters),
         () -> m_intake.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
         () -> {
-            m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
-            System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
+          m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
+          System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
         });
   }
 

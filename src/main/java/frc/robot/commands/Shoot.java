@@ -30,7 +30,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
-
 import java.util.function.DoubleSupplier;
 
 public class Shoot extends Command {
@@ -87,12 +86,11 @@ public class Shoot extends Command {
 
   Translation2d m_goal = new Translation2d();
 
-  /** 
-  * Shoot on the move command
-  */
+  /** Shoot on the move command */
   public Shoot(
       Flywheel flywheel,
-      Hood shooterHood, Vision vision,
+      Hood shooterHood,
+      Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
@@ -106,11 +104,10 @@ public class Shoot extends Command {
     addRequirements(flywheel, shooterHood, swerveDrive);
     SmartDashboard.putData(this);
   }
-  
-  /** 
-  * Standard shooting without shoot on the move capabilities. Used only in auto.
-  */
-  public Shoot(Flywheel flywheel, Hood shooterHood, Vision vision, CommandSwerveDrivetrain swerveDrive) {
+
+  /** Standard shooting without shoot on the move capabilities. Used only in auto. */
+  public Shoot(
+      Flywheel flywheel, Hood shooterHood, Vision vision, CommandSwerveDrivetrain swerveDrive) {
     m_flywheel = flywheel;
     m_shooterHood = shooterHood;
     m_vision = vision;
@@ -125,7 +122,7 @@ public class Shoot extends Command {
   public void initialize() {
     if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
       // TODO: Add pass position as goal
-      
+
       // If we're in our own zone, then we align to the hub
     } else {
       m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
@@ -211,7 +208,7 @@ public class Shoot extends Command {
             omegaOutput));
     lastDriveAngle = driveAngle;
   }
-  
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
