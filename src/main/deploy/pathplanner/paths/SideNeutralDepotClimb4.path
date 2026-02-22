@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.8,
+        "x": 6.6,
         "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8,
+        "x": 4.6,
         "y": 5.5
       },
       "isLocked": false,
@@ -16,24 +16,19 @@
     },
     {
       "anchor": {
-        "x": 0.5,
-        "y": 7.0
+        "x": 1.5,
+        "y": 5.95
       },
       "prevControl": {
-        "x": 0.5,
-        "y": 8.2
+        "x": 1.7489158345221112,
+        "y": 5.374151212553495
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.6,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "SideNeutralDepotClimb",

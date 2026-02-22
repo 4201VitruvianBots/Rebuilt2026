@@ -281,7 +281,8 @@ public class RobotContainer {
             m_hood,
             m_intakePivot,
             m_indexer,
-            m_uptake));
+            m_uptake,
+            m_climber));
     m_autoChooser.addOption(
         "Auto 4 - SideNeutralTwice",
         new SideNeutralTwice(
