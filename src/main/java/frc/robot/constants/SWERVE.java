@@ -7,9 +7,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -29,7 +27,7 @@ public class SWERVE {
   public static final Distance kWheelBase = Inches.of(17.75);
   public static final Distance kTrackWidth = Inches.of(24.5);
   public static final Distance kBumperHeight = Inches.of(4.5);
-  
+
   public static final Map<MODULE_POSITION, Translation2d> kModuleTranslations =
       Map.of(
           MODULE_POSITION.FRONT_LEFT,
@@ -57,11 +55,11 @@ public class SWERVE {
     public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
     public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17.0, 0.0, 0.0);
     public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9.0, 0.0, 0.0);
-    
-    public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
-    
-    
+
+    public static final PPHolonomicDriveController kDriveController =
+        new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
+
     public static final PathConstraints kAutoAlignPathConstraints =
-      new PathConstraints(1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI);
+        new PathConstraints(1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI);
   }
 }

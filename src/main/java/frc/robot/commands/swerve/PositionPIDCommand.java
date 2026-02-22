@@ -48,7 +48,8 @@ public class PositionPIDCommand extends Command {
                       0.0,
                       1.0);
 
-              var position = diff.getTranslation().getNorm() < AUTO_ALIGN.kPositionTolerance.in(Meters);
+              var position =
+                  diff.getTranslation().getNorm() < AUTO_ALIGN.kPositionTolerance.in(Meters);
 
               var speed =
                   m_swerve
@@ -88,7 +89,8 @@ public class PositionPIDCommand extends Command {
     endTriggerLogger.accept(endTrigger.getAsBoolean());
 
     m_swerve.setChassisSpeeds(
-        AUTO_ALIGN.kDriveController.calculateRobotRelativeSpeeds(m_swerve.getState().Pose, goalState));
+        AUTO_ALIGN.kDriveController.calculateRobotRelativeSpeeds(
+            m_swerve.getState().Pose, goalState));
   }
 
   @Override

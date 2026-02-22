@@ -22,11 +22,10 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
-import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.commands.swerve.DriveToTarget;
+import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
@@ -235,13 +234,12 @@ public class RobotContainer {
                 m_vision,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
-    
-    //auto climb align
+
+    // auto climb align
     var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision);
 
     m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(true));
     m_driverController.povRight().whileTrue(driveToTarget.generateCommand(false));
-
   }
 
   private void initAutoChooser() {

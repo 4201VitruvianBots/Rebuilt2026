@@ -3,13 +3,10 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
@@ -27,7 +24,6 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
-import java.util.Arrays;
 
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
@@ -111,30 +107,30 @@ public class Vision extends SubsystemBase {
     if (Controls.isBlueAlliance()) {
       if (m_useLeftTarget) {
         nearestObjectPose =
-          new Pose2d(
-              FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
-              FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-              new Rotation2d());
+            new Pose2d(
+                FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+                FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+                new Rotation2d());
       } else {
         nearestObjectPose =
-          new Pose2d(
-              FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
-              FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-              new Rotation2d());
+            new Pose2d(
+                FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+                FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+                new Rotation2d());
       }
     } else {
       if (m_useLeftTarget) {
         nearestObjectPose =
-          new Pose2d(
-              FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
-              FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
-              new Rotation2d());
+            new Pose2d(
+                FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+                FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+                new Rotation2d());
       } else {
         nearestObjectPose =
-          new Pose2d(
-              FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
-              FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
-              new Rotation2d());
+            new Pose2d(
+                FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+                FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+                new Rotation2d());
       }
     }
   }
@@ -280,16 +276,16 @@ public class Vision extends SubsystemBase {
             .getMeasure();
 
     var isAligned = rotationDelta.abs(Degrees) < 0.5;
-    
+
     var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
     SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
     System.out.println("The angle to the hub is " + setPoint.getAngle());
     System.out.println("The robot's angle is " + m_swerveDriveTrain.getState().Pose.getRotation());
     System.out.println("Therefore, the alignment is" + isAligned);
-    
+
     return isAligned;
   }
-  
+
   @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
   public boolean isPointingAtGoal() {
     // bearing from robot to goal
