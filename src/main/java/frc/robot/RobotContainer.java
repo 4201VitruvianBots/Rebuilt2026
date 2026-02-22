@@ -232,10 +232,12 @@ public class RobotContainer {
         .whileTrue(
             new AutoAlignDrive(
                 m_swerveDrive,
+                m_vision,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
-    //auto climb allign
-    var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision, m_controls);
+    
+    //auto climb align
+    var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision);
 
     m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(true));
     m_driverController.povRight().whileTrue(driveToTarget.generateCommand(false));
