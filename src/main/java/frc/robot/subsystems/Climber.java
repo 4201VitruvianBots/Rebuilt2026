@@ -193,7 +193,7 @@ public class Climber extends SubsystemBase {
 
   @Logged(name = "Is Holding Robot", importance = Importance.INFO)
   public boolean isHoldingRobot() {
-    return getAverageCurrent() < CLIMBER.kHoldingRobotThreshold.in(Amps);
+    return getAverageCurrent() > CLIMBER.kCurrentHoldingRobotThreshold.in(Amps) && m_climberMotor.getVelocity().clone().refresh().getValue().in(RotationsPerSecond) < 1.0;
   }
 
   public void holdClimber() {

@@ -44,14 +44,15 @@ public class INTAKE {
 
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-    public static final double kP = 12.0;
+    public static final double kP = 750.0;
     public static final double kD =
         0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
     // public static final double kV = 0; // Recalc these
     // public static final double kA = 0;
+    public static final double kG = 47.0;
 
-    public static final double gearRatio = 1.0; // encoder is after gear ratio
+    public static final double gearRatio = 35.0 / 1.0; // encoder is after gear ratio
     public static final double motionMagicAcceleration = 35.0;
     public static final double motionMagicCruiseVelocity = 25.0;
     public static final double motionMagicJerk = 0.0;
@@ -68,7 +69,7 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.47412109375;
+    public static final double encoderOffset = 0.446044921875;
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.Clockwise_Positive;
 

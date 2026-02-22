@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
 
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -68,16 +70,19 @@ public class FLYWHEEL {
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
-        1.0; // TODO: Change this later because this is confirmed not what the final thing
+        170 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
     // will be
     public static final double kInertia = 0.005;
     public static final double kStatorCurrentLimit = 30;
+    public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE = SensorDirectionValue.Clockwise_Positive;
+    public static final double kMagnetSensorOffset = -0.31591796875;
+    public static final double kAbsoluteSensorDiscontinuityPoint = 1.0;
 
     public static final double motionMagicCruiseVelocity = 6.0;
     public static final double motionMagicAcceleration = 4.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(45.0);
+    public static final Angle maxAngle = Degrees.of(359.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 

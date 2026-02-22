@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -35,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
+import frc.robot.constants.INTAKE.PIVOT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Hood extends SubsystemBase {
@@ -79,6 +81,14 @@ public class Hood extends SubsystemBase {
   }
 
   public Hood() {
+    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+    if (RobotBase.isReal()) {
+      encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
+      encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
+      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = HOOD.kAbsoluteSensorDiscontinuityPoint;
+    }
+    CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
+
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = HOOD.kP;
     config.Slot0.kD = HOOD.kD;
@@ -132,7 +142,7 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
   public Angle getHoodAngle() {
-    return m_cancoder.getAbsolutePosition().refresh().getValue();
+    return m_cancoder.getAbsolutePosition().refresh().getValue().div(HOOD.gearRatio);
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)

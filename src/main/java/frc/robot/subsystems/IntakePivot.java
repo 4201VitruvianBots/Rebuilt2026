@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
+import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
@@ -83,32 +84,29 @@ public class IntakePivot extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
     config.Slot0.kD = PIVOT.kD;
+    config.Slot0.kG = PIVOT.kG;
     // config.Slot0.kA = PIVOT.kA;
     // config.Slot0.kV = PIVOT.kV;
     // config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
-    config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode =
         NeutralModeValue
-            .Brake; // Here, in this very instance, we, as in me and Sir Nathan Schoen have
-    // ulimately, after an extensive amount of deliberation, have ultimately decided
-    // that is in our best interests to make ues of the "brake" value in neutral
-    // mode, due to the fact that an intake Pivot would not be coasting, thus we
-    // chose to use brake for afformentioned pivot.
+            .Brake; 
 
-    config.CurrentLimits.StatorCurrentLimit = 175;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.ClosedLoopGeneral.ContinuousWrap = false;
+    // config.CurrentLimits.StatorCurrentLimit = 175;
+    // config.CurrentLimits.StatorCurrentLimitEnable = true;
+    // config.ClosedLoopGeneral.ContinuousWrap = false;
 
-    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
-    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
 
     config.MotionMagic.MotionMagicCruiseVelocity = PIVOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = PIVOT.motionMagicAcceleration;
