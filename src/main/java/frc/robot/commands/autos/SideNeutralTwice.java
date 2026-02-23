@@ -7,6 +7,7 @@ package frc.robot.commands.autos;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -23,6 +24,7 @@ import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.utils.TrajectoryUtils;
+
 import java.util.function.BooleanSupplier;
 
 public class SideNeutralTwice extends Auto {
@@ -46,8 +48,14 @@ public class SideNeutralTwice extends Auto {
       var m_path2 = PathPlannerPath.fromPathFile("SideNeutralTwice2");
       var m_path3 = PathPlannerPath.fromPathFile("SideNeutralTwice3");
       var m_path4 = PathPlannerPath.fromPathFile("SideNeutralTwice4");
+      var m_path5 = PathPlannerPath.fromPathFile("SideNeutralTwice5");
+      var m_path6 = PathPlannerPath.fromPathFile("SideNeutralTwice6");
+      var m_path7 = PathPlannerPath.fromPathFile("SideNeutralTwice7");
+
+      Timer timer = new Timer();
 
       addCommands(
+          new InstantCommand(timer::restart),
           getPathCommand(trajectoryUtils, m_path1, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           rushCenter
@@ -55,7 +63,7 @@ public class SideNeutralTwice extends Auto {
               : new ParallelCommandGroup(
                       new Shoot(flywheel, hood, vision, swerveDrive),
                       uptake.command(UPTAKE_SPEED.UPTAKING))
-                  .withTimeout(3), // Don't shoot preload if we're trying to rush the center
+                  .withTimeout(1), // Don't shoot preload if we're trying to rush the center
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
@@ -63,24 +71,26 @@ public class SideNeutralTwice extends Auto {
               getPathCommand(trajectoryUtils, m_path3, flipPath)
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
+              .andThen(() -> swerveDrive.setControl(stopRequest)),
+          new ParallelCommandGroup(
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(2),
+          // This code just repeats the last four steps again.
+          getPathCommand(trajectoryUtils, m_path5, flipPath)
+              .andThen(() -> swerveDrive.setControl(stopRequest)),
+          new ParallelRaceGroup(
+              new IntakeCommand(intake, intakePivot, indexer, uptake),
+              getPathCommand(trajectoryUtils, m_path6, flipPath)
+                  .andThen(() -> swerveDrive.setControl(stopRequest))),
+          getPathCommand(trajectoryUtils, m_path7, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
                   new Shoot(flywheel, hood, vision, swerveDrive),
                   uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
-          // This code just repeats the last four steps again.
-          getPathCommand(trajectoryUtils, m_path2, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelRaceGroup(
-              new IntakeCommand(intake, intakePivot, indexer, uptake),
-              getPathCommand(trajectoryUtils, m_path3, flipPath)
-                  .andThen(() -> swerveDrive.setControl(stopRequest))),
-          getPathCommand(trajectoryUtils, m_path4, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(
-                  new Shoot(flywheel, hood, vision, swerveDrive),
-                  uptake.command(UPTAKE_SPEED.UPTAKING))
-              .withTimeout(3));
+          new InstantCommand(()->System.out.println(timer.get()))
+      );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for SideNeutralTwice", e.getStackTrace());
       addCommands(new InstantCommand());
