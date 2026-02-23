@@ -390,18 +390,20 @@ public class FuelSim {
 
     // Depots
     for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 4; j++) {
-            fuels.add(new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 + 0.076 + 0.152 * i,
-    FUEL_RADIUS)));
-            fuels.add(new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 - 0.076 - 0.152 * i,
-    FUEL_RADIUS)));
-            fuels.add(new Fuel(
-                    new Translation3d(FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 + 0.076 + 0.152 * i,
-    FUEL_RADIUS)));
-            fuels.add(new Fuel(
-                    new Translation3d(FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 - 0.076 - 0.152 * i,
-    FUEL_RADIUS)));
-        }
+      for (int j = 0; j < 4; j++) {
+        fuels.add(
+            new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 + 0.076 + 0.152 * i, FUEL_RADIUS)));
+        fuels.add(
+            new Fuel(new Translation3d(0.076 + 0.152 * j, 5.95 - 0.076 - 0.152 * i, FUEL_RADIUS)));
+        fuels.add(
+            new Fuel(
+                new Translation3d(
+                    FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 + 0.076 + 0.152 * i, FUEL_RADIUS)));
+        fuels.add(
+            new Fuel(
+                new Translation3d(
+                    FIELD_LENGTH - 0.076 - 0.152 * j, 2.09 - 0.076 - 0.152 * i, FUEL_RADIUS)));
+      }
     }
 
     // DEBUG: Log XZ lines

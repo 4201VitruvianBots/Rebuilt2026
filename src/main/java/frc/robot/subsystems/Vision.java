@@ -280,7 +280,8 @@ public class Vision extends SubsystemBase {
     // var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
     // SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
     // System.out.println("The angle to the hub is " + setPoint.getAngle());
-    // System.out.println("The robot's angle is " + m_swerveDriveTrain.getState().Pose.getRotation());
+    // System.out.println("The robot's angle is " +
+    // m_swerveDriveTrain.getState().Pose.getRotation());
     // System.out.println("Therefore, the alignment is" + isAligned);
 
     return isAligned;
