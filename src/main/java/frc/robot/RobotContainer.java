@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.*;
@@ -147,11 +148,11 @@ public class RobotContainer {
                       rotationRate); // Drive counterclockwise with negative X (left)
               return drive;
             }));
-    // m_fieldSim = new FieldSim();
+    m_fieldSim = new FieldSim();
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    m_hood = new Hood();
+    // m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
@@ -175,52 +176,50 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
-      m_driverController
-          .rightBumper()
-          .toggleOnTrue(
-              new ParallelCommandGroup(
-                  new AutoAlignDrive(
-                      m_swerveDrive,
-                      m_vision,
-                      m_driverController::getLeftY,
-                      m_driverController::getLeftX),
-                  new Shoot(m_flywheel, m_vision, m_hood)));
-    }
+    // if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
+    //   m_driverController
+    //       .rightBumper()
+    //       .toggleOnTrue(
+    //           new ParallelCommandGroup(
+    //               new AutoAlignDrive(
+    //                   m_swerveDrive,
+    //                   m_vision,
+    //                   m_driverController::getLeftY,
+    //                   m_driverController::getLeftX),
+    //               new Shoot(m_flywheel, m_vision, m_hood)));
+    // }
 
-    if (m_swerveDrive != null && m_vision != null) {
-      m_driverController
-          .leftBumper()
-          .toggleOnTrue(
-              new AutoAlignDrive(
-                  m_swerveDrive,
-                  m_vision,
-                  m_driverController::getLeftY,
-                  m_driverController::getLeftX));
-    }
+    // if (m_swerveDrive != null && m_vision != null) {
+    //   m_driverController
+    //       .leftBumper()
+    //       .toggleOnTrue(
+    //           new AutoAlignDrive(
+    //               m_swerveDrive,
+    //               m_vision,
+    //               m_driverController::getLeftY,
+    //               m_driverController::getLeftX));
+    // }
 
-    if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
-    }
 
-    if (m_flywheel != null) {
-      m_driverController.y().whileTrue(m_flywheel.manualCommand());
-    }
+    m_driverController.x().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)));
 
-    // I foresee a state machine in the future...
-    if (m_uptake != null && m_indexer != null && m_intake != null) {
-      m_driverController
-          .a()
-          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
-    }
+    m_driverController.y().whileTrue(m_flywheel.manualCommand());
 
-    if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
-    }
 
-    if (m_indexer != null){
-      m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING));
-    }
+    // // I foresee a state machine in the future...
+    // if (m_uptake != null && m_indexer != null && m_intake != null) {
+    //   m_driverController
+    //       .a()
+    //       .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
+    // }
+
+    // if (m_intake != null) {
+    //   m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
+    // }
+
+    // if (m_indexer != null){
+    //   m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING));
+    // }
 
     // if (m_swerveDrive != null) {
     //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));

@@ -41,10 +41,10 @@ public class Flywheel extends SubsystemBase {
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.driveBase);
 
   @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.driveBase);
 
   @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
-  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3);
+  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.driveBase);
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
@@ -82,7 +82,9 @@ public class Flywheel extends SubsystemBase {
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
-    config.CurrentLimits.StatorCurrentLimitEnable = false;
+    config.MotorOutput.PeakReverseDutyCycle = -0.1;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
 
     CtreUtils.configureTalonFx(m_motor1, config);
     CtreUtils.configureTalonFx(m_motor2, config);
@@ -92,8 +94,8 @@ public class Flywheel extends SubsystemBase {
 
     // We only need the sim state of a single motor
 
-    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
     // TODO: Check if they all are  aligned
     var topic =
         NetworkTableInstance.getDefault()
@@ -161,7 +163,7 @@ public class Flywheel extends SubsystemBase {
 
   public Command manualCommand() {
     return this.runEnd(
-        () -> setRPMOutputFOC(RPM.of(getRPMSetpoint())),
+        () -> setRPMOutputFOC(RPM.of(1250)),
         () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
   }
 
@@ -188,11 +190,11 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!isAtRPMsetpoint()) {
-      m_motor1.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
-    } else {
-      m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
-    }
+    // if (isAtRPMsetpoint()) {
+    //   m_motor1.setControl(m_dutyCycleOut.withOutput((Math.signum(getRPMerror())) / 4.0));
+    // } else {
+    m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+    // }
   }
 
   @Override

@@ -100,7 +100,7 @@ public class Hood extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
 
-    config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
+    config.Feedback.RotorToSensorRatio = HOOD.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
 

@@ -12,17 +12,17 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
 public class FLYWHEEL {
-  public static final double kP = 1.0; // These worked for WoodBot but will need to be retuned
+  public static final double kP = 7.0; // These worked for WoodBot but will need to be retuned
   public static final double kD = 0.0;
   ;
   public static final double kV = 0.0;
   public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
   public static final double kA = 0.0;
   // The value of kS is the largest voltage applied before the mechanism begins to move)
-  public static final double gearRatio = 1.0; // Placeholder value
+  public static final double gearRatio = 32.0 / 24.0; // Placeholder value
   public static final double kInertia = 0.01;
-  public static final double kStatorCurrentLimit = 120;
-  public static final double kVelocityErrorThreshold = 40.0;
+  public static final double kStatorCurrentLimit = 70.0;
+  public static final double kVelocityErrorThreshold = 150.0;
 
   // These worked on wood bot. Change jerk later if further optimization is needed
   public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
