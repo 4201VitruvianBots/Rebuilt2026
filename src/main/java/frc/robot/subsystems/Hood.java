@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
@@ -100,7 +101,11 @@ public class Hood extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    if (RobotBase.isReal()){
+      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    } else {
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    }
 
     config.Feedback.RotorToSensorRatio = HOOD.gearRatio;
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
@@ -125,7 +130,7 @@ public class Hood extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
   }
 
   @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)
