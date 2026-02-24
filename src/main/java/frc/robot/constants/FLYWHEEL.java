@@ -65,21 +65,21 @@ public class FLYWHEEL {
 
   public class HOOD {
     public static final double kP = 3.0; // TODO: Change this
-    public static final double kD = 0.1;
+    public static final double kD = 0.0;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
     public static final double kS = 0.0;
     public static final double gearRatio =
-        170 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
+        170.0 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
     // will be
     public static final double kInertia = 0.005;
-    public static final double kStatorCurrentLimit = 30;
+    public static final double kStatorCurrentLimit = 80;
     public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE = SensorDirectionValue.Clockwise_Positive;
     public static final double kMagnetSensorOffset = -0.31591796875;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1.0;
 
-    public static final double motionMagicCruiseVelocity = 6.0;
-    public static final double motionMagicAcceleration = 4.0;
+    public static final double motionMagicCruiseVelocity = 7.0;
+    public static final double motionMagicAcceleration = 7.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
     public static final Angle maxAngle = Degrees.of(359.0);

@@ -117,6 +117,7 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
       m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
+    m_motor.setPosition(getAngle());
   }
 
   public void setAngle(Angle angle) {

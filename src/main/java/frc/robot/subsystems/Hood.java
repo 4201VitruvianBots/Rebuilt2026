@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -85,7 +86,7 @@ public class Hood extends SubsystemBase {
     if (RobotBase.isReal()) {
       encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
       encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
-      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = HOOD.kAbsoluteSensorDiscontinuityPoint;
+      // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = HOOD.kAbsoluteSensorDiscontinuityPoint;
     }
     CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
 
@@ -99,23 +100,24 @@ public class Hood extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     config.Feedback.RotorToSensorRatio = HOOD.gearRatio;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
 
-    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = HOOD.maxAngle.in(Rotations);
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = HOOD.minAngle.in(Rotations);
 
-    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
-    m_motor.setPosition(getHoodAngle().in(Rotations));
-
     CtreUtils.configureTalonFx(m_motor, config);
+
+    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
+    m_motor.setPosition(getHoodAngle().times(HOOD.gearRatio).in(Rotations));
   }
 
   public void setAngle(Angle setpoint) {
@@ -126,6 +128,7 @@ public class Hood extends SubsystemBase {
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
+  @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)
   public Angle getDesiredAngle() {
     return m_hoodSetpoint;
   }
@@ -142,7 +145,7 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
   public Angle getHoodAngle() {
-    return m_cancoder.getAbsolutePosition().refresh().getValue().div(HOOD.gearRatio);
+    return m_cancoder.getPosition().refresh().getValue().div(HOOD.gearRatio);
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)
@@ -165,9 +168,11 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {
-      m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
-    }
+    // if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {
+    //   m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
+    // } else {
+    //   m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
+    // }
   }
 
   @Override
