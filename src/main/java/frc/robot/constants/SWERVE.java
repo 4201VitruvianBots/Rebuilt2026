@@ -27,6 +27,10 @@ public class SWERVE {
   public static final Distance kWheelBase = Inches.of(17.75);
   public static final Distance kTrackWidth = Inches.of(24.5);
   public static final Distance kBumperHeight = Inches.of(4.5);
+  public static final Distance kBumperWidth = Inches.of(4.0);
+  
+  public static final Distance kChassisWidth = Inches.of(30.5);
+  public static final Distance kChassisLength = Inches.of(23.0);
 
   public static final Map<MODULE_POSITION, Translation2d> kModuleTranslations =
       Map.of(

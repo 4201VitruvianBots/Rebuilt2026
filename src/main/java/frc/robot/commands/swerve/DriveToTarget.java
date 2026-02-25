@@ -15,12 +15,12 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
+import frc.robot.constants.VISION.TARGET;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import java.util.List;
 import java.util.Set;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveToTarget {
   private final CommandSwerveDrivetrain m_swerveDrive;
   private final Vision m_vision;
@@ -35,15 +35,12 @@ public class DriveToTarget {
     m_swerveDrive = swerveDrivetrain;
     m_vision = vision;
   }
-
-  // TODO: Vision subsystem updating
-  public Command generateCommand(boolean useLeft) {
+  
+  public Command generateCommand(TARGET target) {
     return Commands.defer(
         () -> {
           // figure out where we need to drive to
-          m_vision.setLeftTarget(useLeft);
-          m_vision.updateNearestClimbTarget();
-          var targetPose = m_vision.getNearestTargetPose();
+          var targetPose = m_vision.updateClimbTarget(target);
 
           // publish the position we want to drive to
           desiredTargetPublisher.accept(targetPose);

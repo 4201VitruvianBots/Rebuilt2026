@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
+import frc.robot.constants.VISION.TARGET;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
 
@@ -34,11 +35,10 @@ public class Vision extends SubsystemBase {
   private Controls m_controls;
 
   private boolean m_localized;
-
-  private boolean m_useLeftTarget;
-
-  private Pose2d nearestObjectPose = Pose2d.kZero;
-  private final Pose2d[] robotToTarget = {Pose2d.kZero, Pose2d.kZero};
+  
+  private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
+  private Pose2d targetPose = Pose2d.kZero;
+  
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
   // NetworkTables publisher setup
@@ -87,78 +87,56 @@ public class Vision extends SubsystemBase {
     m_fieldSim = fieldSim;
   }
 
-  public void setLeftTarget(boolean value) {
-    m_useLeftTarget = value;
-  }
-
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingLeft() {
-    return m_useLeftTarget;
+    return m_currentTarget == TARGET.LEFT_FRONT_TOWER /* || m_currentTarget == TARGET.LEFT_BACK_TOWER */;
   }
 
   @Logged(name = "Right Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingRight() {
-    return !m_useLeftTarget;
+    return m_currentTarget == TARGET.RIGHT_FRONT_TOWER /* || m_currentTarget == TARGET.RIGHT_BACK_TOWER */;
   }
-
-  public void updateNearestClimbTarget() {
-    if (lockTarget) return;
-    robotToTarget[0] = m_swerveDriveTrain.getState().Pose;
-    if (Controls.isBlueAlliance()) {
-      if (m_useLeftTarget) {
-        nearestObjectPose =
-            new Pose2d(
-                FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
-                FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-                new Rotation2d());
-      } else {
-        nearestObjectPose =
-            new Pose2d(
-                FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
-                FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-                new Rotation2d());
-      }
-    } else {
-      if (m_useLeftTarget) {
-        nearestObjectPose =
-            new Pose2d(
-                FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
-                FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
-                new Rotation2d());
-      } else {
-        nearestObjectPose =
-            new Pose2d(
-                FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
-                FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
-                new Rotation2d());
-      }
+ 
+  public Pose2d updateClimbTarget(TARGET target) {
+    if (lockTarget) return targetPose;
+    targetPose = m_swerveDriveTrain.getState().Pose;
+    switch (target) {
+        case LEFT_FRONT_TOWER:
+            if (Controls.isBlueAlliance()) {
+                targetPose =
+                    new Pose2d(
+                        FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+                        FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+                        new Rotation2d(Degrees.of(180)));
+            } else {
+                targetPose =
+                    new Pose2d(
+                        FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+                        FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+                        new Rotation2d());
+            }
+            break;
+        case RIGHT_FRONT_TOWER:
+            if (Controls.isBlueAlliance()) {
+                targetPose =
+                    new Pose2d(
+                        FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+                        FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+                        new Rotation2d(Degrees.of(180)));
+            } else {
+                targetPose =
+                    new Pose2d(
+                        FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+                        FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+                        new Rotation2d());
+            }
+            break;
+        default:
+            break;
     }
+    return targetPose;
   }
 
-  public Pose2d getNearestTargetPose() {
-    return robotToTarget[1];
-  }
-
-  //   private void updateAngleToHub() {
-  //   if (m_swerveDriveTrain != null) {
-  //     if (DriverStation.isDisabled()) {
-  //       if (DriverStation.isAutonomous()) {
-  //         m_goal = Controls.isRedAlliance() ? FIELD.redAutoHub : FIELD.blueAutoHub;
-  //       } else {
-  //         m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
-  //       }
-  //     }
-  //     if(DriverStation.isAutonomous()){
-  //       m_swerveDriveTrain.setAngleToHub(
-  //           m_swerveDriveTrain
-  //               .getState()
-  //               .Pose
-  //              .getTranslation()
-  //              .minus(m_goal)
-  //              .getAngle());
-  //     }
-  //   }
-  // }
 
   /**
    * Process measurements from a limelight. Return true if the given vision measurement is used,
@@ -272,7 +250,7 @@ public class Vision extends SubsystemBase {
             .getState()
             .Pose
             .getRotation()
-            .minus(robotToTarget[1].getRotation())
+            .minus(targetPose.getRotation())
             .getMeasure();
 
     var isAligned = rotationDelta.abs(Degrees) < 0.5;

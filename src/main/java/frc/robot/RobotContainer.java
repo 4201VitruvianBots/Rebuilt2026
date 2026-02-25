@@ -31,6 +31,7 @@ import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.constants.VISION.TARGET;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
@@ -238,8 +239,8 @@ public class RobotContainer {
     // auto climb align
     var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision);
 
-    m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(true));
-    m_driverController.povRight().whileTrue(driveToTarget.generateCommand(false));
+    m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(TARGET.LEFT_FRONT_TOWER));
+    m_driverController.povRight().whileTrue(driveToTarget.generateCommand(TARGET.RIGHT_FRONT_TOWER));
   }
 
   private void initAutoChooser() {
