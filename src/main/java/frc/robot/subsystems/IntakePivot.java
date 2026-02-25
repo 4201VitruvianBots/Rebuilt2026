@@ -68,7 +68,7 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
-          false,
+          true,
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
@@ -117,7 +117,7 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
       m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
-    m_motor.setPosition(getAngle());
+    m_motor.setPosition(getAngle().in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -126,8 +126,6 @@ public class IntakePivot extends SubsystemBase {
             MathUtil.clamp(
                 angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
-    SmartDashboard.putString(
-        "Pivot Control Request", m_request.withPosition(m_desiredAngle.in(Rotations)).toString());
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)

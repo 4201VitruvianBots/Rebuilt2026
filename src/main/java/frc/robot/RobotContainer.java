@@ -157,7 +157,7 @@ public class RobotContainer {
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
+    m_intakePivot = new IntakePivot();
     m_intake = new Intake();
     // m_uptake = new Uptake();
     m_indexer = new Indexer();
@@ -204,6 +204,8 @@ public class RobotContainer {
     m_driverController.x().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)));
 
     m_driverController.y().whileTrue(m_flywheel.manualCommand());
+
+    m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
 
 
     // // I foresee a state machine in the future...

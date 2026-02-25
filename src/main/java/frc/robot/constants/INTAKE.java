@@ -26,7 +26,7 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.65),
+      INTAKING(0.85),
       SHOOTING(0.43),
       REVERSE(-0.6);
 
@@ -50,7 +50,7 @@ public class INTAKE {
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
     // public static final double kV = 0; // Recalc these
     // public static final double kA = 0;
-    public static final double kG = 47.0;
+    public static final double kG = 0.0;
 
     public static final double gearRatio = 35.0 / 1.0; // encoder is after gear ratio
     public static final double motionMagicAcceleration = 35.0;
