@@ -104,7 +104,7 @@ public class RobotContainer {
           .withDeadband(MaxSpeed * 0.1)
           .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
-  private Robot2d m_robotSim;
+  private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
   private FuelSim m_fuelSim = FuelSim.getInstance();
@@ -167,8 +167,6 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
-
-      m_robotSim = new Robot2d();
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
     }
