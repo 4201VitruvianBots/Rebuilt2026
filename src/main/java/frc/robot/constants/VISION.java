@@ -62,7 +62,7 @@ public final class VISION {
   public static final Angle posePitchTolerance = Degrees.of(4);
   public static final Angle poseRollTolerance = Degrees.of(4);
   public static final Angle poseYawTolerance = Degrees.of(4);
-  
+
   public enum TARGET {
     LEFT_FRONT_TOWER,
     RIGHT_FRONT_TOWER,

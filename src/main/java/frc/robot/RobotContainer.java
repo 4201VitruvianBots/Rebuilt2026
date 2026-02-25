@@ -240,7 +240,9 @@ public class RobotContainer {
     var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision);
 
     m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(TARGET.LEFT_FRONT_TOWER));
-    m_driverController.povRight().whileTrue(driveToTarget.generateCommand(TARGET.RIGHT_FRONT_TOWER));
+    m_driverController
+        .povRight()
+        .whileTrue(driveToTarget.generateCommand(TARGET.RIGHT_FRONT_TOWER));
   }
 
   private void initAutoChooser() {

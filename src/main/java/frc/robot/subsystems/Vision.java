@@ -35,10 +35,10 @@ public class Vision extends SubsystemBase {
   private Controls m_controls;
 
   private boolean m_localized;
-  
+
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
   private Pose2d targetPose = Pose2d.kZero;
-  
+
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
   // NetworkTables publisher setup
@@ -89,54 +89,55 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingLeft() {
-    return m_currentTarget == TARGET.LEFT_FRONT_TOWER /* || m_currentTarget == TARGET.LEFT_BACK_TOWER */;
+    return m_currentTarget
+        == TARGET.LEFT_FRONT_TOWER /* || m_currentTarget == TARGET.LEFT_BACK_TOWER */;
   }
 
   @Logged(name = "Right Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingRight() {
-    return m_currentTarget == TARGET.RIGHT_FRONT_TOWER /* || m_currentTarget == TARGET.RIGHT_BACK_TOWER */;
+    return m_currentTarget
+        == TARGET.RIGHT_FRONT_TOWER /* || m_currentTarget == TARGET.RIGHT_BACK_TOWER */;
   }
- 
+
   public Pose2d updateClimbTarget(TARGET target) {
     if (lockTarget) return targetPose;
     targetPose = m_swerveDriveTrain.getState().Pose;
     switch (target) {
-        case LEFT_FRONT_TOWER:
-            if (Controls.isBlueAlliance()) {
-                targetPose =
-                    new Pose2d(
-                        FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
-                        FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-                        new Rotation2d(Degrees.of(180)));
-            } else {
-                targetPose =
-                    new Pose2d(
-                        FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
-                        FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
-                        new Rotation2d());
-            }
-            break;
-        case RIGHT_FRONT_TOWER:
-            if (Controls.isBlueAlliance()) {
-                targetPose =
-                    new Pose2d(
-                        FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
-                        FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-                        new Rotation2d(Degrees.of(180)));
-            } else {
-                targetPose =
-                    new Pose2d(
-                        FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
-                        FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
-                        new Rotation2d());
-            }
-            break;
-        default:
-            break;
+      case LEFT_FRONT_TOWER:
+        if (Controls.isBlueAlliance()) {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+                  new Rotation2d(Degrees.of(180)));
+        } else {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+                  new Rotation2d());
+        }
+        break;
+      case RIGHT_FRONT_TOWER:
+        if (Controls.isBlueAlliance()) {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+                  new Rotation2d(Degrees.of(180)));
+        } else {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+                  new Rotation2d());
+        }
+        break;
+      default:
+        break;
     }
     return targetPose;
   }
-
 
   /**
    * Process measurements from a limelight. Return true if the given vision measurement is used,

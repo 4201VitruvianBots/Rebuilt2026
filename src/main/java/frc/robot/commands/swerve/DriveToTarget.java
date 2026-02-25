@@ -35,7 +35,7 @@ public class DriveToTarget {
     m_swerveDrive = swerveDrivetrain;
     m_vision = vision;
   }
-  
+
   public Command generateCommand(TARGET target) {
     return Commands.defer(
         () -> {
