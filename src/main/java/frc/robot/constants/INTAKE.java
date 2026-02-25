@@ -16,7 +16,7 @@ public class INTAKE {
     // TODO: change values
     public static final double kP = 1.0;
     public static final double gearRatio = 1.0;
-    public static final double peakForwardOutput = 0.9;
+    public static final double peakForwardOutput = 1.0;
     public static final double peakReverseOutput = -0.9;
     public static final double kInertia = 0.005;
 
@@ -26,7 +26,7 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.85),
+      INTAKING(0.99),
       SHOOTING(0.43),
       REVERSE(-0.6);
 
