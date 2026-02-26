@@ -376,6 +376,9 @@ public class RobotContainer {
   }
 
   public void initializeFuelSim() {
+    if (m_fuelSim.isRunning()) {
+      resetFuelSim();
+    }
     m_fuelSim.spawnStartingFuel(); // spawns fuel in the depots and neutral zone
     m_fuelSim.registerRobot(
         SWERVE.kTrackWidth.in(Meters), // from left to right
