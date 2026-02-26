@@ -4,22 +4,19 @@
 
 package frc.robot.commands.autos;
 
+import static edu.wpi.first.units.Units.Meter;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import frc.robot.commands.Climb;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Flywheel;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakePivot;
-import frc.robot.subsystems.Uptake;
-import frc.robot.subsystems.Vision;
+import frc.robot.constants.CLIMBER;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.subsystems.*;
 import frc.team4201.lib.command.Auto;
 
 public class SideNeutralDepotClimb extends Auto {
@@ -32,7 +29,8 @@ public class SideNeutralDepotClimb extends Auto {
       Hood hood,
       IntakePivot intakePivot,
       Indexer indexer,
-      Uptake uptake) {
+      Uptake uptake,
+      Climber climber) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -48,26 +46,32 @@ public class SideNeutralDepotClimb extends Auto {
           swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb5");
       var m_path6 =
           swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb6");
-      var m_path7 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("SideNeutralDepotClimb7");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision, hood).withTimeout(3),
+          new ParallelCommandGroup(
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(3),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelRaceGroup(
               new IntakeCommand(intake, intakePivot, indexer, uptake),
               m_path3.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(
-              new Shoot(flywheel, vision, hood).withTimeout(3),
-              m_path5.andThen(() -> swerveDrive.setControl(stopRequest))),
           new ParallelRaceGroup(
               new IntakeCommand(intake, intakePivot, indexer, uptake),
-              m_path6.andThen(() -> swerveDrive.setControl(stopRequest))),
-          m_path7.andThen(() -> swerveDrive.setControl(stopRequest))
-          // Todo: add climb (command not yet implemented in this branch)
-          );
+              m_path5.andThen(() -> swerveDrive.setControl(stopRequest))),
+          new ParallelCommandGroup(
+              new Shoot(flywheel, hood, vision, swerveDrive).withTimeout(3),
+              new Climb(climber, CLIMBER.CLIMBER_SETPOINT.LEVEL_ONE)
+                  .until(
+                      () ->
+                          Math.abs(
+                                  climber.getHeight().in(Meter)
+                                      - CLIMBER.CLIMBER_SETPOINT.LEVEL_ONE.getSetpoint().in(Meter))
+                              < 0.1)),
+          m_path6.andThen(() -> swerveDrive.setControl(stopRequest)),
+          new Climb(climber, CLIMBER.CLIMBER_SETPOINT.START_POSITION));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for SideNeutralDepotClimb", e.getStackTrace());
       addCommands(new InstantCommand());

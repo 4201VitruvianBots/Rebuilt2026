@@ -1,6 +1,6 @@
 {
   "robotWidth": 0.9652,
-  "robotLength": 0.7747,
+  "robotLength": 0.775,
   "holonomicMode": true,
   "pathFolders": [
     "CenterDepot",
@@ -34,5 +34,7 @@
   "brModuleY": -0.273,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.442,\"y\":0.0},\"size\":{\"width\":0.762,\"length\":0.288},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
+  ]
 }

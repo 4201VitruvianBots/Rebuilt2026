@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.generated.V1Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.TrajectoryUtils;
@@ -275,6 +276,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
   }
 
+  public double getYaw() {
+    return getPigeon2().getYaw().getValueAsDouble();
+  }
+
   public void resetGyro(double angle) {
     getPigeon2().setYaw(-angle);
   }
@@ -336,12 +341,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   @Override
   public PIDConstants getAutoTranslationPIDConstants() {
-    return SWERVE.kTranslationPID;
+    return AUTO_ALIGN.kAutoAlignTranslationPID;
   }
 
   @Override
   public PIDConstants getAutoRotationPIDConstants() {
-    return SWERVE.kRotationPID;
+    return AUTO_ALIGN.kAutoAlignRotationPID;
   }
 
   /**
