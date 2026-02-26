@@ -125,6 +125,16 @@ public class Uptake extends SubsystemBase {
         });
   }
 
+  @NotLogged
+  public Command percentCommand(double speed) {
+    return this.startEnd(
+        () -> m_motor.set(speed),
+        () -> {
+          setPercentOutput(0.0);
+          setVelocitySetpoint(UPTAKE_SPEED.IDLE.get());
+        });
+  }
+
   public void testInit() {
     m_rpmPublisher.set(0.0);
   }
@@ -138,7 +148,7 @@ public class Uptake extends SubsystemBase {
     // if (!isAtRPMsetpoint()) {
     //   m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror()) / 2));
     // } else {
-    m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    // m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
   }
 
   @Override

@@ -200,15 +200,15 @@ public class RobotContainer {
     //       .toggleOnTrue(
     //           new AutoAlignDrive(
     //               m_swerveDrive,
-    //               m_vision,
+    //               m_vision,P
     //               m_driverController::getLeftY,
     //               m_driverController::getLeftX));
     // }
 
 
-    m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING), m_uptake.command(UPTAKE_SPEED.UPTAKING)));
+    m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)));
 
-    m_driverController.leftBumper().whileTrue(new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
+    m_driverController.leftBumper().whileTrue(new Shoot(m_flywheel, m_hood, m_uptake, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
 
     m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
 

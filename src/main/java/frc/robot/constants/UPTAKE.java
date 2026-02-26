@@ -9,7 +9,7 @@ public class UPTAKE {
   public static final double kP = 13.5; // Placeholders
   public static final double kV = 0.0;
   public static final double kS = 24.3603515625;
-  public static final double gearRatio = 1.0;
+  public static final double gearRatio = 12.0 / 20.0;
   public static final double kInertia = 0.01;
   public static final double kVelocityErrorThreshold = 35.0;
 
@@ -25,7 +25,7 @@ public class UPTAKE {
   public enum UPTAKE_SPEED {
     IDLE(RPM.of(0.0)),
     INTAKE_RUN(RPM.of(200.0)),
-    UPTAKING(RPM.of(850.0));
+    UPTAKING(RPM.of(1678.0));
 
     private final AngularVelocity value;
 

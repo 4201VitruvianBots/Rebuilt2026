@@ -339,7 +339,7 @@ public class FIELD {
     }
 
     public static void updateFields() {
-      GOAL = Controls.isBlueAlliance() ? RED : BLUE; // TODO: Unflip this T_T
+      GOAL = Controls.isBlueAlliance() ? BLUE : RED; // TODO: Unflip this T_T
     }
   }
 

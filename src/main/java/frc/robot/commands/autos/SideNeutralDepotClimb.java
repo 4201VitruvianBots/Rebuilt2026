@@ -53,7 +53,7 @@ public class SideNeutralDepotClimb extends Auto {
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
-                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  new Shoot(flywheel, hood, uptake, vision, swerveDrive),
                   uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -62,7 +62,7 @@ public class SideNeutralDepotClimb extends Auto {
               m_path3.andThen(() -> swerveDrive.setControl(stopRequest))),
           m_path4.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
-                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  new Shoot(flywheel, hood, uptake, vision, swerveDrive),
                   uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
           m_path5.andThen(() -> swerveDrive.setControl(stopRequest)),

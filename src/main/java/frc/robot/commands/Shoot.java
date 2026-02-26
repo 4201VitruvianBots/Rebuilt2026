@@ -29,6 +29,7 @@ import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
 
@@ -56,13 +57,14 @@ public class Shoot extends Command {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
         Meters.of(1.8086638318064376),
-        new Shot(RPM.of(2175), Degrees.of(75), 0.96399)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.048), new Shot(RPM.of(2200), Degrees.of(73), 1.286));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(70), 1.4));
+        new Shot(RPM.of(1400), Degrees.of(4.0), 0.96399)); // Hood position is a placeholder
+    distanceToShotMap.put(Meters.of(3.048), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(1600), Degrees.of(10), 1.4));
   }
 
   private final Vision m_vision;
   private final Flywheel m_flywheel;
+  private final Uptake m_uptake;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
@@ -89,7 +91,7 @@ public class Shoot extends Command {
   /** Shoot on the move command */
   public Shoot(
       Flywheel flywheel,
-      Hood shooterHood,
+      Hood shooterHood, Uptake uptake,
       Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
@@ -100,6 +102,7 @@ public class Shoot extends Command {
     m_strafeInput = strafeInput;
     m_shooterHood = shooterHood;
     m_vision = vision;
+    m_uptake = uptake;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
     SmartDashboard.putData(this);
@@ -107,12 +110,13 @@ public class Shoot extends Command {
 
   /** Standard shooting without shoot on the move capabilities. Used only in auto. */
   public Shoot(
-      Flywheel flywheel, Hood shooterHood, Vision vision, CommandSwerveDrivetrain swerveDrive) {
+      Flywheel flywheel, Hood shooterHood, Uptake uptake, Vision vision, CommandSwerveDrivetrain swerveDrive) {
     m_flywheel = flywheel;
     m_shooterHood = shooterHood;
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
-
+    m_uptake = uptake;
+    
     addRequirements(flywheel, shooterHood);
     SmartDashboard.putData(this);
   }
@@ -136,6 +140,7 @@ public class Shoot extends Command {
             new Constraints(
                 SWERVE.kMaxSpeedMetersPerSecond, SWERVE.kMaxAccelerationShootingMetersPerSecond));
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
+    m_uptake.setPercentOutput(1.0);
     m_PidController.setTolerance(1.0);
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
@@ -213,6 +218,8 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
+    m_flywheel.setRPMOutputFOC(RPM.of(0.0));
+    m_uptake.setPercentOutput(0.0);
   }
 
   // Returns true when the command should end.
