@@ -212,7 +212,7 @@ public class RobotContainer {
 
     m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
 
-
+    m_driverController.x().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING), m_uptake.percentCommand(0.7)));
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
