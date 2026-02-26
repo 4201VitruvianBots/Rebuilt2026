@@ -28,6 +28,7 @@ import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.generated.V1Constants;
@@ -152,7 +153,7 @@ public class RobotContainer {
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    // m_hood = new Hood();
+    m_hood = new Hood();
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
@@ -199,9 +200,9 @@ public class RobotContainer {
     // }
 
 
-    m_driverController.x().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)));
+    m_driverController.x().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING), m_uptake.command(UPTAKE_SPEED.UPTAKING)));
 
-    m_driverController.y().whileTrue(m_flywheel.manualCommand());
+    m_driverController.y().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
 
     m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
 

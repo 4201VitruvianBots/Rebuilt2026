@@ -64,7 +64,7 @@ public class FLYWHEEL {
   }
 
   public class HOOD {
-    public static final double kP = 3.0; // TODO: Change this
+    public static final double kP = 12.1; // TODO: Change this
     public static final double kD = 0.0;
     public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
     public static final double kV = 0.0;
@@ -82,7 +82,7 @@ public class FLYWHEEL {
     public static final double motionMagicAcceleration = 7.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(359.0);
+    public static final Angle maxAngle = Degrees.of(25.5);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 

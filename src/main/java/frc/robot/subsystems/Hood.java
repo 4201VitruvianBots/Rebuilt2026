@@ -96,7 +96,7 @@ public class Hood extends SubsystemBase {
     config.Slot0.kD = HOOD.kD;
     // config.Slot0.kA = HOOD.kA;
     // config.Slot0.kV = HOOD.kV;
-    // config.Slot0.kS = HOOD.kS;
+    config.Slot0.kS = HOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -160,7 +160,7 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
-    return m_hoodSetpoint.minus(getHoodAngle()).abs(Degrees) <= 1; // Works as good as always
+    return (m_hoodSetpoint.in(Degrees) - getHoodAngleDegrees()) <= 1; // Works as good as always
   }
 
   public boolean[] isConnected() {
