@@ -12,8 +12,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
 public class FLYWHEEL {
-  public static final double kP = 7.0; // These worked for WoodBot but will need to be retuned
-  public static final double kD = 0.0;
+  public static final double kP = 11.5; // These worked for WoodBot but will need to be retuned
+  public static final double kD = 0.02;
   ;
   public static final double kV = 0.0;
   public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
@@ -67,10 +67,7 @@ public class FLYWHEEL {
 
   public class HOOD {
     public static final double kP = 12.1; // TODO: Change this
-    public static final double kD = 0.0;
-    public static final double kA = 0.0; // TODO: Change these two feedforwards later, use ReCalc
-    public static final double kV = 0.0;
-    public static final double kS = 0.0;
+    public static final double kS = 0.47; 
     public static final double gearRatio =
         170.0 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
     // will be
@@ -80,8 +77,8 @@ public class FLYWHEEL {
     public static final double kMagnetSensorOffset = -0.31591796875;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1.0;
 
-    public static final double motionMagicCruiseVelocity = 7.0;
-    public static final double motionMagicAcceleration = 7.0;
+    public static final double motionMagicCruiseVelocity = 22.0;
+    public static final double motionMagicAcceleration = 14.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
     public static final Angle maxAngle = Degrees.of(25.5);

@@ -93,7 +93,6 @@ public class Hood extends SubsystemBase {
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = HOOD.kP;
-    config.Slot0.kD = HOOD.kD;
     // config.Slot0.kA = HOOD.kA;
     // config.Slot0.kV = HOOD.kV;
     config.Slot0.kS = HOOD.kS;

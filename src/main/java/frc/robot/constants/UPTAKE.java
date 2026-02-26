@@ -25,7 +25,7 @@ public class UPTAKE {
   public enum UPTAKE_SPEED {
     IDLE(RPM.of(0.0)),
     INTAKE_RUN(RPM.of(200.0)),
-    UPTAKING(RPM.of(500.0));
+    UPTAKING(RPM.of(850.0));
 
     private final AngularVelocity value;
 

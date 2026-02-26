@@ -14,9 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
@@ -33,6 +35,7 @@ import frc.robot.constants.SWERVE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
@@ -203,9 +206,9 @@ public class RobotContainer {
     // }
 
 
-    m_driverController.x().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING), m_uptake.command(UPTAKE_SPEED.UPTAKING)));
+    m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING), m_uptake.command(UPTAKE_SPEED.UPTAKING)));
 
-    m_driverController.y().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
+    m_driverController.leftBumper().whileTrue(new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
 
     m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
 
@@ -331,20 +334,20 @@ public class RobotContainer {
   public void testInit() {
     if (m_flywheel != null) m_flywheel.testInit();
     if (m_vision != null) m_vision.testInit();
-    if (m_uptake != null) m_uptake.testInit();
-    if (m_indexer != null) m_indexer.testInit();
+    // if (m_uptake != null) m_uptake.testInit();
+    // if (m_indexer != null) m_indexer.testInit();
     if (m_intakePivot != null) m_intakePivot.testInit();
-    if (m_intake != null) m_intake.testInit();
+    // if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
     if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
     if (m_flywheel != null) m_flywheel.testPeriodic();
-    if (m_uptake != null) m_uptake.testPeriodic();
-    if (m_indexer != null) m_indexer.testPeriodic();
+    // if (m_uptake != null) m_uptake.testPeriodic();
+    // if (m_indexer != null) m_indexer.testPeriodic();
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
-    if (m_intake != null) m_intake.testPeriodic();
+    // if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
     if (m_climber != null) m_climber.testPeriodic();
   }
