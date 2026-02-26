@@ -39,9 +39,12 @@ import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 @Logged(name = "RobotContainer", importance = Logged.Importance.CRITICAL)
@@ -79,8 +82,7 @@ public class RobotContainer {
   private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(USB.driver_xBoxController);
+  private final CommandXboxController m_driverController = new CommandXboxController(USB.driver_xBoxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
@@ -88,19 +90,17 @@ public class RobotContainer {
   }
 
   @NotLogged
-  private final double MaxSpeed =
-      V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
+  private final double MaxSpeed = V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top
+                                                                                   // speed
 
   @NotLogged
-  private final double MaxAngularRate =
-      RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
-          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+  private final double MaxAngularRate = RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
+      .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
-  private final SwerveRequest.FieldCentric drive =
-      new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+      .withDeadband(MaxSpeed * 0.1)
+      .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
 
   private Robot2d m_robotSim;
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
@@ -115,7 +115,9 @@ public class RobotContainer {
 
   private Boolean m_flipToRight = false;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Configure the trigger bindings
     FIELD.initializeConstants();
@@ -137,7 +139,7 @@ public class RobotContainer {
               var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
               // // if heading target
               // if (m_swerveDrive.isTrackingState()) {
-              //   rotationRate = m_swerveDrive.calculateRotationToTarget();
+              // rotationRate = m_swerveDrive.calculateRotationToTarget();
               // }
               drive
                   .withVelocityX(
@@ -324,8 +326,10 @@ public class RobotContainer {
 
   public void simulationPeriodic() {
     m_fuelSim.updateSim();
-    // SmartDashboard.putNumber("Current Red Score:", m_fuelSim.Hub.RED_HUB.getScore());
-    // SmartDashboard.putNumber("Current Blue Score:", m_fuelSim.Hub.BLUE_HUB.getScore());
+    // SmartDashboard.putNumber("Current Red Score:",
+    // m_fuelSim.Hub.RED_HUB.getScore());
+    // SmartDashboard.putNumber("Current Blue Score:",
+    // m_fuelSim.Hub.BLUE_HUB.getScore());
   }
 
   private void initSmartDashboard() {
@@ -341,24 +345,39 @@ public class RobotContainer {
   }
 
   public void testInit() {
-    if (m_flywheel != null) m_flywheel.testInit();
-    if (m_vision != null) m_vision.testInit();
-    if (m_uptake != null) m_uptake.testInit();
-    if (m_indexer != null) m_indexer.testInit();
-    if (m_intakePivot != null) m_intakePivot.testInit();
-    if (m_intake != null) m_intake.testInit();
-    if (m_hood != null) m_hood.testInit();
-    if (m_climber != null) m_climber.testInit();
+    if (m_flywheel != null)
+      m_flywheel.testInit();
+    if (m_vision != null)
+      m_vision.testInit();
+    if (m_uptake != null)
+      m_uptake.testInit();
+    if (m_indexer != null)
+      m_indexer.testInit();
+    if (m_intakePivot != null)
+      m_intakePivot.testInit();
+    if (m_intake != null)
+      m_intake.testInit();
+    if (m_hood != null)
+      m_hood.testInit();
+    if (m_climber != null)
+      m_climber.testInit();
   }
 
   public void testPeriodic() {
-    if (m_flywheel != null) m_flywheel.testPeriodic();
-    if (m_uptake != null) m_uptake.testPeriodic();
-    if (m_indexer != null) m_indexer.testPeriodic();
-    if (m_intakePivot != null) m_intakePivot.testPeriodic();
-    if (m_intake != null) m_intake.testPeriodic();
-    if (m_hood != null) m_hood.testPeriodic();
-    if (m_climber != null) m_climber.testPeriodic();
+    if (m_flywheel != null)
+      m_flywheel.testPeriodic();
+    if (m_uptake != null)
+      m_uptake.testPeriodic();
+    if (m_indexer != null)
+      m_indexer.testPeriodic();
+    if (m_intakePivot != null)
+      m_intakePivot.testPeriodic();
+    if (m_intake != null)
+      m_intake.testPeriodic();
+    if (m_hood != null)
+      m_hood.testPeriodic();
+    if (m_climber != null)
+      m_climber.testPeriodic();
   }
 
   /**
@@ -378,28 +397,29 @@ public class RobotContainer {
   public void initializeFuelSim() {
     if (m_fuelSim.isRunning()) {
       resetFuelSim();
+    } else {
+      m_fuelSim.spawnStartingFuel(); // spawns fuel in the depots and neutral zone
+      m_fuelSim.registerRobot(
+          SWERVE.kTrackWidth.in(Meters), // from left to right
+          SWERVE.kWheelBase.in(Meters), // from front to back
+          SWERVE.kBumperHeight.in(Meters), // from floor to top of bumpers
+          () -> m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
+          () ->
+              m_swerveDrive.getState()
+                  .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+      m_fuelSim
+          .start(); // enables the simulation to run (updateSim must still be called periodically)
+      m_fuelSim.registerIntake(
+          Inches.of(13.688).in(Meters),
+          Inches.of(15.094).in(Meters),
+          Inches.of(-13.938).in(Meters),
+          Inches.of(23.388).in(Meters),
+          () -> m_intake.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
+          () -> {
+            m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
+            System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
+      });
     }
-    m_fuelSim.spawnStartingFuel(); // spawns fuel in the depots and neutral zone
-    m_fuelSim.registerRobot(
-        SWERVE.kTrackWidth.in(Meters), // from left to right
-        SWERVE.kWheelBase.in(Meters), // from front to back
-        SWERVE.kBumperHeight.in(Meters), // from floor to top of bumpers
-        () -> m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
-        () ->
-            m_swerveDrive.getState()
-                .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
-    m_fuelSim
-        .start(); // enables the simulation to run (updateSim must still be called periodically)
-    m_fuelSim.registerIntake(
-        Inches.of(13.688).in(Meters),
-        Inches.of(15.094).in(Meters),
-        Inches.of(-13.938).in(Meters),
-        Inches.of(23.388).in(Meters),
-        () -> m_intake.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
-        () -> {
-          m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
-          System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
-        });
   }
 
   public void updateFuelLaunchSim() {
@@ -407,7 +427,8 @@ public class RobotContainer {
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
       if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.UPTAKING.get().in(RPM) * 0.90)
           && m_intake.getStoredFuel() > 0) {
-        // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
+        // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
+        // of the fuel
         // vel in ft/s = 0.0111882 * RPM - 0.
         try {
           m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);

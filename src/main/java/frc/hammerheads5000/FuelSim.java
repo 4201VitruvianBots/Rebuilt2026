@@ -420,15 +420,8 @@ public class FuelSim {
 
   /** Adds array of `Translation3d`'s to NetworkTables at tableKey + "/Fuels" */
   public void logFuels() {
-    int size = fuels.size();
-    Translation3d[] positions = new Translation3d[size];
-
-    for (int i = 0; i < size; i++) { 
-      positions[i] = fuels.get(i).pos; 
-    }
-    
-    fuelPublisher.set(positions);
-}
+    fuelPublisher.set(fuels.stream().map((fuel) -> fuel.pos).toArray(Translation3d[]::new));
+  }
 
   // Returns whether or not the simulation is running
   // Gavin save me ):
