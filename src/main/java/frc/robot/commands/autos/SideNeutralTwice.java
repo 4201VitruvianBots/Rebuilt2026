@@ -24,7 +24,6 @@ import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.utils.TrajectoryUtils;
-
 import java.util.function.BooleanSupplier;
 
 public class SideNeutralTwice extends Auto {
@@ -89,8 +88,7 @@ public class SideNeutralTwice extends Auto {
                   new Shoot(flywheel, hood, vision, swerveDrive),
                   uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
-          new InstantCommand(()->System.out.println(timer.get()))
-      );
+          new InstantCommand(() -> System.out.println(timer.get())));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for SideNeutralTwice", e.getStackTrace());
       addCommands(new InstantCommand());

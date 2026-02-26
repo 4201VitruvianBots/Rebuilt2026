@@ -247,7 +247,8 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
         "Auto 0 - CenterPreloadClimb",
-        new CenterPreloadClimb(m_swerveDrive, m_climber, m_intake, m_vision, m_flywheel, m_hood));
+        new CenterPreloadClimb(
+            m_swerveDrive, m_climber, m_intake, m_vision, m_flywheel, m_hood, m_uptake));
     m_autoChooser.addOption(
         "Auto 1 - CenterDepot",
         new CenterDepot(
@@ -283,8 +284,7 @@ public class RobotContainer {
             m_hood,
             m_intakePivot,
             m_indexer,
-            m_uptake,
-            m_climber));
+            m_uptake));
     m_autoChooser.addOption(
         "Auto 4 - SideNeutralTwice",
         new SideNeutralTwice(

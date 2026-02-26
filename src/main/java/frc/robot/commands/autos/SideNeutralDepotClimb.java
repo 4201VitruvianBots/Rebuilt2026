@@ -29,8 +29,7 @@ public class SideNeutralDepotClimb extends Auto {
       Hood hood,
       IntakePivot intakePivot,
       Indexer indexer,
-      Uptake uptake,
-      Climber climber) {
+      Uptake uptake) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 

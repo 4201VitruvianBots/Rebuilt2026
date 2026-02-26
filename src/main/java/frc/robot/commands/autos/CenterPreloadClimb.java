@@ -5,14 +5,12 @@
 package frc.robot.commands.autos;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.Shoot;
-import frc.robot.subsystems.Climber;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
@@ -35,8 +33,8 @@ public class CenterPreloadClimb extends Auto {
 
       var m_path1 =
           swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadClimb1");
-      var m_path2 = 
-        swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadClimb2");
+      var m_path2 =
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadClimb2");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
