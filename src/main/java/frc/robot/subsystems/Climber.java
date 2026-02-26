@@ -18,6 +18,9 @@ import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -34,6 +37,9 @@ public class Climber extends SubsystemBase {
   // Creates a new motor object.
   @Logged(name = "Climber Motor", importance = Importance.DEBUG)
   private final TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
+
+  private DoubleSubscriber m_setpointSubscriber;
+  private DoublePublisher m_setpointPublisher;
 
   private final DynamicMotionMagicVoltage m_request =
       new DynamicMotionMagicVoltage(
@@ -239,5 +245,24 @@ public class Climber extends SubsystemBase {
     } else {
       updateSim(m_climberUnweightedSim);
     }
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Climber Setpoint");
+    m_setpointSubscriber = topic.subscribe(0.0);
+    m_setpointPublisher = topic.publish();
+    m_setpointPublisher.set(0.0);
+    m_setpointPublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setDesiredPositionAndMotionMagicConfigs(
+        Inches.of(m_setpointSubscriber.get()),
+        getAverageCurrent(),
+        getHeightInches(),
+        getAverageCurrent());
   }
 }

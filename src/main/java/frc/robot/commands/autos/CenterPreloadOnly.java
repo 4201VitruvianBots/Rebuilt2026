@@ -1,17 +1,20 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// // Copyright (c) FIRST and other WPILib contributors.
+// // Open Source Software; you can modify and/or share it under the terms of
+// // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands.autos;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.Shoot;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
@@ -21,7 +24,8 @@ public class CenterPreloadOnly extends Auto {
       Intake intake,
       Vision vision,
       Flywheel flywheel,
-      Hood hood) {
+      Hood hood,
+      Uptake uptake) {
     try {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -30,7 +34,10 @@ public class CenterPreloadOnly extends Auto {
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision, hood).withTimeout(4));
+          new ParallelCommandGroup(
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(3));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterPreloadOnly", e.getStackTrace());
       addCommands(new InstantCommand());

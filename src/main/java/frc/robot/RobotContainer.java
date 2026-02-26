@@ -9,22 +9,24 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
+import frc.robot.commands.swerve.DriveToTarget;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
@@ -32,7 +34,6 @@ import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.generated.V1Constants;
-import frc.robot.simulation.FuelSim;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
@@ -54,7 +55,7 @@ public class RobotContainer {
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
   private Hood m_hood;
 
-  private CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
+  private final CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
@@ -92,8 +93,6 @@ public class RobotContainer {
   private final double MaxSpeed =
       V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
 
-  private Boolean m_flipToRight = false;
-
   @NotLogged
   private final double MaxAngularRate =
       RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
@@ -108,18 +107,22 @@ public class RobotContainer {
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
-  private FuelSim m_fuelSim = FuelSim.getInstance();
+  private final FuelSim m_fuelSim = new FuelSim();
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
+  @Logged(name = "AutoSideChooser")
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+
+  private Boolean m_flipToRight = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     FIELD.initializeConstants();
     FIELD.updateConstants();
+    ROBOT.initializeConstants();
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
@@ -235,7 +238,7 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
     m_autoChooser.addOption(
         "Auto 0 - CenterPreloadOnly",
-        new CenterPreloadOnly(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood));
+        new CenterPreloadOnly(m_swerveDrive, m_intake, m_vision, m_flywheel, m_hood, m_uptake));
     m_autoChooser.addOption(
         "Auto 1 - CenterDepot",
         new CenterDepot(
@@ -271,7 +274,7 @@ public class RobotContainer {
             m_indexer,
             m_uptake));
     m_autoChooser.addOption(
-        "Auto 4 - PreloadSideNeutralTwice",
+        "Auto 4 - SideNeutralTwice",
         new SideNeutralTwice(
             m_swerveDrive,
             m_intake,
@@ -309,16 +312,20 @@ public class RobotContainer {
 
   public void simulationPeriodic() {
     m_fuelSim.updateSim();
+    // SmartDashboard.putNumber("Current Red Score:", m_fuelSim.Hub.RED_HUB.getScore());
+    // SmartDashboard.putNumber("Current Blue Score:", m_fuelSim.Hub.BLUE_HUB.getScore());
   }
 
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
-    SmartDashboard.putData(
-        "Start Fuel Sim", new InstantCommand((this::initFuelSim)).ignoringDisable(true));
-    SmartDashboard.putData(
-        "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
+    if (RobotBase.isSimulation()) {
+      SmartDashboard.putData(
+          "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
+      SmartDashboard.putData(
+          "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
+    }
   }
 
   public void testInit() {
@@ -329,6 +336,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testInit();
     if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
+    if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
@@ -338,6 +346,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
+    if (m_climber != null) m_climber.testPeriodic();
   }
 
   /**
@@ -354,7 +363,7 @@ public class RobotContainer {
     FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
   }
 
-  public void initFuelSim() {
+  public void initializeFuelSim() {
     m_fuelSim.spawnStartingFuel(); // spawns fuel in the depots and neutral zone
     m_fuelSim.registerRobot(
         SWERVE.kTrackWidth.in(Meters), // from left to right
@@ -371,21 +380,25 @@ public class RobotContainer {
         Inches.of(15.094).in(Meters),
         Inches.of(-13.938).in(Meters),
         Inches.of(23.388).in(Meters),
-        () -> m_fuelSim.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
-        () -> {});
+        () -> m_intake.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
+        () -> {
+          m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
+          System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
+        });
   }
 
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      if (m_uptake.getMotorSpeedRPM() > 100.0 && m_fuelSim.getStoredFuel() > 0) {
+      if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.UPTAKING.get().in(RPM) * 0.90)
+          && m_intake.getStoredFuel() > 0) {
         // ReCalc and Desmos estimated this equation to convert RPM to linear velocity of the fuel
         // vel in ft/s = 0.0111882 * RPM - 0.
         try {
-          m_fuelSim.setStoredFuel(m_fuelSim.getStoredFuel() - 1);
+          m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
           m_fuelSim.launchFuel(
               FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-              Degrees.of(180).minus(m_hood.getHoodAngle()),
+              m_hood.getHoodAngle(),
               Degrees.of(0),
               FLYWHEEL.fuelLaunchHeight);
           System.out.println(
@@ -394,7 +407,7 @@ public class RobotContainer {
                   + " ft/s and angle: "
                   + m_hood.getHoodAngleDegrees()
                   + " degrees");
-          System.out.println("Launched fuel! Remaining fuel: " + m_fuelSim.getStoredFuel());
+          System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
         } catch (IllegalStateException e) {
           return;
         }
@@ -405,6 +418,6 @@ public class RobotContainer {
   public void resetFuelSim() {
     m_fuelSim.clearFuel();
     m_fuelSim.spawnStartingFuel();
-    m_fuelSim.setStoredFuel(8); // preload
+    m_intake.setStoredFuel(8); // preload
   }
 }

@@ -154,8 +154,7 @@ public class IntakePivot extends SubsystemBase {
 
   @NotLogged
   public Command command(PIVOT_SETPOINT setpoint) {
-    return this.startEnd(
-        () -> setAngle(setpoint.getAngle()), () -> setAngle(PIVOT_SETPOINT.STOWED.getAngle()));
+    return this.runOnce(() -> setAngle(setpoint.getAngle()));
   }
 
   @Override

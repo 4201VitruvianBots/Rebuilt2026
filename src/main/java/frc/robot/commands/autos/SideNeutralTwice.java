@@ -1,6 +1,6 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// // Copyright (c) FIRST and other WPILib contributors.
+// // Open Source Software; you can modify and/or share it under the terms of
+// // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands.autos;
 
@@ -8,9 +8,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
@@ -40,17 +42,19 @@ public class SideNeutralTwice extends Auto {
 
       TrajectoryUtils trajectoryUtils = swerveDrive.getTrajectoryUtils();
 
-      var m_path1 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice1");
-      var m_path2 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice2");
-      var m_path3 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice3");
-      var m_path4 = PathPlannerPath.fromPathFile("PreloadSideNeutralTwice4");
+      var m_path1 = PathPlannerPath.fromPathFile("SideNeutralTwice1");
+      var m_path2 = PathPlannerPath.fromPathFile("SideNeutralTwice2");
+      var m_path3 = PathPlannerPath.fromPathFile("SideNeutralTwice3");
+      var m_path4 = PathPlannerPath.fromPathFile("SideNeutralTwice4");
 
       addCommands(
           getPathCommand(trajectoryUtils, m_path1, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           rushCenter
               ? new InstantCommand()
-              : new Shoot(flywheel, vision, hood)
+              : new ParallelCommandGroup(
+                      new Shoot(flywheel, hood, vision, swerveDrive),
+                      uptake.command(UPTAKE_SPEED.UPTAKING))
                   .withTimeout(3), // Don't shoot preload if we're trying to rush the center
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -60,7 +64,10 @@ public class SideNeutralTwice extends Auto {
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision, hood).withTimeout(3),
+          new ParallelCommandGroup(
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(3),
           // This code just repeats the last four steps again.
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -70,10 +77,12 @@ public class SideNeutralTwice extends Auto {
                   .andThen(() -> swerveDrive.setControl(stopRequest))),
           getPathCommand(trajectoryUtils, m_path4, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new Shoot(flywheel, vision, hood).withTimeout(3));
+          new ParallelCommandGroup(
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
+              .withTimeout(3));
     } catch (Exception e) {
-      DriverStation.reportError(
-          "Failed to load path for PreloadSideNeutralTwice", e.getStackTrace());
+      DriverStation.reportError("Failed to load path for SideNeutralTwice", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }
