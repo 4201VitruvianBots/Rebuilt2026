@@ -140,7 +140,7 @@ public class Uptake extends SubsystemBase {
   }
 
   public void testPeriodic() {
-    m_velocitySetpoint = RPM.of(m_rpmSubscriber.get());
+    setPercentOutput(m_rpmSubscriber.get());
   }
 
   @Override
