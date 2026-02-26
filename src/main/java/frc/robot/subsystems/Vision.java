@@ -109,13 +109,13 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-                  new Rotation2d(Degrees.of(180)));
+                  new Rotation2d());
         } else {
           targetPose =
               new Pose2d(
                   FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
-                  new Rotation2d());
+                  new Rotation2d(Degrees.of(180)));
         }
         break;
       case RIGHT_FRONT_TOWER:
@@ -124,13 +124,13 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-                  new Rotation2d(Degrees.of(180)));
+                  new Rotation2d());
         } else {
           targetPose =
               new Pose2d(
                   FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
-                  new Rotation2d());
+                  new Rotation2d(Degrees.of(180)));
         }
         break;
       default:
