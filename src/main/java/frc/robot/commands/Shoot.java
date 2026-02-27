@@ -29,6 +29,7 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Uptake;
@@ -58,10 +59,37 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376),
-        new Shot(RPM.of(1400), Degrees.of(4.0), 0.96399)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.048), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(1600), Degrees.of(10), 1.4));
+        Meters.of(1.7475670592327734),
+        new Shot(RPM.of(1500), Degrees.of(0.0), 0.96399)); // Tuned
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(3.2), new Shot(RPM.of(1700), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(4.423502423690139), new Shot(RPM.of(1775), Degrees.of(16), 1.4)); // Tuned
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
   }
 
   private final Vision m_vision;
@@ -126,14 +154,6 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
-      // TODO: Add pass position as goal
-
-      // If we're in our own zone, then we align to the hub
-    } else {
-      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    }
-    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     if (RobotState.isTest()){
       kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
       kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
@@ -145,8 +165,9 @@ public class Shoot extends Command {
             kTeleD_Theta,
             new Constraints(
                 SWERVE.kMaxSpeedMetersPerSecond, SWERVE.kMaxAccelerationShootingMetersPerSecond));
+    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     m_PidController.enableContinuousInput(-Math.PI, Math.PI);
-    m_uptake.setPercentOutput(1.0);
+    m_uptake.setPercentOutput(0.7);
     m_PidController.setTolerance(1.0);
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
