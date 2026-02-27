@@ -313,8 +313,8 @@ public class Vision extends SubsystemBase {
   }
 
   public void testInit() {
-    m_kPAutoAlignPublisher.set(7.4);
-    m_kDAutoAlignPublisher.set(0.3);
+    m_kPAutoAlignPublisher.set(12.0);
+    m_kDAutoAlignPublisher.set(0.0);
   }
 
   public void teleopInit() {}

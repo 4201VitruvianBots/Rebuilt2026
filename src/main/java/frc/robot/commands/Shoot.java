@@ -21,8 +21,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
@@ -104,7 +106,7 @@ public class Shoot extends Command {
     m_vision = vision;
     m_uptake = uptake;
 
-    addRequirements(flywheel, shooterHood, swerveDrive);
+    addRequirements(flywheel, shooterHood, swerveDrive, uptake);
     SmartDashboard.putData(this);
   }
 
@@ -117,7 +119,7 @@ public class Shoot extends Command {
     m_swerveDrivetrain = swerveDrive;
     m_uptake = uptake;
     
-    addRequirements(flywheel, shooterHood);
+    addRequirements(flywheel, shooterHood, uptake);
     SmartDashboard.putData(this);
   }
 
@@ -132,6 +134,10 @@ public class Shoot extends Command {
       m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     }
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    if (RobotState.isTest()){
+      kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
+      kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
+    }
     m_PidController =
         new ProfiledPIDController(
             kTeleP_Theta,

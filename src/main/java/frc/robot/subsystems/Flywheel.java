@@ -96,7 +96,7 @@ public class Flywheel extends SubsystemBase {
 
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
     m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    // TODO: Check if they all are  aligned
+    
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
