@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
+import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -172,7 +173,9 @@ public class Shoot extends Command {
     for (int i = 0; i < 20; i++) {
       shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
       timeOfFlight = shot.timeOfFlight;
-      double effectiveTimeOfFlight = timeOfFlight;  // Accounting for linear drag 
+      double effectiveTimeOfFlight =
+          (1 - Math.pow(Math.E, FLYWHEEL.kFuelDragCoefficient * timeOfFlight))
+              / FLYWHEEL.kFuelDragCoefficient; // Accounting for linear drag
       double offsetX = launcherVelocityX * effectiveTimeOfFlight;
       double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =
