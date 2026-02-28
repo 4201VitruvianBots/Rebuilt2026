@@ -75,8 +75,7 @@ public class CLIMBER {
   public static final Current kCurrentHoldingRobotThreshold =
       Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a
   // robot
-  public static final AngularVelocity kVelocityHoldingRobotThreshold =
-      RotationsPerSecond.of(1.0);
+  public static final AngularVelocity kVelocityHoldingRobotThreshold = RotationsPerSecond.of(1.0);
 
   public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 

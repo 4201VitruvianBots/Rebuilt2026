@@ -34,11 +34,9 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
-import frc.robot.constants.INTAKE.PIVOT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Hood extends SubsystemBase {
@@ -87,7 +85,8 @@ public class Hood extends SubsystemBase {
     if (RobotBase.isReal()) {
       encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
       encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
-      // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = HOOD.kAbsoluteSensorDiscontinuityPoint;
+      // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+      // HOOD.kAbsoluteSensorDiscontinuityPoint;
     }
     CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
 
@@ -100,7 +99,7 @@ public class Hood extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
-    if (RobotBase.isReal()){
+    if (RobotBase.isReal()) {
       config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     } else {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -121,7 +120,11 @@ public class Hood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
-    m_motor.setPosition(getHoodAngle().times(HOOD.gearRatio).in(Rotations)); // Multiply by gear ratio to cancel the division from earlier for the internal sensor
+    m_motor.setPosition(
+        getHoodAngle()
+            .times(HOOD.gearRatio)
+            .in(Rotations)); // Multiply by gear ratio to cancel the division from earlier for the
+    // internal sensor
   }
 
   public void setAngle(Angle setpoint) {
@@ -129,7 +132,7 @@ public class Hood extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio)); 
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
   }
 
   @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)
@@ -149,7 +152,11 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
   public Angle getHoodAngle() {
-    return m_cancoder.getPosition().refresh().getValue().div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
+    return m_cancoder
+        .getPosition()
+        .refresh()
+        .getValue()
+        .div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)

@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -67,13 +66,14 @@ public class FLYWHEEL {
 
   public class HOOD {
     public static final double kP = 12.1; // TODO: Change this
-    public static final double kS = 0.47; 
+    public static final double kS = 0.47;
     public static final double gearRatio =
         170.0 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
     // will be
     public static final double kInertia = 0.005;
     public static final double kStatorCurrentLimit = 80;
-    public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE = SensorDirectionValue.Clockwise_Positive;
+    public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE =
+        SensorDirectionValue.Clockwise_Positive;
     public static final double kMagnetSensorOffset = -0.31591796875;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1.0;
 

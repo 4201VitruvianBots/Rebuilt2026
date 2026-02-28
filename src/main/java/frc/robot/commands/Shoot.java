@@ -24,12 +24,10 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Uptake;
@@ -59,12 +57,15 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
-        Meters.of(1.7475670592327734),
-        new Shot(RPM.of(1500), Degrees.of(0.0), 0.96399)); // Tuned
+        Meters.of(1.7475670592327734), new Shot(RPM.of(1500), Degrees.of(0.0), 0.96399)); // Tuned
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(3.2), new Shot(RPM.of(1700), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(4.423502423690139), new Shot(RPM.of(1775), Degrees.of(16), 1.4)); // Tuned
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(
+        Meters.of(4.423502423690139), new Shot(RPM.of(1775), Degrees.of(16), 1.4)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(2.814486039549852),
+        new Shot(
+            RPM.of(1500), Degrees.of(6.0), 1.286)); // ...Tuned? Ok not really but it works for now
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
@@ -121,7 +122,8 @@ public class Shoot extends Command {
   /** Shoot on the move command */
   public Shoot(
       Flywheel flywheel,
-      Hood shooterHood, Uptake uptake,
+      Hood shooterHood,
+      Uptake uptake,
       Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
@@ -140,13 +142,17 @@ public class Shoot extends Command {
 
   /** Standard shooting without shoot on the move capabilities. Used only in auto. */
   public Shoot(
-      Flywheel flywheel, Hood shooterHood, Uptake uptake, Vision vision, CommandSwerveDrivetrain swerveDrive) {
+      Flywheel flywheel,
+      Hood shooterHood,
+      Uptake uptake,
+      Vision vision,
+      CommandSwerveDrivetrain swerveDrive) {
     m_flywheel = flywheel;
     m_shooterHood = shooterHood;
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
     m_uptake = uptake;
-    
+
     addRequirements(flywheel, shooterHood, uptake);
     SmartDashboard.putData(this);
   }
@@ -154,7 +160,7 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (RobotState.isTest()){
+    if (RobotState.isTest()) {
       kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
       kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
     }

@@ -96,7 +96,7 @@ public class Flywheel extends SubsystemBase {
 
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
     m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    
+
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
@@ -163,8 +163,7 @@ public class Flywheel extends SubsystemBase {
 
   public Command manualCommand() {
     return this.runEnd(
-        () -> setRPMOutputFOC(RPM.of(1250)),
-        () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
+        () -> setRPMOutputFOC(RPM.of(1250)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
   }
 
   public void testInit() {

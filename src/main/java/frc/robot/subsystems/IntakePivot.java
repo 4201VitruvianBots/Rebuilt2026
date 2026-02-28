@@ -32,11 +32,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
-import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
@@ -95,9 +93,7 @@ public class IntakePivot extends SubsystemBase {
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode =
-        NeutralModeValue
-            .Brake; 
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // config.CurrentLimits.StatorCurrentLimit = 175;
     // config.CurrentLimits.StatorCurrentLimitEnable = true;

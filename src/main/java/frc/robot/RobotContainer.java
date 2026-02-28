@@ -17,25 +17,20 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.hammerheads5000.FuelSim;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
-import frc.robot.commands.swerve.AutoAlignDrive;
-import frc.robot.commands.swerve.DriveToTarget;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
@@ -205,14 +200,34 @@ public class RobotContainer {
     //               m_driverController::getLeftX));
     // }
 
+    m_driverController
+        .rightTrigger()
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_intake.command(INTAKE_SPEED.INTAKING),
+                m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)));
 
-    m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)));
-
-    m_driverController.leftBumper().whileTrue(new Shoot(m_flywheel, m_hood, m_uptake, m_vision, m_swerveDrive, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
+    m_driverController
+        .leftBumper()
+        .whileTrue(
+            new Shoot(
+                m_flywheel,
+                m_hood,
+                m_uptake,
+                m_vision,
+                m_swerveDrive,
+                () -> m_driverController.getLeftY(),
+                () -> m_driverController.getLeftX()));
 
     m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
 
-    m_driverController.x().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING), m_uptake.percentCommand(0.7)));
+    m_driverController
+        .x()
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_intake.command(INTAKE_SPEED.INTAKING),
+                m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
+                m_uptake.percentCommand(0.7)));
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
@@ -225,7 +240,8 @@ public class RobotContainer {
     // }
 
     // if (m_indexer != null){
-    //   m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING));
+    //   m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING,
+    // INDEXER_SPEED_2.INDEXING));
     // }
 
     // if (m_swerveDrive != null) {

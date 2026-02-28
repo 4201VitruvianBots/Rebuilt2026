@@ -25,9 +25,8 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
-import frc.robot.constants.INTAKE;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.INTAKE.ROLLERS;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Intake extends SubsystemBase {
@@ -42,8 +41,7 @@ public class Intake extends SubsystemBase {
 
   private final DCMotorSim m_motor1Sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              ROLLERS.gearbox, ROLLERS.gearRatio, ROLLERS.kInertia),
+          LinearSystemId.createDCMotorSystem(ROLLERS.gearbox, ROLLERS.gearRatio, ROLLERS.kInertia),
           ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;

@@ -202,13 +202,17 @@ public class Robot2d extends SubsystemBase {
   // TODO: Add hopper, Vision, LEDs?
 
   @Logged(name = "ComponentPoses", importance = Logged.Importance.DEBUG)
-  private Pose3d[] componentPoses = 
-   new Pose3d[] {
-    new Pose3d(
-          SIM.intakeOrigin,
-          new Rotation3d(0.0, -(INTAKE.PIVOT.maxAngle.in(Radians)), 0.0)), // For AdvantageScope intake position
-    new Pose3d(SIM.hopperOrigin, new Rotation3d(0.0, 0.0, 0.0)) // For AdvantageScope hopper position
-   };
+  private Pose3d[] componentPoses =
+      new Pose3d[] {
+        new Pose3d(
+            SIM.intakeOrigin,
+            new Rotation3d(
+                0.0,
+                -(INTAKE.PIVOT.maxAngle.in(Radians)),
+                0.0)), // For AdvantageScope intake position
+        new Pose3d(
+            SIM.hopperOrigin, new Rotation3d(0.0, 0.0, 0.0)) // For AdvantageScope hopper position
+      };
 
   /** Map of subsystems for Robot2d to update */
   private final Map<String, Subsystem> m_subsystemMap = new HashMap<>();
