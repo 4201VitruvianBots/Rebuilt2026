@@ -166,16 +166,16 @@ public class Shoot extends Command {
 
     // Account for imparted velocity by robot (launcher) to offset
     double timeOfFlight = shot.timeOfFlight;
+    double effectiveTimeOfFlight = timeOfFlight;
     Pose2d lookaheadPose = launcherPosition;
     double lookaheadLauncherToTargetDistance = launcherToTargetDistance;
-    shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
 
     for (int i = 0; i < 20; i++) {
       shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
       timeOfFlight = shot.timeOfFlight;
-      double effectiveTimeOfFlight =
-          (1 - Math.pow(Math.E, FLYWHEEL.kFuelDragCoefficient * timeOfFlight))
-              / FLYWHEEL.kFuelDragCoefficient; // Accounting for linear drag
+      effectiveTimeOfFlight =
+          (1 - Math.pow(Math.E, -(FLYWHEEL.kFuelDragCoefficient * timeOfFlight)))
+              / FLYWHEEL.kFuelDragCoefficient; // Accounting for linear drag. This is the equation for continuous decay.
       double offsetX = launcherVelocityX * effectiveTimeOfFlight;
       double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =

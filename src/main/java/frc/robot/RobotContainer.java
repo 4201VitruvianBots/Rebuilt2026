@@ -182,7 +182,7 @@ public class RobotContainer {
     if (m_vision != null && m_flywheel != null && m_hood != null) {
       m_driverController
           .rightBumper()
-          .toggleOnTrue(
+          .whileTrue(
               new Shoot(
                   m_flywheel,
                   m_hood,
@@ -200,16 +200,16 @@ public class RobotContainer {
           .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
     }
 
-    if (m_vision != null) {
-      m_driverController
-          .leftBumper()
-          .toggleOnTrue(
-              new AutoAlignDrive(
-                  m_swerveDrive,
-                  m_vision,
-                  m_driverController::getLeftY,
-                  m_driverController::getLeftX));
-    }
+    // if (m_vision != null) {
+    //   m_driverController
+    //       .leftBumper()
+    //       .toggleOnTrue(
+    //           new AutoAlignDrive(
+    //               m_swerveDrive,
+    //               m_vision,
+    //               m_driverController::getLeftY,
+    //               m_driverController::getLeftX));
+    // }
 
     if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
       m_driverController.x().whileTrue(new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive));
