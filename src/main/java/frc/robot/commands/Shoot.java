@@ -170,9 +170,11 @@ public class Shoot extends Command {
     shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
 
     for (int i = 0; i < 20; i++) {
+      shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
       timeOfFlight = shot.timeOfFlight;
-      double offsetX = launcherVelocityX * timeOfFlight;
-      double offsetY = launcherVelocityY * timeOfFlight;
+      double effectiveTimeOfFlight = timeOfFlight;  // Accounting for linear drag 
+      double offsetX = launcherVelocityX * effectiveTimeOfFlight;
+      double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =
           new Pose2d(
               launcherPosition.getTranslation().plus(new Translation2d(offsetX, offsetY)),
