@@ -12,16 +12,16 @@
         "y": 5.866955555555555
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ShootingPoint"
     },
     {
       "anchor": {
-        "x": 5.8,
-        "y": 6.0
+        "x": 5.803738819320215,
+        "y": 5.600751341681574
       },
       "prevControl": {
-        "x": 3.480822222222222,
-        "y": 6.068211111111111
+        "x": 3.4845610415424373,
+        "y": 5.668962452792686
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,11 +31,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.1,
-      "rotationDegrees": -90.0
+      "rotationDegrees": 0.0
     },
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": -90.0
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
@@ -51,7 +51,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "PreloadSideNeutralTwice",
