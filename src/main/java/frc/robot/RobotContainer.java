@@ -9,28 +9,29 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.ShootOnTheMove;
+import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
+import frc.robot.commands.swerve.DriveToTarget;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.constants.VISION.TARGET;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
@@ -159,13 +160,13 @@ public class RobotContainer {
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
-    // m_intake = new Intake();
-    // m_uptake = new Uptake();
-    // m_indexer = new Indexer();
+    m_intakePivot = new IntakePivot();
+    m_intake = new Intake();
+    m_uptake = new Uptake();
+    m_indexer = new Indexer();
     m_climber = new Climber();
-    // m_led = new LEDs();
-    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    m_led = new LEDs();
+    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
@@ -182,13 +183,13 @@ public class RobotContainer {
       m_driverController
           .rightBumper()
           .toggleOnTrue(
-              new ParallelCommandGroup(
-                  new AutoAlignDrive(
-                      m_swerveDrive,
-                      m_vision,
-                      m_driverController::getLeftY,
-                      m_driverController::getLeftX),
-                  new Shoot(m_flywheel, m_vision, m_hood)));
+              new Shoot(
+                  m_flywheel,
+                  m_hood,
+                  m_vision,
+                  m_swerveDrive,
+                  () -> m_driverController.getLeftY(),
+                  () -> m_driverController.getLeftX()));
     }
 
     if (m_uptake != null) {
@@ -210,18 +211,8 @@ public class RobotContainer {
                   m_driverController::getLeftX));
     }
 
-    if (m_flywheel != null && m_vision != null) {
-      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_vision, m_hood));
-      m_driverController
-          .a()
-          .toggleOnTrue(
-              (new ShootOnTheMove(
-                  m_flywheel,
-                  m_hood,
-                  m_vision,
-                  m_swerveDrive,
-                  m_driverController::getLeftY,
-                  m_driverController::getLeftX)));
+    if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
+      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive));
     }
 
     if (m_flywheel != null) {
@@ -235,16 +226,23 @@ public class RobotContainer {
           .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
     }
 
-    if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
-    }
+    // aim at target
+    m_driverController
+        .rightBumper()
+        .whileTrue(
+            new AutoAlignDrive(
+                m_swerveDrive,
+                m_vision,
+                () -> m_driverController.getLeftY(),
+                () -> m_driverController.getLeftX()));
 
-    // if (m_swerveDrive != null) {
-    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
-    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
-    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
-    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
-    // }
+    // auto climb align
+    var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision);
+
+    m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(TARGET.LEFT_FRONT_TOWER));
+    m_driverController
+        .povRight()
+        .whileTrue(driveToTarget.generateCommand(TARGET.RIGHT_FRONT_TOWER));
   }
 
   private void initAutoChooser() {
@@ -326,18 +324,20 @@ public class RobotContainer {
 
   public void simulationPeriodic() {
     m_fuelSim.updateSim();
-    SmartDashboard.putNumber("Current Red Score:", FuelSim.Hub.RED_HUB.getScore());
-    SmartDashboard.putNumber("Current Blue Score:", FuelSim.Hub.BLUE_HUB.getScore());
+    // SmartDashboard.putNumber("Current Red Score:", m_fuelSim.Hub.RED_HUB.getScore());
+    // SmartDashboard.putNumber("Current Blue Score:", m_fuelSim.Hub.BLUE_HUB.getScore());
   }
 
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
-    SmartDashboard.putData(
-        "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
-    SmartDashboard.putData(
-        "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
+    if (RobotBase.isSimulation()) {
+      SmartDashboard.putData(
+          "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
+      SmartDashboard.putData(
+          "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
+    }
   }
 
   public void testInit() {
@@ -393,7 +393,10 @@ public class RobotContainer {
         Inches.of(-13.938).in(Meters),
         Inches.of(23.388).in(Meters),
         () -> m_intake.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
-        () -> {});
+        () -> {
+          m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
+          System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
+        });
   }
 
   public void updateFuelLaunchSim() {
@@ -407,7 +410,7 @@ public class RobotContainer {
           m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
           m_fuelSim.launchFuel(
               FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-              Degrees.of(180).minus(m_hood.getHoodAngle()),
+              m_hood.getHoodAngle(),
               Degrees.of(0),
               FLYWHEEL.fuelLaunchHeight);
           System.out.println(

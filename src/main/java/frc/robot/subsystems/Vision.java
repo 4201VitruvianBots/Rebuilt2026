@@ -6,6 +6,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
@@ -21,24 +22,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
+import frc.robot.constants.VISION.TARGET;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
   private FieldSim m_fieldSim;
-  private Translation2d m_goal;
-
+  private Translation2d m_goal = new Translation2d();
   // TODO: Re-add this
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
   private boolean m_localized;
 
-  private boolean m_useLeftTarget;
+  private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
+  private Pose2d targetPose = Pose2d.kZero;
 
-  private Pose2d nearestObjectPose = Pose2d.kZero;
-  private final Pose2d[] robotToTarget = {Pose2d.kZero, Pose2d.kZero};
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
   // NetworkTables publisher setup
@@ -87,52 +87,56 @@ public class Vision extends SubsystemBase {
     m_fieldSim = fieldSim;
   }
 
-  public void setLeftTarget(boolean value) {
-    m_useLeftTarget = value;
-  }
-
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingLeft() {
-    return m_useLeftTarget;
+    return m_currentTarget
+        == TARGET.LEFT_FRONT_TOWER /* || m_currentTarget == TARGET.LEFT_BACK_TOWER */;
   }
 
   @Logged(name = "Right Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingRight() {
-    return !m_useLeftTarget;
+    return m_currentTarget
+        == TARGET.RIGHT_FRONT_TOWER /* || m_currentTarget == TARGET.RIGHT_BACK_TOWER */;
   }
 
-  //   private void updateAngleToHub() {
-  //   if (m_swerveDriveTrain != null) {
-  //     if (DriverStation.isDisabled()) {
-  //       if (DriverStation.isAutonomous()) {
-  //         m_goal = Controls.isRedAlliance() ? FIELD.redAutoHub : FIELD.blueAutoHub;
-  //       } else {
-  //         m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
-  //       }
-  //     }
-  //     if(DriverStation.isAutonomous()){
-  //       m_swerveDriveTrain.setAngleToHub(
-  //           m_swerveDriveTrain
-  //               .getState()
-  //               .Pose
-  //              .getTranslation()
-  //              .minus(m_goal)
-  //              .getAngle());
-  //     }
-  //   }
-  // }
-
-  public boolean getInitialLocalization() {
-    return m_localized;
-  }
-
-  public void resetInitialLocalization() {
-    m_localized = false;
-
-    // Set Swerve Pose to (0, 0) to reset it
-    if (m_swerveDriveTrain != null) {
-      m_swerveDriveTrain.resetPose(Pose2d.kZero);
+  public Pose2d updateClimbTarget(TARGET target) {
+    if (lockTarget) return targetPose;
+    targetPose = m_swerveDriveTrain.getState().Pose;
+    switch (target) {
+      case LEFT_FRONT_TOWER:
+        if (Controls.isBlueAlliance()) {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+                  new Rotation2d());
+        } else {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+                  new Rotation2d(Degrees.of(180)));
+        }
+        break;
+      case RIGHT_FRONT_TOWER:
+        if (Controls.isBlueAlliance()) {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+                  new Rotation2d());
+        } else {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+                  new Rotation2d(Degrees.of(180)));
+        }
+        break;
+      default:
+        break;
     }
+    return targetPose;
   }
 
   /**
@@ -231,13 +235,35 @@ public class Vision extends SubsystemBase {
   }
 
   @Logged(name = "Has Initial Pose", importance = Logged.Importance.INFO)
-  public boolean getInitalPose() {
+  public boolean getInitialPose() {
     return this.hasInitialPose;
   }
 
   /** Stop the nearest target from updating when we want to score to avoid target switching */
   public void setTargetLock(boolean set) {
     lockTarget = set;
+  }
+
+  @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
+  public boolean isOnTarget() {
+    var rotationDelta =
+        m_swerveDriveTrain
+            .getState()
+            .Pose
+            .getRotation()
+            .minus(targetPose.getRotation())
+            .getMeasure();
+
+    var isAligned = rotationDelta.abs(Degrees) < 0.5;
+
+    // var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
+    // SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
+    // System.out.println("The angle to the hub is " + setPoint.getAngle());
+    // System.out.println("The robot's angle is " +
+    // m_swerveDriveTrain.getState().Pose.getRotation());
+    // System.out.println("Therefore, the alignment is" + isAligned);
+
+    return isAligned;
   }
 
   @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
@@ -312,6 +338,12 @@ public class Vision extends SubsystemBase {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
       m_localized = llaRSuccess && llaLSuccess;
     }
+
+    // if (m_swerveDriveTrain != null) {
+    //   updateAngleToHub();
+    // }
+
+    isOnTarget();
   }
 
   @Override

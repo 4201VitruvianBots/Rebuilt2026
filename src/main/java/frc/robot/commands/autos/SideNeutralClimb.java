@@ -52,7 +52,8 @@ public class SideNeutralClimb extends Auto {
           getPathCommand(trajectoryUtils, m_path1, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
-                  new Shoot(flywheel, vision, hood), uptake.command(UPTAKE_SPEED.UPTAKING))
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
           getPathCommand(trajectoryUtils, m_path2, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -63,7 +64,8 @@ public class SideNeutralClimb extends Auto {
           getPathCommand(trajectoryUtils, m_path4, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
-                  new Shoot(flywheel, vision, hood), uptake.command(UPTAKE_SPEED.UPTAKING))
+                  new Shoot(flywheel, hood, vision, swerveDrive),
+                  uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
           getChoiceCommand(trajectoryUtils, m_path5Outpost, m_path5Depot, flipPath)
               .andThen(() -> swerveDrive.setControl(stopRequest))

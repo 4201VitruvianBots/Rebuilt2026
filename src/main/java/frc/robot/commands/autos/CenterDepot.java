@@ -42,7 +42,7 @@ public class CenterDepot extends SequentialCommandGroup {
           new IntakeCommand(intake, intakePivot, indexer, uptake).withTimeout(9),
           new ParallelCommandGroup(
                   m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
-                  new Shoot(flywheel, vision, hood),
+                  new Shoot(flywheel, hood, vision, swerveDrive),
                   uptake.command(UPTAKE_SPEED.UPTAKING))
               .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
