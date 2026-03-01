@@ -57,11 +57,11 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
-        Meters.of(2.6498582996063598), new Shot(RPM.of(1750), Degrees.of(7.0), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(3.3152151571345647), new Shot(RPM.of(1650), Degrees.of(20.0), 1.286));
-    distanceToShotMap.put(Meters.of(4.388266238410841), new Shot(RPM.of(1778), Degrees.of(23), 1.286));
-    distanceToShotMap.put(Meters.of(5.448205807119931), new Shot(RPM.of(2100), Degrees.of(24.5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+        Meters.of(3.0512233984475174), new Shot(RPM.of(1619), Degrees.of(15.0), 1.286)); // Sorta Tuned
+    distanceToShotMap.put(Meters.of(3.3152151571345647), new Shot(RPM.of(1650), Degrees.of(20.0), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(4.388266238410841), new Shot(RPM.of(1771), Degrees.of(23), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(5.448205807119931), new Shot(RPM.of(2100), Degrees.of(24.5), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(2.4405995962859115), new Shot(RPM.of(1440), Degrees.of(14.3), 1.286)); // Tuned
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
