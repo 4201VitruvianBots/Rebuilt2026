@@ -59,19 +59,6 @@ public class Shoot extends Command {
     distanceToShotMap.put(
         Meters.of(1.7475670592327734), new Shot(RPM.of(1500), Degrees.of(0.0), 0.96399)); // Tuned
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(3.2), new Shot(RPM.of(1700), Degrees.of(5), 1.286));
-    distanceToShotMap.put(
-        Meters.of(4.423502423690139), new Shot(RPM.of(1775), Degrees.of(16), 1.4)); // Tuned
-    distanceToShotMap.put(
-        Meters.of(2.814486039549852),
-        new Shot(
-            RPM.of(1500), Degrees.of(6.0), 1.286)); // ...Tuned? Ok not really but it works for now
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));

@@ -61,9 +61,9 @@ public class Vision extends SubsystemBase {
   public Vision(Controls controls) {
     m_controls = controls;
     if (Controls.isBlueAlliance()) {
-      m_goal = FIELD.HUB.RED.getTargetPosition().toTranslation2d();
-    } else {
       m_goal = FIELD.HUB.BLUE.getTargetPosition().toTranslation2d();
+    } else {
+      m_goal = FIELD.HUB.RED.getTargetPosition().toTranslation2d();
     }
     registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
@@ -322,6 +322,14 @@ public class Vision extends SubsystemBase {
   }
 
   public void teleopInit() {}
+
+  public void disabledPeriodic(){
+    if (Controls.isBlueAlliance()) {
+      m_goal = FIELD.HUB.RED.getTargetPosition().toTranslation2d();
+    } else {
+      m_goal = FIELD.HUB.BLUE.getTargetPosition().toTranslation2d();
+    }
+  }
 
   @Logged(name = "Distance to Hub", importance = Importance.INFO)
   public Distance getDistanceToHub() {
