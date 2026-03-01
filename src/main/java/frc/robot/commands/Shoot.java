@@ -6,8 +6,6 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -17,8 +15,6 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,17 +66,9 @@ public class Shoot extends Command {
   private Rotation2d lastDriveAngle;
   private double lastHoodAngle;
 
-  private final LinearFilter driveAngleFilter = LinearFilter.movingAverage((int) (0.1 / 0.02));
-
   private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
   private Transform2d robotToLauncher =
       new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
-
-  private Double kTeleP_Theta = 12.0;
-  private Double kTeleD_Theta = 0.0;
-  public static final double kTeleI_Theta = 0.0;
-
-  private ProfiledPIDController m_PidController;
 
   private final Hood m_shooterHood;
 
@@ -128,15 +116,6 @@ public class Shoot extends Command {
       m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     }
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    m_PidController =
-        new ProfiledPIDController(
-            kTeleP_Theta,
-            kTeleI_Theta,
-            kTeleD_Theta,
-            new Constraints(
-                SWERVE.kMaxSpeedMetersPerSecond, SWERVE.kMaxAccelerationShootingMetersPerSecond));
-    m_PidController.enableContinuousInput(-Math.PI, Math.PI);
-    m_PidController.setTolerance(1.0);
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
 
@@ -187,26 +166,12 @@ public class Shoot extends Command {
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
-    double driveVelocity =
-        driveAngleFilter.calculate(driveAngle.minus(lastDriveAngle).getRadians() / 0.02);
-
     // all of the logic for angle is above this Comment
 
-    var turnRate =
-        m_PidController.calculate(
-            estimatedPose.getRotation().getRadians(),
-            new State(driveAngle.getRadians(), driveVelocity));
-
-    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
-    m_shooterHood.setAngle(Radians.of(hoodAngle));
-
-    double omegaOutput = m_PidController.getSetpoint().velocity + turnRate;
-    m_swerveDrivetrain.setChassisSpeedControl(
-        new ChassisSpeeds(
-            m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-            m_strafeInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-            omegaOutput));
-    lastDriveAngle = driveAngle;
+    m_swerveDrivetrain.setChassisSpeedsWithHeading(
+        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+        driveAngle);
   }
 
   // Called once the command ends or is interrupted.
