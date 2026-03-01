@@ -9,6 +9,8 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -88,19 +90,18 @@ public class RobotContainer {
   }
 
   @NotLogged
-  private final double MaxSpeed =
-      V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top speed
+  private final LinearVelocity MaxSpeed =
+      V1Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
 
   @NotLogged
-  private final double MaxAngularRate =
-      RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
-          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+  private final AngularVelocity MaxAngularRate =
+      SWERVE.kMaxRotation; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
+          .withDeadband(MaxSpeed.times(0.1))
+          .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
@@ -133,24 +134,16 @@ public class RobotContainer {
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
-            () -> {
-              var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
-              // // if heading target
-              // if (m_swerveDrive.isTrackingState()) {
-              //   rotationRate = m_swerveDrive.calculateRotationToTarget();
-              // }
-              drive
-                  .withVelocityX(
-                      -m_driverController.getLeftY()
-                          * MaxSpeed) // Drive forward with negative Y (forward)
-                  .withVelocityY(
-                      -m_driverController.getLeftX()
-                          * MaxSpeed) // Drive left with negative X (left)
-                  .withRotationalRate(
-                      rotationRate); // Drive counterclockwise with negative X (left)
-              return drive;
-            }));
-    m_fieldSim = new FieldSim();
+            () ->
+                drive
+                    .withVelocityX(
+                        MaxSpeed.times(
+                            -m_driverController
+                                .getLeftY())) // Drive forward with negative Y (forward)
+                    .withVelocityY(
+                        MaxSpeed.times(
+                            -m_driverController.getLeftX())) // Drive left with negative X (left)
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);

@@ -254,11 +254,12 @@ public class Vision extends SubsystemBase {
         m_swerveDriveTrain
             .getState()
             .Pose
-            .getRotation()
-            .minus(targetPose.getRotation())
-            .getMeasure();
+            .getTranslation()
+            .minus(targetPose.getTranslation())
+            .getAngle()
+            .plus(m_swerveDriveTrain.getState().Pose.getRotation());
 
-    var isAligned = rotationDelta.abs(Degrees) < 0.5;
+    var isAligned = rotationDelta.getDegrees() < 0.5;
 
     // var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
     // SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
