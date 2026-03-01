@@ -14,7 +14,7 @@ public class INDEXER {
 
   public enum INDEXER_SPEED_1 {
     ZERO(0),
-    INDEXING(0.5),
+    INDEXING(0.9),
     FREEING(-0.3);
 
     private final double value;
@@ -30,7 +30,7 @@ public class INDEXER {
 
   public enum INDEXER_SPEED_2 {
     ZERO(0),
-    INDEXING(0.5),
+    INDEXING(0.75),
     FREEING(-0.3);
 
     private final double value;
