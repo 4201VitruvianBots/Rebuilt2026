@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.6,
+        "x": 5.8,
         "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.6,
+        "x": 3.8,
         "y": 5.5
       },
       "isLocked": false,
@@ -16,19 +16,56 @@
     },
     {
       "anchor": {
-        "x": 1.5,
-        "y": 5.95
+        "x": 1.5851341681574236,
+        "y": 5.681878354203935
       },
       "prevControl": {
-        "x": 1.7489158345221112,
-        "y": 5.374151212553495
+        "x": 2.117321125877982,
+        "y": 5.327087049056895
+      },
+      "nextControl": {
+        "x": 1.0983720930232554,
+        "y": 6.006386404293381
+      },
+      "isLocked": false,
+      "linkedName": "DepotIntakeStartPoint"
+    },
+    {
+      "anchor": {
+        "x": 0.384,
+        "y": 5.958
+      },
+      "prevControl": {
+        "x": 0.9996483234206988,
+        "y": 6.011862249018053
+      },
+      "nextControl": {
+        "x": 0.1349513254770635,
+        "y": 5.936211064313086
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5851341681574236,
+        "y": 5.681878354203935
+      },
+      "prevControl": {
+        "x": 2.20169946332737,
+        "y": 5.7305545617173514
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "DepotIntakeStartPoint"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.4,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
