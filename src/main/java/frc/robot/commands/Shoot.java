@@ -175,7 +175,9 @@ public class Shoot extends Command {
       timeOfFlight = shot.timeOfFlight;
       effectiveTimeOfFlight =
           (1 - Math.pow(Math.E, -(FLYWHEEL.kFuelDragCoefficient * timeOfFlight)))
-              / FLYWHEEL.kFuelDragCoefficient; // Accounting for linear drag. This is the equation for continuous decay.
+              / FLYWHEEL
+                  .kFuelDragCoefficient; // Accounting for linear drag. This is the equation for
+      // continuous decay.
       double offsetX = launcherVelocityX * effectiveTimeOfFlight;
       double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =
