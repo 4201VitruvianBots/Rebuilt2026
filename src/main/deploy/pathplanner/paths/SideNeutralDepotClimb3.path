@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 6.6,
+        "x": 5.8,
         "y": 5.5
       },
       "prevControl": {
-        "x": 8.152854716362965,
+        "x": 7.352854716362965,
         "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "GoBackToAllianceZone"
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": "SideNeutralDepotClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
