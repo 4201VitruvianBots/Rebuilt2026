@@ -177,6 +177,11 @@ public class Hood extends SubsystemBase {
     m_motor.setControl(m_VoltageOut.withOutput(voltage.in(Volts)));
   }
 
+  public Command manualCommand() {
+    return this.runEnd(
+        () -> setAngle(Degrees.of(8.0)), null);
+  }
+
   @Override
   public void periodic() {
     // if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {

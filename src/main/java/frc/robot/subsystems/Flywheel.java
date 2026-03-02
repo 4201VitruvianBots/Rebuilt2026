@@ -189,11 +189,7 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (isAtRPMsetpoint()) {
-    //   m_motor1.setControl(m_dutyCycleOut.withOutput((Math.signum(getRPMerror())) / 4.0));
-    // } else {
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
-    // }
   }
 
   @Override
