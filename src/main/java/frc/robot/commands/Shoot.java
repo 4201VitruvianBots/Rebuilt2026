@@ -78,7 +78,6 @@ public class Shoot extends Command {
 
   private final Vision m_vision;
   private final Flywheel m_flywheel;
-  private final Uptake m_uptake;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
@@ -98,7 +97,6 @@ public class Shoot extends Command {
   public Shoot(
       Flywheel flywheel,
       Hood shooterHood,
-      Uptake uptake,
       Vision vision,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
@@ -109,9 +107,8 @@ public class Shoot extends Command {
     m_strafeInput = strafeInput;
     m_shooterHood = shooterHood;
     m_vision = vision;
-    m_uptake = uptake;
 
-    addRequirements(flywheel, shooterHood, swerveDrive, uptake);
+    addRequirements(flywheel, shooterHood, swerveDrive);
     SmartDashboard.putData(this);
   }
 
@@ -126,7 +123,6 @@ public class Shoot extends Command {
     m_shooterHood = shooterHood;
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
-    m_uptake = uptake;
 
     addRequirements(flywheel, shooterHood, uptake);
     SmartDashboard.putData(this);

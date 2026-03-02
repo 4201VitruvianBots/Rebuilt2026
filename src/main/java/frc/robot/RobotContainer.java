@@ -206,7 +206,6 @@ public class RobotContainer {
             new Shoot(
                 m_flywheel,
                 m_hood,
-                m_uptake,
                 m_vision,
                 m_swerveDrive,
                 () -> m_driverController.getLeftY(),
