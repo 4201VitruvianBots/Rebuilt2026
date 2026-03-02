@@ -104,7 +104,7 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
   private Robot2d m_robotSim = new Robot2d();
-  private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
+  private final Telemetry m_telemetry = new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
   private final FuelSim m_fuelSim = new FuelSim();
 
@@ -194,7 +194,7 @@ public class RobotContainer {
     // }
 
     m_driverController
-        .rightTrigger()
+        .x()
         .whileTrue(
             new ParallelCommandGroup(
                 m_intake.command(INTAKE_SPEED.INTAKING),
@@ -212,10 +212,10 @@ public class RobotContainer {
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
 
-    m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
+    m_driverController.leftTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
 
     m_driverController
-        .x()
+        .rightTrigger()
         .whileTrue(
             new ParallelCommandGroup(
                 m_intake.command(INTAKE_SPEED.INTAKING),

@@ -53,18 +53,18 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
-        Meters.of(3.0512233984475174), new Shot(RPM.of(1619), Degrees.of(15.0), 1.286)); // Sorta Tuned
-    distanceToShotMap.put(Meters.of(3.3152151571345647), new Shot(RPM.of(1650), Degrees.of(20.0), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(4.388266238410841), new Shot(RPM.of(1771), Degrees.of(23), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(5.448205807119931), new Shot(RPM.of(2100), Degrees.of(24.5), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(2.4405995962859115), new Shot(RPM.of(1440), Degrees.of(14.3), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+        Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(9.0), 1.286)); //
+    distanceToShotMap.put(Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(10.0), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(11.0), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(13.3), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(14.5), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(3.01901001108563), new Shot(RPM.of(1650), Degrees.of(14.7), 1.286));
+    distanceToShotMap.put(Meters.of(3.31521515713456), new Shot(RPM.of(1670), Degrees.of(22), 1.286)); // Half Tuned
+    distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21), 1.286));
+    distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8), 1.286));
+    distanceToShotMap.put(Meters.of(3.79704412351433), new Shot(RPM.of(1720), Degrees.of(20), 1.286));
+    distanceToShotMap.put(Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(21), 1.286));
+    distanceToShotMap.put(Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(24.5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
@@ -135,10 +135,6 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (RobotState.isTest()) {
-      kTeleP_Theta = m_vision.m_kPAutoAlignSubscriber.getAsDouble();
-      kTeleD_Theta = m_vision.m_kDAutoAlignSubscriber.getAsDouble();
-    }
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
@@ -191,7 +187,9 @@ public class Shoot extends Command {
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
     // all of the logic for angle is above this Comment
-
+    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    m_shooterHood.setAngle(Radians.of(hoodAngle));
+    
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
@@ -203,7 +201,6 @@ public class Shoot extends Command {
   public void end(boolean interrupted) {
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
     m_flywheel.setRPMOutputFOC(RPM.of(0.0));
-    m_uptake.setPercentOutput(0.0);
   }
 
   // Returns true when the command should end.
