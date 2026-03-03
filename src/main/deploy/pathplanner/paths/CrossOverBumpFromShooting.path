@@ -40,7 +40,20 @@
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "MeasureIntakeBefore",
+      "waypointRelativePos": 0.500897666068222,
+      "endWaypointRelativePos": 0.7755834829443449,
+      "command": null
+    },
+    {
+      "name": "MeasureIntakeAfter",
+      "waypointRelativePos": 0.77737881508079,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
