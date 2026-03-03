@@ -4,5 +4,11 @@
 
 package frc.robot.commands.autos.segments;
 
-/** Add your docs here. */
-public class IntakeAndShootFromDepot {}
+import frc.robot.commands.autos.AutoDependencies;
+import frc.team4201.lib.command.Auto;
+
+public class IntakeAndShootFromDepot extends Auto {
+    public IntakeAndShootFromDepot(AutoDependencies deps) {
+        
+    }
+}

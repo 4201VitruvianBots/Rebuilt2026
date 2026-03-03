@@ -14,23 +14,25 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.commands.Climb;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.constants.CLIMBER;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.*;
 import frc.team4201.lib.command.Auto;
 
 public class SideNeutralDepotClimb extends Auto {
-  public SideNeutralDepotClimb(
-      CommandSwerveDrivetrain swerveDrive,
-      Climber climber,
-      Intake intake,
-      Vision vision,
-      Flywheel flywheel,
-      Hood hood,
-      IntakePivot intakePivot,
-      Indexer indexer,
-      Uptake uptake) {
+  public SideNeutralDepotClimb(AutoDependencies deps) {
     try {
+      var swerveDrive = deps.swerveDrive;
+      var climber = deps.climber;
+      var intake = deps.intake;
+      var vision = deps.vision;
+      var flywheel = deps.flywheel;
+      var hood = deps.hood;
+      var intakePivot = deps.intakePivot;
+      var indexer = deps.indexer;
+      var uptake = deps.uptake;
+
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 =

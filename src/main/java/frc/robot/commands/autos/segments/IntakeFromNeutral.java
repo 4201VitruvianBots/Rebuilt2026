@@ -4,5 +4,10 @@
 
 package frc.robot.commands.autos.segments;
 
-/** Add your docs here. */
-public class IntakeFromNeutral {}
+import frc.robot.commands.autos.AutoDependencies;
+import frc.team4201.lib.command.Auto;
+
+public class IntakeFromNeutral extends Auto {
+    public IntakeFromNeutral(AutoDependencies deps) {
+    }
+}

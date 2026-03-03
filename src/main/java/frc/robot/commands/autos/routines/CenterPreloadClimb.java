@@ -9,26 +9,19 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Flywheel;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Uptake;
-import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 
 public class CenterPreloadClimb extends Auto {
-  public CenterPreloadClimb(
-      CommandSwerveDrivetrain swerveDrive,
-      Climber climber,
-      Intake intake,
-      Vision vision,
-      Flywheel flywheel,
-      Hood hood,
-      Uptake uptake) {
+  public CenterPreloadClimb(AutoDependencies deps) {
     try {
+      var swerveDrive = deps.swerveDrive;
+      var vision = deps.vision;
+      var flywheel = deps.flywheel;
+      var hood = deps.hood;
+      var uptake = deps.uptake;
+
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 =

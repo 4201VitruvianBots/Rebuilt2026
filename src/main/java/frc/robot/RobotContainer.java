@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.autos.*;
+import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterDepot;
 import frc.robot.commands.autos.routines.CenterPreloadClimb;
 import frc.robot.commands.autos.routines.SideNeutralClimb;
@@ -255,72 +255,37 @@ public class RobotContainer {
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+
+    var autoDeps =
+        new AutoDependencies(
+            m_swerveDrive,
+            m_climber,
+            m_intake,
+            m_vision,
+            m_flywheel,
+            m_hood,
+            m_intakePivot,
+            m_indexer,
+            m_uptake);
+
     m_autoChooser.addOption(
         "Auto 0 - CenterPreloadClimb",
-        new CenterPreloadClimb(
-            m_swerveDrive, m_climber, m_intake, m_vision, m_flywheel, m_hood, m_uptake));
+        new CenterPreloadClimb(autoDeps));
     m_autoChooser.addOption(
         "Auto 1 - CenterDepot",
-        new CenterDepot(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake));
+        new CenterDepot(autoDeps));
     m_autoChooser.addOption(
         "Auto 2 - SideNeutralClimb",
-        new SideNeutralClimb(
-            m_swerveDrive,
-            m_climber,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake,
-            () -> m_flipToRight));
+        new SideNeutralClimb(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
         "Auto 3 - SideNeutralDepotClimb",
-        new SideNeutralDepotClimb(
-            m_swerveDrive,
-            m_climber,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake));
+        new SideNeutralDepotClimb(autoDeps));
     m_autoChooser.addOption(
         "Auto 4 - SideNeutralTwice",
-        new SideNeutralTwice(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake,
-            () -> m_flipToRight,
-            false));
+        new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Auto 5 - SideNeutralTwice - NO PRELOAD",
-        new SideNeutralTwice(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake,
-            () -> m_flipToRight,
-            true));
+        new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
   }
 
   private void initSideChooser() {

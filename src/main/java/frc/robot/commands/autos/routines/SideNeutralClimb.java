@@ -12,33 +12,24 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Flywheel;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakePivot;
-import frc.robot.subsystems.Uptake;
-import frc.robot.subsystems.Vision;
 import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import java.util.function.BooleanSupplier;
 
 public class SideNeutralClimb extends Auto {
-  public SideNeutralClimb(
-      CommandSwerveDrivetrain swerveDrive,
-      Climber climber,
-      Intake intake,
-      Vision vision,
-      Flywheel flywheel,
-      Hood hood,
-      IntakePivot intakePivot,
-      Indexer indexer,
-      Uptake uptake,
-      BooleanSupplier flipPath) {
+  public SideNeutralClimb(AutoDependencies deps, BooleanSupplier flipPath) {
     try {
+      var swerveDrive = deps.swerveDrive;
+      var intake = deps.intake;
+      var vision = deps.vision;
+      var flywheel = deps.flywheel;
+      var hood = deps.hood;
+      var intakePivot = deps.intakePivot;
+      var indexer = deps.indexer;
+      var uptake = deps.uptake;
+
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       TrajectoryUtils trajectoryUtils = swerveDrive.getTrajectoryUtils();
