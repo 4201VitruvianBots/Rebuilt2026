@@ -7,49 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice1"
+            "pathName": "SideNeutralDepotClimb1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice2"
+            "pathName": "SideNeutralDepotClimb2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice3"
+            "pathName": "SideNeutralDepotClimb3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice4"
+            "pathName": "SideNeutralDepotClimb4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice5"
+            "pathName": "SideNeutralDepotClimb5"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice6"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SideNeutralTwice7"
+            "pathName": "SideNeutralDepotClimb6"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Old",
   "choreoAuto": false
 }

@@ -70,7 +70,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "SideNeutralClimb",
+  "folder": "Old - SideNeutralClimb",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -35.0

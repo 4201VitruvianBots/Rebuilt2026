@@ -3,16 +3,18 @@
   "robotLength": 0.775,
   "holonomicMode": true,
   "pathFolders": [
-    "CenterDepot",
-    "CenterPreloadClimb",
-    "PreloadSideNeutralTwice",
+    "Old - CenterDepot",
+    "Old - CenterPreloadClimb",
     "IntakeAndShootFromDepot",
     "IntakeFromNeutral",
+    "Old - PreloadSideNeutralTwice",
     "ShootNearStart",
-    "SideNeutralClimb",
-    "SideNeutralDepotClimb"
+    "Old - SideNeutralClimb",
+    "Old - SideNeutralDepotClimb"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Old"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
