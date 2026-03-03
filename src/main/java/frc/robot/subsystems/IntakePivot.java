@@ -32,7 +32,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
@@ -45,7 +44,7 @@ public class IntakePivot extends SubsystemBase {
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
   private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBase);
 
-  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
+  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder, CAN.driveBase);
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
@@ -67,7 +66,7 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
-          false,
+          true,
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
@@ -83,32 +82,27 @@ public class IntakePivot extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
     config.Slot0.kD = PIVOT.kD;
+    config.Slot0.kG = PIVOT.kG;
     // config.Slot0.kA = PIVOT.kA;
     // config.Slot0.kV = PIVOT.kV;
     // config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
-    config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode =
-        NeutralModeValue
-            .Brake; // Here, in this very instance, we, as in me and Sir Nathan Schoen have
-    // ulimately, after an extensive amount of deliberation, have ultimately decided
-    // that is in our best interests to make ues of the "brake" value in neutral
-    // mode, due to the fact that an intake Pivot would not be coasting, thus we
-    // chose to use brake for afformentioned pivot.
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    config.CurrentLimits.StatorCurrentLimit = 175;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.ClosedLoopGeneral.ContinuousWrap = false;
+    // config.CurrentLimits.StatorCurrentLimit = 175;
+    // config.CurrentLimits.StatorCurrentLimitEnable = true;
+    // config.ClosedLoopGeneral.ContinuousWrap = false;
 
-    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
-    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
 
     config.MotionMagic.MotionMagicCruiseVelocity = PIVOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = PIVOT.motionMagicAcceleration;
@@ -119,6 +113,7 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
       m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
+    m_motor.setPosition(getAngle().in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -127,8 +122,6 @@ public class IntakePivot extends SubsystemBase {
             MathUtil.clamp(
                 angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
-    SmartDashboard.putString(
-        "Pivot Control Request", m_request.withPosition(m_desiredAngle.in(Rotations)).toString());
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)

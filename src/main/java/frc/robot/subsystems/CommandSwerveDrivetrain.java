@@ -9,16 +9,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -78,12 +75,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   private TrajectoryUtils m_trajectoryUtils;
 
-  private final PIDController m_pidController = new PIDController(10.0, 0.0, 0.0);
-  private Rotation2d m_targetAngle = Rotation2d.kZero;
-
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
       new SwerveRequest.ApplyRobotSpeeds();
+
+  // TODO: Check if a constructor with different PID values is needed for different use cases
+  // PID Constants taken from Shoot(OnTheMove)
+  //  private Double kTeleP_Theta = 12.0;
+  //  private Double kTeleD_Theta = 0.0;
+  //  public static final double kTeleI_Theta = 0.0;
+  // PID Constants taken from AutoAlignDrive
+  SwerveRequest.FieldCentricFacingAngle m_driveWithHeadingRequest =
+      new SwerveRequest.FieldCentricFacingAngle().withHeadingPID(12.0, 0.0, 0.0);
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
@@ -174,38 +177,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     }
   }
 
-  private Pose2d m_futurePose = new Pose2d();
-  private Twist2d m_twistFromPose = new Twist2d();
-  private ChassisSpeeds m_newChassisSpeeds = new ChassisSpeeds();
-  private final ApplyRobotSpeeds m_chassisSpeedRequest = new ApplyRobotSpeeds();
-
-  public void setChassisSpeedControl(ChassisSpeeds chassisSpeeds) {
-    setChassisSpeedControl(chassisSpeeds, 0.02, 1.0);
-  }
-
-  public void setChassisSpeedControl(ChassisSpeeds chassisSpeeds, double loopPeriod) {
-    setChassisSpeedControl(chassisSpeeds, loopPeriod, 1.0);
-  }
-
-  public void setChassisSpeedControl(
-      ChassisSpeeds chassisSpeeds, double loopPeriod, double driftRate) {
-    m_futurePose =
-        new Pose2d(
-            chassisSpeeds.vxMetersPerSecond * loopPeriod,
-            chassisSpeeds.vyMetersPerSecond * loopPeriod,
-            Rotation2d.fromRadians(chassisSpeeds.omegaRadiansPerSecond * loopPeriod * driftRate));
-
-    m_twistFromPose = new Pose2d().log(m_futurePose);
-
-    m_newChassisSpeeds =
-        new ChassisSpeeds(
-            m_twistFromPose.dx / loopPeriod,
-            m_twistFromPose.dy / loopPeriod,
-            chassisSpeeds.omegaRadiansPerSecond);
-
-    setControl(m_chassisSpeedRequest.withSpeeds(m_newChassisSpeeds));
-  }
-
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
@@ -261,6 +232,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
     setControl(m_pathApplyRobotSpeeds.withSpeeds(chassisSpeeds));
+  }
+
+  public void setChassisSpeedsWithHeading(
+      LinearVelocity velocityX, LinearVelocity velocityY, Rotation2d headingTarget) {
+    setControl(
+        m_driveWithHeadingRequest
+            .withVelocityX(velocityX)
+            .withVelocityY(velocityY)
+            .withTargetDirection(headingTarget));
   }
 
   public void setChassisSpeedsAuto(
@@ -357,15 +337,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
    */
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
     return run(() -> this.setControl(requestSupplier.get()));
-  }
-
-  public void setTargetAngle(Rotation2d angle) {
-    m_targetAngle = angle;
-  }
-
-  public double calculateRotationToTarget() {
-    return m_pidController.calculate(
-        getState().Pose.getRotation().getRadians(), m_targetAngle.getRadians());
   }
 
   /**

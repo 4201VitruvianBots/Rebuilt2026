@@ -38,6 +38,10 @@ public class FIELD {
   private static DriverStation.Alliance ALLIANCE;
   private static SECTOR[][] SECTOR_MAP;
 
+  private FIELD() {
+    initializeConstants();
+  }
+
   public static void initializeConstants() {
     if (DriverStation.isFMSAttached()) {
       fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
@@ -310,36 +314,43 @@ public class FIELD {
     public static final Distance HEIGHT = Inches.of(56.5);
     public static final Distance WIDTH = Inches.of(47.0);
 
-    public static Target3d GOAL;
-    public static Target3d RED;
-    public static Target3d BLUE;
+    public static Target3d RED = buildRedGoal();
+    public static Target3d BLUE = buildBlueGoal();
+    public static Target3d GOAL = RED;
 
     public static void init() {
-      RED =
-          new Target3d(
-              new Translation3d(
-                  aprilTagMap.get("HUB_NEAR").getPose(false).getMeasureX().minus(WIDTH.div(2.0)),
-                  CENTER.getMeasureY(),
-                  WIDTH),
-              aprilTagMap.entrySet().stream()
-                  .filter(e -> e.getKey().startsWith("HUB"))
-                  .mapToInt(e -> e.getValue().getId(false))
-                  .toArray());
+      RED = buildRedGoal();
+      BLUE = buildBlueGoal();
 
-      BLUE =
-          new Target3d(
-              new Translation3d(
-                  aprilTagMap.get("HUB_NEAR").getPose(true).getMeasureX().plus(WIDTH.div(2.0)),
-                  CENTER.getMeasureY(),
-                  HEIGHT),
-              aprilTagMap.entrySet().stream()
-                  .filter(e -> e.getKey().startsWith("HUB"))
-                  .mapToInt(e -> e.getValue().getId(true))
-                  .toArray());
+      updateFields();
+    }
+
+    private static Target3d buildRedGoal() {
+      return new Target3d(
+          new Translation3d(
+              aprilTagMap.get("HUB_NEAR").getPose(false).getMeasureX().minus(WIDTH.div(2.0)),
+              CENTER.getMeasureY(),
+              WIDTH),
+          aprilTagMap.entrySet().stream()
+              .filter(e -> e.getKey().startsWith("HUB"))
+              .mapToInt(e -> e.getValue().getId(false))
+              .toArray());
+    }
+
+    private static Target3d buildBlueGoal() {
+      return new Target3d(
+          new Translation3d(
+              aprilTagMap.get("HUB_NEAR").getPose(true).getMeasureX().plus(WIDTH.div(2.0)),
+              CENTER.getMeasureY(),
+              HEIGHT),
+          aprilTagMap.entrySet().stream()
+              .filter(e -> e.getKey().startsWith("HUB"))
+              .mapToInt(e -> e.getValue().getId(true))
+              .toArray());
     }
 
     public static void updateFields() {
-      GOAL = AllianceInterface.isBlue() ? BLUE : RED;
+      GOAL = Controls.isBlueAlliance() ? BLUE : RED; // TODO: Unflip this T_T
     }
   }
 

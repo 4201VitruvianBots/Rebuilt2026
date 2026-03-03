@@ -6,8 +6,6 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -17,10 +15,9 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
@@ -29,6 +26,7 @@ import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
 
@@ -55,10 +53,27 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376),
-        new Shot(RPM.of(2175), Degrees.of(75), 0.96399)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.048), new Shot(RPM.of(2200), Degrees.of(73), 1.286));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(70), 1.4));
+        Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(9.0), 1.286)); //
+    distanceToShotMap.put(Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(10.0), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(11.0), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(13.3), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(14.5), 1.286)); // Tuned
+    distanceToShotMap.put(Meters.of(3.01901001108563), new Shot(RPM.of(1650), Degrees.of(14.7), 1.286));
+    distanceToShotMap.put(Meters.of(3.31521515713456), new Shot(RPM.of(1670), Degrees.of(22), 1.286)); // Half Tuned
+    distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21), 1.286));
+    distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8), 1.286));
+    distanceToShotMap.put(Meters.of(3.79704412351433), new Shot(RPM.of(1720), Degrees.of(20), 1.286));
+    distanceToShotMap.put(Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(21), 1.286));
+    distanceToShotMap.put(Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(24.5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
   }
 
   private final Vision m_vision;
@@ -70,17 +85,9 @@ public class Shoot extends Command {
   private Rotation2d lastDriveAngle;
   private double lastHoodAngle;
 
-  private final LinearFilter driveAngleFilter = LinearFilter.movingAverage((int) (0.1 / 0.02));
-
   private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
   private Transform2d robotToLauncher =
       new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
-
-  private Double kTeleP_Theta = 12.0;
-  private Double kTeleD_Theta = 0.0;
-  public static final double kTeleI_Theta = 0.0;
-
-  private ProfiledPIDController m_PidController;
 
   private final Hood m_shooterHood;
 
@@ -107,36 +114,24 @@ public class Shoot extends Command {
 
   /** Standard shooting without shoot on the move capabilities. Used only in auto. */
   public Shoot(
-      Flywheel flywheel, Hood shooterHood, Vision vision, CommandSwerveDrivetrain swerveDrive) {
+      Flywheel flywheel,
+      Hood shooterHood,
+      Uptake uptake,
+      Vision vision,
+      CommandSwerveDrivetrain swerveDrive) {
     m_flywheel = flywheel;
     m_shooterHood = shooterHood;
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
 
-    addRequirements(flywheel, shooterHood);
+    addRequirements(flywheel, shooterHood, uptake);
     SmartDashboard.putData(this);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
-      // TODO: Add pass position as goal
-
-      // If we're in our own zone, then we align to the hub
-    } else {
-      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    }
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    m_PidController =
-        new ProfiledPIDController(
-            kTeleP_Theta,
-            kTeleI_Theta,
-            kTeleD_Theta,
-            new Constraints(
-                SWERVE.kMaxSpeedMetersPerSecond, SWERVE.kMaxAccelerationShootingMetersPerSecond));
-    m_PidController.enableContinuousInput(-Math.PI, Math.PI);
-    m_PidController.setTolerance(1.0);
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
 
@@ -187,32 +182,21 @@ public class Shoot extends Command {
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
-    double driveVelocity =
-        driveAngleFilter.calculate(driveAngle.minus(lastDriveAngle).getRadians() / 0.02);
-
     // all of the logic for angle is above this Comment
-
-    var turnRate =
-        m_PidController.calculate(
-            estimatedPose.getRotation().getRadians(),
-            new State(driveAngle.getRadians(), driveVelocity));
-
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
-
-    double omegaOutput = m_PidController.getSetpoint().velocity + turnRate;
-    m_swerveDrivetrain.setChassisSpeedControl(
-        new ChassisSpeeds(
-            m_throttleInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-            m_strafeInput.getAsDouble() * SWERVE.kMaxSpeedShootingMetersPerSecond,
-            omegaOutput));
-    lastDriveAngle = driveAngle;
+    
+    m_swerveDrivetrain.setChassisSpeedsWithHeading(
+        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+        driveAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
+    m_flywheel.setRPMOutputFOC(RPM.of(0.0));
   }
 
   // Returns true when the command should end.

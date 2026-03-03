@@ -1,19 +1,13 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.*;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.*;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
@@ -27,6 +21,10 @@ public class SWERVE {
   public static final Distance kWheelBase = Inches.of(17.75);
   public static final Distance kTrackWidth = Inches.of(24.5);
   public static final Distance kBumperHeight = Inches.of(4.5);
+  public static final Distance kBumperWidth = Inches.of(4.0);
+
+  public static final Distance kChassisWidth = Inches.of(30.5);
+  public static final Distance kChassisLength = Inches.of(23.0);
 
   public static final Map<MODULE_POSITION, Translation2d> kModuleTranslations =
       Map.of(
@@ -39,11 +37,11 @@ public class SWERVE {
           MODULE_POSITION.BACK_RIGHT,
           new Translation2d(-kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)));
 
-  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(18);
-  public static final double kMaxSpeedShootingMetersPerSecond = Units.feetToMeters(8.0);
-  public static final double kMaxAccelerationShootingMetersPerSecond = Units.feetToMeters(11.0);
-  public static final double kMaxRotationRadiansPerSecond =
-      Math.PI * 0.3; // Temporary to reduce speed (original value 2.0).
+  public static final LinearVelocity kMaxSpeed = FeetPerSecond.of(18);
+  public static final LinearVelocity kMaxSpeedShooting = FeetPerSecond.of(8.0);
+  public static final LinearAcceleration kMaxAccelerationShooting = FeetPerSecondPerSecond.of(11.0);
+  public static final AngularVelocity kMaxRotation =
+      RotationsPerSecond.of(Math.PI * 0.3); // Temporary to reduce speed (original value 2.0).
 
   // Constants needed for auto align
   // TODO: Figure out where these numbers are coming from and if we need to change them.

@@ -9,23 +9,25 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.*;
-import frc.robot.commands.swerve.AutoAlignDrive;
-import frc.robot.commands.swerve.DriveToTarget;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
@@ -90,20 +92,21 @@ public class RobotContainer {
   }
 
   @NotLogged
-  private final double MaxSpeed = V1Constants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeed at 12 volts desired top
-                                                                                   // speed
+  private final LinearVelocity MaxSpeed =
+      V1Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
 
   @NotLogged
-  private final double MaxAngularRate = RotationsPerSecond.of(SWERVE.kMaxRotationRadiansPerSecond)
-      .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+  private final AngularVelocity MaxAngularRate =
+      SWERVE.kMaxRotation; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1)
-      .withRotationalDeadband(MaxAngularRate * 0.1); // Add a 10% deadband
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(MaxSpeed.times(0.1))
+          .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
-  private Robot2d m_robotSim;
-  private final Telemetry m_telemetry = new Telemetry(MaxSpeed, SWERVE.kModuleTranslations);
+  private Robot2d m_robotSim = new Robot2d();
+  private final Telemetry m_telemetry = new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
   private final FuelSim m_fuelSim = new FuelSim();
 
@@ -135,24 +138,16 @@ public class RobotContainer {
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
-            () -> {
-              var rotationRate = -m_driverController.getRightX() * MaxAngularRate;
-              // // if heading target
-              // if (m_swerveDrive.isTrackingState()) {
-              // rotationRate = m_swerveDrive.calculateRotationToTarget();
-              // }
-              drive
-                  .withVelocityX(
-                      -m_driverController.getLeftY()
-                          * MaxSpeed) // Drive forward with negative Y (forward)
-                  .withVelocityY(
-                      -m_driverController.getLeftX()
-                          * MaxSpeed) // Drive left with negative X (left)
-                  .withRotationalRate(
-                      rotationRate); // Drive counterclockwise with negative X (left)
-              return drive;
-            }));
-    m_fieldSim = new FieldSim();
+            () ->
+                drive
+                    .withVelocityX(
+                        MaxSpeed.times(
+                            -m_driverController
+                                .getLeftY())) // Drive forward with negative Y (forward)
+                    .withVelocityY(
+                        MaxSpeed.times(
+                            -m_driverController.getLeftX())) // Drive left with negative X (left)
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -161,18 +156,16 @@ public class RobotContainer {
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    m_intakePivot = new IntakePivot();
+    // m_intakePivot = new IntakePivot();
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
     m_climber = new Climber();
-    m_led = new LEDs();
-    m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+    // m_led = new LEDs();
+    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
-
-      m_robotSim = new Robot2d();
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
     }
@@ -180,68 +173,78 @@ public class RobotContainer {
 
   private void configureBindings() {
     // aim at target
-    if (m_vision != null && m_flywheel != null && m_hood != null) {
-      m_driverController
-          .rightBumper()
-          .toggleOnTrue(
-              new Shoot(
-                  m_flywheel,
-                  m_hood,
-                  m_vision,
-                  m_swerveDrive,
-                  () -> m_driverController.getLeftY(),
-                  () -> m_driverController.getLeftX()));
-    }
+    // if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
+    //   m_driverController
+    //       .rightBumper()
+    //       .toggleOnTrue(
+    //           new ParallelCommandGroup(
+    //               new AutoAlignDrive(
+    //                   m_swerveDrive,
+    //                   m_vision,
+    //                   m_driverController::getLeftY,
+    //                   m_driverController::getLeftX),
+    //               new Shoot(m_flywheel, m_vision, m_hood)));
+    // }
 
-    if (m_uptake != null) {
-      m_driverController
-          .rightTrigger(
-              0.2) // Some of the Xbox controllers struggle to reach 0.5 during normal operation,
-          // preventing us from using the right trigger.
-          .whileTrue(m_uptake.command(UPTAKE_SPEED.UPTAKING));
-    }
+    // if (m_swerveDrive != null && m_vision != null) {
+    //   m_driverController
+    //       .leftBumper()
+    //       .toggleOnTrue(
+    //           new AutoAlignDrive(
+    //               m_swerveDrive,
+    //               m_vision,P
+    //               m_driverController::getLeftY,
+    //               m_driverController::getLeftX));
+    // }
 
-    if (m_vision != null) {
-      m_driverController
-          .leftBumper()
-          .toggleOnTrue(
-              new AutoAlignDrive(
-                  m_swerveDrive,
-                  m_vision,
-                  m_driverController::getLeftY,
-                  m_driverController::getLeftX));
-    }
-
-    if (m_swerveDrive != null && m_flywheel != null && m_vision != null) {
-      m_driverController.x().whileTrue(new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive));
-    }
-
-    if (m_flywheel != null) {
-      m_driverController.y().whileTrue(m_flywheel.manualCommand());
-    }
-
-    // I foresee a state machine in the future...
-    if (m_uptake != null && m_indexer != null && m_intake != null) {
-      m_driverController
-          .a()
-          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
-    }
-
-    // aim at target
     m_driverController
-        .rightBumper()
+        .x()
         .whileTrue(
-            new AutoAlignDrive(
-                m_swerveDrive,
+            new ParallelCommandGroup(
+                m_flywheel.manualCommand(), m_hood.manualCommand()));
+
+    m_driverController
+        .leftBumper()
+        .whileTrue(
+            new Shoot(
+                m_flywheel,
+                m_hood,
                 m_vision,
+                m_swerveDrive,
                 () -> m_driverController.getLeftY(),
                 () -> m_driverController.getLeftX()));
 
-    // auto climb align
-    var driveToTarget = new DriveToTarget(m_swerveDrive, m_vision);
+    m_driverController.leftTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
 
-    m_driverController.povLeft().whileTrue(driveToTarget.generateCommand(true));
-    m_driverController.povRight().whileTrue(driveToTarget.generateCommand(false));
+    m_driverController
+        .rightTrigger()
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_intake.command(INTAKE_SPEED.INTAKING),
+                m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
+                m_uptake.percentCommand(0.7)));
+    // // I foresee a state machine in the future...
+    // if (m_uptake != null && m_indexer != null && m_intake != null) {
+    //   m_driverController
+    //       .a()
+    //       .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
+    // }
+
+    // if (m_intake != null) {
+    //   m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
+    // }
+
+    // if (m_indexer != null){
+    //   m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING,
+    // INDEXER_SPEED_2.INDEXING));
+    // }
+
+    // if (m_swerveDrive != null) {
+    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
+    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
+    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
+    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    // }
   }
 
   private void initAutoChooser() {
@@ -345,39 +348,28 @@ public class RobotContainer {
   }
 
   public void testInit() {
-    if (m_flywheel != null)
-      m_flywheel.testInit();
-    if (m_vision != null)
-      m_vision.testInit();
-    if (m_uptake != null)
-      m_uptake.testInit();
-    if (m_indexer != null)
-      m_indexer.testInit();
-    if (m_intakePivot != null)
-      m_intakePivot.testInit();
-    if (m_intake != null)
-      m_intake.testInit();
-    if (m_hood != null)
-      m_hood.testInit();
-    if (m_climber != null)
-      m_climber.testInit();
+    if (m_flywheel != null) m_flywheel.testInit();
+    if (m_vision != null) m_vision.testInit();
+    // if (m_uptake != null) m_uptake.testInit();
+    // if (m_indexer != null) m_indexer.testInit();
+    if (m_intakePivot != null) m_intakePivot.testInit();
+    // if (m_intake != null) m_intake.testInit();
+    if (m_hood != null) m_hood.testInit();
+    if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
-    if (m_flywheel != null)
-      m_flywheel.testPeriodic();
-    if (m_uptake != null)
-      m_uptake.testPeriodic();
-    if (m_indexer != null)
-      m_indexer.testPeriodic();
-    if (m_intakePivot != null)
-      m_intakePivot.testPeriodic();
-    if (m_intake != null)
-      m_intake.testPeriodic();
-    if (m_hood != null)
-      m_hood.testPeriodic();
-    if (m_climber != null)
-      m_climber.testPeriodic();
+    if (m_flywheel != null) m_flywheel.testPeriodic();
+    // if (m_uptake != null) m_uptake.testPeriodic();
+    // if (m_indexer != null) m_indexer.testPeriodic();
+    if (m_intakePivot != null) m_intakePivot.testPeriodic();
+    // if (m_intake != null) m_intake.testPeriodic();
+    if (m_hood != null) m_hood.testPeriodic();
+    if (m_climber != null) m_climber.testPeriodic();
+  }
+
+  public void disabledPeriodic(){
+    if (m_vision != null) m_vision.disabledPeriodic();
   }
 
   /**
