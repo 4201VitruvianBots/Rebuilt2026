@@ -12,6 +12,7 @@ public class UPTAKE {
   public static final double gearRatio = 12.0 / 20.0;
   public static final double kInertia = 0.01;
   public static final double kVelocityErrorThreshold = 35.0;
+  public static final double kStatorCurrentLimit = 80.0;
 
   public static final double kMotionMagicAcceleration = 30.0;
   public static final double kMotionMagicCruiseVelocity = 60.0;

@@ -58,6 +58,8 @@ public class Intake extends SubsystemBase {
     config.MotorOutput.PeakForwardDutyCycle = ROLLERS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = ROLLERS.peakReverseOutput;
 
+    config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_motor, config);
     // CtreUtils.configureTalonFx(m_motor2, config);
 
