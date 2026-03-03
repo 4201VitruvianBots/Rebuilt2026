@@ -89,7 +89,8 @@ public class RobotContainer {
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led;
 
-  @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
+  // @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
+  @NotLogged
   private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed

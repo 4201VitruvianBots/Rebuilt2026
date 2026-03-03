@@ -178,8 +178,8 @@ public class Hood extends SubsystemBase {
   }
 
   public Command manualCommand() {
-    return this.runEnd(
-        () -> setAngle(Degrees.of(8.0)), null);
+    return this.runOnce(
+        () -> setAngle(Degrees.of(8.0)));
   }
 
   @Override
