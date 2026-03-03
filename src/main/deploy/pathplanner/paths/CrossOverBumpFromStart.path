@@ -8,27 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5,
-        "y": 4.879187278863658
+        "x": 4.521932021466905,
+        "y": 5.487173524150268
       },
       "isLocked": false,
       "linkedName": "SideStartPoint"
     },
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 6.0,
+        "y": 5.5
       },
       "prevControl": {
-        "x": 3.25,
-        "y": 4.817424138370334
+        "x": 4.0,
+        "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ShootingPoint"
+      "linkedName": "OverBumpPointStart"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.2,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,10 +51,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "PreloadSideNeutralTwice",
+  "folder": "Segment - IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
