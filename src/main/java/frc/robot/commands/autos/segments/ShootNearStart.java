@@ -41,7 +41,7 @@ public class ShootNearStart extends Auto {
             Commands.runOnce(() -> deps.flywheel.setRPMOutputFOC(Shoot.getShotForDistance(Meters.of(1.45650895207174)).shooterRPM)), // I literally just copied this from IntakeFromNeutral this is so bad omg
             getPathCommand(traj, path, flipToRight).andThen(() -> swerveDrive.setControl(stopRequest)),
             new ParallelCommandGroup(
-                new Shoot(flywheel, hood, uptake, vision, swerveDrive),
+                new Shoot(flywheel, hood, vision, swerveDrive),
                 new WaitCommand(2).andThen(new Fire(intake, indexer, uptake)) // TODO: Auto-fire once auto align, shooter hood, and flywheel RPM are ready
             ).withTimeout(4) // TODO: Also auto-detect when we're done shooting
         );

@@ -120,7 +120,6 @@ public class Shoot extends Command {
   public Shoot(
       Flywheel flywheel,
       Hood shooterHood,
-      Uptake uptake,
       Vision vision,
       CommandSwerveDrivetrain swerveDrive) {
     m_flywheel = flywheel;
@@ -128,7 +127,7 @@ public class Shoot extends Command {
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
 
-    addRequirements(flywheel, shooterHood, uptake);
+    addRequirements(flywheel, shooterHood);
     SmartDashboard.putData(this);
   }
 
