@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
@@ -19,9 +20,9 @@ public class IntakeCommand extends ParallelCommandGroup {
   /** Creates a new IntakeCommand. */
   public IntakeCommand(Intake intake, IntakePivot intakePivot, Indexer indexer, Uptake uptake) {
     addCommands(
-        intake.command(INTAKE_SPEED.INTAKING),
-        indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
-        uptake.command(UPTAKE_SPEED.INTAKE_RUN),
-        intakePivot.command(PIVOT_SETPOINT.INTAKING));
+        (intake != null) ? intake.command(INTAKE_SPEED.INTAKING) : new InstantCommand(),
+        (indexer != null) ? indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING) : new InstantCommand(),
+        (uptake != null) ? uptake.command(UPTAKE_SPEED.INTAKE_RUN) : new InstantCommand(),
+        (intakePivot != null) ? intakePivot.command(PIVOT_SETPOINT.INTAKING) : new InstantCommand());
   }
 }

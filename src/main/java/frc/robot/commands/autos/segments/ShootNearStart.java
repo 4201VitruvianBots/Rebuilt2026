@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Fire;
 import frc.robot.commands.Shoot;
@@ -38,12 +39,12 @@ public class ShootNearStart extends Auto {
             = PathPlannerPath.fromPathFile("ShootNearStart");
         
         addCommands(
-            Commands.runOnce(() -> deps.flywheel.setRPMOutputFOC(Shoot.getShotForDistance(Meters.of(1.45650895207174)).shooterRPM)), // I literally just copied this from IntakeFromNeutral this is so bad omg
-            getPathCommand(traj, path, flipToRight).andThen(() -> swerveDrive.setControl(stopRequest)),
+            Commands.runOnce(() -> deps.flywheel.setRPMOutputFOC(Shoot.getShotForDistance(Meters.of(1.45650895207174)).shooterRPM)).andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")), // I literally just copied this from IntakeFromNeutral this is so bad omg
+            getPathCommand(traj, path, flipToRight).andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Finished moving to shooting position")),
             new ParallelCommandGroup(
                 new Shoot(flywheel, hood, vision, swerveDrive),
                 new WaitCommand(2).andThen(new Fire(intake, indexer, uptake)) // TODO: Auto-fire once auto align, shooter hood, and flywheel RPM are ready
-            ).withTimeout(4) // TODO: Also auto-detect when we're done shooting
+            ).withTimeout(4).andThen(new PrintCommand("[AUTO] Finished shooting from near start")) // TODO: Also auto-detect when we're done shooting
         );
       } catch (Exception e) {
         DriverStation.reportError("Failed to load path for ShootNearStart", e.getStackTrace());

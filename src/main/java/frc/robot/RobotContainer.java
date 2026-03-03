@@ -272,12 +272,12 @@ public class RobotContainer {
     IntakeFromNeutral.registerNamedCommands(autoDeps);
     IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
-    m_autoChooser.addOption(
-        "Auto 0 - CenterPreloadClimb",
-        new CenterPreloadClimb(autoDeps));
-    m_autoChooser.addOption(
-        "Auto 1 - CenterDepot",
-        new CenterDepot(autoDeps));
+    // m_autoChooser.addOption(
+    //     "Auto 0 - CenterPreloadClimb",
+    //     new CenterPreloadClimb(autoDeps));
+    // m_autoChooser.addOption(
+    //     "Auto 1 - CenterDepot",
+    //     new CenterDepot(autoDeps));
     m_autoChooser.addOption(
         "Auto 2 - SideNeutralClimb",
         new SideNeutralClimb(autoDeps, () -> m_flipToRight));
