@@ -26,7 +26,7 @@ public class CLIMBER {
   // elevator. It should just be the gear ratio that is different from last year.
   public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
   public static final GravityTypeValue K_GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
-  public static final Current kStatorCurrentLimit = Amps.of(40);
+  public static final Current kStatorCurrentLimit = Amps.of(80);
 
   public class NOT_HOLDING_ROBOT {
     public static int slot = 0;

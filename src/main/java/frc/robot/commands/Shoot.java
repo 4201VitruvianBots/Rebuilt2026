@@ -24,6 +24,7 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Uptake;
@@ -180,6 +181,7 @@ public class Shoot extends Command {
 
     // Calculate parameters accounted for imparted velocity
     Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
+
     double hoodAngle = shot.hoodAngle.in(Radians);
 
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
@@ -189,10 +191,17 @@ public class Shoot extends Command {
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
     
-    m_swerveDrivetrain.setChassisSpeedsWithHeading(
+    if (Controls.isRedAlliance()){
+      m_swerveDrivetrain.setChassisSpeedsWithHeading(
+        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+        driveAngle.rotateBy(Rotation2d.k180deg));
+    } else {
+      m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
         driveAngle);
+    }
   }
 
   // Called once the command ends or is interrupted.

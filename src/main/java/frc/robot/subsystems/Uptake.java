@@ -57,6 +57,8 @@ public class Uptake extends SubsystemBase {
     config.Slot0.kP = UPTAKE.kP;
     config.Slot0.kS = UPTAKE.kS;
     config.Slot0.kV = UPTAKE.kV;
+    config.CurrentLimits.StatorCurrentLimit = UPTAKE.kStatorCurrentLimit;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.Feedback.SensorToMechanismRatio = UPTAKE.gearRatio;
 
