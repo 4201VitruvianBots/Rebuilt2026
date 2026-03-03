@@ -149,6 +149,7 @@ public class Shoot extends Command {
     shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
 
     for (int i = 0; i < 20; i++) {
+      shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
       timeOfFlight = shot.timeOfFlight;
       double offsetX = launcherVelocityX * timeOfFlight;
       double offsetY = launcherVelocityY * timeOfFlight;
@@ -167,7 +168,9 @@ public class Shoot extends Command {
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
     // all of the logic for angle is above this Comment
-
+    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    m_shooterHood.setAngle(Radians.of(hoodAngle));
+    
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
