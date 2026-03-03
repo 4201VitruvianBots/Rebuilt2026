@@ -92,6 +92,10 @@ public class Shoot extends Command {
   private final Hood m_shooterHood;
 
   Translation2d m_goal = new Translation2d();
+  
+  public static Shot getShotForDistance(Distance distance) {
+    return distanceToShotMap.get(distance);
+  }
 
   /** Shoot on the move command */
   public Shoot(

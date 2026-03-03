@@ -4,19 +4,11 @@
 
 package frc.robot.commands.autos.routines;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.commands.autos.segments.IntakeFromNeutral;
+import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.team4201.lib.command.Auto;
-import frc.team4201.lib.utils.TrajectoryUtils;
 import java.util.function.BooleanSupplier;
 
 public class SideNeutralTwice extends Auto {
@@ -24,69 +16,13 @@ public class SideNeutralTwice extends Auto {
       AutoDependencies deps,
       BooleanSupplier flipPath,
       boolean rushCenter) {
-    try {
-      var swerveDrive = deps.swerveDrive;
-      var intake = deps.intake;
-      var vision = deps.vision;
-      var flywheel = deps.flywheel;
-      var hood = deps.hood;
-      var intakePivot = deps.intakePivot;
-      var indexer = deps.indexer;
-      var uptake = deps.uptake;
-
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
-
-      TrajectoryUtils trajectoryUtils = swerveDrive.getTrajectoryUtils();
-
-      var m_path1 = PathPlannerPath.fromPathFile("SideNeutralTwice1");
-      var m_path2 = PathPlannerPath.fromPathFile("SideNeutralTwice2");
-      var m_path3 = PathPlannerPath.fromPathFile("SideNeutralTwice3");
-      var m_path4 = PathPlannerPath.fromPathFile("SideNeutralTwice4");
-      var m_path5 = PathPlannerPath.fromPathFile("SideNeutralTwice5");
-      var m_path6 = PathPlannerPath.fromPathFile("SideNeutralTwice6");
-      var m_path7 = PathPlannerPath.fromPathFile("SideNeutralTwice7");
-
-      Timer timer = new Timer();
-
+    
       addCommands(
-          new InstantCommand(timer::restart),
-          getPathCommand(trajectoryUtils, m_path1, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest)),
-          rushCenter
-              ? new InstantCommand()
-              : new ParallelCommandGroup(
-                      new Shoot(flywheel, hood, uptake, vision, swerveDrive),
-                      uptake.command(UPTAKE_SPEED.UPTAKING))
-                  .withTimeout(1), // Don't shoot preload if we're trying to rush the center
-          getPathCommand(trajectoryUtils, m_path2, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelRaceGroup(
-              new IntakeCommand(intake, intakePivot, indexer, uptake),
-              getPathCommand(trajectoryUtils, m_path3, flipPath)
-                  .andThen(() -> swerveDrive.setControl(stopRequest))),
-          getPathCommand(trajectoryUtils, m_path4, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(
-                  new Shoot(flywheel, hood, uptake, vision, swerveDrive),
-                  uptake.command(UPTAKE_SPEED.UPTAKING))
-              .withTimeout(2),
-          // This code just repeats the last four steps again.
-          getPathCommand(trajectoryUtils, m_path5, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelRaceGroup(
-              new IntakeCommand(intake, intakePivot, indexer, uptake),
-              getPathCommand(trajectoryUtils, m_path6, flipPath)
-                  .andThen(() -> swerveDrive.setControl(stopRequest))),
-          getPathCommand(trajectoryUtils, m_path7, flipPath)
-              .andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(
-                  new Shoot(flywheel, hood, uptake, vision, swerveDrive),
-                  uptake.command(UPTAKE_SPEED.UPTAKING))
-              .withTimeout(3),
-          new InstantCommand(() -> System.out.println(timer.get())));
-    } catch (Exception e) {
-      DriverStation.reportError("Failed to load path for SideNeutralTwice", e.getStackTrace());
-      addCommands(new InstantCommand());
-    }
+          rushCenter ? new InstantCommand() : new ShootNearStart(deps, flipPath),
+          new IntakeFromNeutral(deps, !rushCenter, flipPath),
+          new ShootNearStart(deps, flipPath),
+          new IntakeFromNeutral(deps, true, flipPath),
+          new ShootNearStart(deps, flipPath)
+    );
   }
 }

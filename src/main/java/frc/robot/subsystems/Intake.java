@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -36,6 +37,9 @@ public class Intake extends SubsystemBase {
 
   private DoubleSubscriber m_outputSubscriber;
   private DoublePublisher m_outputPublisher;
+  
+  private LinearFilter currentFilter = LinearFilter.movingAverage(200); // Up to ~4 seconds worth of data
+  private boolean runCurrentFilter = false;
 
   // private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 
@@ -112,9 +116,23 @@ public class Intake extends SubsystemBase {
       throw new UnsupportedOperationException("Attempted to set fuel sim count on real robot");
     }
   }
+  
+  public void startCurrentFilter() {
+    currentFilter.reset();
+    runCurrentFilter = true;
+  }
+  
+  public double endCurrentFilter() {
+    runCurrentFilter = false;
+    return currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
+  }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    if (runCurrentFilter) {
+      currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
+    }
+  }
 
   @Override
   public void simulationPeriodic() {

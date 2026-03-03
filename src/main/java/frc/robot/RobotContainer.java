@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
+import frc.robot.commands.Fire;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterDepot;
@@ -27,6 +28,9 @@ import frc.robot.commands.autos.routines.CenterPreloadClimb;
 import frc.robot.commands.autos.routines.SideNeutralClimb;
 import frc.robot.commands.autos.routines.SideNeutralDepotClimb;
 import frc.robot.commands.autos.routines.SideNeutralTwice;
+import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
+import frc.robot.commands.autos.segments.IntakeFromNeutral;
+import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
@@ -223,11 +227,7 @@ public class RobotContainer {
 
     m_driverController
         .rightTrigger()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_intake.command(INTAKE_SPEED.INTAKING),
-                m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
-                m_uptake.percentCommand(0.7)));
+        .whileTrue(new Fire(m_intake, m_indexer, m_uptake));
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
@@ -267,6 +267,9 @@ public class RobotContainer {
             m_intakePivot,
             m_indexer,
             m_uptake);
+    
+    IntakeFromNeutral.registerNamedCommands(autoDeps);
+    IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
     m_autoChooser.addOption(
         "Auto 0 - CenterPreloadClimb",
@@ -286,6 +289,10 @@ public class RobotContainer {
     m_autoChooser.addOption(
         "Auto 5 - SideNeutralTwice - NO PRELOAD",
         new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight));
+    m_autoChooser.addOption(
+        "Test - Intake from Neutral", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
   }
 
   private void initSideChooser() {

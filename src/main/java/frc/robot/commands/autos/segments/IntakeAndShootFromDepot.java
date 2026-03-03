@@ -4,16 +4,26 @@
 
 package frc.robot.commands.autos.segments;
 
+import static edu.wpi.first.units.Units.Meters;
+
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.team4201.lib.command.Auto;
 
 public class IntakeAndShootFromDepot extends Auto {
+    public static void registerNamedCommands(AutoDependencies deps) {
+         NamedCommands.registerCommand("prepareFlywheelForDepot", Commands.runOnce(() -> deps.flywheel.setRPMOutputFOC(Shoot.getShotForDistance(Meters.of(3.31521515713456)).shooterRPM))); // YAY more magic numbers
+    }
+    
     public IntakeAndShootFromDepot(AutoDependencies deps) {
     try {
         var swerveDrive = deps.swerveDrive;
-        var climber = deps.climber;
         var intake = deps.intake;
         var vision = deps.vision;
         var flywheel = deps.flywheel;
@@ -22,7 +32,7 @@ public class IntakeAndShootFromDepot extends Auto {
         var indexer = deps.indexer;
         var uptake = deps.uptake;
         
-        var stopRequest = new com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds();
+        var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
         var intakeFromDepot
             = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("IntakeFromDepot");

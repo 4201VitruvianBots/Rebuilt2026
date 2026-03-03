@@ -45,13 +45,23 @@
       "name": "MeasureIntakeBefore",
       "waypointRelativePos": 0.19928186714542165,
       "endWaypointRelativePos": 0.7109515260323171,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "measureIntakeBefore"
+        }
+      }
     },
     {
       "name": "MeasureIntakeAfter",
       "waypointRelativePos": 0.7055655296229802,
       "endWaypointRelativePos": 1.0,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "measureIntakeAfter"
+        }
+      }
     }
   ],
   "globalConstraints": {

@@ -36,7 +36,12 @@
       "name": "PrepareFlywheel",
       "waypointRelativePos": 0.6000000000000014,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "prepareFlywheelForNearHub"
+        }
+      }
     }
   ],
   "globalConstraints": {

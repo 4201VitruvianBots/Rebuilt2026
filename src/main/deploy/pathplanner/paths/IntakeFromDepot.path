@@ -73,7 +73,12 @@
       "name": "PrepareFlywheel",
       "waypointRelativePos": 0.9966101694915257,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "prepareFlywheelForDepot"
+        }
+      }
     }
   ],
   "globalConstraints": {
