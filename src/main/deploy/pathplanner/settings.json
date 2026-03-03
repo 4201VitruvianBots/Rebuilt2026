@@ -5,11 +5,10 @@
   "pathFolders": [
     "CenterDepot",
     "CenterPreloadClimb",
-    "Segment - ShootNearStart",
     "PreloadSideNeutralTwice",
-    "Segment - IntakeAndShootFromDepot",
-    "Segment - IntakeFromNeutral",
-    "Segment - ReturnToStart",
+    "IntakeAndShootFromDepot",
+    "IntakeFromNeutral",
+    "ShootNearStart",
     "SideNeutralClimb",
     "SideNeutralDepotClimb"
   ],

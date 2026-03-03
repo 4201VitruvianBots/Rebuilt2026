@@ -70,7 +70,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Segment - IntakeFromNeutral",
+  "folder": "IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

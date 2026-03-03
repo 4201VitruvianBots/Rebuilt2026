@@ -3,44 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
+        "x": 6.0,
         "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.521932021466905,
-        "y": 5.487173524150268
+        "x": 7.0,
+        "y": 5.5
       },
       "isLocked": false,
-      "linkedName": "SideStartPoint"
+      "linkedName": "OverBumpPointEnd"
     },
     {
       "anchor": {
-        "x": 6.0,
+        "x": 3.5,
         "y": 5.5
       },
       "prevControl": {
-        "x": 4.0,
+        "x": 2.5,
         "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OverBumpPointStart"
+      "linkedName": "SideStartPoint"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.2,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "PrepareFlywheel",
+      "waypointRelativePos": 0.6000000000000014,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -57,7 +55,7 @@
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

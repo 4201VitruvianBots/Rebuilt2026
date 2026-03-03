@@ -3,39 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 5.5
+        "x": 1.5851341681574236,
+        "y": 5.681878354203935
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.521932021466905,
-        "y": 5.487173524150268
+        "x": 1.5851341681574236,
+        "y": 5.431878354203935
       },
       "isLocked": false,
-      "linkedName": "SideStartPoint"
+      "linkedName": "DepotIntakeStartPoint"
     },
     {
       "anchor": {
-        "x": 6.0,
-        "y": 5.5
+        "x": 1.4715563506261176,
+        "y": 5.178890876565294
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 5.5
+        "x": 1.4715563506261176,
+        "y": 5.437753506924127
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OverBumpPointStart"
+      "linkedName": "DepotShootPoint"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.2,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 0.78,
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [],
@@ -51,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -20.0
   },
   "reversed": false,
-  "folder": "IntakeFromNeutral",
+  "folder": "IntakeAndShootFromDepot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
