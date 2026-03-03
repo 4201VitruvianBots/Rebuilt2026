@@ -170,7 +170,7 @@ public class Shoot extends Command {
     // all of the logic for angle is above this Comment
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
-    
+
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
