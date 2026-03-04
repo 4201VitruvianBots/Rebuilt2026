@@ -22,6 +22,8 @@ public class FLYWHEEL {
   public static final double kInertia = 0.01;
   public static final double kStatorCurrentLimit = 70.0;
   public static final double kVelocityErrorThreshold = 150.0;
+  public static final double kFuelDragCoefficient =
+      0.48; // Estimation based on it's size and relatively smooth shape. TODO: Tune
 
   // These worked on wood bot. Change jerk later if further optimization is needed
   public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
