@@ -68,7 +68,7 @@ public class Shoot extends Command {
     // distanceToShotMap.put(Meters.of(3.31521515713456), new Shot(RPM.of(1670), Degrees.of(22), 1.286)); // Half Tuned
     // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21), 1.286));
     // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8), 1.286));
-    distanceToShotMap.put(Meters.of(3.79704412351433), new Shot(RPM.of(1720), Degrees.of(12), 1.286));
+    distanceToShotMap.put(Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(12), 1.286));
     distanceToShotMap.put(Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(13), 1.286));
     distanceToShotMap.put(Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(16.5), 1.286));
     // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
