@@ -39,7 +39,7 @@ public class SWERVE {
 
   public static final LinearVelocity kMaxSpeed = FeetPerSecond.of(18);
   // Made up values
-  public static final LinearVelocity kMaxSpeedBump = FeetPerSecond.of(5.0);
+  public static final LinearVelocity kMaxSpeedBump = FeetPerSecond.of(5.5);
   public static final LinearAcceleration kMaxAccelerationBump = FeetPerSecondPerSecond.of(3.0);
 
   public static final LinearVelocity kMaxSpeedShooting = FeetPerSecond.of(8.0);
