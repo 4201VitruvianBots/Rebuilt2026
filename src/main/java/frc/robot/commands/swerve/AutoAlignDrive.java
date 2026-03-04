@@ -1,22 +1,31 @@
 package frc.robot.commands.swerve;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.FIELD.SECTOR;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
+import frc.robot.subsystems.Vision;
+
+import static edu.wpi.first.units.Units.Rotation;
+
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
+  private final Vision m_vision;
 
   private final DoubleSupplier m_throttleInput;
   private final DoubleSupplier m_strafeInput;
 
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
-      CommandSwerveDrivetrain commandSwerveDrivetrain,
+      CommandSwerveDrivetrain commandSwerveDrivetrain, Vision vision,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
+    m_vision = vision;
     m_swerveDrivetrain = commandSwerveDrivetrain;
     m_throttleInput = throttleInput;
     m_strafeInput = strafeInput;
@@ -30,26 +39,11 @@ public class AutoAlignDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // TODO: Add pass position as goal
-    // If we're outside our own zone, then we align to pass.
-    //    if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
-    //      m_goal = Translation2d.kZero;
-    //      // If we're in our own zone, then we align to the hub
-    //    } else {
-    //      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    //    }
-    var setPoint =
-        FIELD
-            .HUB
-            .GOAL
-            .getTargetPosition()
-            .toTranslation2d()
-            .minus(m_swerveDrivetrain.getState().Pose.getTranslation());
-
+    var ifZeroFacesBump = (m_vision.isInBlueSector() || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_LEFT || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
-        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        setPoint.getAngle());
+      SWERVE.kMaxSpeedBump.times(m_throttleInput.getAsDouble()),
+      SWERVE.kMaxSpeedBump.times(m_strafeInput.getAsDouble()),
+      ifZeroFacesBump ? Rotation2d.kZero : Rotation2d.k180deg);
   }
 
   // Called once the command ends or is interrupted.

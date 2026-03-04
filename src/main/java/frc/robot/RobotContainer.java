@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.*;
+import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
@@ -193,6 +195,7 @@ public class RobotContainer {
     //               m_driverController::getLeftX));
     // }
 
+    m_driverController.y().whileTrue(new AutoAlignDrive(m_swerveDrive, m_vision, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
     m_driverController
         .x()
         .whileTrue(

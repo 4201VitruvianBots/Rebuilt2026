@@ -15,6 +15,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -271,16 +272,19 @@ public class Vision extends SubsystemBase {
     return isAligned;
   }
 
-  @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
-  public boolean isPointingAtGoal() {
+  public boolean isPointingAtGoal(Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
     // bearing from robot to goal
     var bearing =
-        m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
     // robot heading
     var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
     // smallest signed angle difference in [-pi, pi]
     double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
-    return Math.abs(error) <= Units.degreesToRadians(1.0);
+    if (returnAbsoluteValue == true){
+      return Math.abs(error) <= Units.degreesToRadians(tolerance);
+    } else {
+      return error <= Units.degreesToRadians(tolerance);
+    }
   }
 
   @Logged(name = "Is in Neutral Sector?", importance = Importance.DEBUG)

@@ -38,6 +38,10 @@ public class SWERVE {
           new Translation2d(-kWheelBase.div(2).in(Meters), -kTrackWidth.div(2).in(Meters)));
 
   public static final LinearVelocity kMaxSpeed = FeetPerSecond.of(18);
+  // Made up values
+  public static final LinearVelocity kMaxSpeedBump = FeetPerSecond.of(5.0);
+  public static final LinearAcceleration kMaxAccelerationBump = FeetPerSecondPerSecond.of(3.0);
+
   public static final LinearVelocity kMaxSpeedShooting = FeetPerSecond.of(8.0);
   public static final LinearAcceleration kMaxAccelerationShooting = FeetPerSecondPerSecond.of(11.0);
   public static final AngularVelocity kMaxRotation =
