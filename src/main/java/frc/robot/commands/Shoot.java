@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,6 +22,9 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
+import frc.robot.constants.FIELD.HUB;
+import frc.robot.constants.FIELD.SECTOR;
+import frc.robot.constants.FIELD.ZONE;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
@@ -133,7 +137,16 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    Rectangle2d m_goalZone;
+    var inPassingZone = m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector();
+    if (inPassingZone){
+      m_goalZone = Controls.isRedAlliance() ? (m_vision.isInLeftHalf() ? ZONE.BLUE.BUMP.LEFT : ZONE.BLUE.BUMP.RIGHT)
+                                              : (m_vision.isInLeftHalf() ? ZONE.RED.BUMP.LEFT : ZONE.RED.BUMP.RIGHT);
+      m_goal = m_goalZone.getCenter().getTranslation();
+    // If we're in our own zone, then we align to the hub
+    } else {
+      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    }
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
 
@@ -196,17 +209,10 @@ public class Shoot extends Command {
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
     
-    if (Controls.isRedAlliance()){
-      m_swerveDrivetrain.setChassisSpeedsWithHeading(
+    m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        driveAngle.rotateBy(Rotation2d.k180deg));
-    } else {
-      m_swerveDrivetrain.setChassisSpeedsWithHeading(
-        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        driveAngle);
-    }
+        Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
   }
 
   // Called once the command ends or is interrupted.
