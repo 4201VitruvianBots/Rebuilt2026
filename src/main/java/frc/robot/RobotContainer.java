@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
@@ -27,6 +28,7 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
@@ -152,7 +154,7 @@ public class RobotContainer {
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
+    m_intakePivot = new IntakePivot();
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
@@ -220,11 +222,13 @@ public class RobotContainer {
                 m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
                 m_uptake.percentCommand(0.7)));
     // // I foresee a state machine in the future...
-    // if (m_uptake != null && m_indexer != null && m_intake != null) {
-    //   m_driverController
-    //       .a()
-    //       .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
-    // }
+    if (m_intakePivot != null) {
+      m_driverController
+          .b()
+          .whileTrue(
+                m_intakePivot.jostle()
+              );
+    }
 
     // if (m_intake != null) {
     //   m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
