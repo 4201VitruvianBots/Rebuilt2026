@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.team4201.lib.utils.TrajectoryUtils;
-import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 // The default side for a path should be the depot side, thus it is only flipped if the autoSide
@@ -13,15 +12,14 @@ import java.util.function.BooleanSupplier;
 public abstract class Auto extends SequentialCommandGroup {
   protected final Command getPathCommand(
       TrajectoryUtils trajectoryUtils, PathPlannerPath path, BooleanSupplier flipToRight) {
-    return Commands.defer(
+    return Commands.deferredProxy(
         () -> {
           if (flipToRight.getAsBoolean()) {
             return trajectoryUtils.generatePPHolonomicCommand(path.mirrorPath());
           } else {
             return trajectoryUtils.generatePPHolonomicCommand(path);
           }
-        },
-        Set.of());
+        });
   }
 
   // chooses between 2 paths depending on autoSide input
@@ -30,14 +28,13 @@ public abstract class Auto extends SequentialCommandGroup {
       PathPlannerPath choice1,
       PathPlannerPath choice2,
       BooleanSupplier autoSide) {
-    return Commands.defer(
+    return Commands.deferredProxy(
         () -> {
           if (autoSide.getAsBoolean()) {
             return trajectoryUtils.generatePPHolonomicCommand(choice1);
           } else {
             return trajectoryUtils.generatePPHolonomicCommand(choice2);
           }
-        },
-        Set.of());
+        });
   }
 }
