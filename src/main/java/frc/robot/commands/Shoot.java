@@ -178,6 +178,7 @@ public class Shoot extends Command {
               / FLYWHEEL
                   .kFuelDragCoefficient; // Accounting for linear drag. This is the equation for
       // continuous decay.
+      // https://frc-docs--3242.org.readthedocs.build/en/3242/docs/software/advanced-controls/fire-control/linear-drag.html
       double offsetX = launcherVelocityX * effectiveTimeOfFlight;
       double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =
