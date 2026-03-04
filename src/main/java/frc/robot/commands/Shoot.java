@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
+import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -165,14 +166,21 @@ public class Shoot extends Command {
 
     // Account for imparted velocity by robot (launcher) to offset
     double timeOfFlight = shot.timeOfFlight;
+    double effectiveTimeOfFlight = timeOfFlight;
     Pose2d lookaheadPose = launcherPosition;
     double lookaheadLauncherToTargetDistance = launcherToTargetDistance;
-    shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
 
     for (int i = 0; i < 20; i++) {
+      shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
       timeOfFlight = shot.timeOfFlight;
-      double offsetX = launcherVelocityX * timeOfFlight;
-      double offsetY = launcherVelocityY * timeOfFlight;
+      effectiveTimeOfFlight =
+          (1 - Math.pow(Math.E, -(FLYWHEEL.kFuelDragCoefficient * timeOfFlight)))
+              / FLYWHEEL
+                  .kFuelDragCoefficient; // Accounting for linear drag. This is the equation for
+      // continuous decay.
+      // https://frc-docs--3242.org.readthedocs.build/en/3242/docs/software/advanced-controls/fire-control/linear-drag.html
+      double offsetX = launcherVelocityX * effectiveTimeOfFlight;
+      double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =
           new Pose2d(
               launcherPosition.getTranslation().plus(new Translation2d(offsetX, offsetY)),
