@@ -33,14 +33,13 @@ public class ShootNearStart extends Auto {
         var intake = deps.intake;
         
         var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
-        var traj = swerveDrive.getTrajectoryUtils();
 
         var path
             = PathPlannerPath.fromPathFile("ShootNearStart");
         
         addCommands(
             Commands.runOnce(() -> deps.flywheel.setRPMOutputFOC(Shoot.getShotForDistance(Meters.of(1.45650895207174)).shooterRPM)).andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")), // I literally just copied this from IntakeFromNeutral this is so bad omg
-            getPathCommand(traj, path, flipToRight).andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Finished moving to shooting position")),
+            getPathCommand(swerveDrive, path, flipToRight).andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Finished moving to shooting position")),
             new ParallelCommandGroup(
                 new Shoot(flywheel, hood, vision, swerveDrive),
                 new WaitCommand(2).andThen(new Fire(intake, indexer, uptake)) // TODO: Auto-fire once auto align, shooter hood, and flywheel RPM are ready

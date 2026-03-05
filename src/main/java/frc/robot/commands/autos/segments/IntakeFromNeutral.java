@@ -64,8 +64,7 @@ public class IntakeFromNeutral extends Auto {
         var uptake = deps.uptake;
         
         var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
-        var traj = swerveDrive.getTrajectoryUtils();
-        
+
         var crossOverBump =
             PathPlannerPath.fromPathFile(startingFromShoot ? "CrossOverBumpFromShooting" : "CrossOverBumpFromStart");
               
@@ -79,16 +78,16 @@ public class IntakeFromNeutral extends Auto {
         
         addCommands(
             new ParallelDeadlineGroup(
-                getPathCommand(traj, crossOverBump, flipToRight),
+                getPathCommand(swerveDrive, crossOverBump, flipToRight),
                 new IntakeCommand(intake, intakePivot, indexer, uptake),
                 new PrintCommand("[AUTO] Crossing over bump and intaking...")
             ).andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
             new ParallelDeadlineGroup(
-                getPathCommand(traj, lostCenterRace ? intakeFromSide : intakeFromCenter, flipToRight),
+                getPathCommand(swerveDrive, lostCenterRace ? intakeFromSide : intakeFromCenter, flipToRight),
                 new IntakeCommand(intake, intakePivot, indexer, uptake),
                 new PrintCommand("[AUTO] Intaking " + (lostCenterRace ? "near hub" : "from center") + "...")
             ).andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Finished intaking " + (lostCenterRace ? "near hub" : "from center"))),
-            getPathCommand(traj, returnToAllianceZone, flipToRight)
+            getPathCommand(swerveDrive, returnToAllianceZone, flipToRight)
                 .andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Returned to alliance zone"))
         );
       } catch (Exception e) {
