@@ -19,8 +19,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FIELD.HUB;
 import frc.robot.constants.FIELD.SECTOR;
@@ -85,6 +87,7 @@ public class Shoot extends Command {
   private final Vision m_vision;
   private final Flywheel m_flywheel;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
+  private CommandXboxController m_driverController;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
   private static double phaseDelay = 0.0;
@@ -99,15 +102,17 @@ public class Shoot extends Command {
 
   Translation2d m_goal = new Translation2d();
 
-  /** Shoot on the move command */
+  /** Shoot on the move command with rumble */
   public Shoot(
       Flywheel flywheel,
       Hood shooterHood,
       Vision vision,
+      CommandXboxController driverController,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
     m_flywheel = flywheel;
+    m_driverController = driverController;
     m_swerveDrivetrain = swerveDrive;
     m_throttleInput = throttleInput;
     m_strafeInput = strafeInput;
@@ -208,6 +213,11 @@ public class Shoot extends Command {
     // all of the logic for angle is above this Comment
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
+    if (m_flywheel.isAtRPMsetpoint()) {
+      m_driverController.setRumble(RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength);
+    } else {
+      m_driverController.setRumble(RumbleType.kBothRumble, 0);
+    }
     
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
