@@ -176,7 +176,7 @@ public class RobotContainer {
     if (m_vision != null && m_flywheel != null && m_hood != null) {
       m_driverController
           .rightBumper()
-          .toggleOnTrue(
+          .whileTrue(
               new Shoot(
                   m_flywheel,
                   m_hood,
