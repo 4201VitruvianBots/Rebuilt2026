@@ -215,9 +215,9 @@ public class Shoot extends Command {
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
     if (m_flywheel.isAtRPMsetpoint()) {
-      m_driverController.setRumble(RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength);
+      if (m_driverController != null) m_driverController.setRumble(RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength); // Null in auto
     } else {
-      m_driverController.setRumble(RumbleType.kBothRumble, 0);
+      if (m_driverController != null) m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     }
 
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
@@ -229,7 +229,7 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_driverController.setRumble(RumbleType.kBothRumble, 0);
+    if (m_driverController != null)  m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
     m_flywheel.setRPMOutputFOC(RPM.of(0.0));
   }

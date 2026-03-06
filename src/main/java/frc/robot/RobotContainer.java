@@ -31,6 +31,7 @@ import frc.robot.commands.autos.routines.SideNeutralTwice;
 import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.ShootNearStart;
+import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
@@ -83,7 +84,8 @@ public class RobotContainer {
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake;
 
-  @Logged(name = "Climber", importance = Logged.Importance.INFO)
+  // @Logged(name = "Climber", importance = Logged.Importance.INFO)
+  @NotLogged
   private Climber m_climber;
 
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
@@ -288,12 +290,12 @@ public class RobotContainer {
     IntakeFromNeutral.registerNamedCommands(autoDeps);
     IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
-    // m_autoChooser.addOption(
-    //     "Auto 0 - CenterPreloadClimb",
-    //     new CenterPreloadClimb(autoDeps));
-    // m_autoChooser.addOption(
-    //     "Auto 1 - CenterDepot",
-    //     new CenterDepot(autoDeps));
+    m_autoChooser.addOption(
+        "Auto 0 - CenterPreloadClimb",
+        new CenterPreloadClimb(autoDeps));
+    m_autoChooser.addOption(
+        "Auto 1 - CenterDepot",
+        new CenterDepot(autoDeps));
     m_autoChooser.addOption(
         "Auto 2 - SideNeutralClimb",
         new SideNeutralClimb(autoDeps, () -> m_flipToRight));
