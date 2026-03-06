@@ -177,8 +177,19 @@ public class Hood extends SubsystemBase {
     m_motor.setControl(m_VoltageOut.withOutput(voltage.in(Volts)));
   }
 
-  public Command manualCommand() {
-    return this.startEnd(() -> setAngle(Degrees.of(1.0)), () -> setAngle(Degrees.of(0.0)));
+  public Command manualAgainstHubCommand() {
+    return this.startEnd(
+        () -> setAngle(Degrees.of(1.0)), () -> setAngle(Degrees.of(0.0)));
+  }
+
+  public Command manualAgainstTowerCommand() {
+    return this.startEnd(
+        () -> setAngle(Degrees.of(1.0)), () -> setAngle(Degrees.of(0.0)));
+  }
+
+  public Command manualPassCommand() {
+    return this.startEnd(
+        () -> setAngle(Degrees.of(16.5)), () -> setAngle(Degrees.of(0.0)));
   }
 
   @Override
