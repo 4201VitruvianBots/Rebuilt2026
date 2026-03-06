@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 3.2846726190476185,
+        "y": 4.811510416666668
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1826762342710015,
-        "y": 5.252444315316471
+        "x": 1.21734885331862,
+        "y": 5.563954731983139
       },
       "isLocked": false,
       "linkedName": "ShootingPoint"
@@ -64,7 +64,7 @@
   "folder": "Old - SideNeutralClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": -34.75591255354132
   },
   "useDefaultConstraints": true
 }

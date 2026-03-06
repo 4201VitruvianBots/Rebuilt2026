@@ -16,19 +16,24 @@
     },
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 3.2846726190476185,
+        "y": 4.811510416666668
       },
       "prevControl": {
-        "x": 3.25,
-        "y": 4.817424138370334
+        "x": 3.2846726190476185,
+        "y": 5.128934555037001
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "ShootingPoint"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -28.500000000000004
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": -34.75591255354132
   },
   "reversed": false,
   "folder": "ShootNearStart",
