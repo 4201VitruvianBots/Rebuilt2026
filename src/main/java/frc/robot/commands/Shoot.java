@@ -226,6 +226,7 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_driverController.setRumble(RumbleType.kBothRumble, 0);
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
     m_flywheel.setRPMOutputFOC(RPM.of(0.0));
   }

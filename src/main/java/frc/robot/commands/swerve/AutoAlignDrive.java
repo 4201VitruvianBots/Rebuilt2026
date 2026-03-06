@@ -14,6 +14,7 @@ public class AutoAlignDrive extends Command {
 
   private final DoubleSupplier m_throttleInput;
   private final DoubleSupplier m_strafeInput;
+  private boolean ifZeroFacesBump;
 
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
@@ -30,15 +31,16 @@ public class AutoAlignDrive extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    ifZeroFacesBump =
+        (m_vision.isInBlueSector()
+            || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_LEFT
+            || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    var ifZeroFacesBump =
-        (m_vision.isInBlueSector()
-            || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_LEFT
-            || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeedBump.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeedBump.times(m_strafeInput.getAsDouble()),
