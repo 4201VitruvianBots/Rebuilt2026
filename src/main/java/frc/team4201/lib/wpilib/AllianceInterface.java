@@ -1,13 +1,9 @@
 package frc.team4201.lib.wpilib;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.Controls;
 
 public interface AllianceInterface {
   static boolean isBlue() {
-    if (DriverStation.getAlliance().isPresent()) {
-      return DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue);
-    } else {
-      return false;
-    }
+    return Controls.isBlueAlliance();
   }
 }

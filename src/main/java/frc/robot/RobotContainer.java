@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -18,7 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
@@ -30,7 +28,6 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
-import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
@@ -108,7 +105,8 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
   private Robot2d m_robotSim = new Robot2d();
-  private final Telemetry m_telemetry = new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
+  private final Telemetry m_telemetry =
+      new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
   private final FuelSim m_fuelSim = new FuelSim();
 
@@ -197,12 +195,17 @@ public class RobotContainer {
     //               m_driverController::getLeftX));
     // }
 
-    m_driverController.y().whileTrue(new AutoAlignDrive(m_swerveDrive, m_vision, () -> m_driverController.getLeftY(), () -> m_driverController.getLeftX()));
+    m_driverController
+        .y()
+        .whileTrue(
+            new AutoAlignDrive(
+                m_swerveDrive,
+                m_vision,
+                m_driverController::getLeftY,
+                m_driverController::getLeftX));
     m_driverController
         .x()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_flywheel.manualCommand(), m_hood.manualCommand()));
+        .whileTrue(new ParallelCommandGroup(m_flywheel.manualCommand(), m_hood.manualCommand()));
 
     m_driverController
         .leftBumper()
@@ -213,10 +216,14 @@ public class RobotContainer {
                 m_vision,
                 m_driverController,
                 m_swerveDrive,
-                () -> m_driverController.getLeftY(),
-                () -> m_driverController.getLeftX()));
+                m_driverController::getLeftY,
+                m_driverController::getLeftX));
 
-    m_driverController.leftTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
+    m_driverController
+        .leftTrigger()
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
 
     m_driverController
         .rightTrigger()
@@ -227,11 +234,7 @@ public class RobotContainer {
                 m_uptake.percentCommand(0.7)));
     // // I foresee a state machine in the future...
     if (m_intakePivot != null) {
-      m_driverController
-          .b()
-          .whileTrue(
-                m_intakePivot.jostle()
-              );
+      m_driverController.b().whileTrue(m_intakePivot.jostle());
     }
 
     // if (m_intake != null) {
@@ -367,7 +370,7 @@ public class RobotContainer {
     if (m_climber != null) m_climber.testPeriodic();
   }
 
-  public void disabledPeriodic(){
+  public void disabledPeriodic() {
     if (m_vision != null) m_vision.disabledPeriodic();
   }
 

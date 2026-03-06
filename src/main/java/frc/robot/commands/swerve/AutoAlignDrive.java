@@ -4,13 +4,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.FIELD.SECTOR;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Vision;
-
-import static edu.wpi.first.units.Units.Rotation;
-
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
@@ -22,7 +17,8 @@ public class AutoAlignDrive extends Command {
 
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
-      CommandSwerveDrivetrain commandSwerveDrivetrain, Vision vision,
+      CommandSwerveDrivetrain commandSwerveDrivetrain,
+      Vision vision,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
     m_vision = vision;
@@ -39,11 +35,14 @@ public class AutoAlignDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    var ifZeroFacesBump = (m_vision.isInBlueSector() || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_LEFT || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
+    var ifZeroFacesBump =
+        (m_vision.isInBlueSector()
+            || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_LEFT
+            || FIELD.getCurrentSector() == FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
-      SWERVE.kMaxSpeedBump.times(m_throttleInput.getAsDouble()),
-      SWERVE.kMaxSpeedBump.times(m_strafeInput.getAsDouble()),
-      ifZeroFacesBump ? Rotation2d.kZero : Rotation2d.k180deg);
+        SWERVE.kMaxSpeedBump.times(m_throttleInput.getAsDouble()),
+        SWERVE.kMaxSpeedBump.times(m_strafeInput.getAsDouble()),
+        ifZeroFacesBump ? Rotation2d.kZero : Rotation2d.k180deg);
   }
 
   // Called once the command ends or is interrupted.

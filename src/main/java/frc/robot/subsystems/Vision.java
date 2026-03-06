@@ -15,7 +15,6 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -272,7 +271,8 @@ public class Vision extends SubsystemBase {
     return isAligned;
   }
 
-  public boolean isPointingAtGoal(Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
+  public boolean isPointingAtGoal(
+      Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
     // bearing from robot to goal
     var bearing =
         goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
@@ -280,7 +280,7 @@ public class Vision extends SubsystemBase {
     var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
     // smallest signed angle difference in [-pi, pi]
     double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
-    if (returnAbsoluteValue == true){
+    if (returnAbsoluteValue == true) {
       return Math.abs(error) <= Units.degreesToRadians(tolerance);
     } else {
       return error <= Units.degreesToRadians(tolerance);
@@ -328,7 +328,7 @@ public class Vision extends SubsystemBase {
 
   public void teleopInit() {}
 
-  public void disabledPeriodic(){
+  public void disabledPeriodic() {
     if (Controls.isBlueAlliance()) {
       m_goal = FIELD.HUB.BLUE.getTargetPosition().toTranslation2d();
     } else {

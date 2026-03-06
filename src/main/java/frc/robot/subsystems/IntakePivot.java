@@ -150,25 +150,27 @@ public class IntakePivot extends SubsystemBase {
     return m_motor.isConnected();
   }
 
-  // public Boolean PrevSetpointIsIntaking() {     //placeholder, idea (in the future) is to find way to track previous setpoint and use that for jostling (like if the previous was storwed then not beable to jostle on accident)
-    // return m_desiredAngle
+  // public Boolean PrevSetpointIsIntaking() {     //placeholder, idea (in the future) is to find
+  // way to track previous setpoint and use that for jostling (like if the previous was storwed then
+  // not beable to jostle on accident)
+  // return m_desiredAngle
   // }
 
   @NotLogged
   public Command command(PIVOT_SETPOINT setpoint) {
-    return this.runOnce(
-      () -> setAngle(setpoint.getAngle())
-    );
+    return this.runOnce(() -> setAngle(setpoint.getAngle()));
   }
 
   @NotLogged
   public Command jostle() {
-    return new RepeatCommand(this.startEnd(
-      () -> setAngle(PIVOT_SETPOINT.JOSTLING.getAngle()),
-      () -> {
-        setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
-      }
-    ).withTimeout(0.3).andThen(new WaitCommand(0.3)));
+    return new RepeatCommand(
+        this.startEnd(
+                () -> setAngle(PIVOT_SETPOINT.JOSTLING.getAngle()),
+                () -> {
+                  setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
+                })
+            .withTimeout(0.3)
+            .andThen(new WaitCommand(0.3)));
   }
 
   @Override

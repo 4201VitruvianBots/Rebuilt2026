@@ -7,7 +7,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,16 +16,12 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
-import frc.robot.constants.FIELD.HUB;
-import frc.robot.constants.FIELD.SECTOR;
-import frc.robot.constants.FIELD.ZONE;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
@@ -62,17 +57,28 @@ public class Shoot extends Command {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
         Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(1.0), 1.286)); //
-    distanceToShotMap.put(Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(2.0), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(3.0), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(5.3), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(6.5), 1.286)); // Tuned
-    // distanceToShotMap.put(Meters.of(3.01901001108563), new Shot(RPM.of(1650), Degrees.of(14.7), 1.286));
-    // distanceToShotMap.put(Meters.of(3.31521515713456), new Shot(RPM.of(1670), Degrees.of(22), 1.286)); // Half Tuned
-    // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21), 1.286));
-    // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8), 1.286));
-    distanceToShotMap.put(Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(12), 1.286));
-    distanceToShotMap.put(Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(13), 1.286));
-    distanceToShotMap.put(Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(16.5), 1.286));
+    distanceToShotMap.put(
+        Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(2.0), 1.286)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(3.0), 1.286)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(5.3), 1.286)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(6.5), 1.286)); // Tuned
+    // distanceToShotMap.put(Meters.of(3.01901001108563), new Shot(RPM.of(1650), Degrees.of(14.7),
+    // 1.286));
+    // distanceToShotMap.put(Meters.of(3.31521515713456), new Shot(RPM.of(1670), Degrees.of(22),
+    // 1.286)); // Half Tuned
+    // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21),
+    // 1.286));
+    // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8),
+    // 1.286));
+    distanceToShotMap.put(
+        Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(12), 1.286));
+    distanceToShotMap.put(
+        Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(13), 1.286));
+    distanceToShotMap.put(
+        Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(16.5), 1.286));
     // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
@@ -142,16 +148,8 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Rectangle2d m_goalZone;
-    var inPassingZone = m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector();
-    if (inPassingZone){
-      m_goalZone = Controls.isRedAlliance() ? (m_vision.isInLeftHalf() ? ZONE.BLUE.BUMP.LEFT : ZONE.BLUE.BUMP.RIGHT)
-                                              : (m_vision.isInLeftHalf() ? ZONE.RED.BUMP.LEFT : ZONE.RED.BUMP.RIGHT);
-      m_goal = m_goalZone.getCenter().getTranslation();
-    // If we're in our own zone, then we align to the hub
-    } else {
-      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    }
+    m_goal = FIELD.TARGET.CURRENT_TARGET.getTargetPosition().toTranslation2d();
+
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
 
@@ -218,7 +216,7 @@ public class Shoot extends Command {
     } else {
       m_driverController.setRumble(RumbleType.kBothRumble, 0);
     }
-    
+
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
