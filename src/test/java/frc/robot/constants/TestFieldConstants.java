@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import utils.TestUtils;
 
 public class TestFieldConstants {
-
   @Test
   public void testFieldConstants() {
     // Just check that the values are different. Mostly redundant now, but this was meant to debug
@@ -27,7 +26,6 @@ public class TestFieldConstants {
   public void testSectorMap() {
     Controls controls = new Controls();
     FIELD.initializeConstants();
-    FIELD.updateConstants();
 
     Map<Pose2d, FIELD.SECTOR> redSectors = new HashMap<>();
     redSectors.put(new Pose2d(1, 1, Rotation2d.kZero), FIELD.SECTOR.BLUE_LEFT);
@@ -63,5 +61,33 @@ public class TestFieldConstants {
           FIELD.updateCurrentSector(k);
           assertEquals(v, FIELD.getCurrentSector());
         });
+  }
+
+  @Test
+  public void testTargets() {
+    Controls controls = new Controls();
+    FIELD.initializeConstants();
+
+    FIELD.updateCurrentSector(new Pose2d(13, 3, Rotation2d.kZero));
+    assertEquals(FIELD.HUB.RED, FIELD.TARGET.CURRENT_TARGET);
+
+    FIELD.updateCurrentSector(new Pose2d(7, 1, Rotation2d.kZero));
+    assertEquals(FIELD.TARGET.RED_LEFT_PASS, FIELD.TARGET.CURRENT_TARGET);
+
+    FIELD.updateCurrentSector(new Pose2d(7, 7, Rotation2d.kZero));
+    assertEquals(FIELD.TARGET.RED_RIGHT_PASS, FIELD.TARGET.CURRENT_TARGET);
+
+    // Test Blue Alliance
+    TestUtils.setPrivateField(controls, "m_allianceColor", DriverStation.Alliance.Blue);
+    FIELD.updateConstants();
+
+    FIELD.updateCurrentSector(new Pose2d(1, 3, Rotation2d.kZero));
+    assertEquals(FIELD.HUB.BLUE, FIELD.TARGET.CURRENT_TARGET);
+
+    FIELD.updateCurrentSector(new Pose2d(7, 7, Rotation2d.kZero));
+    assertEquals(FIELD.TARGET.BLUE_LEFT_PASS, FIELD.TARGET.CURRENT_TARGET);
+
+    FIELD.updateCurrentSector(new Pose2d(7, 1, Rotation2d.kZero));
+    assertEquals(FIELD.TARGET.BLUE_RIGHT_PASS, FIELD.TARGET.CURRENT_TARGET);
   }
 }

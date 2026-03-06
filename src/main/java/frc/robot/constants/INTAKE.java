@@ -79,7 +79,8 @@ public class INTAKE {
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),
-      INTAKING(Degrees.of(52.0));
+      INTAKING(Degrees.of(52.0)),
+      JOSTLING(Degrees.of(20.0));
 
       private final Angle angle;
 

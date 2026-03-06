@@ -116,7 +116,8 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
   private Robot2d m_robotSim = new Robot2d();
-  private final Telemetry m_telemetry = new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
+  private final Telemetry m_telemetry =
+      new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
   private final FuelSim m_fuelSim = new FuelSim();
 
@@ -170,7 +171,7 @@ public class RobotContainer {
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
-    m_climber = new Climber();
+    // m_climber = new Climber();
     // m_led = new LEDs();
     // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
@@ -208,10 +209,18 @@ public class RobotContainer {
     // }
 
     m_driverController
+        .y()
+        .whileTrue(
+            new AutoAlignDrive(
+                m_swerveDrive,
+                m_vision,
+                m_driverController::getLeftY,
+                m_driverController::getLeftX));
+    m_driverController
         .x()
         .whileTrue(
             new ParallelCommandGroup(
-                m_flywheel.manualCommand(), m_hood.manualCommand()));
+                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
     m_driverController
         .leftBumper()
@@ -220,11 +229,16 @@ public class RobotContainer {
                 m_flywheel,
                 m_hood,
                 m_vision,
+                m_driverController,
                 m_swerveDrive,
-                () -> m_driverController.getLeftY(),
-                () -> m_driverController.getLeftX()));
+                m_driverController::getLeftY,
+                m_driverController::getLeftX));
 
-    m_driverController.leftTrigger().whileTrue(new ParallelCommandGroup(m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
+    m_driverController
+        .leftTrigger()
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
 
     m_driverController
         .rightTrigger()
@@ -232,8 +246,10 @@ public class RobotContainer {
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
-    //       .a()
-    //       .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer, m_uptake));
+    //       .b()
+    //       .whileTrue(
+    //             m_intakePivot.jostle()
+    //           );
     // }
 
     // if (m_intake != null) {
@@ -346,7 +362,7 @@ public class RobotContainer {
     if (m_climber != null) m_climber.testPeriodic();
   }
 
-  public void disabledPeriodic(){
+  public void disabledPeriodic() {
     if (m_vision != null) m_vision.disabledPeriodic();
   }
 

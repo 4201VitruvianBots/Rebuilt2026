@@ -2,8 +2,7 @@ package frc.team4201.lib.geometry;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Translation3d;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Target3d {
   private static AprilTagFieldLayout m_field;
@@ -53,6 +52,13 @@ public class Target3d {
     } else {
       return m_targetPosition;
     }
+  }
+
+  public Target3d nearest(Collection<Target3d> targets) {
+    return Collections.min(
+        targets,
+        Comparator.comparing(
+            (Target3d other) -> this.getTargetPosition().getDistance(other.getTargetPosition())));
   }
 
   @Override

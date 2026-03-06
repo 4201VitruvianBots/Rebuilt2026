@@ -16,11 +16,13 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
+import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -54,32 +56,44 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     distanceToShotMap.put(
-        Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(9.0), 1.286)); //
-    distanceToShotMap.put(Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(10.0), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(11.0), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(13.3), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(14.5), 1.286)); // Tuned
-    distanceToShotMap.put(Meters.of(3.01901001108563), new Shot(RPM.of(1650), Degrees.of(14.7), 1.286));
-    distanceToShotMap.put(Meters.of(3.31521515713456), new Shot(RPM.of(1670), Degrees.of(22), 1.286)); // Half Tuned
-    distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21), 1.286));
-    distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8), 1.286));
-    distanceToShotMap.put(Meters.of(3.79704412351433), new Shot(RPM.of(1720), Degrees.of(20), 1.286));
-    distanceToShotMap.put(Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(21), 1.286));
-    distanceToShotMap.put(Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(24.5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+        Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(1.0), 1.286)); //
+    distanceToShotMap.put(
+        Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(2.0), 1.286)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(3.0), 1.286)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(5.3), 1.286)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(6.5), 1.286)); // Tuned
+    // distanceToShotMap.put(Meters.of(3.01901001108563), new Shot(RPM.of(1650), Degrees.of(14.7),
+    // 1.286));
+    // distanceToShotMap.put(Meters.of(3.31521515713456), new Shot(RPM.of(1670), Degrees.of(22),
+    // 1.286)); // Half Tuned
+    // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21),
+    // 1.286));
+    // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8),
+    // 1.286));
+    distanceToShotMap.put(
+        Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(12), 1.286));
+    distanceToShotMap.put(
+        Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(13), 1.286));
+    distanceToShotMap.put(
+        Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(16.5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
   }
 
   private final Vision m_vision;
   private final Flywheel m_flywheel;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
+  private CommandXboxController m_driverController;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
   private static double phaseDelay = 0.0;
@@ -98,15 +112,17 @@ public class Shoot extends Command {
     return distanceToShotMap.get(distance);
   }
 
-  /** Shoot on the move command */
+  /** Shoot on the move command with rumble */
   public Shoot(
       Flywheel flywheel,
       Hood shooterHood,
       Vision vision,
+      CommandXboxController driverController,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
     m_flywheel = flywheel;
+    m_driverController = driverController;
     m_swerveDrivetrain = swerveDrive;
     m_throttleInput = throttleInput;
     m_strafeInput = strafeInput;
@@ -135,7 +151,8 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    m_goal = FIELD.TARGET.CURRENT_TARGET.getTargetPosition().toTranslation2d();
+
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
 
@@ -164,14 +181,21 @@ public class Shoot extends Command {
 
     // Account for imparted velocity by robot (launcher) to offset
     double timeOfFlight = shot.timeOfFlight;
+    double effectiveTimeOfFlight = timeOfFlight;
     Pose2d lookaheadPose = launcherPosition;
     double lookaheadLauncherToTargetDistance = launcherToTargetDistance;
-    shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
 
     for (int i = 0; i < 20; i++) {
+      shot = distanceToShotMap.get(Meters.of(lookaheadLauncherToTargetDistance));
       timeOfFlight = shot.timeOfFlight;
-      double offsetX = launcherVelocityX * timeOfFlight;
-      double offsetY = launcherVelocityY * timeOfFlight;
+      effectiveTimeOfFlight =
+          (1 - Math.pow(Math.E, -(FLYWHEEL.kFuelDragCoefficient * timeOfFlight)))
+              / FLYWHEEL
+                  .kFuelDragCoefficient; // Accounting for linear drag. This is the equation for
+      // continuous decay.
+      // https://frc-docs--3242.org.readthedocs.build/en/3242/docs/software/advanced-controls/fire-control/linear-drag.html
+      double offsetX = launcherVelocityX * effectiveTimeOfFlight;
+      double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =
           new Pose2d(
               launcherPosition.getTranslation().plus(new Translation2d(offsetX, offsetY)),
@@ -190,23 +214,22 @@ public class Shoot extends Command {
     // all of the logic for angle is above this Comment
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
-    
-    if (Controls.isRedAlliance()){
-      m_swerveDrivetrain.setChassisSpeedsWithHeading(
-        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        driveAngle.rotateBy(Rotation2d.k180deg));
+    if (m_flywheel.isAtRPMsetpoint()) {
+      m_driverController.setRumble(RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength);
     } else {
-      m_swerveDrivetrain.setChassisSpeedsWithHeading(
+      m_driverController.setRumble(RumbleType.kBothRumble, 0);
+    }
+
+    m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        driveAngle);
-    }
+        Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_driverController.setRumble(RumbleType.kBothRumble, 0);
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
     m_flywheel.setRPMOutputFOC(RPM.of(0.0));
   }

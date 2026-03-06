@@ -14,10 +14,7 @@ import frc.team4201.lib.geometry.LinkedAprilTag;
 import frc.team4201.lib.geometry.Target3d;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.wpilib.AllianceInterface;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -114,6 +111,11 @@ public class FIELD {
     fieldSim.addTranslations("Blue Left Trench", ZONE.BLUE.TRENCH.LEFT.getCorners());
     fieldSim.addTranslations("Blue Right Bump", ZONE.BLUE.BUMP.RIGHT.getCorners());
     fieldSim.addTranslations("Blue Right Trench", ZONE.BLUE.TRENCH.RIGHT.getCorners());
+
+    fieldSim.addTranslations(
+        "Red Pass Points", TARGET.RED_PASS_POINTS.toArray(new Translation2d[0]));
+    fieldSim.addTranslations(
+        "Blue Pass Points", TARGET.BLUE_PASS_POINTS.toArray(new Translation2d[0]));
   }
 
   public enum SECTOR {
@@ -137,6 +139,8 @@ public class FIELD {
     {SECTOR.BLUE_RIGHT, SECTOR.NEUTRAL_NEAR_RIGHT, SECTOR.NEUTRAL_FAR_RIGHT, SECTOR.RED_RIGHT},
     {SECTOR.BLUE_LEFT, SECTOR.NEUTRAL_NEAR_LEFT, SECTOR.NEUTRAL_FAR_LEFT, SECTOR.RED_LEFT}
   };
+  static EnumSet<SECTOR> RED_ALLIANCE_SECTORS = EnumSet.of(SECTOR.RED_LEFT, SECTOR.RED_RIGHT);
+  static EnumSet<SECTOR> BLUE_ALLIANCE_SECTORS = EnumSet.of(SECTOR.BLUE_LEFT, SECTOR.BLUE_RIGHT);
 
   static SECTOR CURRENT_SECTOR = SECTOR.UNKNOWN;
 
@@ -165,6 +169,8 @@ public class FIELD {
     } else {
       CURRENT_SECTOR = SECTOR_MAP[yIdx][xIdx];
     }
+
+    TARGET.updateCurrentTarget(robotPose);
   }
 
   public static SECTOR getCurrentSector() {
@@ -180,6 +186,7 @@ public class FIELD {
         aprilTagMap.get("HUB_NEAR").getPose(false).getMeasureX();
     private static final Distance BLUE_ZONE_LINE =
         aprilTagMap.get("HUB_NEAR").getPose(true).getMeasureX();
+    private static final Distance HALF_ALLIANCE_ZONE_LENGTH = BLUE_ZONE_LINE.div(2);
 
     private static final Distance DEPOT_WIDTH = Inches.of(42);
     private static final Distance DEPOT_DEPTH = Inches.of(27);
@@ -465,6 +472,68 @@ public class FIELD {
         CENTER = RED.CENTER;
         LEFT = RED.LEFT;
         RIGHT = RED.RIGHT;
+      }
+    }
+  }
+
+  public static class TARGET implements AllianceInterface {
+    public static Target3d CURRENT_TARGET;
+    public static Target3d RED_LEFT_PASS =
+        new Target3d(
+            new Translation3d(
+                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH),
+                FIELD_WIDTH.times(0.25),
+                Meters.zero()));
+
+    public static Target3d RED_RIGHT_PASS =
+        new Target3d(
+            new Translation3d(
+                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH),
+                FIELD_WIDTH.times(0.75),
+                Meters.zero()));
+
+    public static Collection<Translation2d> RED_PASS_POINTS =
+        List.of(
+            RED_LEFT_PASS.getTargetPosition().toTranslation2d(),
+            RED_RIGHT_PASS.getTargetPosition().toTranslation2d());
+
+    public static Target3d BLUE_LEFT_PASS =
+        new Target3d(
+            new Translation3d(
+                ZONE.HALF_ALLIANCE_ZONE_LENGTH, FIELD_WIDTH.times(0.75), Meters.zero()));
+
+    public static Target3d BLUE_RIGHT_PASS =
+        new Target3d(
+            new Translation3d(
+                ZONE.HALF_ALLIANCE_ZONE_LENGTH, FIELD_WIDTH.times(0.25), Meters.zero()));
+
+    public static Collection<Translation2d> BLUE_PASS_POINTS =
+        List.of(
+            BLUE_LEFT_PASS.getTargetPosition().toTranslation2d(),
+            BLUE_RIGHT_PASS.getTargetPosition().toTranslation2d());
+
+    public static Map<Translation2d, Target3d> TRANSLATION_TO_TARGET =
+        Map.ofEntries(
+            Map.entry(RED_LEFT_PASS.getTargetPosition().toTranslation2d(), RED_LEFT_PASS),
+            Map.entry(RED_RIGHT_PASS.getTargetPosition().toTranslation2d(), RED_RIGHT_PASS),
+            Map.entry(BLUE_LEFT_PASS.getTargetPosition().toTranslation2d(), BLUE_LEFT_PASS),
+            Map.entry(BLUE_RIGHT_PASS.getTargetPosition().toTranslation2d(), BLUE_RIGHT_PASS));
+
+    public static void updateCurrentTarget(Pose2d robotPose) {
+      if (AllianceInterface.isBlue()) {
+        if (BLUE_ALLIANCE_SECTORS.contains(getCurrentSector())) {
+          CURRENT_TARGET = HUB.BLUE;
+        } else {
+          CURRENT_TARGET =
+              TRANSLATION_TO_TARGET.get(robotPose.getTranslation().nearest(BLUE_PASS_POINTS));
+        }
+      } else {
+        if (RED_ALLIANCE_SECTORS.contains(getCurrentSector())) {
+          CURRENT_TARGET = HUB.RED;
+        } else {
+          CURRENT_TARGET =
+              TRANSLATION_TO_TARGET.get(robotPose.getTranslation().nearest(RED_PASS_POINTS));
+        }
       }
     }
   }

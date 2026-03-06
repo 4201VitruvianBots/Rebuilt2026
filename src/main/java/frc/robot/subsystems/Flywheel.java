@@ -161,9 +161,19 @@ public class Flywheel extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
-  public Command manualCommand() {
-    return this.runEnd(
-        () -> setRPMOutputFOC(RPM.of(1250)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
+  public Command manualAgainstHubCommand() {
+    return this.startEnd(
+        () -> setRPMOutputFOC(RPM.of(1470)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
+  }
+
+  public Command manualAgainstTowerCommand() {
+    return this.startEnd(
+        () -> setRPMOutputFOC(RPM.of(1800)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0))); // Unverified
+  }
+
+  public Command manualPassCommand() {
+    return this.startEnd(
+        () -> setRPMOutputFOC(RPM.of(2200)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
   }
 
   public void testInit() {
