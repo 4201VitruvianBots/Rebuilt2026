@@ -14,8 +14,8 @@ public class SideNeutralDepotClimb extends Auto {
   public SideNeutralDepotClimb(AutoDependencies deps) {
       addCommands(
           new ShootNearStart(deps, () -> false),
-          new IntakeFromNeutral(deps, true, () -> false),
-          new ShootNearStart(deps, () -> false),
+        //   new IntakeFromNeutral(deps, true, () -> false),
+        //   new ShootNearStart(deps, () -> false),
           new IntakeAndShootFromDepot(deps)
         // // TODO: add climb, old code here
         //   new ParallelCommandGroup(

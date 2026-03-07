@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterDepot;
@@ -42,7 +43,7 @@ import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
@@ -239,8 +240,7 @@ public class RobotContainer {
     m_driverController
         .leftTrigger()
         .whileTrue(
-            new ParallelCommandGroup(
-                m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
+            new IntakeCommand(m_intake, null, m_uptake));
 
     m_driverController
         .rightTrigger()
@@ -300,7 +300,7 @@ public class RobotContainer {
         "Auto 2 - SideNeutralClimb",
         new SideNeutralClimb(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
-        "Auto 3 - SideNeutralDepotClimb",
+        "Auto 3 - SideDepot (To Test)",
         new SideNeutralDepotClimb(autoDeps));
     m_autoChooser.addOption(
         "Auto 4 - SideNeutralTwice",
@@ -309,9 +309,9 @@ public class RobotContainer {
         "Auto 5 - SideNeutralTwice - NO PRELOAD",
         new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption(
-        "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight));
+        "Test - Shoot Preload (Working)", new ShootNearStart(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
-        "Test - Intake from Neutral", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
+        "Test - Intake from Neutral (Not Working)", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
   }
 
   private void initSideChooser() {
@@ -413,7 +413,7 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.UPTAKING.get().in(RPM) * 0.90)
+      if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED_RPM.UPTAKING.get().in(RPM) * 0.90)
           && m_intake.getStoredFuel() > 0) {
         // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
         // of the fuel

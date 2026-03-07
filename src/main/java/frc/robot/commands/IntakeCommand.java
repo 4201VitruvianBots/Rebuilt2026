@@ -10,7 +10,7 @@ import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
@@ -18,11 +18,10 @@ import frc.robot.subsystems.Uptake;
 
 public class IntakeCommand extends ParallelCommandGroup {
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(Intake intake, IntakePivot intakePivot, Indexer indexer, Uptake uptake) {
+  public IntakeCommand(Intake intake, IntakePivot intakePivot, Uptake uptake) {
     addCommands(
         (intake != null) ? intake.command(INTAKE_SPEED.INTAKING) : new InstantCommand(),
-        (indexer != null) ? indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING) : new InstantCommand(),
-        (uptake != null) ? uptake.command(UPTAKE_SPEED.INTAKE_RUN) : new InstantCommand(),
+        (uptake != null) ? uptake.percentCommand(-0.3) : new InstantCommand(),
         (intakePivot != null) ? intakePivot.command(PIVOT_SETPOINT.INTAKING) : new InstantCommand());
   }
 }

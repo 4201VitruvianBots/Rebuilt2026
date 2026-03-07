@@ -13,14 +13,15 @@ import java.util.function.BooleanSupplier;
 public abstract class Auto extends SequentialCommandGroup {
   protected final Command getPathCommand(
       CommandSwerveDrivetrain swerveDrive, PathPlannerPath path, BooleanSupplier flipToRight) {
-    return Commands.deferredProxy(
+    return Commands.defer(
         () -> {
           if (flipToRight.getAsBoolean()) {
             return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(path.mirrorPath());
           } else {
             return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(path);
           }
-        });
+        },
+        Set.of());
   }
 
   // chooses between 2 paths depending on autoSide input
@@ -29,13 +30,14 @@ public abstract class Auto extends SequentialCommandGroup {
       PathPlannerPath choice1,
       PathPlannerPath choice2,
       BooleanSupplier autoSide) {
-    return Commands.deferredProxy(
+    return Commands.defer(
         () -> {
           if (autoSide.getAsBoolean()) {
             return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(choice1);
           } else {
             return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(choice2);
           }
-        });
+        },
+        Set.of(swerveDrive));
   }
 }

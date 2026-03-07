@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.team4201.lib.command.Auto;
 
 public class CenterPreloadClimb extends Auto {
@@ -33,7 +33,7 @@ public class CenterPreloadClimb extends Auto {
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
                   new Shoot(flywheel, hood, vision, swerveDrive),
-                  uptake.command(UPTAKE_SPEED.UPTAKING))
+                  uptake.command(UPTAKE_SPEED_RPM.UPTAKING))
               .withTimeout(3));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterPreloadOnly", e.getStackTrace());

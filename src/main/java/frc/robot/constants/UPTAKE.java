@@ -22,15 +22,16 @@ public class UPTAKE {
   public static final AngularVelocity maxRPM = RPM.of(5000.0);
 
   public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
-
-  public enum UPTAKE_SPEED {
+  
+  // unused
+  public enum UPTAKE_SPEED_RPM {
     IDLE(RPM.of(0.0)),
-    INTAKE_RUN(RPM.of(200.0)),
+    INTAKE_RUN(RPM.of(-200.0)),
     UPTAKING(RPM.of(1678.0));
 
     private final AngularVelocity value;
 
-    UPTAKE_SPEED(AngularVelocity value) {
+    UPTAKE_SPEED_RPM(AngularVelocity value) {
       this.value = value;
     }
 

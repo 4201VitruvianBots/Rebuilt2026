@@ -42,8 +42,8 @@ public class ShootNearStart extends Auto {
             getPathCommand(swerveDrive, path, flipToRight).andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Finished moving to shooting position")),
             new ParallelCommandGroup(
                 new Shoot(flywheel, hood, vision, swerveDrive),
-                new WaitCommand(2).andThen(new Fire(intake, indexer, uptake)) // TODO: Auto-fire once auto align, shooter hood, and flywheel RPM are ready
-            ).withTimeout(4).andThen(new PrintCommand("[AUTO] Finished shooting from near start")) // TODO: Also auto-detect when we're done shooting
+                new WaitCommand(1).andThen(new Fire(intake, indexer, uptake)) // TODO: Auto-fire once auto align, shooter hood, and flywheel RPM are ready
+            ).withTimeout(2).andThen(new PrintCommand("[AUTO] Finished shooting from near start")) // TODO: Also auto-detect when we're done shooting
         );
       } catch (Exception e) {
         DriverStation.reportError("Failed to load path for ShootNearStart", e.getStackTrace());

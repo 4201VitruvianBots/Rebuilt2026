@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.5851341681574236,
-        "y": 5.681878354203935
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5851341681574236,
-        "y": 5.431878354203935
+        "x": 1.4361995828554721,
+        "y": 5.7992053553977705
       },
       "isLocked": false,
       "linkedName": "DepotIntakeStartPoint"
@@ -20,22 +20,28 @@
         "y": 5.178890876565294
       },
       "prevControl": {
-        "x": 1.4715563506261176,
-        "y": 5.437753506924127
+        "x": 1.6661061286901515,
+        "y": 5.793379510861216
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "DepotShootPoint"
     }
   ],
-  "rotationTargets": [
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [
     {
-      "waypointRelativePos": 0.78,
-      "rotationDegrees": -90.0
+      "fieldPosition": {
+        "x": 4.6,
+        "y": 4.05
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 1.0,
+      "name": "Point Towards Zone"
     }
   ],
-  "constraintZones": [],
-  "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,

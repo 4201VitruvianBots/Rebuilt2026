@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.2846726190476185,
-        "y": 4.811510416666668
+        "x": 3.25,
+        "y": 4.5
       },
       "prevControl": {
-        "x": 3.3543148818182744,
-        "y": 5.121200647149212
+        "x": 3.319642262770656,
+        "y": 4.809690230482545
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -34.75591255354132
+    "rotation": -35.0
   },
   "reversed": false,
   "folder": "Old - SideNeutralClimb",

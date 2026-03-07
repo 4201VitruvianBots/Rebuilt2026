@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 
 public class CenterDepot extends SequentialCommandGroup {
   public CenterDepot(
@@ -34,11 +34,11 @@ public class CenterDepot extends SequentialCommandGroup {
       var m_path3 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot3");
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new IntakeCommand(intake, intakePivot, indexer, uptake).withTimeout(9),
+          new IntakeCommand(intake, intakePivot, uptake).withTimeout(9),
           new ParallelCommandGroup(
                   m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
                   new Shoot(flywheel, hood, vision, swerveDrive),
-                  uptake.command(UPTAKE_SPEED.UPTAKING))
+                  uptake.command(UPTAKE_SPEED_RPM.UPTAKING))
               .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {

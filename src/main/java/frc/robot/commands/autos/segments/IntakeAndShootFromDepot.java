@@ -48,7 +48,7 @@ public class IntakeAndShootFromDepot extends Auto {
         addCommands(
             new ParallelDeadlineGroup(
                 intakeFromDepot,
-                new IntakeCommand(intake, intakePivot, indexer, uptake),
+                new IntakeCommand(intake, intakePivot, uptake),
                 new PrintCommand("[AUTO] Intaking from depot...")
             )
             .andThen(() -> swerveDrive.setControl(stopRequest)).andThen(new PrintCommand("[AUTO] Finished intaking from depot")),
