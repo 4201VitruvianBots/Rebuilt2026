@@ -40,11 +40,13 @@ import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
+import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.robot.generated.V1Constants;
+import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
@@ -69,7 +71,7 @@ public class RobotContainer {
   @Logged(name = "Hood", importance = Logged.Importance.INFO)
   private Hood m_hood;
 
-  private final CommandSwerveDrivetrain m_swerveDrive = V1Constants.createDrivetrain();
+  private CommandSwerveDrivetrain m_swerveDrive;
 
   @Logged(name = "Intake", importance = Logged.Importance.INFO)
   private Intake m_intake;
@@ -106,7 +108,7 @@ public class RobotContainer {
 
   @NotLogged
   private final LinearVelocity MaxSpeed =
-      V1Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
+      V2Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
 
   @NotLogged
   private final AngularVelocity MaxAngularRate =
@@ -149,6 +151,11 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
+    if (ROBOT.robotID.equals(ROBOT_ID.V1)) {
+        m_swerveDrive = V1Constants.createDrivetrain();
+    } else {
+        m_swerveDrive = V2Constants.createDrivetrain();
+    }
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(
@@ -166,18 +173,20 @@ public class RobotContainer {
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
     m_hood = new Hood();
+    m_intake = new Intake();
+    m_uptake = new Uptake();
+    m_indexer = new Indexer();
+    if (ROBOT.robotID.equals(ROBOT_ID.V2)) {
+        m_intakePivot = new IntakePivot();
+        m_climber = new Climber();
+    }
+    // m_led = new LEDs();
+    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
+
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
-    m_intake = new Intake();
-    m_uptake = new Uptake();
-    m_indexer = new Indexer();
-    // m_climber = new Climber();
-    // m_led = new LEDs();
-    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
-
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(

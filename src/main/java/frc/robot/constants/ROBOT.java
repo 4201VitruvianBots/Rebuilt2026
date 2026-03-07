@@ -40,7 +40,7 @@ public class ROBOT {
     // Robot Serial Numbers (2026)
     WOOD_BOT("030cbc95"), // Rio 1.0
     V1("030cbcf0"),
-
+    V2("032398ed"),
     SIM("");
 
     private final String value;
@@ -86,6 +86,10 @@ public class ROBOT {
   public static void initV1() {
     robotID = ROBOT_ID.V1;
   }
+  
+  public static void initV2() {
+    robotID = ROBOT_ID.V2;
+  }
 
   public static void initializeConstants() {
     var alert = new Alert("Initializing Robot Constants...", AlertType.kInfo);
@@ -94,6 +98,7 @@ public class ROBOT {
       switch (ROBOT_ID.fromSerial(RobotController.getSerialNumber())) {
         case WOOD_BOT -> initWoodBot();
         case V1 -> initV1();
+        case V2 -> initV2();
         case SIM -> {
           initSim();
           System.out.print(
