@@ -184,7 +184,7 @@ public class Hood extends SubsystemBase {
 
   public Command manualAgainstTowerCommand() {
     return this.startEnd(
-        () -> setAngle(Degrees.of(1.0)), () -> setAngle(Degrees.of(0.0)));
+        () -> setAngle(Degrees.of(8.3)), () -> setAngle(Degrees.of(0.0)));
   }
 
   public Command manualPassCommand() {
