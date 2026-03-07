@@ -21,7 +21,7 @@ public abstract class Auto extends SequentialCommandGroup {
             return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(path);
           }
         },
-        Set.of());
+        Set.of(swerveDrive));
   }
 
   // chooses between 2 paths depending on autoSide input
