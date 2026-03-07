@@ -8,8 +8,10 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
@@ -34,6 +36,9 @@ public class Intake extends SubsystemBase {
   @Logged(name = "Intake Motor", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.driveBase);
 
+  @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
+  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.driveBase);
+
   private DoubleSubscriber m_outputSubscriber;
   private DoublePublisher m_outputPublisher;
 
@@ -46,7 +51,7 @@ public class Intake extends SubsystemBase {
 
   private final TalonFXSimState m_simState;
 
-  private int simStoredFuel = 8; // For fuel sim - 8 preload during auto
+  private int simStoredFuel = 8; // For  fuel sim - 8 preload during auto
 
   /** Creates a new Intake. */
   public Intake() {
@@ -61,9 +66,10 @@ public class Intake extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_motor, config);
-    // CtreUtils.configureTalonFx(m_motor2, config);
+    CtreUtils.configureTalonFx(m_motor2, config);
 
-    // m_motor2.setControl(new Follower(m_motor.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_motor2.setControl(new Follower(m_motor.getDeviceID(), MotorAlignmentValue.Opposed));
+
 
     m_simState = m_motor.getSimState();
   }
@@ -73,7 +79,7 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isConnected() {
-    return m_motor.isConnected(); // && m_motor2.isConnected();
+    return m_motor.isConnected() && m_motor2.isConnected();
   }
 
   @Logged(name = "Motor Output %", importance = Logged.Importance.INFO)
@@ -81,6 +87,12 @@ public class Intake extends SubsystemBase {
     return m_motor.get();
   }
 
+  @Logged(name = "Motor 2 Output %", importance = Logged.Importance.DEBUG)
+  public double getSecondMotorOutput() {
+    return m_motor2.get();
+  }
+  
+  //TODO: update robot2d with v2 cad once finished
   // For Robot2d simulation
   @NotLogged
   public AngularVelocity getVelocity() {
