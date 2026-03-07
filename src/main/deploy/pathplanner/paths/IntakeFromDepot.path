@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.609691706445197,
-        "y": 5.578449632584414
+        "x": 1.9881594753444956,
+        "y": 6.00380297853916
       },
       "isLocked": true,
       "linkedName": "ShootingPoint"
@@ -52,8 +52,8 @@
         "y": 6.0
       },
       "prevControl": {
-        "x": 2.002600902816826,
-        "y": 5.895997284505044
+        "x": 2.015360898356174,
+        "y": 6.0
       },
       "nextControl": null,
       "isLocked": true,
@@ -66,7 +66,21 @@
       "rotationDegrees": 180.0
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.2,
+      "maxWaypointRelativePos": 2.5,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -87,7 +101,7 @@
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": false
+    "unlimited": true
   },
   "goalEndState": {
     "velocity": 0.0,
