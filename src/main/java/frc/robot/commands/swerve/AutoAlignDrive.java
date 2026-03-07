@@ -44,7 +44,7 @@ public class AutoAlignDrive extends Command {
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeedBump.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeedBump.times(m_strafeInput.getAsDouble()),
-        ifZeroFacesBump ? Rotation2d.kZero : Rotation2d.k180deg);
+        ifZeroFacesBump ? Rotation2d.k180deg : Rotation2d.kZero);
   }
 
   // Called once the command ends or is interrupted.
