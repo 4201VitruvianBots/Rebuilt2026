@@ -40,6 +40,7 @@ import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
@@ -210,6 +211,9 @@ public class RobotContainer {
                 m_vision,
                 m_driverController::getLeftY,
                 m_driverController::getLeftX));
+
+    m_driverController.rightBumper().whileTrue(m_intake.command(INTAKE_SPEED.REVERSE));
+
     m_driverController
         .x()
         .whileTrue(
