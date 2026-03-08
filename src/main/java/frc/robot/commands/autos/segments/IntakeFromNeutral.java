@@ -27,6 +27,7 @@ public class IntakeFromNeutral extends Auto {
   private static double averageCurrentAfter;
 
   public static void registerNamedCommands(AutoDependencies deps) {
+    // Check whether we've lost the race to intake to the center by measuring the current of the intake rollers before and after crossing the bump
     NamedCommands.registerCommand(
         "prepareFlywheelForNearHub",
         new PrepareFlywheel(deps.flywheel, Meters.of(1.45650895207174))
@@ -42,7 +43,7 @@ public class IntakeFromNeutral extends Auto {
               System.out.println("Finished pre-bump current measurements");
               averageCurrentBefore =
                   deps.intake
-                      .endCurrentFilter(); // Note: UH OH this might start a race condition with the
+                      .endCurrentFilter(); // TODO: UH OH this might start a race condition with the
               // other current measurement command causing things to
               // get reset improperly please check
             }));
