@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
+import frc.robot.commands.autos.PrepareFlywheel;
 import frc.robot.constants.INTAKE.ROLLERS;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
@@ -29,12 +29,8 @@ public class IntakeFromNeutral extends Auto {
   public static void registerNamedCommands(AutoDependencies deps) {
     NamedCommands.registerCommand(
         "prepareFlywheelForNearHub",
-        Commands.runOnce(
-            () -> {
-              deps.flywheel.setRPMOutputFOC(
-                  Shoot.getShotForDistance(Meters.of(1.45650895207174)).shooterRPM);
-              System.out.println("[AUTO] Preparing flywheel for near hub shot");
-            })); // YAY magic numbers
+        new PrepareFlywheel(deps.flywheel, Meters.of(1.45650895207174))
+            .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
     NamedCommands.registerCommand(
         "measureIntakeBefore",
         Commands.startEnd(
