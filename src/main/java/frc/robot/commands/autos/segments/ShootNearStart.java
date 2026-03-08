@@ -21,12 +21,7 @@ public class ShootNearStart extends Auto {
   public ShootNearStart(AutoDependencies deps, BooleanSupplier flipToRight) {
     try {
       var swerveDrive = deps.swerveDrive;
-      var vision = deps.vision;
       var flywheel = deps.flywheel;
-      var hood = deps.hood;
-      var indexer = deps.indexer;
-      var uptake = deps.uptake;
-      var intake = deps.intake;
 
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -41,8 +36,7 @@ public class ShootNearStart extends Auto {
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
               .andThen(
                   new PrintCommand(
-                      "[AUTO] Finished shooting from near start")) // TODO: Also auto-detect when
-          // we're done shooting
+                      "[AUTO] Finished shooting from near start"))
           );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for ShootNearStart", e.getStackTrace());

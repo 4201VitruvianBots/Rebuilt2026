@@ -28,11 +28,7 @@ public class IntakeAndShootFromDepot extends Auto {
     try {
       var swerveDrive = deps.swerveDrive;
       var intake = deps.intake;
-      var vision = deps.vision;
-      var flywheel = deps.flywheel;
-      var hood = deps.hood;
       var intakePivot = deps.intakePivot;
-      var indexer = deps.indexer;
       var uptake = deps.uptake;
 
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
@@ -55,8 +51,7 @@ public class IntakeAndShootFromDepot extends Auto {
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
               .andThen(
                   new PrintCommand(
-                      "[AUTO] Finished shooting from depot")) // TODO: Also auto-detect when we're
-          // done shooting
+                      "[AUTO] Finished shooting from depot"))
           );
     } catch (Exception e) {
       DriverStation.reportError(
