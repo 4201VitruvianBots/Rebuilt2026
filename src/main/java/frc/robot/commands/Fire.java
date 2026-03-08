@@ -18,10 +18,8 @@ public class Fire extends ParallelCommandGroup {
   /** Creates a new Fire. */
   public Fire(Intake intake, Indexer indexer, Uptake uptake) {
     addCommands(
-        (intake != null) ? intake.command(INTAKE_SPEED.REVERSE) : new InstantCommand(),
-        (indexer != null)
-            ? indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)
-            : new InstantCommand(),
+        (intake != null) ? intake.command(INTAKE_SPEED.INTAKING) : new InstantCommand(),
+        (indexer != null) ? indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING) : new InstantCommand(),
         (uptake != null) ? uptake.percentCommand(0.7) : new InstantCommand());
   }
 }
