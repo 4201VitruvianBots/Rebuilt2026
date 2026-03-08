@@ -36,9 +36,6 @@ import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
@@ -52,12 +49,9 @@ import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 @Logged(name = "RobotContainer", importance = Logged.Importance.CRITICAL)
@@ -86,18 +80,17 @@ public class RobotContainer {
   private Uptake m_uptake;
 
   // @Logged(name = "Climber", importance = Logged.Importance.INFO)
-  @NotLogged
-  private Climber m_climber;
+  @NotLogged private Climber m_climber;
 
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led;
 
   // @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
-  @NotLogged
-  private IntakePivot m_intakePivot;
+  @NotLogged private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController = new CommandXboxController(USB.driver_xBoxController);
+  private final CommandXboxController m_driverController =
+      new CommandXboxController(USB.driver_xBoxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
@@ -132,9 +125,7 @@ public class RobotContainer {
 
   private Boolean m_flipToRight = false;
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     FIELD.initializeConstants();
@@ -237,14 +228,9 @@ public class RobotContainer {
                 m_driverController::getLeftY,
                 m_driverController::getLeftX));
 
-    m_driverController
-        .leftTrigger()
-        .whileTrue(
-            new IntakeCommand(m_intake, null, m_uptake));
+    m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, null, m_uptake));
 
-    m_driverController
-        .rightTrigger()
-        .whileTrue(new Fire(m_intake, m_indexer, m_uptake));
+    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
@@ -286,32 +272,25 @@ public class RobotContainer {
             m_intakePivot,
             m_indexer,
             m_uptake);
-    
+
     IntakeFromNeutral.registerNamedCommands(autoDeps);
     IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
+    m_autoChooser.addOption("Auto 0 - CenterPreloadClimb", new CenterPreloadClimb(autoDeps));
+    m_autoChooser.addOption("Auto 1 - CenterDepot", new CenterDepot(autoDeps));
     m_autoChooser.addOption(
-        "Auto 0 - CenterPreloadClimb",
-        new CenterPreloadClimb(autoDeps));
+        "Auto 2 - SideNeutralClimb", new SideNeutralClimb(autoDeps, () -> m_flipToRight));
+    m_autoChooser.addOption("Auto 3 - SideDepot (To Test)", new SideNeutralDepotClimb(autoDeps));
     m_autoChooser.addOption(
-        "Auto 1 - CenterDepot",
-        new CenterDepot(autoDeps));
-    m_autoChooser.addOption(
-        "Auto 2 - SideNeutralClimb",
-        new SideNeutralClimb(autoDeps, () -> m_flipToRight));
-    m_autoChooser.addOption(
-        "Auto 3 - SideDepot (To Test)",
-        new SideNeutralDepotClimb(autoDeps));
-    m_autoChooser.addOption(
-        "Auto 4 - SideNeutralTwice",
-        new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
+        "Auto 4 - SideNeutralTwice", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Auto 5 - SideNeutralTwice - NO PRELOAD",
         new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption(
         "Test - Shoot Preload (Working)", new ShootNearStart(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
-        "Test - Intake from Neutral (Not Working)", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
+        "Test - Intake from Neutral (Not Working)",
+        new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
   }
 
   private void initSideChooser() {
@@ -406,7 +385,7 @@ public class RobotContainer {
           () -> {
             m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
             System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
-      });
+          });
     }
   }
 

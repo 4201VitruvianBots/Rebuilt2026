@@ -15,8 +15,7 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 
 public class CenterDepot extends SequentialCommandGroup {
-  public CenterDepot(
-      AutoDependencies deps) {
+  public CenterDepot(AutoDependencies deps) {
     try {
       var swerveDrive = deps.swerveDrive;
       var vision = deps.vision;
@@ -26,7 +25,7 @@ public class CenterDepot extends SequentialCommandGroup {
       var intakePivot = deps.intakePivot;
       var indexer = deps.indexer;
       var uptake = deps.uptake;
-        
+
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterDepot1");
