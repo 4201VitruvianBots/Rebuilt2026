@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE;
 import frc.robot.constants.ROBOT.SIM;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
@@ -225,7 +224,6 @@ public class Robot2d extends SubsystemBase {
       m_intakePivot.generateSubDisplay();
       m_flywheel.generateSubDisplay();
       m_shooterHood.generateSubDisplay();
-      m_climber.generateSubDisplay();
       //   graphics = good
       //   glitches = None
       //   hackers = 0
@@ -317,17 +315,6 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("Hood")) {
       var hoodSubsystem = (Hood) m_subsystemMap.get("Hood");
       m_shooterHood.update(Degrees.of(hoodSubsystem.getHoodAngleDegrees()).unaryMinus());
-    }
-    if (m_subsystemMap.containsKey("Climber")) {
-      var climberSubsystem = (Climber) m_subsystemMap.get("Climber");
-      m_climber.update(climberSubsystem.getHeight(), climberSubsystem.getVelocity());
-      // // Increase the climber height by 0.1 inches every simulation tick to show the climbing
-      // animation
-      //     testClimberHeight = testClimberHeight.plus(Inches.of(0.08));
-      //     if (testClimberHeight.gt(CLIMBER.upperLimit)) {
-      //       testClimberHeight = CLIMBER.upperLimit;
-      //     }
-      //     m_climber.update(testClimberHeight, InchesPerSecond.of(4.0));
     }
   }
 }
