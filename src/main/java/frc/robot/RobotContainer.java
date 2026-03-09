@@ -25,9 +25,9 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterDepot;
-import frc.robot.commands.autos.routines.CenterPreloadClimb;
-import frc.robot.commands.autos.routines.SideNeutralClimb;
-import frc.robot.commands.autos.routines.SideNeutralDepotClimb;
+import frc.robot.commands.autos.routines.CenterPreload;
+import frc.robot.commands.autos.routines.SideNeutral;
+import frc.robot.commands.autos.routines.SideNeutralDepot;
 import frc.robot.commands.autos.routines.SideNeutralTwice;
 import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
@@ -280,11 +280,11 @@ public class RobotContainer {
     IntakeFromNeutral.registerNamedCommands(autoDeps);
     IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
-    m_autoChooser.addOption("Auto 0 - CenterPreloadClimb", new CenterPreloadClimb(autoDeps));
+    m_autoChooser.addOption("Auto 0 - CenterPreload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Auto 1 - CenterDepot", new CenterDepot(autoDeps));
     m_autoChooser.addOption(
-        "Auto 2 - SideNeutralClimb", new SideNeutralClimb(autoDeps, () -> m_flipToRight));
-    m_autoChooser.addOption("Auto 3 - SideDepot (To Test)", new SideNeutralDepotClimb(autoDeps));
+        "Auto 2 - SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
+    m_autoChooser.addOption("Auto 3 - SideDepot (To Test)", new SideNeutralDepot(autoDeps));
     m_autoChooser.addOption(
         "Auto 4 - SideNeutralTwice", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(

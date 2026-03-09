@@ -13,8 +13,8 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.team4201.lib.command.Auto;
 
-public class CenterPreloadClimb extends Auto {
-  public CenterPreloadClimb(AutoDependencies deps) {
+public class CenterPreload extends Auto {
+  public CenterPreload(AutoDependencies deps) {
     try {
       var swerveDrive = deps.swerveDrive;
       var vision = deps.vision;
