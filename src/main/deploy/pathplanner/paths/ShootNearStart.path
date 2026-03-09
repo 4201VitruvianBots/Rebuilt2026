@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5,
-        "y": 4.879187278863658
+        "x": 3.4335541242729946,
+        "y": 5.187326335796125
       },
       "isLocked": false,
       "linkedName": "SideStartPoint"
@@ -20,8 +20,8 @@
         "y": 4.5
       },
       "prevControl": {
-        "x": 3.25,
-        "y": 4.817424138370334
+        "x": 3.3102140661110915,
+        "y": 4.742640199147563
       },
       "nextControl": null,
       "isLocked": false,
@@ -53,7 +53,7 @@
   "folder": "ShootNearStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -20.0
   },
   "useDefaultConstraints": true
 }
