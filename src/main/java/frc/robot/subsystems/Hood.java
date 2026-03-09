@@ -111,6 +111,7 @@ public class Hood extends SubsystemBase {
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
+    config.MotionMagic.MotionMagicJerk = HOOD.motionMagicJerk;
 
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;

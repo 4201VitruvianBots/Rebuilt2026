@@ -74,17 +74,18 @@ public class FLYWHEEL {
         170.0 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
     // will be
     public static final double kInertia = 0.005;
-    public static final double kStatorCurrentLimit = 80;
+    public static final double kStatorCurrentLimit = 15;
     public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE =
         SensorDirectionValue.Clockwise_Positive;
     public static final double kMagnetSensorOffset = -0.242431640625;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1.0;
 
-    public static final double motionMagicCruiseVelocity = 22.0;
-    public static final double motionMagicAcceleration = 14.0;
+    public static final double motionMagicCruiseVelocity = 68.0;
+    public static final double motionMagicAcceleration = 64.0;
+    public static final double motionMagicJerk = 1500.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(25.5);
+    public static final Angle maxAngle = Degrees.of(23);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
