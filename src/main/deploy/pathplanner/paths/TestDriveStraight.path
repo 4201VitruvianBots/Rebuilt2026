@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.304971264815285,
-        "y": 5.506595507255229
+        "x": 6.652369121561668,
+        "y": 1.8821827861579403
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "OverBumpPointEnd"
     },
     {
       "anchor": {
@@ -20,12 +20,12 @@
         "y": 5.5
       },
       "prevControl": {
-        "x": 7.4098663602699215,
-        "y": 5.489804690553845
+        "x": 7.668004247663698,
+        "y": 5.250139345678528
       },
       "nextControl": {
-        "x": 7.909450409916413,
-        "y": 5.510195309446155
+        "x": 7.610070984915705,
+        "y": 6.984560780834072
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 5.5
       },
       "prevControl": {
-        "x": 6.892720824359039,
-        "y": 5.492271236357478
+        "x": 6.821375332741792,
+        "y": 8.328562555456966
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,13 +62,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 1.0,
     "rotation": 0.0
   },
   "reversed": false,
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 1.0,
     "rotation": 0.0
   },
   "useDefaultConstraints": false

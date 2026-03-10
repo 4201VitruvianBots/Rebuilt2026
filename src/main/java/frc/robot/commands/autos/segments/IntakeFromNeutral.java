@@ -92,7 +92,7 @@ public class IntakeFromNeutral extends Auto {
 
       addCommands(
           new ParallelDeadlineGroup(
-                  getPathCommand(swerveDrive, crossOverBump, flipToRight),
+                  getPathCommand(swerveDrive, intakeFromCenter, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
               .andThen(() -> swerveDrive.setControl(stopRequest))
