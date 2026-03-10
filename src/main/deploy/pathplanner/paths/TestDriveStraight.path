@@ -8,50 +8,54 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.0,
-        "y": 5.5
+        "x": 7.304971264815285,
+        "y": 5.506595507255229
       },
       "isLocked": false,
-      "linkedName": "OverBumpPointEnd"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.5,
+        "x": 7.659658385093167,
         "y": 5.5
       },
       "prevControl": {
-        "x": 2.5,
+        "x": 7.4098663602699215,
+        "y": 5.489804690553845
+      },
+      "nextControl": {
+        "x": 7.909450409916413,
+        "y": 5.510195309446155
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.8,
         "y": 5.5
+      },
+      "prevControl": {
+        "x": 6.892720824359039,
+        "y": 5.492271236357478
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "GoBackToAllianceZone"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 1,
       "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "PrepareFlywheel",
-      "waypointRelativePos": 0.6000000000000014,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "prepareFlywheelForNearHub"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 0.7,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 0.1,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
@@ -84,7 +85,7 @@ public class IntakeFromNeutral extends Auto {
           PathPlannerPath.fromPathFile(
               startingFromShoot ? "CrossOverBumpFromShooting" : "CrossOverBumpFromStart");
 
-      var intakeFromCenter = PathPlannerPath.fromPathFile("IntakeFromCenter");
+      var intakeFromCenter = PathPlannerPath.fromPathFile("TestDriveStraight");
       var intakeFromSide = PathPlannerPath.fromPathFile("IntakeNearHub");
 
       var returnToAllianceZone = PathPlannerPath.fromPathFile("ReturnToAllianceZone");
