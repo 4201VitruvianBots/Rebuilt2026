@@ -7,11 +7,14 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -116,6 +119,7 @@ public class RobotContainer {
   private final Telemetry m_telemetry =
       new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
+  private Field2d field;
   private final FuelSim m_fuelSim = new FuelSim();
 
   @Logged(name = "AutoChooser")
@@ -137,7 +141,27 @@ public class RobotContainer {
     initSmartDashboard();
 
     m_telemetry.registerFieldSim(m_fieldSim);
-    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
+    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);        
+    field = new Field2d();
+    SmartDashboard.putData("Field", field);
+
+    // Logging callback for current robot pose
+    PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
+      // Do whatever you want with the pose here
+      field.setRobotPose(pose);
+    });
+
+        // Logging callback for target robot pose
+    PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+       // Do whatever you want with the pose here
+      field.getObject("target pose").setPose(pose);
+    });
+
+        // Logging callback for the active path, this is sent as a list of poses
+    PathPlannerLogging.setLogActivePathCallback((poses) -> {
+        // Do whatever you want with the poses here
+     field.getObject("path").setPoses(poses);
+    });
   }
 
   private void initializeSubSystems() {
