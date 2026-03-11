@@ -85,14 +85,14 @@ public class IntakeFromNeutral extends Auto {
           PathPlannerPath.fromPathFile(
               startingFromShoot ? "CrossOverBumpFromShooting" : "CrossOverBumpFromStart");
 
-      var intakeFromCenter = PathPlannerPath.fromPathFile("TestDriveStraight");
+      var intakeFromCenter = PathPlannerPath.fromPathFile("IntakeFromCenter");
       var intakeFromSide = PathPlannerPath.fromPathFile("IntakeNearHub");
 
       var returnToAllianceZone = PathPlannerPath.fromPathFile("ReturnToAllianceZone");
 
       addCommands(
           new ParallelDeadlineGroup(
-                  getPathCommand(swerveDrive, intakeFromCenter, flipToRight),
+                  getPathCommand(swerveDrive, crossOverBump, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
               .andThen(() -> swerveDrive.setControl(stopRequest))
