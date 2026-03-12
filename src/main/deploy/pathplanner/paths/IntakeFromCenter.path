@@ -8,52 +8,84 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.1978688273693905,
-        "y": 5.403228906869637
+        "x": 6.259887176416794,
+        "y": 5.605949920577415
       },
       "isLocked": true,
       "linkedName": "OverBumpPointStart"
     },
     {
       "anchor": {
-        "x": 7.054988822565429,
-        "y": 6.909075228621088
+        "x": 6.479373549883991,
+        "y": 5.90701856148492
       },
       "prevControl": {
-        "x": 6.84377646017512,
-        "y": 7.452455311570262
+        "x": 5.998607208678543,
+        "y": 5.947333823296239
       },
       "nextControl": {
-        "x": 7.8207629591460055,
-        "y": 4.938989722515419
+        "x": 7.913910538861481,
+        "y": 5.786723671157034
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.852126353461816,
-        "y": 4.793216350315862
+        "x": 7.815688729874777,
+        "y": 5.797465909090908
       },
       "prevControl": {
-        "x": 8.099007934991336,
-        "y": 4.753852855787516
+        "x": 6.902834422090016,
+        "y": 5.82280314992735
       },
       "nextControl": {
-        "x": 6.736565903152984,
-        "y": 4.97108444970877
+        "x": 8.770273509506154,
+        "y": 5.770970394687283
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.0,
+        "x": 8.589511363636364,
+        "y": 4.900772727272726
+      },
+      "prevControl": {
+        "x": 8.670518629568408,
+        "y": 5.1372845089374355
+      },
+      "nextControl": {
+        "x": 8.460226046389115,
+        "y": 4.523306578114153
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.815688729874777,
+        "y": 4.509113636363637
+      },
+      "prevControl": {
+        "x": 8.063688109586424,
+        "y": 4.226041656009663
+      },
+      "nextControl": {
+        "x": 7.289868069107382,
+        "y": 5.109296975239427
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.609,
         "y": 5.5
       },
       "prevControl": {
-        "x": 5.7500540478233075,
-        "y": 5.505198171840805
+        "x": 5.379860131704224,
+        "y": 5.400025399438685
       },
       "nextControl": null,
       "isLocked": true,
@@ -62,8 +94,20 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
-      "rotationDegrees": -60.94539590092295
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -45.0
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -112.0
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": -160.0
     }
   ],
   "constraintZones": [],
@@ -78,13 +122,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 2.5,
     "rotation": 0.0
   },
   "reversed": false,
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 1.0,
     "rotation": 0.0
   },
   "useDefaultConstraints": false

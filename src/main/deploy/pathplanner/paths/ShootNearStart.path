@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 3.0959772727272723,
+        "y": 4.560647727272727
       },
       "prevControl": {
-        "x": 3.3102140661110915,
-        "y": 4.742640199147563
+        "x": 3.156191338838364,
+        "y": 4.80328792642029
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,7 +35,18 @@
     }
   ],
   "constraintZones": [],
-  "pointTowardsZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.63,
+        "y": 4.05
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.5008976660682227,
+      "maxWaypointRelativePos": 1.0,
+      "name": "Point Towards Zone"
+    }
+  ],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
@@ -46,8 +57,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -35.0
+    "velocity": 0.0,
+    "rotation": -18.400000000000002
   },
   "reversed": false,
   "folder": "ShootNearStart",
