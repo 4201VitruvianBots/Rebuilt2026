@@ -3,26 +3,29 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.Matrix;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
-// import frc.team4201.lib.simulation.LimelightSim;
+import frc.robot.constants.VISION.TARGET;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.ConcurrentTimeInterpolatableBuffer;
 import frc.team4201.lib.vision.LimelightHelpers;
@@ -37,18 +40,22 @@ public class Vision extends SubsystemBase {
   private Controls m_controls;
 
   private boolean m_localized;
-  //  private final RobotState state;
-  private boolean m_useLeftTarget;
 
-  private Pose2d nearestObjectPose = Pose2d.kZero;
-  private final Pose2d[] robotToTarget = {Pose2d.kZero, Pose2d.kZero};
+  private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
+  private Pose2d targetPose = Pose2d.kZero;
+
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
   // NetworkTables publisher setup
   private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
   private final NetworkTable table = inst.getTable("LimelightPoseEstimate");
 
+  public final DoubleSubscriber m_kPAutoAlignSubscriber;
+  public final DoubleSubscriber m_kDAutoAlignSubscriber;
+
   private final DoublePublisher estTimeStamp = table.getDoubleTopic("estTimeStamp").publish();
+  public final DoublePublisher m_kPAutoAlignPublisher;
+  public final DoublePublisher m_kDAutoAlignPublisher;
 
   private final StructPublisher<Pose2d> estPoseLLR =
       table.getStructTopic("estPoseLLR", Pose2d.struct).publish();
@@ -58,11 +65,23 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
+    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
+    registerSwerveDrive(m_swerveDriveTrain);
     // Port Forwarding to access limelight web UI on USB Ethernet
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, CAMERA_SERVER.limelightR.toString(), port);
       PortForwarder.add(port + 10, CAMERA_SERVER.limelightL.toString(), port);
     }
+
+    var topickP =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kPAutoAlign");
+    var topickD =
+        NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kDAutoAlign");
+    m_kPAutoAlignSubscriber = topickP.subscribe(7.4);
+    m_kDAutoAlignSubscriber = topickD.subscribe(0.3);
+
+    m_kPAutoAlignPublisher = topickP.publish();
+    m_kDAutoAlignPublisher = topickD.publish();
   }
 
   public void registerSwerveDrive(CommandSwerveDrivetrain swerveDriveTrain) {
@@ -73,52 +92,56 @@ public class Vision extends SubsystemBase {
     m_fieldSim = fieldSim;
   }
 
-  public void setLeftTarget(boolean value) {
-    m_useLeftTarget = value;
-  }
-
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingLeft() {
-    return m_useLeftTarget;
+    return m_currentTarget
+        == TARGET.LEFT_FRONT_TOWER /* || m_currentTarget == TARGET.LEFT_BACK_TOWER */;
   }
 
   @Logged(name = "Right Target", importance = Logged.Importance.CRITICAL)
   public boolean isTargetingRight() {
-    return !m_useLeftTarget;
+    return m_currentTarget
+        == TARGET.RIGHT_FRONT_TOWER /* || m_currentTarget == TARGET.RIGHT_BACK_TOWER */;
   }
 
-  //   private void updateAngleToHub() {
-  //   if (m_swerveDriveTrain != null) {
-  //     if (DriverStation.isDisabled()) {
-  //       if (DriverStation.isAutonomous()) {
-  //         m_goal = Controls.isRedAlliance() ? FIELD.redAutoHub : FIELD.blueAutoHub;
-  //       } else {
-  //         m_goal = Controls.isRedAlliance() ? FIELD.redHub : FIELD.blueHub;
-  //       }
-  //     }
-  //     if(DriverStation.isAutonomous()){
-  //       m_swerveDriveTrain.setAngleToHub(
-  //           m_swerveDriveTrain
-  //               .getState()
-  //               .Pose
-  //              .getTranslation()
-  //              .minus(m_goal)
-  //              .getAngle());
-  //     }
-  //   }
-  // }
-
-  public boolean getInitialLocalization() {
-    return m_localized;
-  }
-
-  public void resetInitialLocalization() {
-    m_localized = false;
-
-    // Set Swerve Pose to (0, 0) to reset it
-    if (m_swerveDriveTrain != null) {
-      m_swerveDriveTrain.resetPose(Pose2d.kZero);
+  public Pose2d updateClimbTarget(TARGET target) {
+    if (lockTarget) return targetPose;
+    targetPose = m_swerveDriveTrain.getState().Pose;
+    switch (target) {
+      case LEFT_FRONT_TOWER:
+        if (Controls.isBlueAlliance()) {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
+                  new Rotation2d());
+        } else {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
+                  new Rotation2d(Degrees.of(180)));
+        }
+        break;
+      case RIGHT_FRONT_TOWER:
+        if (Controls.isBlueAlliance()) {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
+                  new Rotation2d());
+        } else {
+          targetPose =
+              new Pose2d(
+                  FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
+                  FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
+                  new Rotation2d(Degrees.of(180)));
+        }
+        break;
+      default:
+        break;
     }
+    return targetPose;
   }
 
   final double LOOKBACK_TIME = 1.0;
@@ -365,19 +388,79 @@ public class Vision extends SubsystemBase {
         m_swerveDriveTrain
             .getState()
             .Pose
-            .getRotation()
-            .minus(robotToTarget[1].getRotation())
-            .getMeasure();
+            .getTranslation()
+            .minus(targetPose.getTranslation())
+            .getAngle()
+            .plus(m_swerveDriveTrain.getState().Pose.getRotation());
 
-    var isAligned = rotationDelta.abs(Degrees) < 0.5;
+    var isAligned = rotationDelta.getDegrees() < 0.5;
 
-    var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
-    SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
-    System.out.println("The angle to the hub is " + setPoint.getAngle());
-    System.out.println("The robot's angle is " + m_swerveDriveTrain.getState().Pose.getRotation());
-    System.out.println("Therefore, the alignment is" + isAligned);
+    // var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
+    // SmartDashboard.putBoolean("Aligned to Hub?", isAligned);
+    // System.out.println("The angle to the hub is " + setPoint.getAngle());
+    // System.out.println("The robot's angle is " +
+    // m_swerveDriveTrain.getState().Pose.getRotation());
+    // System.out.println("Therefore, the alignment is" + isAligned);
 
     return isAligned;
+  }
+
+  @Logged(name = "Is Pointing at Goal", importance = Importance.INFO)
+  public boolean isPointingAtGoal() {
+    // bearing from robot to goal
+    var bearing =
+        m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+    // robot heading
+    var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
+    // smallest signed angle difference in [-pi, pi]
+    double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
+    return Math.abs(error) <= Units.degreesToRadians(1.0);
+  }
+
+  @Logged(name = "Is in Neutral Sector?", importance = Importance.DEBUG)
+  public boolean isInNeutralSector() {
+    return FIELD.getCurrentSector().name().startsWith("NEUTRAL");
+  }
+
+  @Logged(name = "Is in Red Sector?", importance = Importance.DEBUG)
+  public boolean isInRedSector() {
+    return FIELD.getCurrentSector().name().startsWith("RED");
+  }
+
+  @Logged(name = "Is in Blue Sector?", importance = Importance.DEBUG)
+  public boolean isInBlueSector() {
+    return FIELD.getCurrentSector().name().startsWith("BLUE");
+  }
+
+  @Logged(name = "Is in Opposing Alliance Sector?", importance = Importance.DEBUG)
+  public boolean isInOpposingAllianceSector() {
+    if (Controls.isBlueAlliance()) {
+      return isInRedSector();
+    } else {
+      return isInBlueSector();
+    }
+  }
+
+  @Logged(name = "Is in Right Half?", importance = Importance.DEBUG)
+  public boolean isInRightHalf() {
+    return FIELD.getCurrentSector().name().endsWith("RIGHT");
+  }
+
+  @Logged(name = "Is in Left Half?", importance = Importance.DEBUG)
+  public boolean isInLeftHalf() {
+    return FIELD.getCurrentSector().name().endsWith("LEFT");
+  }
+
+  public void testInit() {
+    m_kPAutoAlignPublisher.set(7.4);
+    m_kDAutoAlignPublisher.set(0.3);
+  }
+
+  public void teleopInit() {}
+
+  @Logged(name = "Distance to Hub", importance = Importance.INFO)
+  public Distance getDistanceToHub() {
+    return Meters.of(m_swerveDriveTrain.getState().Pose.getTranslation().getDistance(m_goal));
   }
 
   @Override

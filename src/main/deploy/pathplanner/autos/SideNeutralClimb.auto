@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralClimb1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralClimb2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralClimb3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralClimb4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SideNeutralClimb5Depot"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

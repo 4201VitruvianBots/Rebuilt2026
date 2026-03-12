@@ -74,18 +74,10 @@ public final class VISION {
   public static final int kMegatag2YawStdDevIndex = 11;
   public static final double kLargeVariance = 1e6;
 
-  // public enum BRANCH_TARGET {
-  //   LEFT(true),
-  //   RIGHT(false);
-
-  //   private final boolean m_useLeft;
-
-  //   BRANCH_TARGET(final boolean useLeft) {
-  //     this.m_useLeft = useLeft;
-  //   }
-
-  //   public boolean getTargetType() {
-  //     return m_useLeft;
-  //   }
-  // }
+  public enum TARGET {
+    LEFT_FRONT_TOWER,
+    RIGHT_FRONT_TOWER,
+    // LEFT_BACK_TOWER, // add if needed
+    // RIGHT_BACK_TOWER // add if needed
+  }
 }

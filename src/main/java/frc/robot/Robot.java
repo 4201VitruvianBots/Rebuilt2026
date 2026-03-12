@@ -4,12 +4,15 @@
 
 package frc.robot;
 
-// import edu.wpi.first.epilogue.Epilogue;
+import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.ROBOT;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -31,20 +34,16 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DataLogManager.start();
-    // Epilogue.configure(
-    //     config -> {
-    //       // config.backend = new FileBackend(DataLogManager.getLog());
+    enableLiveWindowInTest(false);
+    Epilogue.configure(
+        config -> {
+          // config.backend = new FileBackend(DataLogManager.getLog());
 
-    //       if (RobotBase.isSimulation()) {
-    //         config.minimumImportance = Logged.Importance.DEBUG;
-    //       } else {
-    //         // During competition/practice
-    //         config.minimumImportance = Logged.Importance.INFO;
-    //       }
+          ROBOT.initializeConstants();
 
-    //       config.root = "EpilogueTelemetry";
-    //     });
-    // Epilogue.bind(this);
+          config.root = "EpilogueTelemetry";
+        });
+    Epilogue.bind(this);
   }
 
   /**
@@ -61,6 +60,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    m_robotContainer.robotPeriodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -78,6 +79,10 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    }
+
+    if (RobotBase.isSimulation()) {
+      m_robotContainer.resetFuelSim();
     }
   }
 
@@ -104,17 +109,25 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+
+    m_robotContainer.testInit();
   }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_robotContainer.testPeriodic();
+  }
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    addPeriodic(() -> m_robotContainer.updateFuelLaunchSim(), 1.0 / FLYWHEEL.ballsPerSecond);
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    m_robotContainer.simulationPeriodic();
+  }
 }
