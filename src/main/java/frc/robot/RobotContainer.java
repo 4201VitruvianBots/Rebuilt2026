@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,9 +51,9 @@ public class RobotContainer {
   private CommandSwerveDrivetrain m_swerveDrive = TunerConstants.createDrivetrain();
 
   private Controls m_controls = new Controls();
-  private RobotState state = new RobotState();
+
   @Logged(name = "Vision", importance = Logged.Importance.INFO)
-  private Vision m_vision = new Vision(m_controls, state);
+  private Vision m_vision = new Vision(m_controls);
 
   private Telemetry m_telemetry = new Telemetry();
 

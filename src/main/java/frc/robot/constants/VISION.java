@@ -63,6 +63,17 @@ public final class VISION {
   public static final Angle poseRollTolerance = Degrees.of(4);
   public static final Angle poseYawTolerance = Degrees.of(4);
 
+  // Standard deviation constants
+  public static final int kMegatag1XStdDevIndex = 0;
+  public static final int kMegatag1YStdDevIndex = 1;
+  public static final int kMegatag1YawStdDevIndex = 5;
+
+  // Standard deviation array indices for Megatag2
+  public static final int kMegatag2XStdDevIndex = 6;
+  public static final int kMegatag2YStdDevIndex = 7;
+  public static final int kMegatag2YawStdDevIndex = 11;
+  public static final double kLargeVariance = 1e6;
+
   // public enum BRANCH_TARGET {
   //   LEFT(true),
   //   RIGHT(false);
