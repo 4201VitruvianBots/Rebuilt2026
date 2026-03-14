@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.UPTAKE;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Uptake extends SubsystemBase {
@@ -117,22 +117,11 @@ public class Uptake extends SubsystemBase {
   }
 
   @NotLogged
-  public Command command(UPTAKE_SPEED_RPM speed) {
-    return this.startEnd(
-        () -> setVelocitySetpoint(speed.get()),
-        () -> {
-          setPercentOutput(0.0);
-          setVelocitySetpoint(UPTAKE_SPEED_RPM.IDLE.get());
-        });
-  }
-
-  @NotLogged
   public Command percentCommand(double speed) {
     return this.startEnd(
         () -> m_motor.set(speed),
         () -> {
           setPercentOutput(0.0);
-          setVelocitySetpoint(UPTAKE_SPEED_RPM.IDLE.get());
         });
   }
 

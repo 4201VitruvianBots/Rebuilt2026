@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 
 public class CenterDepot extends SequentialCommandGroup {
   public CenterDepot(AutoDependencies deps) {
@@ -37,7 +37,7 @@ public class CenterDepot extends SequentialCommandGroup {
           new ParallelCommandGroup(
                   m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
                   new Shoot(flywheel, hood, vision, swerveDrive),
-                  uptake.command(UPTAKE_SPEED_RPM.UPTAKING))
+                  uptake.percentCommand(UPTAKE_SPEED.SHOOTING.get()))
               .withTimeout(3),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
