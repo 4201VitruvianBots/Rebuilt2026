@@ -75,9 +75,9 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.446044921875;
+    public static final double encoderOffset = 0.160400390625;
     public static final SensorDirectionValue encoderDirection =
-        SensorDirectionValue.CounterClockwise_Positive;
+        SensorDirectionValue.Clockwise_Positive;
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(55.0)),
