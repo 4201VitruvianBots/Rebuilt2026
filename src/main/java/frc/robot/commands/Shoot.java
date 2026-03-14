@@ -29,7 +29,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
 
@@ -55,30 +54,29 @@ public class Shoot extends Command {
 
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
+    // Everything has been offset by plus 5.5 degrees. 
+    distanceToShotMap.put(Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(6.5), 0.9)); //
     distanceToShotMap.put(
-        Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(1.0), 0.9)); //
+        Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(7.5), 1.0)); // Tuned
     distanceToShotMap.put(
-        Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(2.0), 1.0)); // Tuned
+        Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(8.5), 1.09)); // Tuned
     distanceToShotMap.put(
-        Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(3.0), 1.09)); // Tuned
+        Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(10.8), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(5.3), 1.1)); // Tuned
+        Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(12), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(6.5), 1.1)); // Tuned
-    distanceToShotMap.put(Meters.of(3.166696048347548), new Shot(RPM.of(1740), Degrees.of(9.1),
-    1.11));
-    distanceToShotMap.put(Meters.of(3.404527735240185), new Shot(RPM.of(1780), Degrees.of(10),
-    1.115)); // Half Tuned
+        Meters.of(3.166696048347548), new Shot(RPM.of(1740), Degrees.of(14.6), 1.11));
+    distanceToShotMap.put(
+        Meters.of(3.404527735240185), new Shot(RPM.of(1780), Degrees.of(15.5), 1.115)); // Half Tuned
     // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21),
     // 1.286));
     // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8),
     // 1.286));
     distanceToShotMap.put(
-        Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(12), 1.1));
+        Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(17.5), 1.1));
+    distanceToShotMap.put(Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(18.5), 1.12));
     distanceToShotMap.put(
-        Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(13), 1.12));
-    distanceToShotMap.put(
-        Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(16.5), 1.16));
+        Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(22), 1.16));
     // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
     // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
@@ -107,7 +105,7 @@ public class Shoot extends Command {
   private final Hood m_shooterHood;
 
   Translation2d m_goal = new Translation2d();
-  
+
   public static Shot getShotForDistance(Distance distance) {
     return distanceToShotMap.get(distance);
   }
@@ -135,10 +133,7 @@ public class Shoot extends Command {
 
   /** Standard shooting without shoot on the move capabilities. Used only in auto. */
   public Shoot(
-      Flywheel flywheel,
-      Hood shooterHood,
-      Vision vision,
-      CommandSwerveDrivetrain swerveDrive) {
+      Flywheel flywheel, Hood shooterHood, Vision vision, CommandSwerveDrivetrain swerveDrive) {
     m_flywheel = flywheel;
     m_shooterHood = shooterHood;
     m_vision = vision;
@@ -215,9 +210,12 @@ public class Shoot extends Command {
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
     if (m_flywheel.isAtRPMsetpoint()) {
-      if (m_driverController != null) m_driverController.setRumble(RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength); // Null in auto
+      if (m_driverController != null)
+        m_driverController.setRumble(
+            RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength); // Null in auto
     } else {
-      if (m_driverController != null) m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
+      if (m_driverController != null)
+        m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     }
 
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
@@ -229,7 +227,8 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (m_driverController != null)  m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
+    if (m_driverController != null)
+      m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
     m_flywheel.setRPMOutputFOC(RPM.of(0.0));
   }

@@ -24,9 +24,11 @@ public class INTAKE {
     public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
 
     public static final Distance radius = Inches.of(0.625);
-    
-    // How much the stator current of the intake should increase when it is intaking a game piece compared to when it is not.
-    public static final double currentDifferenceThreshold = 40.0; // TODO: Tune this value based on testing.
+
+    // How much the stator current of the intake should increase when it is intaking a game piece
+    // compared to when it is not.
+    public static final double currentDifferenceThreshold =
+        40.0; // TODO: Tune this value based on testing.
 
     public enum INTAKE_SPEED {
       ZERO(0),

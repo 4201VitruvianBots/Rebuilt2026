@@ -6,17 +6,16 @@ package frc.robot.commands.autos.routines;
 
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
-import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.team4201.lib.command.Auto;
 
 public class SideNeutralDepotClimb extends Auto {
   public SideNeutralDepotClimb(AutoDependencies deps) {
-      addCommands(
-          new ShootNearStart(deps, () -> false),
+    addCommands(
+        new ShootNearStart(deps, () -> false),
         //   new IntakeFromNeutral(deps, true, () -> false),
         //   new ShootNearStart(deps, () -> false),
-          new IntakeAndShootFromDepot(deps)
+        new IntakeAndShootFromDepot(deps)
         // // TODO: add climb, old code here
         //   new ParallelCommandGroup(
         //       new Shoot(flywheel, hood, vision, swerveDrive).withTimeout(3),
@@ -25,10 +24,11 @@ public class SideNeutralDepotClimb extends Auto {
         //               () ->
         //                   Math.abs(
         //                           climber.getHeight().in(Meter)
-        //                               - CLIMBER.CLIMBER_SETPOINT.LEVEL_ONE.getSetpoint().in(Meter))
+        //                               -
+        // CLIMBER.CLIMBER_SETPOINT.LEVEL_ONE.getSetpoint().in(Meter))
         //                       < 0.1)),
         //   m_path6.andThen(() -> swerveDrive.setControl(stopRequest)),
         //   new Climb(climber, CLIMBER.CLIMBER_SETPOINT.START_POSITION)
-    );
+        );
   }
 }
