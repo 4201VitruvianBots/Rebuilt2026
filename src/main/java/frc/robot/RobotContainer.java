@@ -89,7 +89,8 @@ public class RobotContainer {
   private LEDs m_led;
 
   // @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
-  @NotLogged private IntakePivot m_intakePivot;
+  @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
+  private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -168,9 +169,9 @@ public class RobotContainer {
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
-    if (ROBOT.robotID.equals(ROBOT_ID.V2)) {
+    if (ROBOT.robotID.equals(ROBOT_ID.V2) || RobotBase.isSimulation()) {
         m_intakePivot = new IntakePivot();
-        m_climber = new Climber();
+        // m_climber = new Climber();
     }
     // m_led = new LEDs();
     // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
@@ -241,7 +242,7 @@ public class RobotContainer {
                 m_driverController::getLeftY,
                 m_driverController::getLeftX));
 
-    m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, null, m_uptake));
+    m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
     // // I foresee a state machine in the future...

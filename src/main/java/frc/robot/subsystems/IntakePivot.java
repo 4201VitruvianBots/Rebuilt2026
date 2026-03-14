@@ -123,7 +123,6 @@ public class IntakePivot extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)
@@ -150,10 +149,11 @@ public class IntakePivot extends SubsystemBase {
     return m_motor.isConnected();
   }
 
-  // public Boolean PrevSetpointIsIntaking() {     //placeholder, idea (in the future) is to find
-  // way to track previous setpoint and use that for jostling (like if the previous was storwed then
-  // not beable to jostle on accident)
-  // return m_desiredAngle
+  // placeholder, idea (in the future) is to find
+  // way to track previous setpoint and use that for jostling (like if the previous was stowed then
+  // not be able to jostle on accident)
+  // public Boolean PrevSetpointIsIntaking() { 
+  //  return m_desiredAngle
   // }
 
   @NotLogged
@@ -175,9 +175,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getAngleDegrees() > PIVOT.maxAngle.in(Degrees)) {
-      m_motor.setControl(m_request.withPosition(PIVOT.maxAngle.in(Rotations)));
-    }
+    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
   }
 
   @Override

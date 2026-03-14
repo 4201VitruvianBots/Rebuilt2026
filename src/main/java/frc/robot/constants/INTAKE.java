@@ -65,7 +65,7 @@ public class INTAKE {
 
     public static final Angle minAngle = Degrees.of(0.0);
     public static final Angle maxAngle = Degrees.of(55.0);
-    public static final Angle startingAngle = minAngle;
+    public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
             .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
@@ -77,11 +77,11 @@ public class INTAKE {
 
     public static final double encoderOffset = 0.446044921875;
     public static final SensorDirectionValue encoderDirection =
-        SensorDirectionValue.Clockwise_Positive;
+        SensorDirectionValue.CounterClockwise_Positive;
 
     public enum PIVOT_SETPOINT {
-      STOWED(Degrees.of(0.0)),
-      INTAKING(Degrees.of(52.0)),
+      STOWED(Degrees.of(55.0)),
+      INTAKING(Degrees.of(0.0)),
       JOSTLING(Degrees.of(20.0));
 
       private final Angle angle;
