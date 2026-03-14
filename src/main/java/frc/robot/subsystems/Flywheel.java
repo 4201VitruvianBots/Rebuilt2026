@@ -38,13 +38,13 @@ public class Flywheel extends SubsystemBase {
 
   // TODO: Check how many motors we have later
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
-  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.driveBase);
+  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.roboRIO);
 
   @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.driveBase);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.roboRIO);
 
   @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
-  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.driveBase);
+  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.roboRIO);
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
