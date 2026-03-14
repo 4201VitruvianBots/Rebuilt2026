@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 3.5,
+        "x": 3.591361607142857,
         "y": 5.5
       },
       "prevControl": {
-        "x": 2.5,
+        "x": 2.591361607142857,
         "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SideStartPoint"
     }
   ],
   "rotationTargets": [
@@ -64,7 +64,7 @@
   "reversed": false,
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
-    "velocity": 2.5,
+    "velocity": 3.1,
     "rotation": 0.0
   },
   "useDefaultConstraints": false

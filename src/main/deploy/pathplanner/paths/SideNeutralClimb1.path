@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.0959772727272723,
-        "y": 4.560647727272727
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": {
-        "x": 3.165619535497928,
-        "y": 4.870337957755272
+        "x": 3.2050726088221198,
+        "y": 5.306416051245633
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -18.400000000000002
+    "rotation": -31.798912824294426
   },
   "reversed": false,
   "folder": "Zold - SideNeutralClimb",

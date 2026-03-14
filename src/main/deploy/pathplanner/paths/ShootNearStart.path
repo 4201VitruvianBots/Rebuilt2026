@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5249157314158515,
-        "y": 5.187326335796125
+        "x": 3.4975411408636434,
+        "y": 5.1329647274155
       },
       "isLocked": false,
       "linkedName": "SideStartPoint"
     },
     {
       "anchor": {
-        "x": 3.0959772727272723,
-        "y": 4.560647727272727
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": {
-        "x": 3.156191338838364,
-        "y": 4.80328792642029
+        "x": 3.249534405627019,
+        "y": 5.2654425592681395
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": -28.500000000000004
+      "rotationDegrees": -29.999999999999996
     }
   ],
   "constraintZones": [],
@@ -58,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -18.400000000000002
+    "rotation": -31.798912824294426
   },
   "reversed": false,
   "folder": "ShootNearStart",

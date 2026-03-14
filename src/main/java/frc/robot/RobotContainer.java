@@ -308,7 +308,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Auto 1 - CenterDepot", new CenterDepot(autoDeps));
     m_autoChooser.addOption(
         "Auto 2 - SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
-    m_autoChooser.addOption("Auto 3 - SideDepot (To Test)", new SideNeutralDepot(autoDeps));
+    m_autoChooser.addOption("Auto 3 - SideNeutralDepot", new SideNeutralDepot(autoDeps));
     m_autoChooser.addOption(
         "Auto 4 - SideNeutralTwice", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(

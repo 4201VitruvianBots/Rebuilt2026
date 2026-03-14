@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.0959772727272723,
-        "y": 4.560647727272727
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7760217171717168,
-        "y": 5.927603282828282
+        "x": 2.8154747904959083,
+        "y": 6.3636813763186435
       },
       "isLocked": false,
       "linkedName": "ShootingPoint"
@@ -57,7 +57,7 @@
   "folder": "Zold - PreloadSideNeutralTwice",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -18.400000000000002
+    "rotation": -31.798912824294426
   },
   "useDefaultConstraints": true
 }
