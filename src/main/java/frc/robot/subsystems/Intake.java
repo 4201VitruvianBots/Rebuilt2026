@@ -38,10 +38,6 @@ public class Intake extends SubsystemBase {
   private DoubleSubscriber m_outputSubscriber;
   private DoublePublisher m_outputPublisher;
 
-  private LinearFilter currentFilter =
-      LinearFilter.movingAverage(200); // Up to ~4 seconds worth of data
-  private boolean runCurrentFilter = false;
-
   // private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2);
 
   private final DCMotorSim m_motor1Sim =
@@ -120,22 +116,8 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public void startCurrentFilter() {
-    currentFilter.reset();
-    runCurrentFilter = true;
-  }
-
-  public double endCurrentFilter() {
-    runCurrentFilter = false;
-    return currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
-  }
-
   @Override
-  public void periodic() {
-    if (runCurrentFilter) {
-      currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
-    }
-  }
+  public void periodic() {}
 
   @Override
   public void simulationPeriodic() {

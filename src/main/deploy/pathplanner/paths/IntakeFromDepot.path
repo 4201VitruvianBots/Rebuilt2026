@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9881594753444953,
-        "y": 6.00380297853916
+        "x": 1.8735898213959592,
+        "y": 6.5005287993022485
       },
       "isLocked": true,
       "linkedName": "ShootingPoint"
@@ -96,12 +96,12 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.3,
+    "maxAcceleration": 1.8,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": true
+    "unlimited": false
   },
   "goalEndState": {
     "velocity": 0.0,
@@ -111,7 +111,7 @@
   "folder": "IntakeAndShootFromDepot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": -31.798912824294426
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
