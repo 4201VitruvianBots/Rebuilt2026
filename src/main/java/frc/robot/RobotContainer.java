@@ -42,6 +42,7 @@ import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
@@ -224,7 +225,7 @@ public class RobotContainer {
                 m_driverController::getLeftY,
                 m_driverController::getLeftX));
 
-    m_driverController.rightBumper().whileTrue(m_intake.command(INTAKE_SPEED.REVERSE));
+    m_driverController.rightBumper().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
     m_driverController
         .x()
@@ -346,7 +347,7 @@ public class RobotContainer {
     // if (m_uptake != null) m_uptake.testInit();
     // if (m_indexer != null) m_indexer.testInit();
     if (m_intakePivot != null) m_intakePivot.testInit();
-    // if (m_intake != null) m_intake.testInit();
+    if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
     if (m_climber != null) m_climber.testInit();
   }

@@ -30,6 +30,14 @@ public class INTAKE {
     public static final double currentDifferenceThreshold =
         40.0; // TODO: Tune this value based on testing.
 
+    public enum INTAKE_STATE{
+      IDLE,
+      INTAKING,
+      SHOOTING,
+      REVERSING,
+      MANUAL;
+    }
+    
     public enum INTAKE_SPEED {
       ZERO(0),
       INTAKING(0.99),

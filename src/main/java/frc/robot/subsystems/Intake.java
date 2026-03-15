@@ -22,14 +22,17 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.ROLLERS;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Intake extends SubsystemBase {
@@ -45,6 +48,7 @@ public class Intake extends SubsystemBase {
       LinearFilter.movingAverage(200); // Up to ~4 seconds worth of data
   private boolean runCurrentFilter = false;
 
+  private INTAKE_STATE m_state = INTAKE_STATE.IDLE;
 
   private final DCMotorSim m_motor1Sim =
       new DCMotorSim(
@@ -100,11 +104,6 @@ public class Intake extends SubsystemBase {
   }
 
   @NotLogged
-  public Command command(INTAKE_SPEED speed) {
-    return this.startEnd(() -> m_motor.set(speed.get()), () -> m_motor.set(0));
-  }
-
-  @NotLogged
   public int getStoredFuel() {
     if (RobotBase.isSimulation()) {
       return simStoredFuel;
@@ -132,10 +131,37 @@ public class Intake extends SubsystemBase {
     return currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
   }
 
+  public void setIntakeState(INTAKE_STATE state){
+    m_state = state;
+  }
+
+  public Command commandIntakeState(INTAKE_STATE state){
+    return this.startEnd(() -> setIntakeState(state), () -> setIntakeState(INTAKE_STATE.IDLE));
+  }
+
   @Override
   public void periodic() {
     if (runCurrentFilter) {
       currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
+    }
+    switch (m_state){
+      case IDLE:
+      default:
+        setOutputPercent(INTAKE_SPEED.ZERO.get());
+        break;
+      case INTAKING:
+        setOutputPercent(INTAKE_SPEED.INTAKING.get());
+        break;
+      case SHOOTING:
+        boolean shouldReverse = Math.round(Timer.getFPGATimestamp()) % 2 == 0;
+        setOutputPercent(shouldReverse ? INTAKE_SPEED.REVERSE.get() : INTAKE_SPEED.SHOOTING.get());
+        break;
+      case MANUAL:
+        setOutputPercent(m_outputSubscriber.get());
+        break;
+      case REVERSING:
+        setOutputPercent(INTAKE_SPEED.REVERSE.get());
+        break;
     }
   }
 
@@ -161,9 +187,8 @@ public class Intake extends SubsystemBase {
     m_outputSubscriber = topic.subscribe(0.0);
     m_outputPublisher = topic.publish();
     m_outputPublisher.set(0.0);
+    setIntakeState(INTAKE_STATE.MANUAL);
   }
 
-  public void testPeriodic() {
-    setOutputPercent(m_outputSubscriber.get());
-  }
+  public void testPeriodic() {}
 }
