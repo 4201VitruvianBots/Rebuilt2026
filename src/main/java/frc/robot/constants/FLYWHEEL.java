@@ -68,8 +68,8 @@ public class FLYWHEEL {
   }
 
   public class HOOD {
-    public static final double kP = 12.1; // TODO: Change this
-    public static final double kS = 0.47;
+    public static final double kP = 1.1; // TODO: Change this
+    public static final double kS = 0.0;
     public static final double gearRatio =
         170.0 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
     // will be

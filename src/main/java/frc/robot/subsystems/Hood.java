@@ -44,12 +44,12 @@ public class Hood extends SubsystemBase {
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
       new TalonFX(
-          CAN.kShooterHoodMotor, CAN.driveBase); // Replace these device ids after motors are set up
+          CAN.kShooterHoodMotor, CAN.roboRIO); // Replace these device ids after motors are set up
 
   private final CANcoder m_cancoder =
       new CANcoder(
           CAN.kShooterHoodCANCoder,
-          CAN.driveBase); // Replace these device ids after motors are set up
+          CAN.roboRIO); // Replace these device ids after motors are set up
 
   private DoublePublisher m_anglePublisher;
 
@@ -100,7 +100,7 @@ public class Hood extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
     if (RobotBase.isReal()) {
-      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     } else {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     }
