@@ -97,16 +97,17 @@ public class Hood extends SubsystemBase {
     config.Slot0.kS = HOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimitEnable = false;
     config.ClosedLoopGeneral.ContinuousWrap = false;
     if (RobotBase.isReal()) {
-      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     } else {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     }
 
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     config.Feedback.RotorToSensorRatio = HOOD.gearRatio;
+    config.Feedback.SensorToMechanismRatio = 3.0;
     config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
