@@ -115,6 +115,8 @@ public class RobotContainer {
           .withDeadband(MaxSpeed.times(0.1))
           .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
+  private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest = new SwerveRequest.SwerveDriveBrake();
+
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry =
       new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
@@ -245,6 +247,8 @@ public class RobotContainer {
     m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
+
+    m_driverController.povDown().whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
