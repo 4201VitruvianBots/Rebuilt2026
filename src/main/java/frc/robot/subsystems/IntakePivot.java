@@ -23,24 +23,33 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.INTAKE.PIVOT;
-import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.constants.CAN;
+import frc.robot.constants.INTAKE.PIVOT;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBaseCanbus);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.roboRIO);
 
-  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
+  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder, CAN.roboRIO);
+
+  private DoubleSubscriber m_angleSubscriber;
+  private DoublePublisher m_anglePublisher;
 
   private final MotionMagicTorqueCurrentFOC m_request =
       new MotionMagicTorqueCurrentFOC(Rotations.of(0.0));
@@ -75,32 +84,27 @@ public class IntakePivot extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
     config.Slot0.kD = PIVOT.kD;
+    config.Slot0.kG = PIVOT.kG;
     // config.Slot0.kA = PIVOT.kA;
     // config.Slot0.kV = PIVOT.kV;
     // config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
-    config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode =
-        NeutralModeValue
-            .Brake; // Here, in this very instance, we, as in me and Sir Nathan Schoen have
-    // ulimately, after an extensive amount of deliberation, have ultimately decided
-    // that is in our best interests to make ues of the "brake" value in neutral
-    // mode, due to the fact that an intake Pivot would not be coasting, thus we
-    // chose to use brake for afformentioned pivot.
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    config.CurrentLimits.StatorCurrentLimit = 175;
+    config.CurrentLimits.StatorCurrentLimit = 80;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.ClosedLoopGeneral.ContinuousWrap = false;
+    // config.ClosedLoopGeneral.ContinuousWrap = false;
 
-    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
-    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVOT.maxAngle.in(Rotations);
+    // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVOT.minAngle.in(Rotations);
 
     config.MotionMagic.MotionMagicCruiseVelocity = PIVOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = PIVOT.motionMagicAcceleration;
@@ -111,6 +115,7 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
       m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
+    m_motor.setPosition(getAngle().in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -118,9 +123,6 @@ public class IntakePivot extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
-    SmartDashboard.putString(
-        "Pivot Control Request", m_request.withPosition(m_desiredAngle.in(Rotations)).toString());
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)
@@ -147,11 +149,33 @@ public class IntakePivot extends SubsystemBase {
     return m_motor.isConnected();
   }
 
+  // placeholder, idea (in the future) is to find
+  // way to track previous setpoint and use that for jostling (like if the previous was stowed then
+  // not be able to jostle on accident)
+  // public Boolean PrevSetpointIsIntaking() { 
+  //  return m_desiredAngle
+  // }
+
+  @NotLogged
+  public Command command(PIVOT_SETPOINT setpoint) {
+    return this.runOnce(() -> setAngle(setpoint.getAngle()));
+  }
+
+  @NotLogged
+  public Command jostle() {
+    return new RepeatCommand(
+        this.startEnd(
+                () -> setAngle(PIVOT_SETPOINT.JOSTLING.getAngle()),
+                () -> {
+                  setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
+                })
+            .withTimeout(0.3)
+            .andThen(new WaitCommand(0.3)));
+  }
+
   @Override
   public void periodic() {
-    if (getAngleDegrees() > PIVOT.maxAngle.in(Degrees)) {
-      m_motor.setControl(m_request.withPosition(PIVOT.maxAngle.in(Rotations)));
-    }
+    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
   }
 
   @Override
@@ -168,5 +192,19 @@ public class IntakePivot extends SubsystemBase {
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Intake Angle Setpoint");
+    m_angleSubscriber = topic.subscribe(0.0);
+    m_anglePublisher = topic.publish();
+    m_anglePublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }

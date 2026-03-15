@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.ROBOT;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -37,12 +39,7 @@ public class Robot extends TimedRobot {
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
 
-          if (RobotBase.isSimulation()) {
-            config.minimumImportance = Logged.Importance.DEBUG;
-          } else {
-            // During competition/practice
-            config.minimumImportance = Logged.Importance.INFO;
-          }
+          ROBOT.initializeConstants();
 
           config.root = "EpilogueTelemetry";
         });
@@ -63,6 +60,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    m_robotContainer.robotPeriodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -70,7 +69,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.disabledPeriodic();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -80,6 +81,10 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    }
+
+    if (RobotBase.isSimulation()) {
+      m_robotContainer.resetFuelSim();
     }
   }
 
@@ -118,9 +123,13 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    addPeriodic(() -> m_robotContainer.updateFuelLaunchSim(), 1.0 / FLYWHEEL.ballsPerSecond);
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    m_robotContainer.simulationPeriodic();
+  }
 }

@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
@@ -13,23 +15,31 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.CLIMBER;
-import frc.robot.Constants.CLIMBER.HOLDING_ROBOT;
-import frc.robot.Constants.CLIMBER.NOT_HOLDING_ROBOT;
+import frc.robot.constants.CAN;
+import frc.robot.constants.CLIMBER;
+import frc.robot.constants.CLIMBER.HOLDING_ROBOT;
+import frc.robot.constants.CLIMBER.NOT_HOLDING_ROBOT;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Climber extends SubsystemBase {
   // Creates a new motor object.
   @Logged(name = "Climber Motor", importance = Importance.DEBUG)
   private final TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
+
+  private DoubleSubscriber m_setpointSubscriber;
+  private DoublePublisher m_setpointPublisher;
 
   private final DynamicMotionMagicVoltage m_request =
       new DynamicMotionMagicVoltage(
@@ -140,6 +150,14 @@ public class Climber extends SubsystemBase {
         m_climberMotor.getPosition().clone().refresh().getValue().magnitude());
   }
 
+  // For Robot2d Simulation
+  @NotLogged
+  public LinearVelocity getVelocity() {
+    return InchesPerSecond.of(
+        m_climberMotor.getVelocity().clone().refresh().getValue().in(RotationsPerSecond)
+            * CLIMBER.drumRotationsToDistance.in(Meters));
+  }
+
   public double convertDistancetoRotations(Distance distance) {
     return distance.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters);
   }
@@ -181,7 +199,8 @@ public class Climber extends SubsystemBase {
 
   @Logged(name = "Is Holding Robot", importance = Importance.INFO)
   public boolean isHoldingRobot() {
-    return getAverageCurrent() < CLIMBER.kHoldingRobotThreshold.in(Amps);
+    return getAverageCurrent() > CLIMBER.kCurrentHoldingRobotThreshold.in(Amps)
+        && m_climberMotor.getVelocity().clone().refresh().getValue().in(RotationsPerSecond) < 1.0;
   }
 
   public void holdClimber() {
@@ -227,5 +246,24 @@ public class Climber extends SubsystemBase {
     } else {
       updateSim(m_climberUnweightedSim);
     }
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Climber Setpoint");
+    m_setpointSubscriber = topic.subscribe(0.0);
+    m_setpointPublisher = topic.publish();
+    m_setpointPublisher.set(0.0);
+    m_setpointPublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setDesiredPositionAndMotionMagicConfigs(
+        Inches.of(m_setpointSubscriber.get()),
+        getAverageCurrent(),
+        getHeightInches(),
+        getAverageCurrent());
   }
 }

@@ -82,6 +82,9 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation 'org.mockito:mockito-core:5.+'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.+'
 }
 
 test {
@@ -169,7 +172,14 @@ gversion {
     classPackage = "frc.robot"
     className    = "BuildConstants"
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    timeZone     = "America/Los_Angeles" // Use preferred time zone
+    def today = java.time.LocalDate.now()
+    def hwStart = java.time.LocalDate.of(2026, 4, 28)
+    def hwEnd = java.time.LocalDate.of(2026, 5, 3)
+    if (!today.isBefore(hwStart) && !today.isAfter(hwEnd)) {
+        timeZone = "America/Chicago" // world champs!!!
+    } else {
+        timeZone = "America/Los_Angeles" // LA/OC/SoCal dcmp
+    }
     indent       = "  "
 }
 
@@ -177,4 +187,76 @@ apply plugin: 'com.diffplug.spotless'
 
 afterEvaluate {
     tasks.getByName('spotlessCheck').dependsOn(tasks.getByName('spotlessApply'))
+}
+
+// --------------------------------------------------
+// Task: copyAdvantageScopeAssets
+// Copies resources/Robot_Threepeater_v1 into AdvantageScope userAssets for the
+// current OS.
+// Usage:
+//   ./gradlew copyAdvantageScopeAssets
+// --------------------------------------------------
+
+task copyAdvantageScopeAssets(type: Copy) {
+    // Accept project properties:
+    //  -Pmirror=true|false : control whether to delete existing destination folder before copying (default: true)
+
+    def osName = System.getProperty('os.name').toLowerCase()
+    def sourceDir = file('resources/Robot_Threepeater_v1')
+    if (!sourceDir.exists()) {
+        throw new GradleException("Source folder not found: ${sourceDir}")
+    }
+
+    def destDir
+    if (osName.contains('windows')) {
+        def appdata = System.getenv('APPDATA')
+        if (!appdata) {
+            throw new GradleException('APPDATA environment variable not set; cannot determine destination on Windows.')
+        }
+        destDir = file("${appdata}/AdvantageScope/userAssets")
+    } else {
+        def xdg = System.getenv('XDG_CONFIG_HOME')
+        if (xdg && xdg.trim()) {
+            destDir = file("${xdg}/AdvantageScope/userAssets")
+        } else {
+            destDir = file("${System.getProperty('user.home')}/.config/AdvantageScope/userAssets")
+        }
+    }
+
+    // Copy the source folder itself into the destination parent so the final
+    // path becomes: <userAssets>/Robot_Threepeater_v1
+    def destTarget = new File(destDir, sourceDir.name)
+
+    // Default mirror to true; allow overriding with -Pmirror=false
+    def mirror = true
+    if (project.hasProperty('mirror')) {
+        def p = project.property('mirror')
+        mirror = !(p != null && (p.toString().toLowerCase() in ['0', 'false', 'no', 'n']))
+    }
+
+    from sourceDir
+    into destTarget
+
+    doFirst {
+        println 'Preparing to copy AdvantageScope assets...'
+        println "Source: ${sourceDir}"
+        println "Target parent: ${destDir}"
+        println "Final target: ${destTarget}"
+
+        // Create parent directories
+        destDir.mkdirs()
+
+        if (mirror) {
+            if (destTarget.exists()) {
+                println "Mirror enabled: deleting existing target ${destTarget} before copy."
+                project.delete(destTarget)
+            } else {
+                println "Mirror enabled: target does not exist, nothing to delete."
+            }
+        }
+
+        // Ensure destination exists (after potential deletion)
+        destTarget.mkdirs()
+        println "Copying assets from: ${sourceDir} -> ${destTarget}"
+    }
 }

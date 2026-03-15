@@ -6,16 +6,17 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -24,15 +25,17 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.UPTAKE;
+import frc.robot.constants.CAN;
+import frc.robot.constants.UPTAKE;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Uptake extends SubsystemBase {
 
   @Logged(name = "Uptake Motor", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.driveBaseCanbus);
+  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.roboRIO);
 
   private final FlywheelSim m_motorSim =
       new FlywheelSim(
@@ -41,8 +44,8 @@ public class Uptake extends SubsystemBase {
 
   private final TalonFXSimState m_simState;
 
-  private MotionMagicVelocityTorqueCurrentFOC m_request =
-      new MotionMagicVelocityTorqueCurrentFOC(0.0);
+  private VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0.0);
+  private DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0.0);
 
   private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
 
@@ -54,14 +57,13 @@ public class Uptake extends SubsystemBase {
     config.Slot0.kP = UPTAKE.kP;
     config.Slot0.kS = UPTAKE.kS;
     config.Slot0.kV = UPTAKE.kV;
+    config.CurrentLimits.StatorCurrentLimit = UPTAKE.kStatorCurrentLimit;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.Feedback.SensorToMechanismRatio = UPTAKE.gearRatio;
 
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-    config.MotionMagic.MotionMagicAcceleration = UPTAKE.kMotionMagicAcceleration;
-    config.MotionMagic.MotionMagicCruiseVelocity = UPTAKE.kMotionMagicCruiseVelocity;
 
     CtreUtils.configureTalonFx(m_motor, config);
 
@@ -97,9 +99,41 @@ public class Uptake extends SubsystemBase {
     return m_motor.get();
   }
 
+  public double getRPMerror() {
+    return getRPMsetpoint() - getMotorSpeedRPM();
+  }
+
   @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
   public double getMotorSpeedRPM() {
     return m_motor.getVelocity().refresh().getValue().in(RPM);
+  }
+
+  public boolean isAtRPMsetpoint() {
+    return getAbsoluteRPMerror() <= UPTAKE.kVelocityErrorThreshold;
+  }
+
+  public double getAbsoluteRPMerror() {
+    return Math.abs(getRPMerror());
+  }
+
+  @NotLogged
+  public Command command(UPTAKE_SPEED_RPM speed) {
+    return this.startEnd(
+        () -> setVelocitySetpoint(speed.get()),
+        () -> {
+          setPercentOutput(0.0);
+          setVelocitySetpoint(UPTAKE_SPEED_RPM.IDLE.get());
+        });
+  }
+
+  @NotLogged
+  public Command percentCommand(double speed) {
+    return this.startEnd(
+        () -> m_motor.set(speed),
+        () -> {
+          setPercentOutput(0.0);
+          setVelocitySetpoint(UPTAKE_SPEED_RPM.IDLE.get());
+        });
   }
 
   public void testInit() {
@@ -107,12 +141,15 @@ public class Uptake extends SubsystemBase {
   }
 
   public void testPeriodic() {
-    m_velocitySetpoint = RPM.of(m_rpmSubscriber.get());
+    setPercentOutput(m_rpmSubscriber.get());
   }
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    // if (!isAtRPMsetpoint()) {
+    //   m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror()) / 2));
+    // } else {
+    // m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
   }
 
   @Override

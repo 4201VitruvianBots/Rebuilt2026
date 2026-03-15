@@ -2,39 +2,42 @@ package frc.team4201.lib.command;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.team4201.lib.utils.TrajectoryUtils;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 // The default side for a path should be the depot side, thus it is only flipped if the autoSide
 // input is on the outpost.
 public abstract class Auto extends SequentialCommandGroup {
   protected final Command getPathCommand(
-      TrajectoryUtils trajectoryUtils, PathPlannerPath path, BooleanSupplier flipToRight) {
-    return new ProxyCommand(
+      CommandSwerveDrivetrain swerveDrive, PathPlannerPath path, BooleanSupplier flipToRight) {
+    return Commands.defer(
         () -> {
           if (flipToRight.getAsBoolean()) {
-            return trajectoryUtils.generatePPHolonomicCommand(path.mirrorPath());
+            return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(path.mirrorPath());
           } else {
-            return trajectoryUtils.generatePPHolonomicCommand(path);
+            return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(path);
           }
-        });
+        },
+        Set.of(swerveDrive));
   }
 
   // chooses between 2 paths depending on autoSide input
   protected final Command getChoiceCommand(
-      TrajectoryUtils trajectoryUtils,
+      CommandSwerveDrivetrain swerveDrive,
       PathPlannerPath choice1,
       PathPlannerPath choice2,
       BooleanSupplier autoSide) {
-    return new ProxyCommand(
+    return Commands.defer(
         () -> {
           if (autoSide.getAsBoolean()) {
-            return trajectoryUtils.generatePPHolonomicCommand(choice1);
+            return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(choice1);
           } else {
-            return trajectoryUtils.generatePPHolonomicCommand(choice2);
+            return swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(choice2);
           }
-        });
+        },
+        Set.of(swerveDrive));
   }
 }
