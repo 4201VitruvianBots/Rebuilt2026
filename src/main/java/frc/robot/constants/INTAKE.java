@@ -40,8 +40,9 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.3),
+      INTAKING(0.4),
       SHOOTING(0.3),
+      SHOTREVERSING(0.13),
       REVERSE(-0.6);
 
       private final double value;

@@ -154,7 +154,7 @@ public class Intake extends SubsystemBase {
         break;
       case SHOOTING:
         boolean shouldReverse = Math.round(Timer.getFPGATimestamp()) % 2 == 0;
-        setOutputPercent(shouldReverse ? INTAKE_SPEED.REVERSE.get() : INTAKE_SPEED.SHOOTING.get());
+        setOutputPercent(shouldReverse ? INTAKE_SPEED.SHOTREVERSING.get() : INTAKE_SPEED.SHOOTING.get());
         break;
       case MANUAL:
         setOutputPercent(m_outputSubscriber.get());
