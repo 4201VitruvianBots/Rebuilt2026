@@ -230,7 +230,6 @@ public class Shoot extends Command {
     if (m_driverController != null)
       m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
-    m_flywheel.setRPMOutputFOC(RPM.of(0.0));
   }
 
   // Returns true when the command should end.

@@ -4,8 +4,10 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Climber;
+import frc.robot.constants.LED.LED_STATES;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
@@ -15,20 +17,14 @@ import frc.robot.subsystems.Uptake;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class UpdateLEDs extends Command {
   private final LEDs m_led;
-  private final CommandSwerveDrivetrain m_drivetrain;
   private final Intake m_intake; // Used to track intaking state
-  private final Climber m_climber; // Used to track climbing state
-  private final Uptake m_uptake; // Used to track shooting state
   private final Flywheel m_flywheel; // Used to track shooting state
 
   /** Creates a new UpdateLEDs. */
   public UpdateLEDs(
-      LEDs led, CommandSwerveDrivetrain drivetrain, Intake intake, Climber climber, Uptake uptake, Flywheel flywheel) {
+      LEDs led, Intake intake, Flywheel flywheel) {
     m_led = led;
-    m_drivetrain = drivetrain;
     m_intake = intake;
-    m_climber = climber;
-    m_uptake = uptake;
     m_flywheel = flywheel;
 
     addRequirements(led);
@@ -44,11 +40,18 @@ public class UpdateLEDs extends Command {
     /*
      * When disabled, DISABLED state always takes priority
      * When robot enables, default to IDLE state
-     * If the drivetrain is moving above a certain threshold, set to DRIVING state
      * If the intake is running, set to INTAKING state
-     * If the uptake is running to shoot, set to SHOOTING state
-     * If the climber is climbing, set to CLIMBING state. Climbing state is permanent until disabled or when switching from auto to teleop.
+     * If the flywheel is running to shoot, set to SHOOTING state
      */
+    if (m_flywheel.getRPMSetpoint() > 0) {
+      m_led.setState(LED_STATES.SHOOTING, () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
+    } else if (MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
+      m_led.setState(LED_STATES.INTAKING, () -> 0.0);
+    } else if (DriverStation.isEnabled()) {
+      m_led.setState(LED_STATES.IDLE, () -> 0.0);
+    } else {
+      m_led.setState(LED_STATES.DISABLED, () -> 0.0);
+    }
   }
 
   // Called once the command ends or is interrupted.

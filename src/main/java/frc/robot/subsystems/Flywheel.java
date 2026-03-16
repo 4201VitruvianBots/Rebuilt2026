@@ -113,8 +113,12 @@ public class Flywheel extends SubsystemBase {
     m_rpmSetpoint = rpm;
   }
 
+  /**
+  * Immediately stops the flywheel. Also resets the RPM setpoint controller.
+  */
   public void setTorqueCurrentOutputFOC(Voltage voltage) {
     m_motor1.setControl(m_torqueCurrentFOC.withOutput(voltage.abs(Volts)));
+    m_rpmSetpoint = RPM.of(0);
   }
 
   @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
