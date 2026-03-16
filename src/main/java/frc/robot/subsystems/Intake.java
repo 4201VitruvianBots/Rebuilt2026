@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
     config.Slot0.kP = ROLLERS.kP;
     config.Feedback.SensorToMechanismRatio = ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = ROLLERS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = ROLLERS.peakReverseOutput;
 

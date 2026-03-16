@@ -37,10 +37,10 @@ public class INTAKE {
       REVERSING,
       MANUAL;
     }
-    
+
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.99),
+      INTAKING(0.3),
       SHOOTING(0.99),
       REVERSE(-0.6);
 
