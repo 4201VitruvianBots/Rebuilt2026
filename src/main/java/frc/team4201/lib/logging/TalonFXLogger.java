@@ -14,20 +14,20 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
 
   @Override
   public void update(EpilogueBackend backend, TalonFX motor) {
-    backend.log("Supply Voltage (V)", motor.getSupplyVoltage().getValue());
-    backend.log("Supply Current (A)", motor.getSupplyCurrent().getValue());
+    backend.log("Supply Voltage (V)", motor.getSupplyVoltage().refresh().getValue());
+    backend.log("Supply Current (A)", motor.getSupplyCurrent().refresh().getValue());
 
     backend.log("Control Mode", motor.getAppliedControl().getName());
 
     backend.log("Output (%)", motor.get());
-    backend.log("Output (V)", motor.getMotorVoltage().getValue());
-    backend.log("Stator Current (A)", motor.getStatorCurrent().getValue());
+    backend.log("Output (V)", motor.getMotorVoltage().refresh().getValue());
+    backend.log("Stator Current (A)", motor.getStatorCurrent().refresh().getValue());
 
-    backend.log("Position", motor.getPosition().getValue());
-    backend.log("Velocity", motor.getVelocity().getValue());
-    backend.log("Acceleration", motor.getAcceleration().getValue());
+    backend.log("Position", motor.getPosition().refresh().getValue());
+    backend.log("Velocity", motor.getVelocity().refresh().getValue());
+    backend.log("Acceleration", motor.getAcceleration().refresh().getValue());
 
-    backend.log("Setpoint", motor.getClosedLoopReference().getValue());
-    backend.log("Error", motor.getClosedLoopError().getValue());
+    backend.log("Setpoint", motor.getClosedLoopReference().refresh().getValue());
+    backend.log("Error", motor.getClosedLoopError().refresh().getValue());
   }
 }

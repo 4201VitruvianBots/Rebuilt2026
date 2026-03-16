@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
+import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
@@ -100,19 +101,20 @@ public class Hood extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimitEnable = false;
     config.ClosedLoopGeneral.ContinuousWrap = false;
     if (RobotBase.isReal()) {
-      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     } else {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     }
 
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    config.Feedback.RotorToSensorRatio = HOOD.gearRatio;
-    config.Feedback.SensorToMechanismRatio = 3.0;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    config.Feedback.RotorToSensorRatio = 3.111;
     config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
+    config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
     config.MotionMagic.MotionMagicJerk = HOOD.motionMagicJerk;
+    
 
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
@@ -122,11 +124,6 @@ public class Hood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
-    m_motor.setPosition(
-        getHoodAngle()
-            .times(HOOD.gearRatio)
-            .in(Rotations)); // Multiply by gear ratio to cancel the division from earlier for the
-    // internal sensor
   }
 
   public void setAngle(Angle setpoint) {
@@ -134,7 +131,7 @@ public class Hood extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
   @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)
@@ -157,8 +154,7 @@ public class Hood extends SubsystemBase {
     return m_cancoder
         .getPosition()
         .refresh()
-        .getValue()
-        .div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
+        .getValue().div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)
