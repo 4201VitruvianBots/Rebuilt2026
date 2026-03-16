@@ -11,11 +11,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
 public class FLYWHEEL {
-  public static final double kP = 4.5; // These worked for WoodBot but will need to be retuned
+  public static final double kP = 19.100000381469727; // These worked for WoodBot but will need to be retuned
   public static final double kD = 0.0;
-  ;
   public static final double kV = 0.0;
-  public static final double kS = 0.0; // TODO: Calculate kS (hooo boy that's gonna be fun,
+  public static final double kS = 7.3; // TODO: Calculate kS (hooo boy that's gonna be fun,
   public static final double kA = 0.0;
   // The value of kS is the largest voltage applied before the mechanism begins to move)
   public static final double gearRatio = 32.0 / 24.0; // Placeholder value
