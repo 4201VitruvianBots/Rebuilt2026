@@ -86,8 +86,8 @@ public class Hood extends SubsystemBase {
     if (RobotBase.isReal()) {
       encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
       encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
-      // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-      // HOOD.kAbsoluteSensorDiscontinuityPoint;
+      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+      HOOD.kAbsoluteSensorDiscontinuityPoint;
     }
     CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
 
@@ -106,7 +106,7 @@ public class Hood extends SubsystemBase {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     }
 
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.RotorToSensorRatio = 3.111;
     config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
     config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
@@ -114,7 +114,7 @@ public class Hood extends SubsystemBase {
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
     config.MotionMagic.MotionMagicJerk = HOOD.motionMagicJerk;
-    
+
 
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
@@ -124,6 +124,10 @@ public class Hood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
+    m_motor.setPosition(
+        getHoodAngle()
+            .times(HOOD.gearRatio)
+            .in(Rotations)); 
   }
 
   public void setAngle(Angle setpoint) {
