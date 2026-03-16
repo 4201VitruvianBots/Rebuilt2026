@@ -42,8 +42,8 @@ import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
@@ -411,8 +411,8 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED_RPM.UPTAKING.get().in(RPM) * 0.90)
-          && m_intake.getStoredFuel() > 0) {
+      // if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.SHOOTING.get().in(RPM) * 0.90) // TODO: Reimplement
+      //     && m_intake.getStoredFuel() > 0) {
         // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
         // of the fuel
         // vel in ft/s = 0.0111882 * RPM - 0.
@@ -433,7 +433,7 @@ public class RobotContainer {
         } catch (IllegalStateException e) {
           return;
         }
-      }
+      //}
     }
   }
 

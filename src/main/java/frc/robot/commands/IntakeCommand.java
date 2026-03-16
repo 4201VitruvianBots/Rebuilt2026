@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
+import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Uptake;
@@ -17,7 +18,7 @@ public class IntakeCommand extends ParallelCommandGroup {
   public IntakeCommand(Intake intake, IntakePivot intakePivot, Uptake uptake) {
     addCommands(
         (intake != null) ? intake.commandIntakeState(INTAKE_STATE.INTAKING) : new InstantCommand(),
-        (uptake != null) ? uptake.percentCommand(-0.3) : new InstantCommand(),
+        (uptake != null) ? uptake.percentCommand(UPTAKE_SPEED.INTAKEREVERSING.get()) : new InstantCommand(),
         (intakePivot != null)
             ? intakePivot.command(PIVOT_SETPOINT.INTAKING)
             : new InstantCommand());
