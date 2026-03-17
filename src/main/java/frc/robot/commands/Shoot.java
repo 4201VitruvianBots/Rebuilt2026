@@ -178,7 +178,7 @@ public class Shoot extends Command {
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
     // all of the logic for angle is above this Comment
-    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    m_flywheel.setRPMOutput(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
@@ -201,7 +201,7 @@ public class Shoot extends Command {
     if (m_driverController != null)
       m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
-    m_flywheel.setRPMOutputFOC(RPM.of(0.0));
+    m_flywheel.setRPMOutput(RPM.of(0.0));
   }
 
   // Returns true when the command should end.

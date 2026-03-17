@@ -95,6 +95,10 @@ public class Uptake extends SubsystemBase {
     return m_motor.isConnected();
   }
 
+  public boolean isShooting(){
+    return getPercentOutput() > 0.01;
+  }
+
   public double getPercentOutput() {
     return m_motor.get();
   }

@@ -59,8 +59,8 @@ public class Hood extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request =
-      new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(true);
-  private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(true);
+      new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(false);
+  private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(false);
 
   private Angle m_hoodSetpoint = MANUAL_ANGLE.NOTHING.getAngle();
 

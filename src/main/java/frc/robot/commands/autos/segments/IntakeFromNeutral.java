@@ -31,7 +31,7 @@ public class IntakeFromNeutral extends Auto {
         "prepareFlywheelForNearHub",
         Commands.runOnce(
             () -> {
-              deps.flywheel.setRPMOutputFOC(
+              deps.flywheel.setRPMOutput(
                   Shoot.getShotForDistance(Meters.of(1.45650895207174)).shooterRPM);
               System.out.println("[AUTO] Preparing flywheel for near hub shot");
             })); // YAY magic numbers

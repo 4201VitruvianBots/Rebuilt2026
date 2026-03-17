@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -51,8 +52,8 @@ public class IntakePivot extends SubsystemBase {
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
 
-  private final MotionMagicTorqueCurrentFOC m_request =
-      new MotionMagicTorqueCurrentFOC(Rotations.of(0.0));
+  private final MotionMagicVoltage m_request =
+      new MotionMagicVoltage(Rotations.of(0.0));
 
   private static Angle m_desiredAngle = PIVOT_SETPOINT.STOWED.getAngle();
 
@@ -169,8 +170,8 @@ public class IntakePivot extends SubsystemBase {
                 () -> {
                   setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
                 })
-            .withTimeout(0.3)
-            .andThen(new WaitCommand(0.3)));
+            .withTimeout(0.15)
+            .andThen(new WaitCommand(0.1)));
   }
 
   @Override

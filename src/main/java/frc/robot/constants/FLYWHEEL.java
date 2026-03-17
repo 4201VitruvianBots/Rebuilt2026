@@ -11,7 +11,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
 public class FLYWHEEL {
-  public static final double kP = 19.100000381469727; // These worked for WoodBot but will need to be retuned
+  public static final double kP = 1.0; // These worked for WoodBot but will need to be retuned
   public static final double kD = 0.0;
   public static final double kV = 0.0;
   public static final double kS = 7.3; // TODO: Calculate kS (hooo boy that's gonna be fun,
@@ -20,7 +20,7 @@ public class FLYWHEEL {
   public static final double gearRatio = 32.0 / 24.0; // Placeholder value
   public static final double kInertia = 0.01;
   public static final double kStatorCurrentLimit = 70.0;
-  public static final double kVelocityErrorThreshold = 150.0;
+  public static final double kVelocityErrorThreshold = 100.0;
   public static final double kFuelDragCoefficient =
       0.48; // Estimation based on it's size and relatively smooth shape. TODO: Tune
   public static final double kRumbleStrength = 0.25;

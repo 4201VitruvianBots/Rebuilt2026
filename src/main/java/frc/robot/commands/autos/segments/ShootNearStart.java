@@ -38,7 +38,7 @@ public class ShootNearStart extends Auto {
       addCommands(
           Commands.runOnce(
                   () ->
-                      deps.flywheel.setRPMOutputFOC(
+                      deps.flywheel.setRPMOutput(
                           Shoot.getShotForDistance(Meters.of(1.45650895207174)).shooterRPM))
               .andThen(
                   new PrintCommand(

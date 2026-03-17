@@ -10,7 +10,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -49,7 +51,7 @@ public class Flywheel extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
 
-  private final VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0);
+  private final VelocityVoltage m_request = new VelocityVoltage(0);
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
   private final TorqueCurrentFOC m_torqueCurrentFOC = new TorqueCurrentFOC(0.0);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
@@ -109,7 +111,7 @@ public class Flywheel extends SubsystemBase {
     m_neutralMode = neutralmode;
   }
 
-  public void setRPMOutputFOC(AngularVelocity rpm) {
+  public void setRPMOutput(AngularVelocity rpm) {
     m_rpmSetpoint = rpm;
   }
 
@@ -163,18 +165,18 @@ public class Flywheel extends SubsystemBase {
 
   public Command manualAgainstHubCommand() {
     return this.startEnd(
-        () -> setRPMOutputFOC(RPM.of(1470)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
+        () -> setRPMOutput(RPM.of(1470)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
   }
 
   public Command manualAgainstTowerCommand() {
     return this.startEnd(
-        () -> setRPMOutputFOC(RPM.of(1719)),
+        () -> setRPMOutput(RPM.of(1719)),
         () -> setTorqueCurrentOutputFOC(Volts.of(0.0))); // Unverified
   }
 
   public Command manualPassCommand() {
     return this.startEnd(
-        () -> setRPMOutputFOC(RPM.of(2200)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
+        () -> setRPMOutput(RPM.of(2200)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
   }
 
   public void testInit() {

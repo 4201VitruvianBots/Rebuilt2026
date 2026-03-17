@@ -27,7 +27,7 @@ public class IntakeAndShootFromDepot extends Auto {
         "prepareFlywheelForDepot",
         Commands.runOnce(
             () ->
-                deps.flywheel.setRPMOutputFOC(
+                deps.flywheel.setRPMOutput(
                     Shoot.getShotForDistance(Meters.of(3.31521515713456))
                         .shooterRPM))); // YAY more magic numbers
   }
