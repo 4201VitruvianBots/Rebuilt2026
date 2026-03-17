@@ -59,7 +59,7 @@ public class INTAKE {
 
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-    public static final double kP = 0.0;
+    public static final double kP = 60.0;
     public static final double kD =
         0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
@@ -71,6 +71,7 @@ public class INTAKE {
     public static final double motionMagicAcceleration = 35.0;
     public static final double motionMagicCruiseVelocity = 25.0;
     public static final double motionMagicJerk = 0.0;
+    public static final double kStatorCurrentLimit = 40.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
     public static final Angle maxAngle = Degrees.of(55.0);

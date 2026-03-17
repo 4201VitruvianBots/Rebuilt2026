@@ -55,7 +55,7 @@ public class IntakePivot extends SubsystemBase {
   private final MotionMagicVoltage m_request =
       new MotionMagicVoltage(Rotations.of(0.0));
 
-  private static Angle m_desiredAngle = PIVOT_SETPOINT.STOWED.getAngle();
+  private static Angle m_desiredAngle = PIVOT_SETPOINT.INTAKING.getAngle();
 
   private final TalonFXSimState m_motorSimState = m_motor.getSimState();
   private final CANcoderSimState m_cancoderSimState = m_canCoder.getSimState();
@@ -94,8 +94,9 @@ public class IntakePivot extends SubsystemBase {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
+    config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
 
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     config.CurrentLimits.StatorCurrentLimit = 80;
