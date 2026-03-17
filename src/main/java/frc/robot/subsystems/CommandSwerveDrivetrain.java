@@ -81,12 +81,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   // TODO: Check if a constructor with different PID values is needed for different use cases
   // PID Constants taken from Shoot(OnTheMove)
-  //  private Double kTeleP_Theta = 12.0;
+  //  private Double kTeleP_Theta = 7.0;
   //  private Double kTeleD_Theta = 0.0;
   //  public static final double kTeleI_Theta = 0.0;
   // PID Constants taken from AutoAlignDrive
   SwerveRequest.FieldCentricFacingAngle m_driveWithHeadingRequest =
-      new SwerveRequest.FieldCentricFacingAngle().withHeadingPID(12.0, 0.0, 0.0);
+      new SwerveRequest.FieldCentricFacingAngle().withHeadingPID(7.1, 0.0, 0.1);
 
 
   /* Swerve requests to apply during SysId characterization */

@@ -162,6 +162,12 @@ public class IntakePivot extends SubsystemBase {
     return this.runOnce(() -> setAngle(setpoint.getAngle()));
   }
 
+  // TODO: don't use this
+  @NotLogged
+  public Command percentCommand(double speed) {
+    return this.startEnd(() -> m_motor.set(speed), () -> m_motor.set(0.0));
+  }
+
   @NotLogged
   public Command jostle() {
     return new RepeatCommand(

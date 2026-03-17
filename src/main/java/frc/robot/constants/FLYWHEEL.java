@@ -70,13 +70,13 @@ public class FLYWHEEL {
     public static final double kP = 230; // TODO: Change this
     public static final double kS = 0.349609375;
     public static final double gearRatio =
-        170.0 / 10.0; // TODO: Change this later because this is confirmed not what the final thing
-    // will be
+        170.0 / 10.0; 
+    public static final double rotorToSensorRatio = 3.111;
     public static final double kInertia = 0.005;
     public static final double kStatorCurrentLimit = 15;
     public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE =
         SensorDirectionValue.Clockwise_Positive;
-    public static final double kMagnetSensorOffset = -0.052001935125;
+    public static final double kMagnetSensorOffset = -0.7431640625;
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.85;
 
     public static final double motionMagicCruiseVelocity = 68.0;

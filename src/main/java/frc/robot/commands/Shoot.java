@@ -55,8 +55,8 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees. 
-    distanceToShotMap.put(Meters.of(2.7180497932398944), new Shot(RPM.of(1635), Degrees.of(0.0), 0.9)); //
-    // distanceToShotMap.put(Meters.of(2.52591431119054), new Shot(RPM.of(1730), Degrees.of(0.0), 0.9)); //
+    distanceToShotMap.put(Meters.of(1.110492594094558), new Shot(RPM.of(1300), Degrees.of(0.0), 0.9)); //
+    // distanceToShotMap.put(Meters.of(1.318160000669336), new Shot(RPM.of(1300), Degrees.of(0.0), 0.9)); //
   }
 
   private final Vision m_vision;

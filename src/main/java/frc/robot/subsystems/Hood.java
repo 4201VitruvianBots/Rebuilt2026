@@ -107,7 +107,7 @@ public class Hood extends SubsystemBase {
     }
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    config.Feedback.RotorToSensorRatio = 3.111;
+    config.Feedback.RotorToSensorRatio = HOOD.rotorToSensorRatio;
     config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
     config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
 
