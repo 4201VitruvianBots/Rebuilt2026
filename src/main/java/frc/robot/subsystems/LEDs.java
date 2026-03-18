@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -27,7 +30,7 @@ public class LEDs extends SubsystemBase {
     m_led.setData(m_ledBuffer);
     m_led.start();
 
-    rainbow = LEDPattern.rainbow(255, 127);
+    rainbow = LEDPattern.rainbow(255, 127).scrollAtRelativeSpeed(Percent.per(Second).of(50));
 
     // Apply the LED pattern to the data buffer
     rainbow.applyTo(m_ledBuffer);
@@ -38,6 +41,9 @@ public class LEDs extends SubsystemBase {
   
   @Override
   public void periodic() {
+    // Apply the LED pattern to the data buffer
+    rainbow.applyTo(m_ledBuffer);
+    
     // Write the data to the LED strip
     m_led.setData(m_ledBuffer);
   }
