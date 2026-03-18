@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
@@ -220,22 +221,22 @@ public class RobotContainer {
     //               m_driverController::getLeftX));
     // }
 
-    m_driverController
-        .y()
-        .whileTrue(
-            new AutoAlignDrive(
-                m_swerveDrive,
-                m_vision,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
+    // m_driverController
+    //     .y()
+    //     .whileTrue(
+    //         new AutoAlignDrive(
+    //             m_swerveDrive,
+    //             m_vision,
+    //             m_driverController::getLeftY,
+    //             m_driverController::getLeftX));
 
     m_driverController.rightBumper().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
-    m_driverController
-        .x()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+    // m_driverController
+    //     .x()
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
     m_driverController
         .leftBumper()
@@ -253,7 +254,7 @@ public class RobotContainer {
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
-    m_driverController.b().whileTrue(m_intakePivot.percentCommand(0.3));
+    // m_driverController.b().whileTrue(m_intakePivot.percentCommand(0.3));
     
     POVUtils.povDownWithTilt(m_driverController).whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...
@@ -274,12 +275,12 @@ public class RobotContainer {
     // INDEXER_SPEED_2.INDEXING));
     // }
 
-    // if (m_swerveDrive != null) {
-    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
-    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
-    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
-    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
-    // }
+    if (m_swerveDrive != null) {
+      m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
+      m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
+      m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
+      m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    }
   }
 
   private void initAutoChooser() {

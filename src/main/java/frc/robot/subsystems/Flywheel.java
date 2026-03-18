@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -51,9 +52,9 @@ public class Flywheel extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
 
-  private final VelocityVoltage m_request = new VelocityVoltage(0);
+  private final VelocityVoltage m_request = new VelocityVoltage(0).withEnableFOC(true);
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
-  private final TorqueCurrentFOC m_torqueCurrentFOC = new TorqueCurrentFOC(0.0);
+  private final VoltageOut m_voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
 
   public final DoubleSubscriber m_rpmSubscriber;
@@ -66,7 +67,7 @@ public class Flywheel extends SubsystemBase {
           FLYWHEEL.gearbox);
   private final TalonFXSimState m_simState;
 
-  private void sysIDLogMotors(SysIdRoutineLog log) {
+  private void sysIDLogFlywheelMotors(SysIdRoutineLog log) {
     log.motor("motor1")
         .voltage(m_motor1.getMotorVoltage().refresh().getValue()) // Units: Volts
         .angularPosition(m_motor1.getPosition().refresh().getValue()) // Units: Rotations/Meters
@@ -115,9 +116,13 @@ public class Flywheel extends SubsystemBase {
     m_rpmSetpoint = rpm;
   }
 
-  public void setTorqueCurrentOutputFOC(Voltage voltage) {
-    m_motor1.setControl(m_torqueCurrentFOC.withOutput(voltage.abs(Volts)));
+  public void setVoltageOutput(Voltage voltage){
+    m_motor1.setControl(m_voltageOut.withOutput(voltage.abs(Volts)));
   }
+
+  // public void setTorqueCurrentOutputFOC(Voltage voltage) {
+  //   m_motor1.setControl(m_torqueCurrentFOC.withOutput(voltage.abs(Volts)));
+  // }
 
   @Logged(name = "RPM Setpoint", importance = Logged.Importance.INFO)
   public double getRPMSetpoint() {
@@ -141,8 +146,8 @@ public class Flywheel extends SubsystemBase {
               null // Max time before automatically ending the routine
               ),
           new SysIdRoutine.Mechanism(
-              this::setTorqueCurrentOutputFOC, // Set voltage of mechanism
-              this::sysIDLogMotors,
+              this::setVoltageOutput, // Set voltage of mechanism
+              this::sysIDLogFlywheelMotors,
               this));
 
   /**
@@ -165,18 +170,18 @@ public class Flywheel extends SubsystemBase {
 
   public Command manualAgainstHubCommand() {
     return this.startEnd(
-        () -> setRPMOutput(RPM.of(1470)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
+        () -> setRPMOutput(RPM.of(1470)), () -> setVoltageOutput(Volts.of(0.0)));
   }
 
   public Command manualAgainstTowerCommand() {
     return this.startEnd(
         () -> setRPMOutput(RPM.of(1719)),
-        () -> setTorqueCurrentOutputFOC(Volts.of(0.0))); // Unverified
+        () -> setVoltageOutput(Volts.of(0.0))); // Unverified
   }
 
   public Command manualPassCommand() {
     return this.startEnd(
-        () -> setRPMOutput(RPM.of(2200)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0)));
+        () -> setRPMOutput(RPM.of(2200)), () -> setVoltageOutput(Volts.of(0.0)));
   }
 
   public void testInit() {
