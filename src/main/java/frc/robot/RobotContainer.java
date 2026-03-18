@@ -23,8 +23,8 @@ import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.TestLEDs;
-import frc.robot.commands.UpdateLEDs;
+// import frc.robot.commands.TestLEDs;
+// import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterDepot;
 import frc.robot.commands.autos.routines.CenterPreloadClimb;
@@ -88,8 +88,8 @@ public class RobotContainer {
   // @Logged(name = "Climber", importance = Logged.Importance.INFO)
   @NotLogged private Climber m_climber;
 
-  @Logged(name = "LEDs", importance = Logged.Importance.INFO)
-  private LEDs m_led;
+  // @Logged(name = "LEDs", importance = Logged.Importance.INFO)
+  // private LEDs m_led;
 
   // @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
   @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
@@ -176,8 +176,8 @@ public class RobotContainer {
     m_indexer = new Indexer();
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
         m_intakePivot = new IntakePivot();
-        m_led = new LEDs();
-        m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
+        // m_led = new LEDs();
+        // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
         // m_led.setDefaultCommand(new TestLEDs(m_led));
         // m_climber = new Climber();
     }

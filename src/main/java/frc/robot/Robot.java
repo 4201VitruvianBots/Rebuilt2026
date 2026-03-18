@@ -6,9 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.FLYWHEEL;
@@ -24,6 +28,15 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  
+  // PWM port 3
+  // Must be a PWM header, not MXP or DIO
+  private AddressableLED m_led = new AddressableLED(8);
+      
+  // Create an LED pattern that sets the entire strip to solid red
+  private LEDPattern red;
+  
+  private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(43);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -44,6 +57,24 @@ public class Robot extends TimedRobot {
           config.root = "EpilogueTelemetry";
         });
     Epilogue.bind(this);
+
+    // Reuse buffer
+    // Default to a length of 43, start empty output
+    // Length is expensive to set, so only set it once, then just update data
+    m_led.setLength(m_ledBuffer.getLength());
+
+    // Set the data
+    m_led.setData(m_ledBuffer);
+    m_led.start();
+
+    red = LEDPattern.solid(Color.kRed);
+
+    // Apply the LED pattern to the data buffer
+    red.applyTo(m_ledBuffer);
+
+    // Write the data to the LED strip
+    m_led.setData(m_ledBuffer);
+    System.out.println("RUNNING LED SETUP");
   }
 
   /**
@@ -62,6 +93,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     m_robotContainer.robotPeriodic();
+    
+    // Write the data to the LED strip
+    m_led.setData(m_ledBuffer);
+    System.out.println("RUNNING LED CODE");
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
