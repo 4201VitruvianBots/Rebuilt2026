@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
   private AddressableLED m_led = new AddressableLED(8);
       
   // Create an LED pattern that sets the entire strip to solid red
-  private LEDPattern red;
+  private LEDPattern rainbow;
   
   private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(43);
 
@@ -67,10 +67,10 @@ public class Robot extends TimedRobot {
     m_led.setData(m_ledBuffer);
     m_led.start();
 
-    red = LEDPattern.solid(Color.kRed);
+    rainbow = LEDPattern.rainbow(255, 127);
 
     // Apply the LED pattern to the data buffer
-    red.applyTo(m_ledBuffer);
+    rainbow.applyTo(m_ledBuffer);
 
     // Write the data to the LED strip
     m_led.setData(m_ledBuffer);
