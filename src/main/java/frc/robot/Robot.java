@@ -28,15 +28,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-  
-  // PWM port 3
-  // Must be a PWM header, not MXP or DIO
-  private AddressableLED m_led = new AddressableLED(8);
-      
-  // Create an LED pattern that sets the entire strip to solid red
-  private LEDPattern rainbow;
-  
-  private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(43);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -57,24 +48,6 @@ public class Robot extends TimedRobot {
           config.root = "EpilogueTelemetry";
         });
     Epilogue.bind(this);
-
-    // Reuse buffer
-    // Default to a length of 43, start empty output
-    // Length is expensive to set, so only set it once, then just update data
-    m_led.setLength(m_ledBuffer.getLength());
-
-    // Set the data
-    m_led.setData(m_ledBuffer);
-    m_led.start();
-
-    rainbow = LEDPattern.rainbow(255, 127);
-
-    // Apply the LED pattern to the data buffer
-    rainbow.applyTo(m_ledBuffer);
-
-    // Write the data to the LED strip
-    m_led.setData(m_ledBuffer);
-    System.out.println("RUNNING LED SETUP");
   }
 
   /**
@@ -93,10 +66,6 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     m_robotContainer.robotPeriodic();
-    
-    // Write the data to the LED strip
-    m_led.setData(m_ledBuffer);
-    System.out.println("RUNNING LED CODE");
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
