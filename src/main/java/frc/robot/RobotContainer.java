@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -15,10 +16,12 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
@@ -50,6 +53,7 @@ import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
+import frc.team4201.lib.utils.POVUtils;
 import frc.team4201.lib.utils.Telemetry;
 
 /**
@@ -250,7 +254,8 @@ public class RobotContainer {
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
     m_driverController.b().whileTrue(m_intakePivot.percentCommand(0.3));
-    m_driverController.povDown().whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
+    
+    POVUtils.povDownWithTilt(m_driverController).whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
@@ -340,6 +345,14 @@ public class RobotContainer {
       SmartDashboard.putData(
           "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
     }
+    
+    SmartDashboard.putData("Start Signal Logger", Commands.runOnce(SignalLogger::start));
+    SmartDashboard.putData("Stop Signal Logger", Commands.runOnce(SignalLogger::stop));
+
+    SmartDashboard.putData("SysID Quasistatic Forward", m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("SysID Quasistatic Reverse", m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData("SysID Dynamic Forward", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("SysID Dynamic Reverse", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   public void testInit() {
