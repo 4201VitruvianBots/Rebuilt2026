@@ -55,31 +55,13 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees.
-    distanceToShotMap.put(Meters.of(1.391736631), new Shot(RPM.of(1370), Degrees.of(0), 0.9)); //
-    distanceToShotMap.put(Meters.of(1.391736631), new Shot(RPM.of(1370), Degrees.of(0), 0.9)); //
+    distanceToShotMap.put(Meters.of(1.10695), new Shot(RPM.of(1260), Degrees.of(0), 0.9)); //
     distanceToShotMap.put(
-        Meters.of(1.45650895207174), new Shot(RPM.of(1370), Degrees.of(0), 1.0)); // Tuned
+        Meters.of(2.0749597158415), new Shot(RPM.of(1540), Degrees.of(0), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(1.9791021529687), new Shot(RPM.of(1430), Degrees.of(0), 1.09)); // Tuned
+        Meters.of(2.5916617555783), new Shot(RPM.of(1570), Degrees.of(2.2), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.0749597158415), new Shot(RPM.of(1500), Degrees.of(0), 1.1)); // Tuned
-    distanceToShotMap.put(
-        Meters.of(2.5916617555783), new Shot(RPM.of(1500), Degrees.of(2.2), 1.1)); // Tuned
-    distanceToShotMap.put(
-        Meters.of(3.166696048347548), new Shot(RPM.of(1640), Degrees.of(3.8), 1.11));
-    distanceToShotMap.put(
-        Meters.of(3.404527735240185),
-        new Shot(RPM.of(1680), Degrees.of(9), 1.115)); // Half Tuned
-    // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21),
-    // 1.286));
-    // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8),
-    // 1.286));
-    distanceToShotMap.put(
-        Meters.of(3.815967642543882), new Shot(RPM.of(1700), Degrees.of(6.7), 1.1));
-    distanceToShotMap.put(
-        Meters.of(4.6722084908365), new Shot(RPM.of(1900), Degrees.of(7.7), 1.12));
-    distanceToShotMap.put(
-        Meters.of(5.44820580711993), new Shot(RPM.of(2000), Degrees.of(11.2), 1.16));
+        Meters.of(5.44820580711993), new Shot(RPM.of(1945), Degrees.of(14), 1.16));
   }
 
   private final Vision m_vision;

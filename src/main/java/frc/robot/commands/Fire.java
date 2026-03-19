@@ -19,13 +19,11 @@ import frc.robot.subsystems.Uptake;
 
 // *insert fire emoji*
 public class Fire extends ParallelCommandGroup {
-  private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest = new SwerveRequest.SwerveDriveBrake();
   /** Creates a new Fire. */
   public Fire(Intake intake, Indexer indexer, Uptake uptake, CommandSwerveDrivetrain swerveDrive) {
     addCommands(
         (intake != null) ? intake.commandIntakeState(INTAKE_STATE.SHOOTING) : new InstantCommand(),
         (indexer != null) ? indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING) : new InstantCommand(),
-        (uptake != null) ? uptake.percentCommand(UPTAKE_SPEED.SHOOTING.get()) : new InstantCommand(),
-        (swerveDrive != null) ? swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest) : new InstantCommand());
+        (uptake != null) ? uptake.percentCommand(UPTAKE_SPEED.SHOOTING.get()) : new InstantCommand());
   }
 }
