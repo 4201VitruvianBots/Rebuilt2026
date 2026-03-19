@@ -27,6 +27,8 @@ import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.TestLEDs;
+import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterDepot;
 import frc.robot.commands.autos.routines.CenterPreloadClimb;
@@ -176,12 +178,13 @@ public class RobotContainer {
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
-    if (ROBOT.robotID.equals(ROBOT_ID.V2) || RobotBase.isSimulation()) {
+    if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
         m_intakePivot = new IntakePivot();
+        m_led = new LEDs();
+        m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
+        // m_led.setDefaultCommand(new TestLEDs(m_led));
         // m_climber = new Climber();
     }
-    // m_led = new LEDs();
-    // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
     if (Robot.isSimulation()) {
       m_fieldSim = new FieldSim();
