@@ -248,7 +248,7 @@ public class Vision extends SubsystemBase {
     lockTarget = set;
   }
 
-  @Logged(name = "On Target", importance = Logged.Importance.CRITICAL)
+  @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
     var rotationDelta =
         m_swerveDriveTrain
