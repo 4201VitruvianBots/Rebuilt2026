@@ -52,7 +52,7 @@ public class Flywheel extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
 
-  private final VelocityVoltage m_request = new VelocityVoltage(0).withEnableFOC(true);
+  private final VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0);
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
   private final VoltageOut m_voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
@@ -78,9 +78,6 @@ public class Flywheel extends SubsystemBase {
   public Flywheel() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = FLYWHEEL.kP;
-    config.Slot0.kD = FLYWHEEL.kD;
-    config.Slot0.kV = FLYWHEEL.kV;
-    config.Slot0.kS = FLYWHEEL.kS;
     // config.Slot0.kA = FLYWHEEL.kA;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
