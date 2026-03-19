@@ -118,6 +118,7 @@ public class Flywheel extends SubsystemBase {
 
   public void setVoltageOutput(Voltage voltage){
     m_motor1.setControl(m_voltageOut.withOutput(voltage.abs(Volts)));
+    m_rpmSetpoint = RPM.of(0);
   }
 
   // public void setTorqueCurrentOutputFOC(Voltage voltage) {
