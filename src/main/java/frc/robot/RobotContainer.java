@@ -106,8 +106,9 @@ public class RobotContainer {
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
-    return HubTracker.isAllianceHubActive();
+    return HubTracker.isActive();
   }
+  
 
   @NotLogged
   private final LinearVelocity MaxSpeed =
