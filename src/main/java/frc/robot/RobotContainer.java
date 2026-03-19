@@ -126,8 +126,8 @@ public class RobotContainer {
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry =
       new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
-  private FieldSim m_fieldSim = new FieldSim();
-  private final FuelSim m_fuelSim = new FuelSim();
+  private FieldSim m_fieldSim;
+  private FuelSim m_fuelSim;
 
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -146,8 +146,7 @@ public class RobotContainer {
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
-
-    m_telemetry.registerFieldSim(m_fieldSim);
+    
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
@@ -184,15 +183,18 @@ public class RobotContainer {
     // m_led = new LEDs();
     // m_led.setDefaultCommand(new UpdateLEDs(m_led, m_swerveDrive, m_intake, m_climber, m_uptake));
 
-    m_vision.registerSwerveDrive(m_swerveDrive);
-    m_vision.registerFieldSim(m_fieldSim);
-    m_telemetry.registerFieldSim(m_fieldSim);
-    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
     if (Robot.isSimulation()) {
+      m_fieldSim = new FieldSim();
+      m_fuelSim = new FuelSim();
+      m_telemetry.registerFieldSim(m_fieldSim);
+      m_vision.registerFieldSim(m_fieldSim);
+      m_telemetry.registerFieldSim(m_fieldSim);
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
     }
+    m_vision.registerSwerveDrive(m_swerveDrive);
+    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
   private void configureBindings() {

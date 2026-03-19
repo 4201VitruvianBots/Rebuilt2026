@@ -359,8 +359,6 @@ public class Vision extends SubsystemBase {
     // if (m_swerveDriveTrain != null) {
     //   updateAngleToHub();
     // }
-
-    isOnTarget();
   }
 
   @Override
