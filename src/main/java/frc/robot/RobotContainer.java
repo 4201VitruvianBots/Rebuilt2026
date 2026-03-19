@@ -84,9 +84,6 @@ public class RobotContainer {
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake;
 
-  // @Logged(name = "Climber", importance = Logged.Importance.INFO)
-  @NotLogged private Climber m_climber;
-
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led;
 
@@ -116,7 +113,7 @@ public class RobotContainer {
           .withDeadband(MaxSpeed.times(0.1))
           .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
-  private Robot2d m_robotSim = new Robot2d();
+  private Robot2d m_robotSim;
   private final Telemetry m_telemetry =
       new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
@@ -198,7 +195,7 @@ public class RobotContainer {
     if (Robot.isSimulation()) {
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
-          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
+          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
     }
   }
 
@@ -359,7 +356,6 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testInit();
     // if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
-    if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
@@ -369,7 +365,6 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     // if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
-    if (m_climber != null) m_climber.testPeriodic();
   }
 
   public void disabledPeriodic() {
