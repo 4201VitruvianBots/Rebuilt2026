@@ -32,9 +32,8 @@ public class LEDs extends SubsystemBase {
   // The buffer we apply patterns to before copying to m_ledBuffer.
   // This allows us to create a buffer larger than the number of LEDs
   private AddressableLEDBuffer workingBuffer;
-  private LEDPattern m_currentPattern = LEDPattern.solid(Color.kBlack);
+  private LEDPattern m_currentPattern = LEDPattern.rainbow(255, 127).scrollAtRelativeSpeed(Percent.per(Second).of(50));
   
-  private AddressableLEDSim m_ledSim;
   private LEDSim m_ledSim2d;
 
   public LEDs() {
@@ -45,11 +44,7 @@ public class LEDs extends SubsystemBase {
     m_led.setData(m_ledBuffer);
     m_led.start();
     
-    LEDPattern base = LEDPattern.rainbow(255, 127);
-    m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
-    
     if (RobotBase.isSimulation()) {
-        m_ledSim = new AddressableLEDSim(m_led);
         m_ledSim2d = new LEDSim(m_ledBuffer, LEDSim.Layout.HORIZONTAL);
     }
   }
