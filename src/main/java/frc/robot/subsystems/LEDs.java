@@ -45,6 +45,9 @@ public class LEDs extends SubsystemBase {
     m_led.setData(m_ledBuffer);
     m_led.start();
     
+    LEDPattern base = LEDPattern.rainbow(255, 127);
+    m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+    
     if (RobotBase.isSimulation()) {
         m_ledSim = new AddressableLEDSim(m_led);
         m_ledSim2d = new LEDSim(m_ledBuffer, LEDSim.Layout.HORIZONTAL);
