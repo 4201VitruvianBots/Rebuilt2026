@@ -55,7 +55,7 @@ public class ShootNearStart extends Auto {
                       .andThen(
                           new Fire(
                               intake, indexer,
-                              uptake)) // TODO: Auto-fire once auto align, shooter hood, and
+                              uptake, swerveDrive)) // TODO: Auto-fire once auto align, shooter hood, and
                   // flywheel RPM are ready
                   )
               .withTimeout(2)

@@ -258,7 +258,7 @@ public class RobotContainer {
 
     m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
 
-    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
+    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake, m_swerveDrive));
 
     POVUtils.povDownWithTilt(m_driverController).whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...
@@ -279,12 +279,12 @@ public class RobotContainer {
     // INDEXER_SPEED_2.INDEXING));
     // }
 
-    if (m_swerveDrive != null) {
-      m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
-      m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
-      m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
-      m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
-    }
+    // if (m_swerveDrive != null) {
+    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
+    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
+    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
+    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    // }
   }
 
   private void initAutoChooser() {
