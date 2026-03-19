@@ -39,6 +39,7 @@ public class Intake extends SubsystemBase {
 
   @Logged(name = "Intake Motor", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.roboRIO);
+  @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.roboRIO);
 
   private DoubleSubscriber m_outputSubscriber;
