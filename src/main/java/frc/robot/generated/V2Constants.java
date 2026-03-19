@@ -23,12 +23,12 @@ public class V2Constants {
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
       new Slot0Configs()
-          .withKP(35.17) // Previous value 100
+          .withKP(25.063) // Previous value 35.17
           .withKI(0) // Previous value 0
-          .withKD(1.6779) // Previous value 0.5
-          .withKS(0.1) // Previous Value 0.1
-          .withKV(2.54) // Previous value 2.49
-          .withKA(0.065486) // Previous value 0.1
+          .withKD(0.53199) // Previous value 0.5
+          .withKS(0.66054) // Previous Value 0.1
+          .withKV(0.097954) // Previous value 2.54
+          .withKA(0.0066241) // Previous value 0.1
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
@@ -79,7 +79,7 @@ public class V2Constants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.39);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.2672);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
