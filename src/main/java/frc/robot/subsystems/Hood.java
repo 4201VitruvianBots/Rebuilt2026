@@ -62,7 +62,7 @@ public class Hood extends SubsystemBase {
       new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(false);
   private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(false);
 
-  private Angle m_hoodSetpoint = MANUAL_ANGLE.NOTHING.getAngle();
+  private Angle m_hoodSetpoint = MANUAL_ANGLE.STOWED.getAngle();
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
@@ -123,7 +123,7 @@ public class Hood extends SubsystemBase {
 
     CtreUtils.configureTalonFx(m_motor, config);
 
-    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
+    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
     m_motor.setPosition(
         getHoodAngle()
             .times(HOOD.gearRatio)
@@ -180,15 +180,15 @@ public class Hood extends SubsystemBase {
   }
 
   public Command manualAgainstHubCommand() {
-    return this.startEnd(() -> setAngle(Degrees.of(6.5)), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(() -> setAngle(MANUAL_ANGLE.HUB.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   public Command manualAgainstTowerCommand() {
-    return this.startEnd(() -> setAngle(Degrees.of(13.8)), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(() -> setAngle(MANUAL_ANGLE.TOWER.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   public Command manualPassCommand() {
-    return this.startEnd(() -> setAngle(Degrees.of(22)), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(() -> setAngle(MANUAL_ANGLE.PASSING.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   @Override

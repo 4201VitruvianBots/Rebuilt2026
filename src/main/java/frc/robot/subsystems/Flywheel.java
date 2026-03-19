@@ -40,6 +40,7 @@ import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
+import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Flywheel extends SubsystemBase {
@@ -193,18 +194,18 @@ public class Flywheel extends SubsystemBase {
 
   public Command manualAgainstHubCommand() {
     return this.startEnd(
-        () -> setRPMOutput(RPM.of(1470)), () -> setVoltageOutput(Volts.of(0.0)));
+        () -> setRPMOutput(MANUAL_RPM.HUB.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
 
   public Command manualAgainstTowerCommand() {
     return this.startEnd(
-        () -> setRPMOutput(RPM.of(1719)),
+        () -> setRPMOutput(MANUAL_RPM.TOWER.getRPM()),
         () -> setVoltageOutput(Volts.of(0.0))); // Unverified
   }
 
   public Command manualPassCommand() {
     return this.startEnd(
-        () -> setRPMOutput(RPM.of(2200)), () -> setVoltageOutput(Volts.of(0.0)));
+        () -> setRPMOutput(MANUAL_RPM.TOWER.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
 
   public void testInit() {

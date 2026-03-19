@@ -49,8 +49,9 @@ public class FLYWHEEL {
 
   public enum MANUAL_RPM {
     IDLE(RPM.of(0.0)),
-    LOW(RPM.of(1000.0)),
-    HIGH(RPM.of(2900.0));
+    HUB(RPM.of(1470.0)),
+    TOWER(RPM.of(1719.0)),
+    PASSING(RPM.of(2300.0));
 
     private final AngularVelocity rpm;
 
@@ -86,10 +87,10 @@ public class FLYWHEEL {
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
     public enum MANUAL_ANGLE {
-      // TODO: Going to stop using this because we are going to do math instead :)
-      NOTHING(Degrees.of(0.0)),
-      CLOSE(Degrees.of(30.0)),
-      FAR(Degrees.of(45.0));
+      STOWED(Degrees.of(0.0)),
+      HUB(Degrees.of(1.0)),
+      TOWER(Degrees.of(8.3)),
+      PASSING(Degrees.of(17.5));
 
       private final Angle angle;
 
