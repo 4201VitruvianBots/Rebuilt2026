@@ -24,7 +24,11 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.TimeUnit;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Energy;
+import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -32,6 +36,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
@@ -56,6 +61,7 @@ public class Flywheel extends SubsystemBase {
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
   private final VoltageOut m_voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
+  private Energy m_totalEnergyUsed = Joules.of(0.0);
 
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
@@ -136,6 +142,25 @@ public class Flywheel extends SubsystemBase {
     return new boolean[] {m_motor1.isConnected()};
   }
 
+  public Current getSupplyCurrent(){
+    return m_motor1.getSupplyCurrent().refresh().getValue();
+  }
+
+  public Power getPowerDraw(){
+    double power = (getSupplyCurrent().times(RobotController.getBatteryVoltage())).in(Amp);
+    return Watts.of(power);
+  }
+
+  public void updateEnergyUsed(){
+    double newEnergy = (getPowerDraw().in(Watts) * 0.02);
+    m_totalEnergyUsed = m_totalEnergyUsed.plus(Joules.of(newEnergy));
+  }
+
+  @Logged(name = "Total Energy Used by Flywheel", importance = Importance.INFO)
+  public Energy getEnergyUsed(){
+    return m_totalEnergyUsed;
+  }
+
   private SysIdRoutine m_sysIdRoutine =
       new SysIdRoutine(
           new SysIdRoutine.Config(
@@ -206,6 +231,7 @@ public class Flywheel extends SubsystemBase {
   @Override
   public void periodic() {
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+    updateEnergyUsed();
   }
 
   @Override

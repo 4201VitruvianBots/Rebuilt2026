@@ -135,6 +135,6 @@ public class ROBOT {
     public static final Translation3d intakeOrigin = new Translation3d(0.06, 0, 0.13);
     public static final Translation3d hopperOrigin = new Translation3d(0.0, 0.0, 0.0);
 
-    public static int MAX_FUEL = 48;
+    public static int MAX_FUEL = 60;
   }
 }
