@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.util.PathPlannerLogging;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -44,8 +43,6 @@ import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.generated.V1Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
@@ -139,27 +136,30 @@ public class RobotContainer {
     initSmartDashboard();
 
     m_telemetry.registerFieldSim(m_fieldSim);
-    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);        
+    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
     // Logging callback for current robot pose
-    PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
-      // Do whatever you want with the pose here
-      field.setRobotPose(pose);
-    });
+    PathPlannerLogging.setLogCurrentPoseCallback(
+        (pose) -> {
+          // Do whatever you want with the pose here
+          field.setRobotPose(pose);
+        });
 
-        // Logging callback for target robot pose
-    PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-       // Do whatever you want with the pose here
-      field.getObject("target pose").setPose(pose);
-    });
+    // Logging callback for target robot pose
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (pose) -> {
+          // Do whatever you want with the pose here
+          field.getObject("target pose").setPose(pose);
+        });
 
-        // Logging callback for the active path, this is sent as a list of poses
-    PathPlannerLogging.setLogActivePathCallback((poses) -> {
-        // Do whatever you want with the poses here
-     field.getObject("path").setPoses(poses);
-    });
+    // Logging callback for the active path, this is sent as a list of poses
+    PathPlannerLogging.setLogActivePathCallback(
+        (poses) -> {
+          // Do whatever you want with the poses here
+          field.getObject("path").setPoses(poses);
+        });
   }
 
   private void initializeSubSystems() {
@@ -304,8 +304,7 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Auto 0 - CenterPreload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Auto 1 - CenterDepot", new CenterDepot(autoDeps));
-    m_autoChooser.addOption(
-        "Auto 2 - SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
+    m_autoChooser.addOption("Auto 2 - SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption("Auto 3 - SideNeutralDepot", new SideNeutralDepot(autoDeps));
     m_autoChooser.addOption(
         "Auto 4 - SideNeutralTwice", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
@@ -416,29 +415,30 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      // if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.SHOOTING.get().in(RPM) * 0.90) // TODO: Reimplement
+      // if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.SHOOTING.get().in(RPM) * 0.90) // TODO:
+      // Reimplement
       //     && m_intake.getStoredFuel() > 0) {
-        // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
-        // of the fuel
-        // vel in ft/s = 0.0111882 * RPM - 0.
-        try {
-          m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
-          m_fuelSim.launchFuel(
-              FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-              m_hood.getHoodAngle(),
-              Degrees.of(0),
-              FLYWHEEL.fuelLaunchHeight);
-          System.out.println(
-              "Launching fuel at velocity: "
-                  + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
-                  + " ft/s and angle: "
-                  + m_hood.getHoodAngleDegrees()
-                  + " degrees");
-          System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
-        } catch (IllegalStateException e) {
-          return;
-        }
-      //}
+      // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
+      // of the fuel
+      // vel in ft/s = 0.0111882 * RPM - 0.
+      try {
+        m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
+        m_fuelSim.launchFuel(
+            FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
+            m_hood.getHoodAngle(),
+            Degrees.of(0),
+            FLYWHEEL.fuelLaunchHeight);
+        System.out.println(
+            "Launching fuel at velocity: "
+                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
+                + " ft/s and angle: "
+                + m_hood.getHoodAngleDegrees()
+                + " degrees");
+        System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
+      } catch (IllegalStateException e) {
+        return;
+      }
+      // }
     }
   }
 

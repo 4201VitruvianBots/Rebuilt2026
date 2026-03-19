@@ -49,10 +49,7 @@ public class IntakeAndShootFromDepot extends Auto {
               .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Ready to shoot from depot")),
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
-              .andThen(
-                  new PrintCommand(
-                      "[AUTO] Finished shooting from depot"))
-          );
+              .andThen(new PrintCommand("[AUTO] Finished shooting from depot")));
     } catch (Exception e) {
       DriverStation.reportError(
           "Failed to load path for IntakeAndShootFromDepot", e.getStackTrace());

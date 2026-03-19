@@ -15,7 +15,6 @@ public class SideNeutral extends Auto {
     addCommands(
         new ShootNearStart(deps, flipPath),
         new IntakeFromNeutral(deps, true, flipPath),
-        new ShootNearStart(deps, flipPath)
-        );
+        new ShootNearStart(deps, flipPath));
   }
 }

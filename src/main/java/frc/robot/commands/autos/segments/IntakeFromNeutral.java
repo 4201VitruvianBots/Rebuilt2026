@@ -54,19 +54,14 @@ public class IntakeFromNeutral extends Auto {
               .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
           new ParallelDeadlineGroup(
-                  getPathCommand(
-                      swerveDrive, intakeFromCenter, flipToRight),
+                  getPathCommand(swerveDrive, intakeFromCenter, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
-                  new PrintCommand(
-                      "[AUTO] Intaking from center..."))
+                  new PrintCommand("[AUTO] Intaking from center..."))
               .andThen(() -> swerveDrive.setControl(stopRequest))
-              .andThen(
-                  new PrintCommand(
-                      "[AUTO] Finished intaking from center")),
+              .andThen(new PrintCommand("[AUTO] Finished intaking from center")),
           getPathCommand(swerveDrive, returnToAllianceZone, flipToRight)
               .andThen(() -> swerveDrive.setControl(stopRequest))
-              .andThen(new PrintCommand("[AUTO] Returned to alliance zone"))
-        );
+              .andThen(new PrintCommand("[AUTO] Returned to alliance zone")));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());

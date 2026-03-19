@@ -8,12 +8,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
-import frc.robot.constants.INTAKE;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
-import frc.robot.subsystems.Intake;
 
 public class CenterDepot extends SequentialCommandGroup {
   public CenterDepot(AutoDependencies deps) {
@@ -37,11 +33,9 @@ public class CenterDepot extends SequentialCommandGroup {
           new AutoShoot(deps, 2),
           new ParallelDeadlineGroup(
               m_path2.andThen(() -> swerveDrive.setControl(stopRequest)),
-              new IntakeCommand(intake, intakePivot, uptake)
-          ),
+              new IntakeCommand(intake, intakePivot, uptake)),
           m_path3.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new AutoShoot(deps, 3)
-      );
+          new AutoShoot(deps, 3));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterDepot", e.getStackTrace());
       addCommands(new InstantCommand());

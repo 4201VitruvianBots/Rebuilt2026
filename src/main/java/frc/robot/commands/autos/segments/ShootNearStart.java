@@ -34,10 +34,7 @@ public class ShootNearStart extends Auto {
               .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Finished moving to shooting position")),
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
-              .andThen(
-                  new PrintCommand(
-                      "[AUTO] Finished shooting from near start"))
-          );
+              .andThen(new PrintCommand("[AUTO] Finished shooting from near start")));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for ShootNearStart", e.getStackTrace());
       addCommands(new InstantCommand());
