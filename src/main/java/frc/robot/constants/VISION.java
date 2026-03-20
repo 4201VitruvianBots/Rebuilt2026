@@ -6,9 +6,9 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
@@ -19,14 +19,20 @@ public final class VISION {
 
     private final String name;
     private final String ip;
+    private final int lastOctet;
 
     CAMERA_SERVER(final String name, final String ip) {
       this.name = name;
       this.ip = ip;
+      this.lastOctet = Integer.parseInt(this.ip.substring(this.ip.length() - 2));
     }
 
     public String getIp() {
       return ip;
+    }
+
+    public int getLastOctet() {
+      return lastOctet;
     }
 
     @Override
@@ -68,5 +74,56 @@ public final class VISION {
     RIGHT_FRONT_TOWER,
     // LEFT_BACK_TOWER, // add if needed
     // RIGHT_BACK_TOWER // add if needed
+  }
+
+  public static class Limelight {
+    static int basePort = 5800;
+    CAMERA_SERVER limelight;
+    private static final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    private final NetworkTable baseTable = inst.getTable("llTable");
+    private final NetworkTable table;
+    private final DoublePublisher estimatedTimestamp;
+    private final StructPublisher<Pose2d> estimatedPose;
+    private final IntegerPublisher numTags;
+    private final BooleanPublisher validPose;
+
+    public Limelight(CAMERA_SERVER limelight) {
+      this.limelight = limelight;
+      table = baseTable.getSubTable(limelight.name);
+      estimatedTimestamp = table.getDoubleTopic("estTimestamp").publish();
+      estimatedTimestamp.setDefault(-1);
+      estimatedPose = table.getStructTopic("estPose", Pose2d.struct).publish();
+      estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
+      numTags = table.getIntegerTopic("numTags").publish();
+      numTags.setDefault(-1);
+      validPose = table.getBooleanTopic("poseValid").publish();
+      validPose.setDefault(false);
+
+      for (int i = 0; i < 10; i++) {
+        int ethPort = basePort + i;
+        int usbPort = ethPort + (limelight.ordinal() * 10);
+        PortForwarder.add(usbPort, this.limelight.ip, ethPort);
+      }
+    }
+
+    public String getName() {
+      return limelight.name;
+    }
+
+    public void publishTimestamp(double timestamp) {
+      estimatedTimestamp.set(timestamp);
+    }
+
+    public void publishPose(Pose2d pose) {
+      estimatedPose.set(pose);
+    }
+
+    public void publishTagCount(int tags) {
+      numTags.set(tags);
+    }
+
+    public void publishValid(boolean valid) {
+      validPose.set(valid);
+    }
   }
 }

@@ -22,7 +22,7 @@ public class V2Constants {
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
-    new Slot0Configs()
+      new Slot0Configs()
           .withKP(35.17) // Previous value 100
           .withKI(0) // Previous value 0
           .withKD(1.6779) // Previous value 0.5

@@ -16,7 +16,6 @@ public class SideNeutralDepot extends Auto {
         new ShootNearStart(deps, () -> false),
         new IntakeFromNeutral(deps, true, () -> false),
         new ShootNearStart(deps, () -> false),
-        new IntakeAndShootFromDepot(deps)
-        );
+        new IntakeAndShootFromDepot(deps));
   }
 }

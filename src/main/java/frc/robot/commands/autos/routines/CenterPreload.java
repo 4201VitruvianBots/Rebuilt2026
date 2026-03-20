@@ -24,10 +24,8 @@ public class CenterPreload extends Auto {
 
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload1");
-      var m_path2 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload2");
+      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload1");
+      var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload2");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),

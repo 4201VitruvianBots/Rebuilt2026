@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -38,12 +37,12 @@ import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
@@ -102,7 +101,6 @@ public class RobotContainer {
   public boolean isHubActive() {
     return HubTracker.isActive();
   }
-  
 
   @NotLogged
   private final LinearVelocity MaxSpeed =
@@ -118,7 +116,8 @@ public class RobotContainer {
           .withDeadband(MaxSpeed.times(0.1))
           .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
 
-  private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest = new SwerveRequest.SwerveDriveBrake();
+  private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest =
+      new SwerveRequest.SwerveDriveBrake();
 
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry =
@@ -143,15 +142,15 @@ public class RobotContainer {
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
-    
+
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
   private void initializeSubSystems() {
     if (ROBOT.robotID.equals(ROBOT_ID.V1)) {
-        m_swerveDrive = V1Constants.createDrivetrain();
+      m_swerveDrive = V1Constants.createDrivetrain();
     } else {
-        m_swerveDrive = V2Constants.createDrivetrain();
+      m_swerveDrive = V2Constants.createDrivetrain();
     }
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
@@ -174,11 +173,11 @@ public class RobotContainer {
     m_uptake = new Uptake();
     m_indexer = new Indexer();
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
-        m_intakePivot = new IntakePivot();
-        m_led = new LEDs();
-        m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
-        // m_led.setDefaultCommand(new TestLEDs(m_led));
-        // m_climber = new Climber();
+      m_intakePivot = new IntakePivot();
+      m_led = new LEDs();
+      m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
+      // m_led.setDefaultCommand(new TestLEDs(m_led));
+      // m_climber = new Climber();
     }
 
     if (Robot.isSimulation()) {
@@ -250,11 +249,14 @@ public class RobotContainer {
                 m_driverController::getLeftY,
                 m_driverController::getLeftX));
 
-    m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+    m_driverController
+        .leftTrigger()
+        .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
-    POVUtils.povDownWithTilt(m_driverController).whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
+    POVUtils.povDownWithTilt(m_driverController)
+        .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController
@@ -305,15 +307,12 @@ public class RobotContainer {
     m_autoChooser.addOption(
         "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
-        "SideNeutralTwice - No Preload",
-        new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
-        "Test - SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
+        "SideNeutralTwice - No Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Test - SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
         "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
-        "Test - Intake from Neutral",
-        new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
+        "Test - Intake from Neutral", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
   }
 
   private void initSideChooser() {
@@ -343,14 +342,20 @@ public class RobotContainer {
       SmartDashboard.putData(
           "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
     }
-    
+
     SmartDashboard.putData("Start Signal Logger", Commands.runOnce(SignalLogger::start));
     SmartDashboard.putData("Stop Signal Logger", Commands.runOnce(SignalLogger::stop));
 
-    SmartDashboard.putData("SysID Quasistatic Forward", m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("SysID Quasistatic Reverse", m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    SmartDashboard.putData("SysID Dynamic Forward", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("SysID Dynamic Reverse", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData(
+        "SysID Quasistatic Forward",
+        m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData(
+        "SysID Quasistatic Reverse",
+        m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData(
+        "SysID Dynamic Forward", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData(
+        "SysID Dynamic Reverse", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
   public void testInit() {
@@ -423,29 +428,30 @@ public class RobotContainer {
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
     if (m_uptake != null && m_flywheel != null && m_hood != null) {
-      // if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.SHOOTING.get().in(RPM) * 0.90) // TODO: Reimplement
+      // if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.SHOOTING.get().in(RPM) * 0.90) // TODO:
+      // Reimplement
       //     && m_intake.getStoredFuel() > 0) {
-        // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
-        // of the fuel
-        // vel in ft/s = 0.0111882 * RPM - 0.
-        try {
-          m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
-          m_fuelSim.launchFuel(
-              FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-              m_hood.getHoodAngle(),
-              Degrees.of(0),
-              FLYWHEEL.fuelLaunchHeight);
-          System.out.println(
-              "Launching fuel at velocity: "
-                  + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
-                  + " ft/s and angle: "
-                  + m_hood.getHoodAngleDegrees()
-                  + " degrees");
-          System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
-        } catch (IllegalStateException e) {
-          return;
-        }
-      //}
+      // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
+      // of the fuel
+      // vel in ft/s = 0.0111882 * RPM - 0.
+      try {
+        m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
+        m_fuelSim.launchFuel(
+            FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
+            m_hood.getHoodAngle(),
+            Degrees.of(0),
+            FLYWHEEL.fuelLaunchHeight);
+        System.out.println(
+            "Launching fuel at velocity: "
+                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
+                + " ft/s and angle: "
+                + m_hood.getHoodAngleDegrees()
+                + " degrees");
+        System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
+      } catch (IllegalStateException e) {
+        return;
+      }
+      // }
     }
   }
 

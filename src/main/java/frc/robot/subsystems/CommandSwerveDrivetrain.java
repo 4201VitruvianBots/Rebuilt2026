@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
-import frc.robot.generated.V1Constants.TunerSwerveDrivetrain;
+import frc.robot.generated.V2Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
