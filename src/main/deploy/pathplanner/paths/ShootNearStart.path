@@ -64,7 +64,7 @@
   "folder": "ShootNearStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "useDefaultConstraints": true
 }
