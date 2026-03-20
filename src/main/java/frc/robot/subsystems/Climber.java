@@ -1,10 +1,6 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
@@ -13,23 +9,37 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.CLIMBER;
-import frc.robot.Constants.CLIMBER.HOLDING_ROBOT;
-import frc.robot.Constants.CLIMBER.NOT_HOLDING_ROBOT;
+import frc.robot.constants.CAN;
+import frc.robot.constants.CLIMBER;
+import frc.robot.constants.CLIMBER.HOLDING_ROBOT;
+import frc.robot.constants.CLIMBER.NOT_HOLDING_ROBOT;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredDevice;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredSubsystem;
 import frc.team4201.lib.utils.CtreUtils;
 
-public class Climber extends SubsystemBase {
+public class Climber extends SubsystemBase implements MonitoredSubsystem {
   // Creates a new motor object.
+  @MonitoredDevice(
+      name = "Climber Motor",
+      type = MonitoredDevice.DEVICE_TYPE.PRIMARY,
+      canbus = "rio")
   @Logged(name = "Climber Motor", importance = Importance.DEBUG)
-  private final TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor);
+  private final TalonFX m_climberMotor = new TalonFX(CAN.kClimberMotor, CAN.roboRIO);
+
+  private DoubleSubscriber m_setpointSubscriber;
+  private DoublePublisher m_setpointPublisher;
 
   private final DynamicMotionMagicVoltage m_request =
       new DynamicMotionMagicVoltage(
@@ -39,9 +49,9 @@ public class Climber extends SubsystemBase {
           .withEnableFOC(true)
           .withSlot(NOT_HOLDING_ROBOT.slot);
 
-  // The position it's trying to reach and stabilise at.
+  // The position it's trying to reach and stabilize at.
   @Logged(name = "Desired Position Inches", importance = Importance.INFO)
-  private Distance m_desiredPosition = Inches.of(0.0);
+  private Distance m_desiredPosition = Inches.zero();
 
   @Logged(name = "Neutral Mode", importance = Logged.Importance.DEBUG)
   private NeutralModeValue m_neutralMode =
@@ -77,6 +87,13 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   public Climber() {
+    m_motorSimState = m_climberMotor.getSimState();
+
+    m_climberMotor.setPosition(Rotations.zero());
+  }
+
+  @Override
+  public void initDevices() {
     // configuring the motor for the elevator:
     TalonFXConfiguration config = new TalonFXConfiguration();
     // Climbing No Robot PID Gains
@@ -117,16 +134,12 @@ public class Climber extends SubsystemBase {
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        convertDistancetoRotations(CLIMBER.upperLimit);
+        CLIMBER.upperLimit.timesConversionFactor(CLIMBER.distanceToDrumRotations).in(Rotations);
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        convertDistancetoRotations(CLIMBER.lowerLimit);
+        CLIMBER.lowerLimit.timesConversionFactor(CLIMBER.distanceToDrumRotations).in(Rotations);
 
-    // This is the function that applies all these configNoRoboturations to the motor.
-    CtreUtils.configureTalonFx(m_climberMotor, config);
-
-    m_motorSimState = m_climberMotor.getSimState();
-
-    m_climberMotor.setPosition(Rotations.of(0));
+    // This is the function that applies all these configurations to the motor.
+    CtreUtils.configureDevice(m_climberMotor, config);
   }
 
   @Logged(name = "Height Inches", importance = Logged.Importance.INFO)
@@ -136,12 +149,16 @@ public class Climber extends SubsystemBase {
 
   @Logged(name = "Height Meters", importance = Logged.Importance.DEBUG)
   public Distance getHeight() {
-    return CLIMBER.drumRotationsToDistance.times(
-        m_climberMotor.getPosition().clone().refresh().getValue().magnitude());
+    return m_climberMotor
+        .getPosition()
+        .getValue()
+        .timesConversionFactor(CLIMBER.drumRotationsToDistance);
   }
 
-  public double convertDistancetoRotations(Distance distance) {
-    return distance.in(Meters) / CLIMBER.drumRotationsToDistance.in(Meters);
+  // For Robot2d Simulation
+  @NotLogged
+  public LinearVelocity getVelocity() {
+    return m_climberMotor.getVelocity().getValue().timesConversionFactor(CLIMBER.drumRpsToMps);
   }
 
   public void setDesiredPositionAndMotionMagicConfigs(
@@ -158,7 +175,9 @@ public class Climber extends SubsystemBase {
                 desiredPosition.in(Meters),
                 CLIMBER.lowerLimit.in(Meters),
                 CLIMBER.upperLimit.in(Meters)));
-    m_climberMotor.setControl(m_request.withPosition(convertDistancetoRotations(desiredPosition)));
+    m_climberMotor.setControl(
+        m_request.withPosition(
+            desiredPosition.timesConversionFactor(CLIMBER.distanceToDrumRotations)));
   }
 
   public void setPIDSlot(int slot) {
@@ -171,7 +190,7 @@ public class Climber extends SubsystemBase {
   }
 
   public Current getStatorCurrent() {
-    return m_climberMotor.getStatorCurrent().clone().refresh().getValue();
+    return m_climberMotor.getStatorCurrent().getValue();
   }
 
   @Logged(name = "Average Current", importance = Importance.DEBUG)
@@ -208,11 +227,10 @@ public class Climber extends SubsystemBase {
     sim.update(0.020);
 
     m_motorSimState.setRawRotorPosition(
-        sim.getPositionMeters() * CLIMBER.gearRatio / CLIMBER.drumRotationsToDistance.in(Meters));
+        Meters.of(sim.getPositionMeters()).timesConversionFactor(CLIMBER.distanceToDrumRotations));
     m_motorSimState.setRotorVelocity(
-        sim.getVelocityMetersPerSecond()
-            * CLIMBER.gearRatio
-            / CLIMBER.drumRotationsToDistance.in(Meters));
+        MetersPerSecond.of(sim.getVelocityMetersPerSecond())
+            .timesConversionFactor(CLIMBER.drumMpsToRps));
   }
 
   @Override
@@ -227,5 +245,24 @@ public class Climber extends SubsystemBase {
     } else {
       updateSim(m_climberUnweightedSim);
     }
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Climber Setpoint");
+    m_setpointSubscriber = topic.subscribe(0.0);
+    m_setpointPublisher = topic.publish();
+    m_setpointPublisher.set(0.0);
+    m_setpointPublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setDesiredPositionAndMotionMagicConfigs(
+        Inches.of(m_setpointSubscriber.get()),
+        getAverageCurrent(),
+        getHeightInches(),
+        getAverageCurrent());
   }
 }

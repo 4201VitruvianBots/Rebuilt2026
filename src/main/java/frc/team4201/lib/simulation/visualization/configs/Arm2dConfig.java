@@ -19,7 +19,7 @@ public class Arm2dConfig extends BaseMechanismConfig {
   public Angle m_initialAngle;
 
   /** Angle offset of the arm to its parent {@link MechanismLigament2d} */
-  public Angle m_angleOffset = Degrees.of(0);
+  public Angle m_angleOffset = Degrees.zero();
 
   /** Line width (thickness) of the arm. This is in pixels per inch of the Mechanism2d */
   public double m_lineWidth = 3;
@@ -33,7 +33,7 @@ public class Arm2dConfig extends BaseMechanismConfig {
    * @param name Name of the mechanism
    */
   public Arm2dConfig(String name) {
-    this(name, new Color8Bit(255, 255, 255), Degrees.of(0), Inches.of(12));
+    this(name, new Color8Bit(255, 255, 255), Degrees.zero(), Inches.of(12));
     this.m_lineWidth = 5;
   }
 

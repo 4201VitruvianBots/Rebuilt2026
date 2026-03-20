@@ -43,18 +43,16 @@ public final class VISION {
   // Camera offset from robot center. Camera F is positioned on the hopper
   public static final Transform3d limelightFPosition =
       new Transform3d(
-          new Translation3d(
-              Meters.of(0).magnitude(), Meters.of(0).magnitude(), Meters.of(0).magnitude()),
-          new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(180)));
+          new Translation3d(Meters.zero(), Meters.zero(), Meters.zero()),
+          new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(180)));
 
   // TODO: Update values
   // Camera offset from robot center. Camera B is facing out of the rear of the robot (On the
   // EndEffector side)
   public static final Transform3d limelightBPosition =
       new Transform3d(
-          new Translation3d(
-              Meters.of(0).magnitude(), Meters.of(0).magnitude(), Meters.of(0).magnitude()),
-          new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(180)));
+          new Translation3d(Meters.zero(), Meters.zero(), Meters.zero()),
+          new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(180)));
 
   public static final Distance poseXTolerance = Inches.of(4);
   public static final Distance poseYTolerance = Inches.of(4);
@@ -62,19 +60,4 @@ public final class VISION {
   public static final Angle posePitchTolerance = Degrees.of(4);
   public static final Angle poseRollTolerance = Degrees.of(4);
   public static final Angle poseYawTolerance = Degrees.of(4);
-
-  // public enum BRANCH_TARGET {
-  //   LEFT(true),
-  //   RIGHT(false);
-
-  //   private final boolean m_useLeft;
-
-  //   BRANCH_TARGET(final boolean useLeft) {
-  //     this.m_useLeft = useLeft;
-  //   }
-
-  //   public boolean getTargetType() {
-  //     return m_useLeft;
-  //   }
-  // }
 }

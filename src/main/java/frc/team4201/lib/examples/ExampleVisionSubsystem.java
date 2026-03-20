@@ -26,7 +26,7 @@ public class ExampleVisionSubsystem extends LoggedSubsystem {
     for (var limelight : m_limelights) {
       if (limelight.process()) {
         if (m_swerve != null) {
-          if (m_swerve.getYawRate().gt(DegreesPerSecond.of(720))) {
+          if (m_swerve.getGyroYawRate().gt(DegreesPerSecond.of(720))) {
             continue;
           }
 

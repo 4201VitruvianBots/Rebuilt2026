@@ -161,7 +161,7 @@ public class Arm2d implements AutoCloseable {
    * @param angle The angle to set the Arm2d to.
    */
   public void update(Angle angle) {
-    update(angle, RotationsPerSecond.of(0));
+    update(angle, RotationsPerSecond.zero());
   }
 
   /**
@@ -172,7 +172,7 @@ public class Arm2d implements AutoCloseable {
    *     visualization.
    */
   public void update(Angle angle, AngularVelocity velocity) {
-    update(angle, RotationsPerSecond.of(0), m_config.m_initialLength);
+    update(angle, RotationsPerSecond.zero(), m_config.m_initialLength);
   }
 
   /**

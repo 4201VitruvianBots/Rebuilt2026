@@ -1,0 +1,89 @@
+package frc.robot.constants;
+
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
+
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
+
+public class INTAKE {
+  public static class ROLLERS {
+    // TODO: change values
+    public static final double kP = 1.0;
+    public static final double gearRatio = 1.0;
+    public static final double peakForwardOutput = 0.9;
+    public static final double peakReverseOutput = -0.9;
+    public static final double kInertia = 0.005;
+
+    public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
+
+    public static final Distance radius = Inches.of(0.625);
+
+    public enum INTAKE_SPEED {
+      ZERO(0),
+      INTAKING(0.55),
+      REVERSE(-0.2);
+
+      private final double value;
+
+      INTAKE_SPEED(double value) {
+        this.value = value;
+      }
+
+      public double get() {
+        return value;
+      }
+    }
+  }
+
+  public static class PIVOT {
+    /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
+    public static final double kP = 100.0;
+    public static final double kD =
+        10.0; /*so basically kS kV and kA are not being used currently so they are commented out */
+    // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
+    // public static final double kV = 0; // Recalc these
+    // public static final double kA = 0;
+
+    public static final double gearRatio = 1.0; // encoder is after gear ratio
+    public static final double motionMagicAcceleration = 35.0;
+    public static final double motionMagicCruiseVelocity = 25.0;
+    public static final double motionMagicJerk = 0.0;
+
+    public static final Angle minAngle = Degrees.zero();
+    public static final Angle maxAngle = Degrees.of(52.0);
+    public static final Angle startingAngle = minAngle;
+    public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
+        GravityTypeValue
+            .Arm_Cosine; /* 'tis a pivot so we use the arm one because arm cosine is for arm */
+    public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+
+    public static final Distance baseLength =
+        Inches.of(13.897040); /* Almost completely made up :P */
+    public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
+
+    public static final double encoderOffset = 0.0;
+    public static final SensorDirectionValue encoderDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
+
+    public enum PIVOT_SETPOINT {
+      STOWED(Degrees.zero()),
+      INTAKING(Degrees.of(52.0));
+
+      private final Angle angle;
+
+      PIVOT_SETPOINT(Angle angle) {
+        this.angle = angle;
+      }
+
+      public Angle getAngle() {
+        return angle;
+      }
+    }
+  }
+}

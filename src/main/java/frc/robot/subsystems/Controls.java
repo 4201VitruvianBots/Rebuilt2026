@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.Alert;
@@ -14,29 +15,38 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.USB;
+import frc.robot.constants.CAN;
+import frc.robot.constants.FIELD;
+import frc.robot.constants.ROBOT.USB;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredSubsystem;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-@Logged
-public class Controls extends SubsystemBase {
+public class Controls extends SubsystemBase implements MonitoredSubsystem {
+
+  @Logged(name = "roboRIO", importance = Logged.Importance.INFO)
+  public static final CANBus roboRIO = CAN.roboRIO;
+
+  @Logged(name = "canivore", importance = Logged.Importance.INFO)
+  public static final CANBus canivore = CAN.canivore;
+
   //   private Vision m_vision;
   private static boolean m_allianceInit;
   private static DriverStation.Alliance m_allianceColor = DriverStation.Alliance.Red;
 
-  private static Alert m_usbAlert =
+  private static final Alert m_usbAlert =
       new Alert("USB connection alert not properly initialized", AlertType.kError);
-  private static Alert m_brownoutAlert =
+  private static final Alert m_brownoutAlert =
       new Alert("Brownout alert not properly initialized", AlertType.kWarning);
-  private static Alert m_storageAlert =
+  private static final Alert m_storageAlert =
       new Alert("Storage space alert not properly initialized", AlertType.kWarning);
-  private static Alert m_canAlert =
+  private static final Alert m_canAlert =
       new Alert("CAN bus alert not properly initialized", AlertType.kError);
   // private static Alert m_visionAlert = new Alert("Vision alert not properly initialized",
   // AlertType.kWarning);
 
-  private static Timer m_brownoutTimer = new Timer();
+  private static final Timer m_brownoutTimer = new Timer();
   private static double m_brownoutLastUpdatedTime = 0.0;
 
   /** Map of subsystems for Controls to update */
@@ -44,6 +54,7 @@ public class Controls extends SubsystemBase {
 
   @NotLogged private final Map<String, Alert> alertMap = new HashMap<>();
 
+  /** Creates a new Controls subsystem */
   public Controls() {
     // Alerts for setting up the robot properly
     alertMap.put(
@@ -104,7 +115,7 @@ public class Controls extends SubsystemBase {
     // Update brownout alert state
     if (RobotController.isBrownedOut()) {
       m_brownoutAlert.setText(
-          "A brownout occured less than a minute ago. Please ensure that a fresh battery has been plugged in.");
+          "A brownout occurred less than a minute ago. Please ensure that a fresh battery has been plugged in.");
       m_brownoutAlert.set(true);
       m_brownoutTimer.restart();
       m_brownoutLastUpdatedTime = 0.0;
@@ -114,7 +125,7 @@ public class Controls extends SubsystemBase {
     if (m_brownoutTimer.get() - m_brownoutLastUpdatedTime > 60.0) {
       int minutesCount = (int) Math.round(m_brownoutTimer.get() / 60.0);
       m_brownoutAlert.setText(
-          "A brownout occured "
+          "A brownout occurred "
               + minutesCount
               + " minute"
               + (minutesCount == 1 ? "" : "s")
@@ -169,6 +180,8 @@ public class Controls extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // This method will be called once per scheduler run
+
     if (DriverStation.isDisabled()) {
       DriverStation.getAlliance()
           .ifPresent(
@@ -177,6 +190,9 @@ public class Controls extends SubsystemBase {
                 m_allianceInit = true;
               });
       alertMap.get("allianceInit").set(!m_allianceInit);
+
+      // Update field constants
+      FIELD.updateConstants();
     }
   }
 }

@@ -36,9 +36,9 @@ public class HubTracker {
 
     var currentTime = DriverStation.getMatchTime();
 
-    if (currentGameData.length() == 0) {
+    if (currentGameData.isEmpty()) {
       currentGameData = DriverStation.getGameSpecificMessage();
-      if (currentGameData.length() == 0) {
+      if (currentGameData.isEmpty()) {
         return null;
       }
     }

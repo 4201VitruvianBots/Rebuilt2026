@@ -53,7 +53,7 @@ public class Elevator2dConfig extends BaseMechanismConfig {
    * @param initialLength Initial length of the Elevator2d
    */
   public Elevator2dConfig(String name, Color8Bit color, Distance initialLength) {
-    this(name, color, initialLength, Degrees.of(0));
+    this(name, color, initialLength, Degrees.zero());
   }
 
   /**

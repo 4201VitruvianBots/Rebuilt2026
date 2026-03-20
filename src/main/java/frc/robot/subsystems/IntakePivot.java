@@ -4,12 +4,7 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -23,27 +18,45 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.INTAKE.PIVOT;
-import frc.robot.Constants.INTAKE.PIVOT.PIVOT_SETPOINT;
+import frc.robot.constants.CAN;
+import frc.robot.constants.INTAKE.PIVOT;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredDevice;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredSubsystem;
 import frc.team4201.lib.utils.CtreUtils;
 
-public class IntakePivot extends SubsystemBase {
+public class IntakePivot extends SubsystemBase implements MonitoredSubsystem {
   /** Creates a new IntakePivot. */
+  @MonitoredDevice(
+      name = "Intake Pivot Motor",
+      type = MonitoredDevice.DEVICE_TYPE.PRIMARY,
+      canbus = "rio")
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBaseCanbus);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.canivore);
 
+  @MonitoredDevice(
+      name = "Intake Pivot CANcoder",
+      type = MonitoredDevice.DEVICE_TYPE.PRIMARY,
+      canbus = "rio")
   private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder);
 
+  private DoubleSubscriber m_angleSubscriber;
+  private DoublePublisher m_anglePublisher;
+
   private final MotionMagicTorqueCurrentFOC m_request =
-      new MotionMagicTorqueCurrentFOC(Rotations.of(0.0));
+      new MotionMagicTorqueCurrentFOC(Rotations.zero());
 
   private static Angle m_desiredAngle = PIVOT_SETPOINT.STOWED.getAngle();
 
@@ -59,10 +72,13 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.baseLength.in(Meters),
           PIVOT.minAngle.in(Radians),
           PIVOT.maxAngle.in(Radians),
-          true,
+          false,
           PIVOT.startingAngle.in(Radians));
 
-  public IntakePivot() {
+  public IntakePivot() {}
+
+  @Override
+  public void initDevices() {
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
     if (RobotBase.isReal()) {
@@ -70,7 +86,7 @@ public class IntakePivot extends SubsystemBase {
       encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
     }
 
-    CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
+    CtreUtils.configureDevice(m_canCoder, encoderConfig);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
@@ -88,10 +104,10 @@ public class IntakePivot extends SubsystemBase {
     config.MotorOutput.NeutralMode =
         NeutralModeValue
             .Brake; // Here, in this very instance, we, as in me and Sir Nathan Schoen have
-    // ulimately, after an extensive amount of deliberation, have ultimately decided
+    // ultimately, after an extensive amount of deliberation, have ultimately decided
     // that is in our best interests to make ues of the "brake" value in neutral
     // mode, due to the fact that an intake Pivot would not be coasting, thus we
-    // chose to use brake for afformentioned pivot.
+    // chose to use brake for aforementioned pivot.
 
     config.CurrentLimits.StatorCurrentLimit = 175;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -105,7 +121,7 @@ public class IntakePivot extends SubsystemBase {
     config.MotionMagic.MotionMagicCruiseVelocity = PIVOT.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = PIVOT.motionMagicAcceleration;
 
-    CtreUtils.configureTalonFx(m_motor, config);
+    CtreUtils.configureDevice(m_motor, config);
 
     if (RobotBase.isSimulation()) {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
@@ -130,7 +146,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Logged(name = "Pivot Angle Radians", importance = Importance.DEBUG)
   public Angle getAngle() {
-    return m_canCoder.getAbsolutePosition().refresh().getValue();
+    return m_canCoder.getAbsolutePosition().getValue();
   }
 
   @Logged(name = "Pivot Angle Degrees", importance = Importance.INFO)
@@ -145,6 +161,12 @@ public class IntakePivot extends SubsystemBase {
 
   public boolean isConnected() {
     return m_motor.isConnected();
+  }
+
+  @NotLogged
+  public Command command(PIVOT_SETPOINT setpoint) {
+    return this.startEnd(
+        () -> setAngle(setpoint.getAngle()), () -> setAngle(PIVOT_SETPOINT.STOWED.getAngle()));
   }
 
   @Override
@@ -168,5 +190,19 @@ public class IntakePivot extends SubsystemBase {
     // Update the pivotEncoder simState
     m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Intake Angle Setpoint");
+    m_angleSubscriber = topic.subscribe(0.0);
+    m_anglePublisher = topic.publish();
+    m_anglePublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }

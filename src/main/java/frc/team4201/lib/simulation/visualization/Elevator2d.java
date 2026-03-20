@@ -192,7 +192,7 @@ public class Elevator2d implements AutoCloseable {
    * @param height The height to set the {@link Elevator2d} to.
    */
   public void update(Distance height) {
-    update(height, FeetPerSecond.of(0));
+    update(height, FeetPerSecond.zero());
   }
 
   /**

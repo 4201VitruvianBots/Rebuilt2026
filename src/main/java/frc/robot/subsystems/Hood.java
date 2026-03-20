@@ -19,6 +19,9 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -29,29 +32,39 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.FLYWHEEL.HOOD;
-import frc.robot.Constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
+import frc.robot.constants.CAN;
+import frc.robot.constants.FLYWHEEL.HOOD;
+import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredDevice;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredSubsystem;
 import frc.team4201.lib.utils.CtreUtils;
 
-public class Hood extends SubsystemBase {
+public class Hood extends SubsystemBase implements MonitoredSubsystem {
 
+  @MonitoredDevice(name = "Hood Motor", type = MonitoredDevice.DEVICE_TYPE.PRIMARY, canbus = "rio")
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
       new TalonFX(
-          CAN.kShooterHoodMotor,
-          CAN.driveBaseCanbus); // Replace these device ids after motors are set up
+          CAN.kShooterHoodMotor, CAN.roboRIO); // Replace these device ids after motors are set up
 
+  @MonitoredDevice(
+      name = "Hood CANcoder",
+      type = MonitoredDevice.DEVICE_TYPE.PRIMARY,
+      canbus = "rio")
   private final CANcoder m_cancoder =
       new CANcoder(
           CAN.kShooterHoodCANCoder,
-          CAN.driveBaseCanbus); // Replace these device ids after motors are set up
+          CAN.roboRIO); // Replace these device ids after motors are set up
+
+  private DoublePublisher m_anglePublisher;
+
+  private DoubleSubscriber m_angleSubscriber;
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request =
-      new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(true);
-  private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(true);
+      new MotionMagicVoltage(Rotations.zero()).withEnableFOC(true);
+  private final VoltageOut m_VoltageOut = new VoltageOut(Volts.zero()).withEnableFOC(true);
 
   private Angle m_hoodSetpoint = MANUAL_ANGLE.NOTHING.getAngle();
 
@@ -66,13 +79,16 @@ public class Hood extends SubsystemBase {
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
     log.motor("motor1")
-        .voltage(m_motor.getMotorVoltage().refresh().getValue()) // Units: Volts
-        .angularPosition(m_motor.getPosition().refresh().getValue()) // Units: Rotations/Meters
+        .voltage(m_motor.getMotorVoltage().getValue()) // Units: Volts
+        .angularPosition(m_motor.getPosition().getValue()) // Units: Rotations/Meters
         .angularVelocity(
-            m_motor.getVelocity().refresh().getValue()); // Units: Rotations per sec/Meters per sec
+            m_motor.getVelocity().getValue()); // Units: Rotations per sec/Meters per sec
   }
 
-  public Hood() {
+  public Hood() {}
+
+  @Override
+  public void initDevices() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = HOOD.kP;
     config.Slot0.kD = HOOD.kD;
@@ -80,8 +96,6 @@ public class Hood extends SubsystemBase {
     // config.Slot0.kV = HOOD.kV;
     // config.Slot0.kS = HOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
-    config.MotorOutput.PeakForwardDutyCycle = HOOD.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = HOOD.peakReverseOutput;
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
@@ -98,10 +112,10 @@ public class Hood extends SubsystemBase {
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = HOOD.maxAngle.in(Rotations);
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = HOOD.minAngle.in(Rotations);
 
-    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
-    m_motor.setPosition(getHoodRotations().in(Rotations));
+    CtreUtils.configureDevice(m_motor, config);
 
-    CtreUtils.configureTalonFx(m_motor, config);
+    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
+    m_motor.setPosition(getHoodAngle().in(Rotations));
   }
 
   public void setAngle(Angle setpoint) {
@@ -117,28 +131,28 @@ public class Hood extends SubsystemBase {
   }
 
   public Voltage getHoodVoltage() {
-    return m_motor.getMotorVoltage().refresh().getValue();
+    return m_motor.getMotorVoltage().getValue();
   }
 
   // TODO: Delete this after testing. Only for debugging purposes
   @Logged(name = "Hood Velocity", importance = Importance.DEBUG)
   public AngularVelocity getHoodVelocity() {
-    return m_motor.getVelocity().refresh().getValue();
+    return m_motor.getVelocity().getValue();
   }
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
-  public Angle getHoodRotations() {
-    return m_cancoder.getAbsolutePosition().refresh().getValue();
+  public Angle getHoodAngle() {
+    return m_cancoder.getAbsolutePosition().getValue();
   }
 
-  @Logged(name = "Hood Angle", importance = Importance.INFO)
-  public double getHoodAngle() {
-    return getHoodRotations().in(Degrees);
+  @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)
+  public double getHoodAngleDegrees() {
+    return getHoodAngle().in(Degrees);
   }
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
-    return m_hoodSetpoint.minus(getHoodRotations()).abs(Degrees) <= 1; // Works as good as always
+    return m_hoodSetpoint.minus(getHoodAngle()).abs(Degrees) <= 1; // Works as good as always
   }
 
   public boolean[] isConnected() {
@@ -151,7 +165,7 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getHoodAngle() > HOOD.maxAngle.in(Degrees)) {
+    if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {
       m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
     }
   }
@@ -205,5 +219,19 @@ public class Hood extends SubsystemBase {
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public void testInit() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Hood Angle Setpoint");
+    m_angleSubscriber = topic.subscribe(0.0);
+    m_anglePublisher = topic.publish();
+    m_anglePublisher.set(0.0);
+  }
+
+  public void testPeriodic() {
+    setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }

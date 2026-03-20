@@ -6,14 +6,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.LED.LED_STATES;
+import frc.robot.constants.LED.LED_STATES;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredSubsystem;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
-public class LEDs extends SubsystemBase {
+public class LEDs extends SubsystemBase implements MonitoredSubsystem {
   private DatagramSocket socket;
   private LED_STATES currentState = LED_STATES.DISABLED;
 

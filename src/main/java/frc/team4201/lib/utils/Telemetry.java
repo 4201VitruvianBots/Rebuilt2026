@@ -9,13 +9,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.simulation.visualization.SwerveModule2d;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 
 public class Telemetry {
-  private Map<MODULE_POSITION, Translation2d> m_moduleTranslations;
+  private final Map<MODULE_POSITION, Translation2d> m_moduleTranslations;
 
   private FieldSim m_fieldSim;
   private final SwerveModule2d[] m_moduleVisualizer;
@@ -67,8 +68,6 @@ public class Telemetry {
 
   /* Accept the swerve drive state and telemeterize it to SmartDashboard */
   public void telemeterize(SwerveDriveState state) {
-    Pose2d pose = state.Pose;
-
     /* Telemeterize the swerve drive state */
     drivePose.set(state.Pose);
     driveSpeeds.set(state.Speeds);
@@ -94,7 +93,7 @@ public class Telemetry {
     SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
     SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
-    if (m_fieldSim != null) {
+    if (m_fieldSim != null && RobotBase.isSimulation()) {
       for (MODULE_POSITION i : MODULE_POSITION.values()) {
         m_moduleVisualizer[i.ordinal()].update(state.ModuleStates[i.ordinal()]);
         m_moduleTransforms[i.ordinal()] =

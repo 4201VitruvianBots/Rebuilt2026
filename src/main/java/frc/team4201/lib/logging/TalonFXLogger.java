@@ -16,13 +16,15 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
   public void update(EpilogueBackend backend, TalonFX motor) {
     backend.log("Supply Voltage (V)", motor.getSupplyVoltage().getValue());
     backend.log("Supply Current (A)", motor.getSupplyCurrent().getValue());
+    backend.log("Device Temp (C)", motor.getDeviceTemp().getValue());
 
     backend.log("Control Mode", motor.getAppliedControl().getName());
 
-    backend.log("Output (%)", motor.get());
+    backend.log("Output (%)", motor.getDutyCycle().getValue());
     backend.log("Output (V)", motor.getMotorVoltage().getValue());
     backend.log("Stator Current (A)", motor.getStatorCurrent().getValue());
 
+    backend.log("Position", motor.getPosition().getValue());
     backend.log("Velocity", motor.getVelocity().getValue());
     backend.log("Acceleration", motor.getAcceleration().getValue());
 

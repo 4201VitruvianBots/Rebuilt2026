@@ -5,51 +5,68 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.UPTAKE;
+import frc.robot.constants.CAN;
+import frc.robot.constants.UPTAKE;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredDevice;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredSubsystem;
+import frc.team4201.lib.simulation.TalonFXSim;
 import frc.team4201.lib.utils.CtreUtils;
 
-public class Uptake extends SubsystemBase {
+public class Uptake extends SubsystemBase implements MonitoredSubsystem {
 
+  @MonitoredDevice(
+      name = "Uptake Motor",
+      type = MonitoredDevice.DEVICE_TYPE.PRIMARY,
+      canbus = "rio")
   @Logged(name = "Uptake Motor", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.driveBaseCanbus);
+  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.canivore);
 
   private final FlywheelSim m_motorSim =
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(UPTAKE.gearbox, UPTAKE.kInertia, UPTAKE.gearRatio),
           UPTAKE.gearbox);
+  private final TalonFXSim m_talonFxSim =
+      new TalonFXSim(m_motorSim, m_motor).withConversionFactor(UPTAKE.gearRatio);
 
-  private final TalonFXSimState m_simState;
+  private VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0.0);
+  private DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0.0);
 
-  private MotionMagicVelocityTorqueCurrentFOC m_request =
-      new MotionMagicVelocityTorqueCurrentFOC(0.0);
-
-  private static AngularVelocity m_velocitySetpoint = RPM.of(0.0);
+  private static AngularVelocity m_velocitySetpoint = RPM.zero();
 
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
 
   public Uptake() {
+    var topic =
+        NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard")
+            .getDoubleTopic("Uptake RPM Setpoint");
+    m_rpmSubscriber = topic.subscribe(0.0);
+    m_rpmPublisher = topic.publish();
+  }
+
+  @Override
+  public void initDevices() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = UPTAKE.kP;
     config.Slot0.kS = UPTAKE.kS;
@@ -57,21 +74,13 @@ public class Uptake extends SubsystemBase {
 
     config.Feedback.SensorToMechanismRatio = UPTAKE.gearRatio;
 
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     config.MotionMagic.MotionMagicAcceleration = UPTAKE.kMotionMagicAcceleration;
     config.MotionMagic.MotionMagicCruiseVelocity = UPTAKE.kMotionMagicCruiseVelocity;
 
-    CtreUtils.configureTalonFx(m_motor, config);
-
-    m_simState = m_motor.getSimState();
-    var topic =
-        NetworkTableInstance.getDefault()
-            .getTable("SmartDashboard")
-            .getDoubleTopic("Uptake RPM Setpoint");
-    m_rpmSubscriber = topic.subscribe(0.0);
-    m_rpmPublisher = topic.publish();
+    CtreUtils.configureDevice(m_motor, config);
   }
 
   public void setPercentOutput(double speed) {
@@ -97,9 +106,31 @@ public class Uptake extends SubsystemBase {
     return m_motor.get();
   }
 
+  public double getRPMerror() {
+    return getRPMsetpoint() - getMotorSpeedRPM();
+  }
+
   @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
   public double getMotorSpeedRPM() {
-    return m_motor.getVelocity().refresh().getValue().in(RPM);
+    return m_motor.getVelocity().getValue().in(RPM);
+  }
+
+  public boolean isAtRPMsetpoint() {
+    return getAbsoluteRPMerror() <= UPTAKE.kVelocityErrorThreshold;
+  }
+
+  public double getAbsoluteRPMerror() {
+    return Math.abs(getRPMerror());
+  }
+
+  @NotLogged
+  public Command command(UPTAKE.UPTAKE_SPEED speed) {
+    return this.startEnd(
+        () -> setVelocitySetpoint(speed.get()),
+        () -> {
+          setPercentOutput(0.0);
+          setVelocitySetpoint(UPTAKE.UPTAKE_SPEED.IDLE.get());
+        });
   }
 
   public void testInit() {
@@ -112,18 +143,15 @@ public class Uptake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    if (!isAtRPMsetpoint()) {
+      m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
+    } else {
+      m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    }
   }
 
   @Override
   public void simulationPeriodic() {
-    m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_motorSim.setInputVoltage(m_simState.getMotorVoltage());
-
-    m_motorSim.update(0.02);
-
-    m_simState.setRawRotorPosition(
-        Rotations.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
-    m_simState.setRotorVelocity(RPM.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
+    m_talonFxSim.update();
   }
 }

@@ -4,34 +4,44 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.INDEXER;
+import frc.robot.constants.CAN;
+import frc.robot.constants.INDEXER;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredDevice;
+import frc.team4201.lib.hardwareMonitor.annotations.MonitoredSubsystem;
+import frc.team4201.lib.simulation.TalonFXSim;
 import frc.team4201.lib.utils.CtreUtils;
 
-public class Indexer extends SubsystemBase {
+public class Indexer extends SubsystemBase implements MonitoredSubsystem {
 
+  @MonitoredDevice(
+      name = "Indexer Motor 1",
+      type = MonitoredDevice.DEVICE_TYPE.PRIMARY,
+      canbus = "rio")
   @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBaseCanbus);
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.canivore);
 
+  @MonitoredDevice(
+      name = "Indexer Motor 2",
+      type = MonitoredDevice.DEVICE_TYPE.PRIMARY,
+      canbus = "rio")
   @Logged(name = "Indexer Motor 2", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.driveBaseCanbus);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.canivore);
 
   // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
@@ -45,15 +55,14 @@ public class Indexer extends SubsystemBase {
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
           INDEXER.gearbox);
-  private final DCMotorSim m_indexerMotor2Sim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
-          INDEXER.gearbox);
-  private final TalonFXSimState m_simState1;
-  private final TalonFXSimState m_simState2;
+  private final TalonFXSim m_talonFxSim =
+      new TalonFXSim(m_indexerMotor1Sim, m_indexerMotor1, m_indexerMotor2);
 
   /** Creates a new Indexer. */
-  public Indexer() {
+  public Indexer() {}
+
+  @Override
+  public void initDevices() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = INDEXER.kP;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -64,17 +73,10 @@ public class Indexer extends SubsystemBase {
 
     config.CurrentLimits.StatorCurrentLimit = 60;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    CtreUtils.configureTalonFx(m_indexerMotor1, config);
+    CtreUtils.configureDevice(m_indexerMotor1, config);
+
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    CtreUtils.configureTalonFx(m_indexerMotor2, config);
-
-    // m_indexerMotor2.setControl(
-    //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    // m_indexerMotor3.setControl(
-    //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
-
-    m_simState1 = m_indexerMotor1.getSimState();
-    m_simState2 = m_indexerMotor2.getSimState();
+    CtreUtils.configureDevice(m_indexerMotor2, config);
   }
 
   public void setSpeeds(double speed1, double speed2) {
@@ -96,29 +98,17 @@ public class Indexer extends SubsystemBase {
     return m_indexerMotor2.get();
   }
 
+  @NotLogged
+  public Command command(INDEXER_SPEED_1 speed1, INDEXER_SPEED_2 speed2) {
+    return this.startEnd(() -> setSpeeds(speed1.get(), speed2.get()), () -> setSpeeds(0.0, 0.0));
+  }
+
   @Override
   public void periodic() {}
 
   @Override
   public void simulationPeriodic() {
-    m_simState1.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_indexerMotor1Sim.setInputVoltage(m_simState1.getMotorVoltage());
-
-    m_indexerMotor1Sim.update(0.02);
-
-    m_simState1.setRawRotorPosition(
-        Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
-    m_simState1.setRotorVelocity(
-        RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
-    m_simState2.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_indexerMotor2Sim.setInputVoltage(m_simState2.getMotorVoltage());
-
-    m_indexerMotor2Sim.update(0.02);
-
-    m_simState2.setRawRotorPosition(
-        Rotations.of(m_indexerMotor2Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
-    m_simState2.setRotorVelocity(
-        RPM.of(m_indexerMotor2Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
+    m_talonFxSim.update();
   }
 
   public void testInit() {
