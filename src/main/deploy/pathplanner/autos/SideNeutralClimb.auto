@@ -7,31 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb1"
+            "pathName": "ShootNearStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb2"
+            "pathName": "CrossOverBumpFromShooting"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb3"
+            "pathName": "IntakeFromCenter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb4"
+            "pathName": "ReturnToAllianceZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb5Depot"
+            "pathName": "ShootNearStart"
           }
         }
       ]

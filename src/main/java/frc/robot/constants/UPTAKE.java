@@ -6,12 +6,13 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 public class UPTAKE {
-  public static final double kP = 10.1; // Placeholders
+  public static final double kP = 13.5; // Placeholders
   public static final double kV = 0.0;
-  public static final double kS = 0.0;
-  public static final double gearRatio = 1.0;
+  public static final double kS = 24.3603515625;
+  public static final double gearRatio = 12.0 / 20.0;
   public static final double kInertia = 0.01;
   public static final double kVelocityErrorThreshold = 35.0;
+  public static final double kStatorCurrentLimit = 80.0;
 
   public static final double kMotionMagicAcceleration = 30.0;
   public static final double kMotionMagicCruiseVelocity = 60.0;
@@ -22,18 +23,19 @@ public class UPTAKE {
 
   public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 
+  // unused
   public enum UPTAKE_SPEED {
-    IDLE(RPM.of(0.0)),
-    INTAKE_RUN(RPM.of(200.0)),
-    UPTAKING(RPM.of(500.0));
+    IDLE(0.0),
+    INTAKEREVERSING(-0.3),
+    SHOOTING(0.7);
 
-    private final AngularVelocity value;
+    private final double value;
 
-    UPTAKE_SPEED(AngularVelocity value) {
+    UPTAKE_SPEED(double value) {
       this.value = value;
     }
 
-    public AngularVelocity get() {
+    public double get() {
       return value;
     }
   }

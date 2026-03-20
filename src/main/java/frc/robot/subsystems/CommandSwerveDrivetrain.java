@@ -86,7 +86,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   //  public static final double kTeleI_Theta = 0.0;
   // PID Constants taken from AutoAlignDrive
   SwerveRequest.FieldCentricFacingAngle m_driveWithHeadingRequest =
-      new SwerveRequest.FieldCentricFacingAngle().withHeadingPID(7.4, 0.0, 0.3);
+      new SwerveRequest.FieldCentricFacingAngle().withHeadingPID(12.0, 0.0, 0.0);
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =

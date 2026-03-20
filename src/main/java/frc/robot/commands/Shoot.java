@@ -16,14 +16,17 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
@@ -51,16 +54,46 @@ public class Shoot extends Command {
 
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
+    // Everything has been offset by plus 5.5 degrees.
+    distanceToShotMap.put(Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(6.5), 0.9)); //
     distanceToShotMap.put(
-        Meters.of(1.8086638318064376),
-        new Shot(RPM.of(2175), Degrees.of(75), 0.96399)); // Hood position is a placeholder
-    distanceToShotMap.put(Meters.of(3.048), new Shot(RPM.of(2200), Degrees.of(73), 1.286));
-    distanceToShotMap.put(Meters.of(6.00), new Shot(RPM.of(2900), Degrees.of(70), 1.4));
+        Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(7.5), 1.0)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(8.5), 1.09)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(10.8), 1.1)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(12), 1.1)); // Tuned
+    distanceToShotMap.put(
+        Meters.of(3.166696048347548), new Shot(RPM.of(1740), Degrees.of(14.6), 1.11));
+    distanceToShotMap.put(
+        Meters.of(3.404527735240185),
+        new Shot(RPM.of(1780), Degrees.of(15.5), 1.115)); // Half Tuned
+    // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21),
+    // 1.286));
+    // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8),
+    // 1.286));
+    distanceToShotMap.put(
+        Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(17.5), 1.1));
+    distanceToShotMap.put(
+        Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(18.5), 1.12));
+    distanceToShotMap.put(
+        Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(22), 1.16));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
   }
 
   private final Vision m_vision;
   private final Flywheel m_flywheel;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
+  private CommandXboxController m_driverController;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
   private static double phaseDelay = 0.0;
@@ -75,15 +108,21 @@ public class Shoot extends Command {
 
   Translation2d m_goal = new Translation2d();
 
-  /** Shoot on the move command */
+  public static Shot getShotForDistance(Distance distance) {
+    return distanceToShotMap.get(distance);
+  }
+
+  /** Shoot on the move command with rumble */
   public Shoot(
       Flywheel flywheel,
       Hood shooterHood,
       Vision vision,
+      CommandXboxController driverController,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
     m_flywheel = flywheel;
+    m_driverController = driverController;
     m_swerveDrivetrain = swerveDrive;
     m_throttleInput = throttleInput;
     m_strafeInput = strafeInput;
@@ -109,14 +148,8 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_vision.isInOpposingAllianceSector() || m_vision.isInNeutralSector()) {
-      // TODO: Add pass position as goal
+    m_goal = FIELD.TARGET.CURRENT_TARGET.getTargetPosition().toTranslation2d();
 
-      // If we're in our own zone, then we align to the hub
-    } else {
-      m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
-    }
-    m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
 
@@ -169,6 +202,7 @@ public class Shoot extends Command {
 
     // Calculate parameters accounted for imparted velocity
     Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
+
     double hoodAngle = shot.hoodAngle.in(Radians);
 
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
@@ -177,17 +211,28 @@ public class Shoot extends Command {
     // all of the logic for angle is above this Comment
     m_flywheel.setRPMOutputFOC(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
+    if (m_flywheel.isAtRPMsetpoint()) {
+      if (m_driverController != null)
+        m_driverController.setRumble(
+            RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength); // Null in auto
+    } else {
+      if (m_driverController != null)
+        m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
+    }
 
     m_swerveDrivetrain.setChassisSpeedsWithHeading(
         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        driveAngle);
+        Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    if (m_driverController != null)
+      m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
+    m_flywheel.setRPMOutputFOC(RPM.of(0.0));
   }
 
   // Returns true when the command should end.

@@ -1,15 +1,20 @@
 {
   "robotWidth": 0.9652,
-  "robotLength": 0.7747,
+  "robotLength": 0.775,
   "holonomicMode": true,
   "pathFolders": [
-    "CenterPreloadOnly",
     "CenterDepot",
-    "SideNeutralDepotClimb",
-    "SideNeutralClimb",
-    "PreloadSideNeutralTwice"
+    "CenterPreloadClimb",
+    "IntakeAndShootFromDepot",
+    "IntakeFromNeutral",
+    "ShootNearStart",
+    "Zold - PreloadSideNeutralTwice",
+    "Zold - SideNeutralClimb",
+    "Zold - SideNeutralDepotClimb"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Old"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
@@ -34,5 +39,7 @@
   "brModuleY": -0.273,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.442,\"y\":0.0},\"size\":{\"width\":0.762,\"length\":0.288},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
+  ]
 }

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": {
-        "x": 3.25,
-        "y": 5.7
+        "x": 3.135430346051464,
+        "y": 6.196725820763088
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ShootingPoint"
     }
   ],
   "rotationTargets": [
@@ -47,10 +47,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": -31.798912824294426
   },
   "reversed": false,
-  "folder": "SideNeutralClimb",
+  "folder": "Zold - SideNeutralClimb",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

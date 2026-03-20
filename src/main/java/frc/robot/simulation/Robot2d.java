@@ -200,12 +200,18 @@ public class Robot2d extends SubsystemBase {
 
   // TODO: Add hopper, Vision, LEDs?
 
-  private Pose3d intakePose =
-      new Pose3d(
-          SIM.intakeOrigin,
-          new Rotation3d(0.0, -(INTAKE.PIVOT.maxAngle.in(Radians)), 0.0)); // For AdvantageScope
-  private Pose3d hopperPose =
-      new Pose3d(SIM.hopperOrigin, new Rotation3d(0.0, 0.0, 0.0)); // For AdvantageScope
+  @Logged(name = "ComponentPoses", importance = Logged.Importance.DEBUG)
+  private Pose3d[] componentPoses =
+      new Pose3d[] {
+        new Pose3d(
+            SIM.intakeOrigin,
+            new Rotation3d(
+                0.0,
+                -(INTAKE.PIVOT.maxAngle.in(Radians)),
+                0.0)), // For AdvantageScope intake position
+        new Pose3d(
+            SIM.hopperOrigin, new Rotation3d(0.0, 0.0, 0.0)) // For AdvantageScope hopper position
+      };
 
   /** Map of subsystems for Robot2d to update */
   private final Map<String, Subsystem> m_subsystemMap = new HashMap<>();
@@ -251,11 +257,6 @@ public class Robot2d extends SubsystemBase {
     return new Pose3d[] {new Pose3d(), new Pose3d()};
   }
 
-  @Logged(name = "ComponentPoses", importance = Logged.Importance.DEBUG)
-  public Pose3d[] getComponentPoses() {
-    return new Pose3d[] {intakePose, hopperPose};
-  }
-
   // private Distance testClimberHeight = Inches.of(0);
   // private Angle testIntakePivotAngle = Degrees.of(0);
 
@@ -274,11 +275,11 @@ public class Robot2d extends SubsystemBase {
       m_intakePivot.update(
           Degrees.of(-159).plus(INTAKE.PIVOT.maxAngle).minus(intakePivotSubsystem.getAngle()));
       var pivotAngle = intakePivotSubsystem.getAngle();
-      intakePose =
+      componentPoses[0] =
           new Pose3d(
               SIM.intakeOrigin,
               new Rotation3d(0.0, -(INTAKE.PIVOT.maxAngle.minus(pivotAngle).in(Radians)), 0.0));
-      hopperPose =
+      componentPoses[1] =
           new Pose3d(
               SIM.hopperOrigin
                   .getMeasureX()

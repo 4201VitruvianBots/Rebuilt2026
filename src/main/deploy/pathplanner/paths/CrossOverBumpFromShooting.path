@@ -3,37 +3,46 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 3.135430346051464,
+        "y": 5.648606921029281
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ShootingPoint"
     },
     {
       "anchor": {
-        "x": 5.479230769230769,
-        "y": 6.898783542039356
+        "x": 5.609033989266547,
+        "y": 5.5
       },
       "prevControl": {
-        "x": 4.479230769230769,
-        "y": 6.898783542039356
+        "x": 3.6076616123282115,
+        "y": 5.509149327321151
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "OverBumpPointStart"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.2,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -45,10 +54,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -31.798912824294426
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

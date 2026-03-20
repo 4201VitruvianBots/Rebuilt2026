@@ -423,6 +423,12 @@ public class FuelSim {
     fuelPublisher.set(fuels.stream().map((fuel) -> fuel.pos).toArray(Translation3d[]::new));
   }
 
+  // Returns whether or not the simulation is running
+  // Gavin save me ):
+  public boolean isRunning() {
+    return running;
+  }
+
   /** Start the simulation. `updateSim` must still be called every loop */
   public void start() {
     running = true;

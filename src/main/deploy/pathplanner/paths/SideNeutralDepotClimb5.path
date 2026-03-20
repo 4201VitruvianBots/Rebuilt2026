@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5,
-        "y": 7.0
+        "x": 1.5851341681574236,
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.5,
-        "y": 6.75
+        "x": 1.5851341681574236,
+        "y": 5.75
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "DepotIntakeStartPoint"
     },
     {
       "anchor": {
-        "x": 0.7,
-        "y": 4.85
+        "x": 1.4715563506261176,
+        "y": 5.178890876565294
       },
       "prevControl": {
-        "x": 0.7,
-        "y": 5.108862630358833
+        "x": 1.4715563506261176,
+        "y": 5.437753506924127
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "DepotShootPoint"
     }
   ],
   "rotationTargets": [
@@ -47,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -20.0
   },
   "reversed": false,
-  "folder": "SideNeutralDepotClimb",
+  "folder": "Zold - SideNeutralDepotClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

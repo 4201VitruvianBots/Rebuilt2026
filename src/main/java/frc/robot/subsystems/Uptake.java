@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -57,14 +56,13 @@ public class Uptake extends SubsystemBase {
     config.Slot0.kP = UPTAKE.kP;
     config.Slot0.kS = UPTAKE.kS;
     config.Slot0.kV = UPTAKE.kV;
+    config.CurrentLimits.StatorCurrentLimit = UPTAKE.kStatorCurrentLimit;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
 
     config.Feedback.SensorToMechanismRatio = UPTAKE.gearRatio;
 
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-    config.MotionMagic.MotionMagicAcceleration = UPTAKE.kMotionMagicAcceleration;
-    config.MotionMagic.MotionMagicCruiseVelocity = UPTAKE.kMotionMagicCruiseVelocity;
 
     CtreUtils.configureTalonFx(m_motor, config);
 
@@ -118,12 +116,11 @@ public class Uptake extends SubsystemBase {
   }
 
   @NotLogged
-  public Command command(UPTAKE.UPTAKE_SPEED speed) {
+  public Command percentCommand(double speed) {
     return this.startEnd(
-        () -> setVelocitySetpoint(speed.get()),
+        () -> m_motor.set(speed),
         () -> {
           setPercentOutput(0.0);
-          setVelocitySetpoint(UPTAKE.UPTAKE_SPEED.IDLE.get());
         });
   }
 
@@ -132,16 +129,15 @@ public class Uptake extends SubsystemBase {
   }
 
   public void testPeriodic() {
-    m_velocitySetpoint = RPM.of(m_rpmSubscriber.get());
+    setPercentOutput(m_rpmSubscriber.get());
   }
 
   @Override
   public void periodic() {
-    if (!isAtRPMsetpoint()) {
-      m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror())));
-    } else {
-      m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
-    }
+    // if (!isAtRPMsetpoint()) {
+    //   m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror()) / 2));
+    // } else {
+    // m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
   }
 
   @Override

@@ -4,9 +4,11 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pound;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
@@ -24,7 +26,7 @@ public class CLIMBER {
   // elevator. It should just be the gear ratio that is different from last year.
   public static final Distance drumRotationsToDistance = kClimberDrumDiameter.times(Math.PI);
   public static final GravityTypeValue K_GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
-  public static final Current kStatorCurrentLimit = Amps.of(40);
+  public static final Current kStatorCurrentLimit = Amps.of(80);
 
   public class NOT_HOLDING_ROBOT {
     public static int slot = 0;
@@ -70,9 +72,10 @@ public class CLIMBER {
   public static final double peakForwardOutput = 1.00; // Placeholder.
   public static final double peakReverseOutput = -0.5; // Placeholder.
 
-  public static final Current kHoldingRobotThreshold =
+  public static final Current kCurrentHoldingRobotThreshold =
       Amps.of(15.0); // Amount of current you must be measuring to be sure that you are carrying a
   // robot
+  public static final AngularVelocity kVelocityHoldingRobotThreshold = RotationsPerSecond.of(1.0);
 
   public static DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
 

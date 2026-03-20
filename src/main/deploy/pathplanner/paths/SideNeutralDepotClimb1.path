@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.410526034174801,
-        "y": 4.885668783013414
+        "x": 3.378446275633149,
+        "y": 4.810634572891455
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 4.5
       },
       "prevControl": {
-        "x": 3.319642262770656,
-        "y": 4.809690230482545
+        "x": 3.302094453300079,
+        "y": 4.795442325903663
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -35.0
   },
   "reversed": false,
-  "folder": "SideNeutralDepotClimb",
+  "folder": "Zold - SideNeutralDepotClimb",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

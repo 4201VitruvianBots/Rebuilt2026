@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
-import frc.robot.constants.INTAKE;
+import frc.robot.constants.INTAKE.ROLLERS;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.team4201.lib.utils.CtreUtils;
 
@@ -41,9 +41,8 @@ public class Intake extends SubsystemBase {
 
   private final DCMotorSim m_motor1Sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(
-              INTAKE.ROLLERS.gearbox, INTAKE.ROLLERS.gearRatio, INTAKE.ROLLERS.kInertia),
-          INTAKE.ROLLERS.gearbox);
+          LinearSystemId.createDCMotorSystem(ROLLERS.gearbox, ROLLERS.gearRatio, ROLLERS.kInertia),
+          ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
 
@@ -52,13 +51,15 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = INTAKE.ROLLERS.kP;
-    config.Feedback.SensorToMechanismRatio = INTAKE.ROLLERS.gearRatio;
+    config.Slot0.kP = ROLLERS.kP;
+    config.Feedback.SensorToMechanismRatio = ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    config.MotorOutput.PeakForwardDutyCycle = INTAKE.ROLLERS.peakForwardOutput;
-    config.MotorOutput.PeakReverseDutyCycle = INTAKE.ROLLERS.peakReverseOutput;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.PeakForwardDutyCycle = ROLLERS.peakForwardOutput;
+    config.MotorOutput.PeakReverseDutyCycle = ROLLERS.peakReverseOutput;
 
+    config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_motor, config);
     // CtreUtils.configureTalonFx(m_motor2, config);
 
@@ -126,9 +127,9 @@ public class Intake extends SubsystemBase {
     m_motor1Sim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_motor1Sim.getAngularPositionRotations()).times(INTAKE.ROLLERS.gearRatio));
+        Rotations.of(m_motor1Sim.getAngularPositionRotations()).times(ROLLERS.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_motor1Sim.getAngularVelocityRPM()).times(INTAKE.ROLLERS.gearRatio));
+        RPM.of(m_motor1Sim.getAngularVelocityRPM()).times(ROLLERS.gearRatio));
   }
 
   public void testInit() {
