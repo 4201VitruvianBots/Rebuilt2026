@@ -6,12 +6,14 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.LED;
@@ -54,20 +56,30 @@ public class LEDs extends SubsystemBase {
       currentState = state;
       switch (currentState) {
         case DISABLED:
-          base = LEDPattern.rainbow(255, 127);
-          m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
-          workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
-          break;
-          // LEDPattern base = LEDPattern.steps(Map.of(0, Color.kRed, 0.5, Color.kBlack));
-          // m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
-          // workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
-          // break;
+            base = LEDPattern.rainbow(255, 127);
+            m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
+            break;
         case IDLE:
-          // case DRIVING:
-          base = LEDPattern.steps(Map.of(0, Color.kGreen, 0.5, Color.kBlack));
-          m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
-          workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
-          break;
+            base = LEDPattern.gradient(GradientType.kContinuous, Color.kGreen, Color.kBlack);
+            m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
+            break;
+        case IDLE_CAN_ERROR:
+            base = LEDPattern.gradient(GradientType.kContinuous, Color.kOrange, Color.kBlack);
+            m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
+            break;
+        case RED_SHIFT_END:
+            base = LEDPattern.solid(Color.kRed);
+            m_currentPattern = base.breathe(Seconds.of(0.5));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
+            break;
+        case BLUE_SHIFT_END:
+            base = LEDPattern.solid(Color.kBlue);
+            m_currentPattern = base.breathe(Seconds.of(0.5));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
+            break;
         case INTAKING:
           base =
               LEDPattern.steps(
@@ -84,20 +96,19 @@ public class LEDs extends SubsystemBase {
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
           break;
         case SHOOTING:
-          base = LEDPattern.steps(Map.of(0, Color.kYellow, 0.33, Color.kRed, 0.67, Color.kBlue));
-          LEDPattern mask = LEDPattern.progressMaskLayer(() -> 1 - shooterProgress.getAsDouble());
-          m_currentPattern = base.mask(mask);
-          workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
-          break;
-          // case CLIMBING:
-          //     base = LEDPattern.rainbow(255, 255);
-          //     m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
-          //     workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
-          //     break;
+            base = LEDPattern.steps(Map.of(0, Color.kYellow, 0.33, Color.kRed, 0.67, Color.kBlue));
+            LEDPattern mask = LEDPattern.progressMaskLayer(() -> 1 - shooterProgress.getAsDouble());
+            m_currentPattern = base.mask(mask);
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
+            break;
       }
     }
   }
-
+  
+  public void setState(LED_STATES state) {
+    setState(state, () -> 0.0);
+  }
+  
   public String getDataString() {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < m_ledBuffer.getLength(); i++) {

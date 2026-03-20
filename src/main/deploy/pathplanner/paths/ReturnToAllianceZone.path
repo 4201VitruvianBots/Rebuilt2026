@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.609,
-        "y": 5.5
+        "x": 5.622236024844721,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.609,
-        "y": 5.5
+        "x": 4.622236024844721,
+        "y": 5.535936113575865
       },
       "isLocked": false,
-      "linkedName": "OverBumpPointEnd"
+      "linkedName": "OverBumpPointStart"
     },
     {
       "anchor": {
         "x": 3.586113575865128,
-        "y": 5.7693256433007996
+        "y": 5.535936113575865
       },
       "prevControl": {
-        "x": 2.586113575865128,
-        "y": 5.7693256433007996
+        "x": 4.586113575865128,
+        "y": 5.535936113575865
       },
       "nextControl": null,
       "isLocked": false,
@@ -50,8 +50,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -64,7 +64,7 @@
   "reversed": false,
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
-    "velocity": 3.1,
+    "velocity": 0.9,
     "rotation": 0.0
   },
   "useDefaultConstraints": false
