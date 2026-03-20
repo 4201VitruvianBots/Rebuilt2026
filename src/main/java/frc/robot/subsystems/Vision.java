@@ -50,12 +50,6 @@ public class Vision extends SubsystemBase {
 
   public Vision(Controls controls) {
     m_controls = controls;
-    registerSwerveDrive(m_swerveDriveTrain);
-    // Port Forwarding to access limelight web UI on USB Ethernet
-    for (int port = 5800; port <= 5809; port++) {
-      PortForwarder.add(port, CAMERA_SERVER.limelightR.toString(), port);
-      PortForwarder.add(port + 10, CAMERA_SERVER.limelightL.toString(), port);
-    }
 
     var topickP =
         NetworkTableInstance.getDefault().getTable("SmartDashboard").getDoubleTopic("kPAutoAlign");
@@ -274,7 +268,7 @@ public class Vision extends SubsystemBase {
   public boolean isOnTarget() {
     return getAngleToTarget().getDegrees() < 0.5;
   }
-  
+
   public boolean isPointingAtGoal(
       Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
     // bearing from robot to goal
@@ -343,9 +337,9 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // limelight l
+    // limelight-left
     boolean lllSuccess = processLimelight(LLL);
-    // limelight l
+    // limelight-right
     boolean llrSuccess = processLimelight(LLR);
 
     if (!m_localized) {

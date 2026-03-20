@@ -164,7 +164,7 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
-    return (m_hoodSetpoint.in(Degrees) - getHoodAngleDegrees()) <= 1; // Works as good as always
+    return m_hoodSetpoint.minus(getHoodAngle()).lte(Degrees.of(1)); // Works as good as always
   }
 
   public boolean[] isConnected() {

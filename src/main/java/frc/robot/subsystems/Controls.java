@@ -67,9 +67,7 @@ public class Controls extends SubsystemBase {
   private final MedianFilter epilogueBuffer = new MedianFilter(100);
   private final DoubleSubscriber epilogueRuntimeSub =
       NetworkTableInstance.getDefault()
-          .getTable("Epilogue")
-          .getSubTable("Stats")
-          .getDoubleTopic("Last Run")
+          .getDoubleTopic("Epilogue/Stats/Last Run")
           .subscribe(0.0);
 
   /** Creates a new Controls subsystem */
