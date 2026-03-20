@@ -31,7 +31,6 @@ public class ShootNearStart extends Auto {
           new PrepareFlywheel(flywheel, Meters.of(1.45650895207174))
               .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")),
           getPathCommand(swerveDrive, path, flipToRight)
-              .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Finished moving to shooting position")),
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
               .andThen(

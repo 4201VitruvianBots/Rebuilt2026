@@ -109,7 +109,7 @@ public class Shoot extends Command {
     m_shooterHood = shooterHood;
     m_vision = vision;
 
-    addRequirements(flywheel, shooterHood, swerveDrive);
+    addRequirements(flywheel, shooterHood);
     SmartDashboard.putData(this);
   }
 

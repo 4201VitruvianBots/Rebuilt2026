@@ -51,7 +51,6 @@ public class IntakeFromNeutral extends Auto {
                   getPathCommand(swerveDrive, crossOverBump, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
           new ParallelDeadlineGroup(
                   getPathCommand(
@@ -59,12 +58,10 @@ public class IntakeFromNeutral extends Auto {
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand(
                       "[AUTO] Intaking from center..."))
-              .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(
                   new PrintCommand(
                       "[AUTO] Finished intaking from center")),
           getPathCommand(swerveDrive, returnToAllianceZone, flipToRight)
-              .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Returned to alliance zone"))
         );
     } catch (Exception e) {
