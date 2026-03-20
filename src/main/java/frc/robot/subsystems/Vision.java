@@ -93,13 +93,13 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-                  new Rotation2d());
+                  Rotation2d.kZero);
         } else {
           targetPose =
               new Pose2d(
                   FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.RED.LEFT.getTargetPosition().getMeasureY(),
-                  new Rotation2d(Degrees.of(180)));
+                  Rotation2d.k180deg);
         }
         break;
       case RIGHT_FRONT_TOWER:
@@ -108,13 +108,13 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-                  new Rotation2d());
+                  Rotation2d.kZero);
         } else {
           targetPose =
               new Pose2d(
                   FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.RED.RIGHT.getTargetPosition().getMeasureY(),
-                  new Rotation2d(Degrees.of(180)));
+                  Rotation2d.k180deg);
         }
         break;
       default:
@@ -173,6 +173,7 @@ public class Vision extends SubsystemBase {
     boolean validResult = isPoseValid(limelightName, limelightMeasurement);
 
     // Log Data
+    limelight.getHeartbeat();
     limelight.publishValid(validResult);
     if (limelightMeasurement != null) {
       limelight.publishTimestamp(limelightMeasurement.timestampSeconds);

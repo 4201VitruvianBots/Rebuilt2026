@@ -145,6 +145,7 @@ public final class VISION {
       } else {
         isAlive = false;
       }
+
       return lastHeartbeat;
     }
 
