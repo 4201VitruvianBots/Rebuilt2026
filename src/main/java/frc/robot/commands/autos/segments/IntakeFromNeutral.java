@@ -36,8 +36,6 @@ public class IntakeFromNeutral extends Auto {
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
-
       var crossOverBump =
           PathPlannerPath.fromPathFile(
               startingFromShoot ? "CrossOverBumpFromShooting" : "CrossOverBumpFromStart");

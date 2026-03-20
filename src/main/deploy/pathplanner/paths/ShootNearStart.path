@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 3.586113575865128,
-        "y": 5.7693256433007996
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.4922931095859147,
-        "y": 5.402290370716299
+        "y": 5.168900840991364
       },
       "isLocked": false,
       "linkedName": "SideStartPoint"

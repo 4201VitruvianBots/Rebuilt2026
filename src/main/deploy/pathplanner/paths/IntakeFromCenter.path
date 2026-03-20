@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.638331854480923,
-        "y": 5.7693256433007996
+        "x": 5.622236024844721,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.874874842557195,
-        "y": 5.688409546064533
+        "x": 5.8587790129209925,
+        "y": 5.455020016339598
       },
       "isLocked": true,
       "linkedName": "OverBumpPointStart"
@@ -64,12 +64,12 @@
     },
     {
       "anchor": {
-        "x": 5.638331854480923,
-        "y": 5.7693256433007996
+        "x": 5.622236024844721,
+        "y": 5.535936113575865
       },
       "prevControl": {
-        "x": 5.406237049900295,
-        "y": 5.676417077029006
+        "x": 5.390141220264093,
+        "y": 5.443027547304071
       },
       "nextControl": null,
       "isLocked": true,
@@ -84,10 +84,6 @@
     {
       "waypointRelativePos": 2,
       "rotationDegrees": -79.01
-    },
-    {
-      "waypointRelativePos": 2.5,
-      "rotationDegrees": -135.00000000000003
     },
     {
       "waypointRelativePos": 3.0,
