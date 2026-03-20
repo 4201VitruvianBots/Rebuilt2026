@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.622236024844721,
-        "y": 5.535936113575865
+        "x": 5.705,
+        "y": 5.536
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.872236024844721,
-        "y": 5.535936113575865
+        "x": 5.955,
+        "y": 5.536
       },
       "isLocked": true,
       "linkedName": "OverBumpPointStart"
@@ -64,12 +64,12 @@
     },
     {
       "anchor": {
-        "x": 5.622236024844721,
-        "y": 5.535936113575865
+        "x": 5.705,
+        "y": 5.536
       },
       "prevControl": {
-        "x": 5.390141220264093,
-        "y": 5.443027547304071
+        "x": 5.955,
+        "y": 5.536
       },
       "nextControl": null,
       "isLocked": true,
@@ -96,7 +96,7 @@
       "minWaypointRelativePos": 0,
       "maxWaypointRelativePos": 1.0906040268456367,
       "constraints": {
-        "maxVelocity": 3.1,
+        "maxVelocity": 0.9,
         "maxAcceleration": 1.2,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
