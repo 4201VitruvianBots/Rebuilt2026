@@ -25,7 +25,6 @@ import java.util.Map;
 
 @Logged
 public class Controls extends SubsystemBase {
-  //   private Vision m_vision;
   private static boolean m_allianceInit;
   private static DriverStation.Alliance m_allianceColor = DriverStation.Alliance.Red;
 
@@ -56,7 +55,7 @@ public class Controls extends SubsystemBase {
               "allianceInit",
               new Alert("Did not get alliance color from FMS/DS!", Alert.AlertType.kWarning)),
           Map.entry(
-              "visionInit", new Alert("Vision Subsystem is not ready!", Alert.AlertType.kWarning)),
+              "vision", new Alert("Vision Subsystem is not ready!", Alert.AlertType.kWarning)),
 
           // Alerts for when the robot is running
           Map.entry("radioError", new Alert("Robot Radio not detected!", Alert.AlertType.kError)),
@@ -66,13 +65,19 @@ public class Controls extends SubsystemBase {
 
   private final MedianFilter epilogueBuffer = new MedianFilter(100);
   private final DoubleSubscriber epilogueRuntimeSub =
-      NetworkTableInstance.getDefault()
-          .getDoubleTopic("Epilogue/Stats/Last Run")
-          .subscribe(0.0);
+      NetworkTableInstance.getDefault().getDoubleTopic("Epilogue/Stats/Last Run").subscribe(0.0);
 
   /** Creates a new Controls subsystem */
   public Controls() {
     initSmartDashboard();
+  }
+
+  public void registerSubsystem(Subsystem subsystem) {
+    if (subsystem != null) {
+      m_subsystemMap.put(subsystem.getName(), subsystem);
+    } else {
+      DriverStation.reportWarning("[Controls] Attempting to register null subsystem!", true);
+    }
   }
 
   public static DriverStation.Alliance getAllianceColor() {
@@ -91,14 +96,6 @@ public class Controls extends SubsystemBase {
     SmartDashboard.putString("Controls/Serial Number", RobotController.getSerialNumber());
   }
 
-  public void registerSubsystem(Subsystem subsystem) {
-    if (subsystem != null) {
-      m_subsystemMap.put(subsystem.getName(), subsystem);
-    } else {
-      DriverStation.reportWarning("[Controls] Attempting to register null subsystem!", true);
-    }
-  }
-
   public void updateAlerts() {
     // Update USB alerts
     alertMap.get("usb").set(false);
@@ -106,16 +103,13 @@ public class Controls extends SubsystemBase {
     // String for USB alert message
     String usbAlertMessage = "The following USB devices are not connected: ";
 
+    // TODO: Change this to a loop/array for String.join()
     if (!DriverStation.isJoystickConnected(USB.driver_xBoxController)) {
-      usbAlertMessage += "Driver Xbox Controller, ";
-      alertMap.get("usb").set(true);
+      usbAlertMessage += String.join(", ", "Driver Xbox Controller");
+      alertMap.get("usb").setText(usbAlertMessage);
     }
 
-    // Remove the last comma and space
-    if (usbAlertMessage.endsWith(", ")) {
-      usbAlertMessage = usbAlertMessage.substring(0, usbAlertMessage.length() - 2);
-    }
-    alertMap.get("usb").setText(usbAlertMessage);
+    alertMap.get("usb").set(true);
 
     // Update brownout alert state
     if (RobotController.isBrownedOut()) {
@@ -164,37 +158,36 @@ public class Controls extends SubsystemBase {
 
     // String for CAN alert message
     String canAlertMessage = "The following CAN devices are not connected: ";
+    //    canAlertMessage += String.join(", ")
+    //    alertMap.get("canError").setText(canAlertMessage);
 
-    // Remove the last comma and space
-    if (canAlertMessage.endsWith(", ")) {
-      canAlertMessage = canAlertMessage.substring(0, usbAlertMessage.length() - 2);
-    }
-    alertMap.get("canError").setText(canAlertMessage);
+    // Update vision alerts
+    alertMap.get("vision").set(false);
+    m_subsystemMap.computeIfPresent(
+        "Vision",
+        (v, s) -> {
+          var vision = (Vision) s;
+          if (!vision.lllConnected() && !vision.llrConnected()) {
+            alertMap.get("vision").setText("Both Limelights are disconnected");
+            alertMap.get("vision").set(true);
+          } else if (!vision.lllConnected()) {
+            alertMap.get("vision").setText("The left Limelight is disconnected");
+            alertMap.get("vision").set(true);
+          } else if (!vision.llrConnected()) {
+            alertMap.get("vision").setText("The right Limelight is disconnected");
+            alertMap.get("vision").set(true);
+          }
+          return vision;
+        });
 
-    // // Update vision alerts
-    // m_visionAlert.set(false);
-
-    // if (m_subsystemMap.containsKey("Vision")) {
-    //     var visionSubsystem = (Vision) m_subsystemMap.get("Vision");
-    //     if (!visionSubsystem.isLimelightFConnected() && !visionSubsystem.isLimelightBConnected())
-    // {
-    //         m_visionAlert.setText("Both Limelights are disconnected");
-    //         m_visionAlert.set(true);
-    //     } else if (!visionSubsystem.isLimelightFConnected()) {
-    //         m_visionAlert.setText("The front Limelight is disconnected");
-    //         m_visionAlert.set(true);
-    //     } else if (!visionSubsystem.isLimelightBConnected()) {
-    //         m_visionAlert.setText("The back Limelight is disconnected");
-    //         m_visionAlert.set(true);
-    //     }
-    // }
+    var avgRuntime = epilogueBuffer.calculate(epilogueRuntimeSub.get());
+    alertMap.get("epilogue").set(avgRuntime > 0.04);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    var avgRuntime = epilogueBuffer.calculate(epilogueRuntimeSub.get());
-    alertMap.get("epilogue").set(avgRuntime > 0.04);
+    updateAlerts();
 
     if (DriverStation.isDisabled()) {
       DriverStation.getAlliance()

@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -60,6 +59,8 @@ public class Vision extends SubsystemBase {
 
     m_kPAutoAlignPublisher = topickP.publish();
     m_kDAutoAlignPublisher = topickD.publish();
+
+    setName("Vision");
   }
 
   public void registerSwerveDrive(CommandSwerveDrivetrain swerveDriveTrain) {
@@ -240,6 +241,16 @@ public class Vision extends SubsystemBase {
   @Logged(name = "Has Initial Pose", importance = Logged.Importance.INFO)
   public boolean getInitialPose() {
     return this.hasInitialPose;
+  }
+
+  @Logged(name = "LLL Connected", importance = Logged.Importance.INFO)
+  public boolean lllConnected() {
+    return LLL.isAlive();
+  }
+
+  @Logged(name = "LLR Connected", importance = Logged.Importance.INFO)
+  public boolean llrConnected() {
+    return LLR.isAlive();
   }
 
   /** Stop the nearest target from updating when we want to score to avoid target switching */

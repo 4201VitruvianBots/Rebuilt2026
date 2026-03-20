@@ -12,6 +12,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -172,6 +173,8 @@ public class RobotContainer {
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
+    m_controls.registerSubsystem(m_vision);
+
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
       m_intakePivot = new IntakePivot();
       m_led = new LEDs();
@@ -189,6 +192,8 @@ public class RobotContainer {
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
+
+      DriverStation.silenceJoystickConnectionWarning(true);
     }
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);

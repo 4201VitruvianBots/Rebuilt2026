@@ -82,6 +82,9 @@ public final class VISION {
     private static final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable baseTable = inst.getTable("llTable");
     private final NetworkTable table;
+    private final DoubleSubscriber heartbeat;
+    private double lastHeartbeat = -1.0;
+    private boolean isAlive = false;
     private final DoublePublisher estimatedTimestamp;
     private final StructPublisher<Pose2d> estimatedPose;
     private final IntegerPublisher numTags;
@@ -90,6 +93,7 @@ public final class VISION {
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
       table = baseTable.getSubTable(limelight.name);
+      heartbeat = table.getDoubleTopic("hb").subscribe(-1.0);
       estimatedTimestamp = table.getDoubleTopic("estTimestamp").publish();
       estimatedTimestamp.setDefault(-1);
       estimatedPose = table.getStructTopic("estPose", Pose2d.struct).publish();
@@ -124,6 +128,21 @@ public final class VISION {
 
     public void publishValid(boolean valid) {
       validPose.set(valid);
+    }
+
+    public double getHeartbeat() {
+      var hb = heartbeat.get();
+      if (hb != -1 || hb != lastHeartbeat) {
+        lastHeartbeat = hb;
+        isAlive = true;
+      } else {
+        isAlive = false;
+      }
+      return lastHeartbeat;
+    }
+
+    public boolean isAlive() {
+      return isAlive;
     }
   }
 }
