@@ -85,6 +85,7 @@ public final class VISION {
     private final DoublePublisher estimatedTimestamp;
     private final StructPublisher<Pose2d> estimatedPose;
     private final IntegerPublisher numTags;
+    private final BooleanPublisher megatag2Pose;
     private final BooleanPublisher validPose;
 
     public Limelight(CAMERA_SERVER limelight) {
@@ -100,6 +101,8 @@ public final class VISION {
       estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
       numTags = llPubTable.getIntegerTopic("numTags").publish();
       numTags.setDefault(-1);
+      megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();
+      megatag2Pose.setDefault(false);
       validPose = llPubTable.getBooleanTopic("poseValid").publish();
       validPose.setDefault(false);
 
@@ -124,6 +127,10 @@ public final class VISION {
 
     public void publishTagCount(int tags) {
       numTags.set(tags);
+    }
+
+    public void publishMegatag2Pose(boolean isMegatag2) {
+      megatag2Pose.set(isMegatag2);
     }
 
     public void publishValid(boolean valid) {

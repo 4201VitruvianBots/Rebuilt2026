@@ -178,10 +178,12 @@ public class Vision extends SubsystemBase {
       limelight.publishTimestamp(limelightMeasurement.timestampSeconds);
       limelight.publishPose(limelightMeasurement.pose);
       limelight.publishTagCount(limelightMeasurement.tagCount);
+      limelight.publishMegatag2Pose(limelightMeasurement.isMegaTag2);
     } else {
       limelight.publishTimestamp(-1);
       limelight.publishPose(new Pose2d(-1, -1, Rotation2d.kZero));
       limelight.publishTagCount(-1);
+      limelight.publishMegatag2Pose(false);
     }
 
     if (validResult) {
