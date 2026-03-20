@@ -52,10 +52,13 @@ public class UpdateLEDs extends Command {
     final boolean shiftEnd = HubTracker.timeRemainingInCurrentShift()
         .map(timeRemain -> timeRemain.lt(Seconds.of(3.0)))
         .orElse(false);
+    final boolean isEndgame = HubTracker.getCurrentShift()
+        .map(currentShift -> currentShift.equals(HubTracker.Shift.ENDGAME))
+        .orElse(false);
     if (shiftEnd) {
-        if ((HubTracker.isActive(Alliance.Red) && !HubTracker.isActiveNext(Alliance.Red))) {
+        if ((HubTracker.isActive(Alliance.Red) && !HubTracker.isActiveNext(Alliance.Red)) && !isEndgame) {
             m_led.setState(LED_STATES.RED_SHIFT_END);
-        } else if ((HubTracker.isActive(Alliance.Blue) && !HubTracker.isActiveNext(Alliance.Blue))) {
+        } else if ((HubTracker.isActive(Alliance.Blue) && !HubTracker.isActiveNext(Alliance.Blue)) && !isEndgame) {
             m_led.setState(LED_STATES.BLUE_SHIFT_END);
         }
     } else if (m_flywheel.getRPMSetpoint() > 0) {
