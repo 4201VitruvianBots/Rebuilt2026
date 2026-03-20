@@ -44,8 +44,7 @@ public class IntakeAndShootFromDepot extends Auto {
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Intaking from depot..."))
               .andThen(new PrintCommand("[AUTO] Finished intaking from depot")),
-          shootFromDepot
-              .andThen(new PrintCommand("[AUTO] Ready to shoot from depot")),
+          shootFromDepot.andThen(new PrintCommand("[AUTO] Ready to shoot from depot")),
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
               .andThen(new PrintCommand("[AUTO] Finished shooting from depot")));
     } catch (Exception e) {

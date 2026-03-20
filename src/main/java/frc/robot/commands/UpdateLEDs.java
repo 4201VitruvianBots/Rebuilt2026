@@ -11,12 +11,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.LED.LED_STATES;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.utils.HubTracker;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -44,24 +41,30 @@ public class UpdateLEDs extends Command {
     /*
      * When disabled, DISABLED state always takes priority
      * When robot enables, default to IDLE state, IDLE_CAN_ERROR if a CAN device is disconnected
-     * During the last 3 seconds of a shift, display lights similar to the 
+     * During the last 3 seconds of a shift, display lights similar to the
      * If the intake is running, set to INTAKING state
      * If the flywheel is running to shoot, set to SHOOTING state
      */
-    final boolean shiftEnd = HubTracker.timeRemainingInCurrentShift()
-        .map(timeRemain -> timeRemain.lt(Seconds.of(3.0)))
-        .orElse(false);
-    final boolean isEndgame = HubTracker.getCurrentShift()
-        .map(currentShift -> currentShift.equals(HubTracker.Shift.ENDGAME))
-        .orElse(false);
+    final boolean shiftEnd =
+        HubTracker.timeRemainingInCurrentShift()
+            .map(timeRemain -> timeRemain.lt(Seconds.of(3.0)))
+            .orElse(false);
+    final boolean isEndgame =
+        HubTracker.getCurrentShift()
+            .map(currentShift -> currentShift.equals(HubTracker.Shift.ENDGAME))
+            .orElse(false);
     if (shiftEnd) {
-        if ((HubTracker.isActive(Alliance.Red) && !HubTracker.isActiveNext(Alliance.Red)) && !isEndgame) {
-            m_led.setState(LED_STATES.RED_SHIFT_END);
-        } else if ((HubTracker.isActive(Alliance.Blue) && !HubTracker.isActiveNext(Alliance.Blue)) && !isEndgame) {
-            m_led.setState(LED_STATES.BLUE_SHIFT_END);
-        }
+      if ((HubTracker.isActive(Alliance.Red) && !HubTracker.isActiveNext(Alliance.Red))
+          && !isEndgame) {
+        m_led.setState(LED_STATES.RED_SHIFT_END);
+      } else if ((HubTracker.isActive(Alliance.Blue) && !HubTracker.isActiveNext(Alliance.Blue))
+          && !isEndgame) {
+        m_led.setState(LED_STATES.BLUE_SHIFT_END);
+      }
     } else if (m_flywheel.getRPMSetpoint() > 0) {
-      m_led.setState(LED_STATES.SHOOTING, () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
+      m_led.setState(
+          LED_STATES.SHOOTING,
+          () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
     } else if (MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
       m_led.setState(LED_STATES.INTAKING);
     } else if (DriverStation.isEnabled()) {

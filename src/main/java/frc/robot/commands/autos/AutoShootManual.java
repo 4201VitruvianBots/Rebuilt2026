@@ -15,11 +15,7 @@ public class AutoShootManual extends ParallelDeadlineGroup {
   /** Creates a new AutoShoot. */
   public AutoShootManual(AutoDependencies deps, double fireDurationSeconds) {
     super(
-        Commands.waitUntil(
-                () ->
-                    (deps.flywheel.isAtRPMsetpoint()
-                        && deps.hood.atSetpoint()
-                        ))
+        Commands.waitUntil(() -> (deps.flywheel.isAtRPMsetpoint() && deps.hood.atSetpoint()))
             .withTimeout(fireDurationSeconds)
             .andThen(
                 new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds)));

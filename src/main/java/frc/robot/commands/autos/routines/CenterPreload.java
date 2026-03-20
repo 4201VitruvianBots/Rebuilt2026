@@ -24,8 +24,7 @@ public class CenterPreload extends Auto {
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new AutoShootManual(deps, 3.0),
-          m_path2.andThen(() -> swerveDrive.setControl(stopRequest))
-      );
+          m_path2.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterPreload", e.getStackTrace());
       addCommands(new InstantCommand());
