@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.LED.LED_STATES;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -52,8 +53,11 @@ public class UpdateLEDs extends Command {
         .map(timeRemain -> timeRemain.lt(Seconds.of(3.0)))
         .orElse(false);
     if (shiftEnd) {
-        if (HubTracker.isActive(Alliance.Red)
-        
+        if ((HubTracker.isActive(Alliance.Red) && !HubTracker.isActiveNext(Alliance.Red))) {
+            m_led.setState(LED_STATES.RED_SHIFT_END);
+        } else if ((HubTracker.isActive(Alliance.Blue) && !HubTracker.isActiveNext(Alliance.Blue))) {
+            m_led.setState(LED_STATES.BLUE_SHIFT_END);
+        }
     } else if (m_flywheel.getRPMSetpoint() > 0) {
       m_led.setState(LED_STATES.SHOOTING, () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
     } else if (MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
