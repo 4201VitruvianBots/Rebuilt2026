@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.710763087843833,
-        "y": 5.7693256433007996
+        "x": 5.609,
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.710763087843833,
-        "y": 5.7693256433007996
+        "x": 6.609,
+        "y": 5.5
       },
       "isLocked": false,
       "linkedName": "OverBumpPointEnd"
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0,
-      "rotationDegrees": -45.0
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
@@ -59,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -45.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 3.1,
-    "rotation": -45.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }
