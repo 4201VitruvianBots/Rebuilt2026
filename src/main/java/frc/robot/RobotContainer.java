@@ -262,7 +262,7 @@ public class RobotContainer {
 
     m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
 
-    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake, m_swerveDrive));
+    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
     POVUtils.povDownWithTilt(m_driverController).whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...

@@ -20,7 +20,7 @@ import frc.robot.subsystems.Uptake;
 // *insert fire emoji*
 public class Fire extends ParallelCommandGroup {
   /** Creates a new Fire. */
-  public Fire(Intake intake, Indexer indexer, Uptake uptake, CommandSwerveDrivetrain swerveDrive) {
+  public Fire(Intake intake, Indexer indexer, Uptake uptake) {
     addCommands(
         (intake != null) ? intake.commandIntakeState(INTAKE_STATE.SHOOTING) : new InstantCommand(),
         (indexer != null) ? indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING) : new InstantCommand(),
