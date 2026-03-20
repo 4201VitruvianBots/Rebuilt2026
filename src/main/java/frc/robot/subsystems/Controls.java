@@ -63,7 +63,7 @@ public class Controls extends SubsystemBase {
               "joystickError", new Alert("Missing joystick detected!", Alert.AlertType.kError)),
           Map.entry("canError", new Alert("CAN bus error detected!", Alert.AlertType.kError)));
 
-  private final MedianFilter epilogueBuffer = new MedianFilter(100);
+  private final MedianFilter epilogueBuffer = new MedianFilter(20);
   private final DoubleSubscriber epilogueRuntimeSub =
       NetworkTableInstance.getDefault().getDoubleTopic("Epilogue/Stats/Last Run").subscribe(0.0);
 
@@ -181,7 +181,7 @@ public class Controls extends SubsystemBase {
         });
 
     var avgRuntime = epilogueBuffer.calculate(epilogueRuntimeSub.get());
-    alertMap.get("epilogue").set(avgRuntime > 0.04);
+    alertMap.get("epilogue").set(avgRuntime > 40);
   }
 
   @Override
