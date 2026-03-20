@@ -79,9 +79,6 @@ public final class VISION {
   public static class Limelight {
     static int basePort = 5800;
     CAMERA_SERVER limelight;
-    private static final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    private final NetworkTable baseTable = inst.getTable("llTable");
-    private final NetworkTable table;
     private final DoubleSubscriber heartbeat;
     private double lastHeartbeat = -1.0;
     private boolean isAlive = false;
@@ -92,15 +89,18 @@ public final class VISION {
 
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
-      table = baseTable.getSubTable(limelight.name);
-      heartbeat = table.getDoubleTopic("hb").subscribe(-1.0);
-      estimatedTimestamp = table.getDoubleTopic("estTimestamp").publish();
+      var ntInst = NetworkTableInstance.getDefault();
+      var llSubTable = ntInst.getTable(limelight.name);
+      heartbeat = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
+
+      var llPubTable = ntInst.getTable("llTable").getSubTable(limelight.name);
+      estimatedTimestamp = llPubTable.getDoubleTopic("estTimestamp").publish();
       estimatedTimestamp.setDefault(-1);
-      estimatedPose = table.getStructTopic("estPose", Pose2d.struct).publish();
+      estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
       estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
-      numTags = table.getIntegerTopic("numTags").publish();
+      numTags = llPubTable.getIntegerTopic("numTags").publish();
       numTags.setDefault(-1);
-      validPose = table.getBooleanTopic("poseValid").publish();
+      validPose = llPubTable.getBooleanTopic("poseValid").publish();
       validPose.setDefault(false);
 
       for (int i = 0; i < 10; i++) {
