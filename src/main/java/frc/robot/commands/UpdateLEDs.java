@@ -43,9 +43,9 @@ public class UpdateLEDs extends Command {
      * If the intake is running, set to INTAKING state
      * If the flywheel is running to shoot, set to SHOOTING state
      */
-    if (m_flywheel.getRPMSetpoint() > 0) {
+    if (m_flywheel != null && m_flywheel.getRPMSetpoint() > 0) {
       m_led.setState(LED_STATES.SHOOTING, () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
-    } else if (MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
+    } else if (m_intake != null && MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
       m_led.setState(LED_STATES.INTAKING, () -> 0.0);
     } else if (DriverStation.isEnabled()) {
       m_led.setState(LED_STATES.IDLE, () -> 0.0);

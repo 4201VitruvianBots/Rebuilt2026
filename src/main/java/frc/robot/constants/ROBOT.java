@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.RobotController;
 public class ROBOT {
   public static final boolean useSysID = false;
 
-  public static Logged.Importance logMode = Logged.Importance.INFO;
+  public static Logged.Importance logMode = Logged.Importance.CRITICAL;
   public static ROBOT_ID robotID = ROBOT_ID.SIM;
 
   public enum CONTROL_MODE {

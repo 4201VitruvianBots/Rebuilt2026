@@ -106,7 +106,7 @@ public class RobotContainer {
 
   @NotLogged
   private final LinearVelocity MaxSpeed =
-      V2Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
+      V1Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
 
   @NotLogged
   private final AngularVelocity MaxAngularRate =
@@ -151,7 +151,7 @@ public class RobotContainer {
     if (ROBOT.robotID.equals(ROBOT_ID.V1)) {
         m_swerveDrive = V1Constants.createDrivetrain();
     } else {
-        m_swerveDrive = V2Constants.createDrivetrain();
+        m_swerveDrive = V1Constants.createDrivetrain();
     }
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
@@ -166,13 +166,13 @@ public class RobotContainer {
                         MaxSpeed.times(
                             -m_driverController.getLeftX())) // Drive left with negative X (left)
                     .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
-    m_flywheel = new Flywheel();
+    // m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    m_hood = new Hood();
-    m_intake = new Intake();
-    m_uptake = new Uptake();
-    m_indexer = new Indexer();
+    // m_hood = new Hood();
+    // m_intake = new Intake();
+    // m_uptake = new Uptake();
+    // m_indexer = new Indexer();
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
         m_intakePivot = new IntakePivot();
         m_led = new LEDs();
@@ -230,7 +230,7 @@ public class RobotContainer {
     //             m_driverController::getLeftY,
     //             m_driverController::getLeftX));
 
-    m_driverController.rightBumper().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    if (m_intake != null) m_driverController.rightBumper().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
     // m_driverController
     //     .x()
@@ -238,17 +238,19 @@ public class RobotContainer {
     //         new ParallelCommandGroup(
     //             m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
-    m_driverController
-        .leftBumper()
-        .whileTrue(
-            new Shoot(
-                m_flywheel,
-                m_hood,
-                m_vision,
-                m_driverController,
-                m_swerveDrive,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
+    if (m_flywheel != null && m_hood != null) {
+      m_driverController
+          .leftBumper()
+          .whileTrue(
+              new Shoot(
+                  m_flywheel,
+                  m_hood,
+                  m_vision,
+                  m_driverController,
+                  m_swerveDrive,
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX));
+    }
 
     m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
 
