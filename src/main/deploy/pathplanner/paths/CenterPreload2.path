@@ -3,53 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4715563506261176,
-        "y": 5.178890876565294
+        "x": 3.5,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3301155517673442,
-        "y": 4.745581318790687
-      },
-      "isLocked": false,
-      "linkedName": "DepotShootPoint"
-    },
-    {
-      "anchor": {
-        "x": 0.4655813953488368,
-        "y": 4.838157423971377
-      },
-      "prevControl": {
-        "x": 0.4530969911128637,
-        "y": 5.0878455086908385
-      },
-      "nextControl": {
-        "x": 0.48180679785330893,
-        "y": 4.513649373881932
+        "x": 3.5,
+        "y": 3.6
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.5844365192582024,
-        "y": 3.7050641940085596
+        "x": 0.52,
+        "y": 3.8
       },
       "prevControl": {
-        "x": 0.3796285391284423,
-        "y": 3.8484297800993916
+        "x": 3.02,
+        "y": 3.8
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -66,10 +45,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Zold - SideNeutralDepotClimb",
+  "folder": "CenterPreload",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -20.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
