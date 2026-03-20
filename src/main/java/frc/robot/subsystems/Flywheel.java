@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -198,7 +199,7 @@ public class Flywheel extends SubsystemBase {
 
   public Command manualPassCommand() {
     return this.startEnd(
-        () -> setRPMOutput(MANUAL_RPM.TOWER.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
+        () -> setRPMOutput(MANUAL_RPM.PASSING.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
 
   public void testInit() {

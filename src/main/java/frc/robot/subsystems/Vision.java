@@ -8,6 +8,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.units.measure.Distance;
@@ -272,6 +273,22 @@ public class Vision extends SubsystemBase {
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
     return getAngleToTarget().getDegrees() < 0.5;
+  }
+  
+  public boolean isPointingAtGoal(
+      Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
+    // bearing from robot to goal
+    var bearing =
+        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+    // robot heading
+    var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
+    // smallest signed angle difference in [-pi, pi]
+    double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
+    if (returnAbsoluteValue == true) {
+      return Math.abs(error) <= Units.degreesToRadians(tolerance);
+    } else {
+      return error <= Units.degreesToRadians(tolerance);
+    }
   }
 
   @Logged(name = "Is in Neutral Sector?", importance = Importance.DEBUG)

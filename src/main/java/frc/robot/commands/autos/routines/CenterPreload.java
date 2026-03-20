@@ -7,20 +7,14 @@ package frc.robot.commands.autos.routines;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.commands.autos.AutoShootManual;
 import frc.team4201.lib.command.Auto;
 
 public class CenterPreload extends Auto {
   public CenterPreload(AutoDependencies deps) {
     try {
       var swerveDrive = deps.swerveDrive;
-      var vision = deps.vision;
-      var flywheel = deps.flywheel;
-      var hood = deps.hood;
-      var uptake = deps.uptake;
 
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -29,10 +23,9 @@ public class CenterPreload extends Auto {
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
-          new ParallelCommandGroup(
-                  new Shoot(flywheel, hood, vision, swerveDrive),
-                  uptake.percentCommand(UPTAKE_SPEED.SHOOTING.get()))
-              .withTimeout(3));
+          new AutoShootManual(deps, 3.0),
+          m_path2.andThen(() -> swerveDrive.setControl(stopRequest))
+      );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterPreload", e.getStackTrace());
       addCommands(new InstantCommand());
