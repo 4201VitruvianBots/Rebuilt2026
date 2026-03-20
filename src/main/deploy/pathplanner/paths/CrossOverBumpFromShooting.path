@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.25,
-        "y": 5.75
+        "x": 3.135430346051464,
+        "y": 5.648606921029281
       },
       "isLocked": false,
       "linkedName": "ShootingPoint"
     },
     {
       "anchor": {
-        "x": 6.0,
+        "x": 5.609033989266547,
         "y": 5.5
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 5.5
+        "x": 3.6076616123282115,
+        "y": 5.509149327321151
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,23 +40,10 @@
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "MeasureIntakeBefore",
-      "waypointRelativePos": 0.500897666068222,
-      "endWaypointRelativePos": 0.7755834829443449,
-      "command": null
-    },
-    {
-      "name": "MeasureIntakeAfter",
-      "waypointRelativePos": 0.77737881508079,
-      "endWaypointRelativePos": 1.0,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.6764,
-    "maxAcceleration": 1.676,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -70,7 +57,7 @@
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": -31.798912824294426
   },
   "useDefaultConstraints": false
 }

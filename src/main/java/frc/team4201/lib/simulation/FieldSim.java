@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.pathplanner.lib.util.PathPlannerLogging;
+
 /** Class to handle all updates to the Field2D widget */
 public class FieldSim extends SubsystemBase implements AutoCloseable {
 
