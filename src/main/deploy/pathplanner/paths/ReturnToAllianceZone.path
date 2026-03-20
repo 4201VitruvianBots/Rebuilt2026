@@ -64,7 +64,7 @@
   "reversed": false,
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
-    "velocity": 1.2,
+    "velocity": 0.9,
     "rotation": 0.0
   },
   "useDefaultConstraints": false
