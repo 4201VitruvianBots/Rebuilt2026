@@ -8,10 +8,11 @@ public class LED {
   public enum LED_STATES {
     DISABLED("disabled"),
     IDLE("idle"),
-    // DRIVING("driving"),
+    IDLE_CAN_ERROR("idle_can_error"),
     INTAKING("intaking"),
-    SHOOTING("shooting");
-    // CLIMBING("climbing");
+    SHOOTING("shooting"),
+    RED_SHIFT_END("red_shift_end"),
+    BLUE_SHIFT_END("blue_shift_end");
 
     private final String animation;
 
