@@ -14,8 +14,8 @@ import edu.wpi.first.units.measure.Distance;
 
 public final class VISION {
   public enum CAMERA_SERVER {
-    limelightR("limelight-right", "10.42.1.11"),
-    limelightL("limelight-left", "10.42.1.12");
+    limelightL("limelight-left", "10.42.1.12"),
+    limelightR("limelight-right", "10.42.1.11");
 
     private final String name;
     private final String ip;
@@ -79,9 +79,11 @@ public final class VISION {
   public static class Limelight {
     static int basePort = 5800;
     CAMERA_SERVER limelight;
-    private final DoubleSubscriber heartbeat;
+    private final DoubleSubscriber hbSub;
     private double lastHeartbeat = -1.0;
     private boolean isAlive = false;
+
+    private final DoublePublisher hbPub;
     private final DoublePublisher estimatedTimestamp;
     private final StructPublisher<Pose2d> estimatedPose;
     private final IntegerPublisher numTags;
@@ -92,9 +94,10 @@ public final class VISION {
       this.limelight = limelight;
       var ntInst = NetworkTableInstance.getDefault();
       var llSubTable = ntInst.getTable(limelight.name);
-      heartbeat = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
+      hbSub = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
 
       var llPubTable = ntInst.getTable("llTable").getSubTable(limelight.name);
+      hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
       estimatedTimestamp = llPubTable.getDoubleTopic("estTimestamp").publish();
       estimatedTimestamp.setDefault(-1);
       estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
@@ -138,13 +141,15 @@ public final class VISION {
     }
 
     public double getHeartbeat() {
-      var hb = heartbeat.get();
-      if (hb != -1 || hb != lastHeartbeat) {
-        lastHeartbeat = hb;
+      var heartbeat = hbSub.get();
+      if (heartbeat != -1 || heartbeat != lastHeartbeat) {
+        lastHeartbeat = heartbeat;
         isAlive = true;
       } else {
         isAlive = false;
       }
+
+      hbPub.set(heartbeat);
 
       return lastHeartbeat;
     }
