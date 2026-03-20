@@ -4,15 +4,19 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.LED.LED_STATES;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Uptake;
+import frc.team4201.lib.utils.HubTracker;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class UpdateLEDs extends Command {
@@ -39,18 +43,25 @@ public class UpdateLEDs extends Command {
   public void execute() {
     /*
      * When disabled, DISABLED state always takes priority
-     * When robot enables, default to IDLE state
+     * When robot enables, default to IDLE state, IDLE_CAN_ERROR if a CAN device is disconnected
+     * During the last 3 seconds of a shift, display lights similar to the 
      * If the intake is running, set to INTAKING state
      * If the flywheel is running to shoot, set to SHOOTING state
      */
-    if (m_flywheel.getRPMSetpoint() > 0) {
+    final boolean shiftEnd = HubTracker.timeRemainingInCurrentShift()
+        .map(timeRemain -> timeRemain.lt(Seconds.of(3.0)))
+        .orElse(false);
+    if (shiftEnd) {
+        if (HubTracker.isActive(Alliance.Red)
+        
+    } else if (m_flywheel.getRPMSetpoint() > 0) {
       m_led.setState(LED_STATES.SHOOTING, () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
     } else if (MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
-      m_led.setState(LED_STATES.INTAKING, () -> 0.0);
+      m_led.setState(LED_STATES.INTAKING);
     } else if (DriverStation.isEnabled()) {
-      m_led.setState(LED_STATES.IDLE, () -> 0.0);
+      m_led.setState(LED_STATES.IDLE);
     } else {
-      m_led.setState(LED_STATES.DISABLED, () -> 0.0);
+      m_led.setState(LED_STATES.DISABLED);
     }
   }
 

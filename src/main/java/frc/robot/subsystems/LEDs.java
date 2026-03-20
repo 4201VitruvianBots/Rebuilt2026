@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
@@ -15,7 +16,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.LED;
@@ -59,15 +60,25 @@ public class LEDs extends SubsystemBase {
             m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
             workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
             break;
-            // LEDPattern base = LEDPattern.steps(Map.of(0, Color.kRed, 0.5, Color.kBlack));
-            // m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
-            // workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
-            // break;
         case IDLE:
-        // case DRIVING:
-            base = LEDPattern.steps(Map.of(0, Color.kGreen, 0.5, Color.kBlack));
+            base = LEDPattern.gradient(GradientType.kContinuous, Color.kGreen, Color.kBlack);
             m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
             workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
+            break;
+        case IDLE_CAN_ERROR:
+            base = LEDPattern.gradient(GradientType.kContinuous, Color.kOrange, Color.kBlack);
+            m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
+            break;
+        case RED_SHIFT_END:
+            base = LEDPattern.solid(Color.kRed);
+            m_currentPattern = base.breathe(Seconds.of(0.5));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
+            break;
+        case BLUE_SHIFT_END:
+            base = LEDPattern.solid(Color.kBlue);
+            m_currentPattern = base.breathe(Seconds.of(0.5));
+            workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
             break;
         case INTAKING:
             base = LEDPattern.steps(Map.of(0, Color.kBlack, 0.25, Color.kYellow, 0.5, Color.kBlack, 0.75, Color.kYellow)); // Yeah, you know what it is
@@ -80,13 +91,12 @@ public class LEDs extends SubsystemBase {
             m_currentPattern = base.mask(mask);
             workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
             break;
-        // case CLIMBING:
-        //     base = LEDPattern.rainbow(255, 255);
-        //     m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
-        //     workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
-        //     break;
       }
     }
+  }
+  
+  public void setState(LED_STATES state) {
+    setState(state, () -> 0.0);
   }
   
   public String getDataString() {
