@@ -19,7 +19,7 @@ public class INTAKE {
     public static final double peakForwardOutput = 1.0;
     public static final double peakReverseOutput = -0.9;
     public static final double kInertia = 0.005;
-    public static final double kStatorCurrentLimit = 65;
+    public static final double kStatorCurrentLimit = 50;
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
 
@@ -71,7 +71,7 @@ public class INTAKE {
     public static final double motionMagicAcceleration = 15.0;
     public static final double motionMagicCruiseVelocity = 12.0;
     public static final double motionMagicJerk = 0.0;
-    public static final double kStatorCurrentLimit = 80.0;
+    public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
     public static final Angle maxAngle = Degrees.of(55.0);
