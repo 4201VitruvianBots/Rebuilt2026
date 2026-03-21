@@ -98,6 +98,8 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(USB.operator_xboxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
@@ -134,6 +136,12 @@ public class RobotContainer {
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
 
   private Boolean m_flipToRight = false;
+
+  @Logged(name = "ManualRPMShift", importance = Logged.Importance.INFO)
+  private double m_manualRPMshift = 0.0;
+
+  @Logged(name = "ManualHoodAngleShift", importance = Logged.Importance.INFO)
+  private double m_manualHoodAngleShift = 0.0;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -200,6 +208,13 @@ public class RobotContainer {
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
+  private ParallelCommandGroup resetManualShifts() {
+    return new ParallelCommandGroup(
+      new InstantCommand(() -> m_manualRPMshift = 0.0),
+      new InstantCommand(() -> m_manualHoodAngleShift = 0.0)
+    );
+  }
+
   private void configureBindings() {
     // aim at target
     // if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
@@ -253,7 +268,10 @@ public class RobotContainer {
                 m_driverController,
                 m_swerveDrive,
                 m_driverController::getLeftY,
-                m_driverController::getLeftX));
+                m_driverController::getLeftX,
+                () -> m_manualHoodAngleShift,
+                () -> m_manualRPMshift
+                )).onFalse(resetManualShifts()); // Reset shifts after we're done shooting
 
     m_driverController
         .leftTrigger()
@@ -263,6 +281,25 @@ public class RobotContainer {
 
     POVUtils.povDownWithTilt(m_driverController)
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
+
+    // Decrease rpm manual shift by 0.2
+    m_operatorController.leftBumper().onTrue(
+        new InstantCommand(() -> m_manualRPMshift -= (0.2 * FLYWHEEL.maxRPMShift.in(RPM)))
+    );
+    // Increase rpm manual shift by 0.2
+    m_operatorController.rightBumper().onTrue(
+        new InstantCommand(() -> m_manualRPMshift += (0.2 * FLYWHEEL.maxRPMShift.in(RPM)))
+    );
+
+    // Decrease hood angle manual shift by 0.2
+    POVUtils.povDownWithTilt(m_operatorController).onTrue(
+        new InstantCommand(() -> m_manualHoodAngleShift -= (0.2 * FLYWHEEL.HOOD.maxAngleShift.in(Degrees)))
+    );
+    // Increase hood angle manual shift by 0.2
+    POVUtils.povUpWithTilt(m_operatorController).onTrue(
+        new InstantCommand(() -> m_manualHoodAngleShift += (0.2 * FLYWHEEL.HOOD.maxAngleShift.in(Degrees)))
+    );
+
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {
     //   m_driverController

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -77,6 +78,8 @@ public class Shoot extends Command {
   private CommandXboxController m_driverController;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
+  private DoubleSupplier m_hoodAngleShift = () -> 0.0;
+  private DoubleSupplier m_RPMShift = () -> 0.0;
   private static double phaseDelay = 0.0;
   private Rotation2d lastDriveAngle;
   private double lastHoodAngle;
@@ -101,7 +104,9 @@ public class Shoot extends Command {
       CommandXboxController driverController,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
-      DoubleSupplier strafeInput) {
+      DoubleSupplier strafeInput,
+      DoubleSupplier hoodAngleShift,
+      DoubleSupplier RPMShift) {
     m_flywheel = flywheel;
     m_driverController = driverController;
     m_swerveDrivetrain = swerveDrive;
@@ -109,6 +114,8 @@ public class Shoot extends Command {
     m_strafeInput = strafeInput;
     m_shooterHood = shooterHood;
     m_vision = vision;
+    m_hoodAngleShift = hoodAngleShift;
+    m_RPMShift = RPMShift;
 
     addRequirements(flywheel, shooterHood);
     SmartDashboard.putData(this);
@@ -190,8 +197,8 @@ public class Shoot extends Command {
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
     // all of the logic for angle is above this Comment
-    m_flywheel.setRPMOutput(shot.shooterRPM);
-    m_shooterHood.setAngle(Radians.of(hoodAngle));
+    m_flywheel.setRPMOutput(shot.shooterRPM.plus(RPM.of(m_RPMShift.getAsDouble())));
+    m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Radians.of(m_hoodAngleShift.getAsDouble())));
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
         m_driverController.setRumble(
