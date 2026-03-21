@@ -55,20 +55,20 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees.
-    distanceToShotMap.put(Meters.of(1.10695), new Shot(RPM.of(1260 + 30), Degrees.of(0), 0.9)); //
+    distanceToShotMap.put(Meters.of(1.10695), new Shot(RPM.of(1260), Degrees.of(0), 0.9)); //
     distanceToShotMap.put(
-        Meters.of(2.0749597158415), new Shot(RPM.of(1540 + 30), Degrees.of(0), 1.1)); // Tuned
+        Meters.of(2.0749597158415), new Shot(RPM.of(1540), Degrees.of(0), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.31209), new Shot(RPM.of(1553 + 30), Degrees.of(0.4), 1.1)); // Tuned
+        Meters.of(2.31209), new Shot(RPM.of(1553), Degrees.of(0.4), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.5916617555783), new Shot(RPM.of(1570 + 30), Degrees.of(2.2), 1.1)); // Tuned
+        Meters.of(2.5916617555783), new Shot(RPM.of(1570), Degrees.of(2.2), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(3.152353828396097), new Shot(RPM.of(1648 + 30), Degrees.of(3.5), 1.1)); // Tuned
+        Meters.of(3.152353828396097), new Shot(RPM.of(1648), Degrees.of(3.5), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(3.97453), new Shot(RPM.of(1764.3 + 30), Degrees.of(6.234), 1.1)); // Tuned
-    distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3 + 30), Degrees.of(8), 1.16));
+        Meters.of(3.97453), new Shot(RPM.of(1764.3), Degrees.of(6.234), 1.1)); // Tuned
+    distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
     distanceToShotMap.put(
-        Meters.of(5.44820580711993), new Shot(RPM.of(1945 + 30), Degrees.of(14), 1.16));
+        Meters.of(5.44820580711993), new Shot(RPM.of(1945), Degrees.of(14), 1.16));
   }
 
   private final Vision m_vision;
