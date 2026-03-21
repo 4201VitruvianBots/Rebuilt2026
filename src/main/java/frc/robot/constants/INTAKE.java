@@ -85,7 +85,7 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.324951171875;
+    public static final double encoderOffset = 0.316162109375;
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.Clockwise_Positive;
 
