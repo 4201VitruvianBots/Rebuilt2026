@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
@@ -235,8 +236,9 @@ public class RobotContainer {
     //             m_driverController::getLeftY,
     //             m_driverController::getLeftX));
 
-    m_driverController.rightBumper().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-
+    m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
+    
     m_driverController
         .x()
         .whileTrue(
