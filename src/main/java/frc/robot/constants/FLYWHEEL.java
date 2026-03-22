@@ -36,7 +36,7 @@ public class FLYWHEEL {
 
   public static final int ballsPerSecond = 20;
 
-  public static final AngularVelocity maxRPMShift = RPM.of(50.0);
+  public static final AngularVelocity rpmShiftIncrement = RPM.of(10.0);
 
   public static class Shot {
     public final AngularVelocity shooterRPM;
@@ -88,7 +88,7 @@ public class FLYWHEEL {
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
-    public static final Angle maxAngleShift = Degrees.of(3.0);
+    public static final Angle angleShiftIncrement = Degrees.of(0.25);
 
     public enum MANUAL_ANGLE {
       STOWED(Degrees.of(0.0)),

@@ -198,7 +198,7 @@ public class Shoot extends Command {
     lastHoodAngle = hoodAngle;
     // all of the logic for angle is above this Comment
     m_flywheel.setRPMOutput(shot.shooterRPM.plus(RPM.of(m_RPMShift.getAsDouble())));
-    m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Radians.of(m_hoodAngleShift.getAsDouble())));
+    m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Degrees.of(m_hoodAngleShift.getAsDouble())));
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
         m_driverController.setRumble(

@@ -284,20 +284,20 @@ public class RobotContainer {
 
     // Decrease rpm manual shift by 0.2
     m_operatorController.leftBumper().onTrue(
-        new InstantCommand(() -> m_manualRPMshift -= (0.2 * FLYWHEEL.maxRPMShift.in(RPM)))
+        new InstantCommand(() -> m_manualRPMshift -= (FLYWHEEL.rpmShiftIncrement.in(RPM)))
     );
     // Increase rpm manual shift by 0.2
     m_operatorController.rightBumper().onTrue(
-        new InstantCommand(() -> m_manualRPMshift += (0.2 * FLYWHEEL.maxRPMShift.in(RPM)))
+        new InstantCommand(() -> m_manualRPMshift += (FLYWHEEL.rpmShiftIncrement.in(RPM)))
     );
 
     // Decrease hood angle manual shift by 0.2
     POVUtils.povDownWithTilt(m_operatorController).onTrue(
-        new InstantCommand(() -> m_manualHoodAngleShift -= (0.2 * FLYWHEEL.HOOD.maxAngleShift.in(Degrees)))
+        new InstantCommand(() -> m_manualHoodAngleShift -= (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     );
     // Increase hood angle manual shift by 0.2
     POVUtils.povUpWithTilt(m_operatorController).onTrue(
-        new InstantCommand(() -> m_manualHoodAngleShift += (0.2 * FLYWHEEL.HOOD.maxAngleShift.in(Degrees)))
+        new InstantCommand(() -> m_manualHoodAngleShift += (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     );
 
     // // I foresee a state machine in the future...
