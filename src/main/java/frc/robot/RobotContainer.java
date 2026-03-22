@@ -270,8 +270,7 @@ public class RobotContainer {
                 m_driverController::getLeftY,
                 m_driverController::getLeftX,
                 () -> m_manualHoodAngleShift,
-                () -> m_manualRPMshift
-                )).onFalse(resetManualShifts()); // Reset shifts after we're done shooting
+                () -> m_manualRPMshift))
 
     m_driverController
         .leftTrigger()
@@ -299,6 +298,8 @@ public class RobotContainer {
     POVUtils.povUpWithTilt(m_operatorController).onTrue(
         new InstantCommand(() -> m_manualHoodAngleShift += (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     );
+
+    m_operatorController.b().onTrue(resetManualShifts());
 
     // // I foresee a state machine in the future...
     // if (m_uptake != null && m_indexer != null && m_intake != null) {

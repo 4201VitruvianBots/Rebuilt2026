@@ -36,7 +36,7 @@ public class FLYWHEEL {
 
   public static final int ballsPerSecond = 20;
 
-  public static final AngularVelocity rpmShiftIncrement = RPM.of(10.0);
+  public static final AngularVelocity rpmShiftIncrement = RPM.of(5.0);
 
   public static class Shot {
     public final AngularVelocity shooterRPM;
