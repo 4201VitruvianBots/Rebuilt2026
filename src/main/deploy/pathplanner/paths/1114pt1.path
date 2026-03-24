@@ -1,0 +1,181 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.586113575865128,
+        "y": 5.535936113575865
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.026364538531443,
+        "y": 5.652938979519911
+      },
+      "isLocked": false,
+      "linkedName": "SideStartPoint"
+    },
+    {
+      "anchor": {
+        "x": 3.0304971407860823,
+        "y": 5.535936113575865
+      },
+      "prevControl": {
+        "x": 3.417344606191004,
+        "y": 5.662746335217978
+      },
+      "nextControl": {
+        "x": 2.7869055708942847,
+        "y": 5.456085775314514
+      },
+      "isLocked": false,
+      "linkedName": "Backupbumppoint"
+    },
+    {
+      "anchor": {
+        "x": 5.704,
+        "y": 5.536
+      },
+      "prevControl": {
+        "x": 5.307516468876411,
+        "y": 5.49488539970818
+      },
+      "nextControl": {
+        "x": 6.452709698651141,
+        "y": 5.6136397947915135
+      },
+      "isLocked": false,
+      "linkedName": "OverBumpPointStart"
+    },
+    {
+      "anchor": {
+        "x": 7.809373691204897,
+        "y": 6.918925076514175
+      },
+      "prevControl": {
+        "x": 7.007994065012955,
+        "y": 7.297202690508476
+      },
+      "nextControl": {
+        "x": 8.325277869135382,
+        "y": 6.675401289411441
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.809373691204897,
+        "y": 4.396208017880155
+      },
+      "prevControl": {
+        "x": 8.924428932363613,
+        "y": 4.6757605772458435
+      },
+      "nextControl": {
+        "x": 7.009288073189699,
+        "y": 4.1956206622300405
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.704,
+        "y": 5.536
+      },
+      "prevControl": {
+        "x": 6.77619790653093,
+        "y": 5.449883208780643
+      },
+      "nextControl": {
+        "x": 5.079789116781622,
+        "y": 5.586135369580127
+      },
+      "isLocked": false,
+      "linkedName": "OverBumpPointStart"
+    },
+    {
+      "anchor": {
+        "x": 3.586113575865128,
+        "y": 5.535936113575865
+      },
+      "prevControl": {
+        "x": 4.111743087463876,
+        "y": 5.693582512643267
+      },
+      "nextControl": {
+        "x": 3.1682743237874655,
+        "y": 5.410618086285677
+      },
+      "isLocked": false,
+      "linkedName": "SideStartPoint"
+    },
+    {
+      "anchor": {
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
+      },
+      "prevControl": {
+        "x": 2.8871730755362472,
+        "y": 4.967258421211471
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ShootingPoint"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -82.29156218626936
+    },
+    {
+      "waypointRelativePos": 3.4729675640417437,
+      "rotationDegrees": -106.56963801761596
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": -173.6999425845342
+    },
+    {
+      "waypointRelativePos": 4.891521880929791,
+      "rotationDegrees": -30.011
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 2.93902587890625,
+      "maxWaypointRelativePos": 4.3292846679687536,
+      "constraints": {
+        "maxVelocity": 1.9,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -31.798912824294426
+  },
+  "reversed": false,
+  "folder": "1114 Auto",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -51.792
+  },
+  "useDefaultConstraints": false
+}

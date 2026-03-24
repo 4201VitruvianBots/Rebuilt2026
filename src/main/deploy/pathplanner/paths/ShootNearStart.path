@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.586113575865128,
-        "y": 5.535936113575865
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.964950178127934,
-        "y": 5.535936113575865
+        "x": 3.51426694831427,
+        "y": 4.996725820763088
       },
       "isLocked": false,
-      "linkedName": "SideStartPoint"
+      "linkedName": "ShootingPoint"
     },
     {
       "anchor": {
@@ -64,7 +64,7 @@
   "folder": "ShootNearStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -31.798912824294426
   },
   "useDefaultConstraints": true
 }
