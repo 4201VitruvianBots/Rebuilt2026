@@ -1,0 +1,30 @@
+// // Copyright (c) FIRST and other WPILib contributors.
+// // Open Source Software; you can modify and/or share it under the terms of
+// // the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands.autos.routines;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.autos.AutoDependencies;
+import frc.robot.commands.autos.AutoShoot;
+import frc.team4201.lib.command.Auto;
+
+public class SimboticsAuto extends Auto {
+  public SimboticsAuto(AutoDependencies deps) {
+    try {
+      var swerveDrive = deps.swerveDrive;
+
+      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("1114pt1");
+      var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("1114pt2");
+
+      addCommands(
+          m_path1,
+          new AutoShoot(deps, 3.0),
+          m_path2);
+    } catch (Exception e) {
+      DriverStation.reportError("Failed to load path for Simbotics Auto", e.getStackTrace());
+      addCommands(new InstantCommand());
+    }
+  }
+}
