@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {
@@ -19,7 +18,6 @@ public class AutoAlignDrive extends Command {
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
       CommandSwerveDrivetrain commandSwerveDrivetrain,
-      Vision vision,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput) {
     m_vision = vision;

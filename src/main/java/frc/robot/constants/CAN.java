@@ -35,7 +35,6 @@ public class CAN {
   public static final int kIndexerMotor2 = 50;
 
   public static final int kIntakeRollerMotor1 = 53;
-  public static final int kIntakeRollerMotor2 = 54;
 
   public static final int kIntakePivotMotor = 55;
   public static final int kPivotEncoder = 56;

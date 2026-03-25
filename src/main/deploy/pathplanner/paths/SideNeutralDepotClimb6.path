@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.609,
-        "y": 5.5
+        "x": 1.4715563506261176,
+        "y": 5.178890876565294
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.261369121561668,
-        "y": 1.8821827861579403
+        "x": 1.3301155517673442,
+        "y": 4.745581318790687
       },
       "isLocked": false,
-      "linkedName": "OverBumpPointEnd"
+      "linkedName": "DepotShootPoint"
     },
     {
       "anchor": {
-        "x": 7.659658385093167,
-        "y": 5.5
+        "x": 0.4655813953488368,
+        "y": 4.838157423971377
       },
       "prevControl": {
-        "x": 7.668004247663698,
-        "y": 5.250139345678528
+        "x": 0.4530969911128637,
+        "y": 5.0878455086908385
       },
       "nextControl": {
-        "x": 7.610070984915705,
-        "y": 6.984560780834072
+        "x": 0.48180679785330893,
+        "y": 4.513649373881932
       },
       "isLocked": false,
-      "linkedName": "ShootingPoint"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.8,
-        "y": 5.5
+        "x": 0.5844365192582024,
+        "y": 3.7050641940085596
       },
       "prevControl": {
-        "x": 6.821375332741792,
-        "y": 8.328562555456966
+        "x": 0.3796285391284423,
+        "y": 3.8484297800993916
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "GoBackToAllianceZone"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
@@ -54,22 +54,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.0,
+    "velocity": 0,
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "IntakeFromNeutral",
+  "folder": "Zold - SideNeutralDepotClimb",
   "idealStartingState": {
-    "velocity": 1.0,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": -20.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
