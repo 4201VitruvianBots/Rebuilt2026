@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,18 +25,9 @@ import java.util.Map;
 
 @Logged
 public class Controls extends SubsystemBase {
-  //   private Vision m_vision;
   private static boolean m_allianceInit;
   private static DriverStation.Alliance m_allianceColor = DriverStation.Alliance.Red;
 
-  private static Alert m_usbAlert =
-      new Alert("USB connection alert not properly initialized", AlertType.kError);
-  private static Alert m_brownoutAlert =
-      new Alert("Brownout alert not properly initialized", AlertType.kWarning);
-  private static Alert m_storageAlert =
-      new Alert("Storage space alert not properly initialized", AlertType.kWarning);
-  private static Alert m_canAlert =
-      new Alert("CAN bus alert not properly initialized", AlertType.kError);
   // private static Alert m_visionAlert = new Alert("Vision alert not properly initialized",
   // AlertType.kWarning);
 
@@ -43,22 +37,47 @@ public class Controls extends SubsystemBase {
   /** Map of subsystems for Controls to update */
   @NotLogged private final Map<String, Subsystem> m_subsystemMap = new HashMap<>();
 
-  @NotLogged private final Map<String, Alert> alertMap = new HashMap<>();
+  @NotLogged
+  private final Map<String, Alert> alertMap =
+      Map.ofEntries(
+          Map.entry(
+              "usb", new Alert("USB connection alert not properly initialized", AlertType.kError)),
+          Map.entry(
+              "brownout", new Alert("Brownout alert not properly initialized", AlertType.kWarning)),
+          Map.entry(
+              "storage",
+              new Alert("Storage space alert not properly initialized", AlertType.kWarning)),
+          Map.entry(
+              "epilogue",
+              new Alert("Epilogue Runtime average is > 0.04 seconds!", AlertType.kWarning)),
+          // Alerts for setting up the robot properly
+          Map.entry(
+              "allianceInit",
+              new Alert("Did not get alliance color from FMS/DS!", Alert.AlertType.kWarning)),
+          Map.entry(
+              "vision", new Alert("Vision Subsystem is not ready!", Alert.AlertType.kWarning)),
+
+          // Alerts for when the robot is running
+          Map.entry("radioError", new Alert("Robot Radio not detected!", Alert.AlertType.kError)),
+          Map.entry(
+              "joystickError", new Alert("Missing joystick detected!", Alert.AlertType.kError)),
+          Map.entry("canError", new Alert("CAN bus error detected!", Alert.AlertType.kError)));
+
+  private final MedianFilter epilogueBuffer = new MedianFilter(20);
+  private final DoubleSubscriber epilogueRuntimeSub =
+      NetworkTableInstance.getDefault().getDoubleTopic("Epilogue/Stats/Last Run").subscribe(0.0);
 
   /** Creates a new Controls subsystem */
   public Controls() {
-    // Alerts for setting up the robot properly
-    alertMap.put(
-        "allianceInit",
-        new Alert("Did not get alliance color from FMS/DS!", Alert.AlertType.kWarning));
-    alertMap.put(
-        "visionInit", new Alert("Vision Subsystem is not ready!", Alert.AlertType.kWarning));
-
-    // Alerts for when the robot is running
-    alertMap.put("radioError", new Alert("Robot Radio not detected!", Alert.AlertType.kError));
-    alertMap.put("joystickError", new Alert("Missing joystick detected!", Alert.AlertType.kError));
-    alertMap.put("canError", new Alert("CAN bus error detected!", Alert.AlertType.kError));
     initSmartDashboard();
+  }
+
+  public void registerSubsystem(Subsystem subsystem) {
+    if (subsystem != null) {
+      m_subsystemMap.put(subsystem.getName(), subsystem);
+    } else {
+      DriverStation.reportWarning("[Controls] Attempting to register null subsystem!", true);
+    }
   }
 
   public static DriverStation.Alliance getAllianceColor() {
@@ -77,37 +96,28 @@ public class Controls extends SubsystemBase {
     SmartDashboard.putString("Controls/Serial Number", RobotController.getSerialNumber());
   }
 
-  public void registerSubsystem(Subsystem subsystem) {
-    if (subsystem != null) {
-      m_subsystemMap.put(subsystem.getName(), subsystem);
-    } else {
-      DriverStation.reportWarning("[Controls] Attempting to register null subsystem!", true);
-    }
-  }
-
   public void updateAlerts() {
     // Update USB alerts
-    m_usbAlert.set(false);
+    alertMap.get("usb").set(false);
 
     // String for USB alert message
     String usbAlertMessage = "The following USB devices are not connected: ";
 
+    // TODO: Change this to a loop/array for String.join()
     if (!DriverStation.isJoystickConnected(USB.driver_xBoxController)) {
-      usbAlertMessage += "Driver Xbox Controller, ";
-      m_usbAlert.set(true);
+      usbAlertMessage += String.join(", ", "Driver Xbox Controller");
+      alertMap.get("usb").setText(usbAlertMessage);
     }
 
-    // Remove the last comma and space
-    if (usbAlertMessage.endsWith(", ")) {
-      usbAlertMessage = usbAlertMessage.substring(0, usbAlertMessage.length() - 2);
-    }
-    m_usbAlert.setText(usbAlertMessage);
+    alertMap.get("usb").set(true);
 
     // Update brownout alert state
     if (RobotController.isBrownedOut()) {
-      m_brownoutAlert.setText(
-          "A brownout occured less than a minute ago. Please ensure that a fresh battery has been plugged in.");
-      m_brownoutAlert.set(true);
+      alertMap
+          .get("brownout")
+          .setText(
+              "A brownout occurred less than a minute ago. Please ensure that a fresh battery has been plugged in.");
+      alertMap.get("brownout").set(true);
       m_brownoutTimer.restart();
       m_brownoutLastUpdatedTime = 0.0;
     }
@@ -115,12 +125,15 @@ public class Controls extends SubsystemBase {
     // Update brownout alert timing once a minute
     if (m_brownoutTimer.get() - m_brownoutLastUpdatedTime > 60.0) {
       int minutesCount = (int) Math.round(m_brownoutTimer.get() / 60.0);
-      m_brownoutAlert.setText(
-          "A brownout occured "
-              + minutesCount
-              + " minute"
-              + (minutesCount == 1 ? "" : "s")
-              + " ago. Please ensure that a fresh battery has been plugged in."); // this condition
+      alertMap
+          .get("brownout")
+          .setText(
+              "A brownout occurred "
+                  + minutesCount
+                  + " minute"
+                  + (minutesCount == 1 ? "" : "s")
+                  + " ago. Please ensure that a fresh battery has been plugged in."); // this
+      // condition
       // being flipped
       // makes NO SENSE
       // but whatever
@@ -130,48 +143,51 @@ public class Controls extends SubsystemBase {
     // Get the amount of storage space left
     File root = new File("/");
     long freeSpaceMB = root.getFreeSpace() / 1048576;
-    if (!m_storageAlert.get() && freeSpaceMB < 512.0) {
-      m_storageAlert.setText(
-          "There is only "
-              + freeSpaceMB
-              + " MB of storage space left on the RoboRIO. Consider deleting old logs to free up space.");
-      m_storageAlert.set(true);
+    if (!alertMap.get("storage").get() && freeSpaceMB < 512.0) {
+      alertMap
+          .get("storage")
+          .setText(
+              "There is only "
+                  + freeSpaceMB
+                  + " MB of storage space left on the RoboRIO. Consider deleting old logs to free up space.");
+      alertMap.get("storage").set(true);
     }
 
     // Update CAN alerts
-    m_canAlert.set(false);
+    alertMap.get("canError").set(false);
 
     // String for CAN alert message
     String canAlertMessage = "The following CAN devices are not connected: ";
+    //    canAlertMessage += String.join(", ")
+    //    alertMap.get("canError").setText(canAlertMessage);
 
-    // Remove the last comma and space
-    if (canAlertMessage.endsWith(", ")) {
-      canAlertMessage = canAlertMessage.substring(0, usbAlertMessage.length() - 2);
-    }
-    m_canAlert.setText(canAlertMessage);
+    // Update vision alerts
+    alertMap.get("vision").set(false);
+    m_subsystemMap.computeIfPresent(
+        "Vision",
+        (v, s) -> {
+          var vision = (Vision) s;
+          if (!vision.lllConnected() && !vision.llrConnected()) {
+            alertMap.get("vision").setText("Both Limelights are disconnected");
+            alertMap.get("vision").set(true);
+          } else if (!vision.lllConnected()) {
+            alertMap.get("vision").setText("The left Limelight is disconnected");
+            alertMap.get("vision").set(true);
+          } else if (!vision.llrConnected()) {
+            alertMap.get("vision").setText("The right Limelight is disconnected");
+            alertMap.get("vision").set(true);
+          }
+          return vision;
+        });
 
-    // // Update vision alerts
-    // m_visionAlert.set(false);
-
-    // if (m_subsystemMap.containsKey("Vision")) {
-    //     var visionSubsystem = (Vision) m_subsystemMap.get("Vision");
-    //     if (!visionSubsystem.isLimelightFConnected() && !visionSubsystem.isLimelightBConnected())
-    // {
-    //         m_visionAlert.setText("Both Limelights are disconnected");
-    //         m_visionAlert.set(true);
-    //     } else if (!visionSubsystem.isLimelightFConnected()) {
-    //         m_visionAlert.setText("The front Limelight is disconnected");
-    //         m_visionAlert.set(true);
-    //     } else if (!visionSubsystem.isLimelightBConnected()) {
-    //         m_visionAlert.setText("The back Limelight is disconnected");
-    //         m_visionAlert.set(true);
-    //     }
-    // }
+    var avgRuntime = epilogueBuffer.calculate(epilogueRuntimeSub.get());
+    alertMap.get("epilogue").set(avgRuntime > 40);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updateAlerts();
 
     if (DriverStation.isDisabled()) {
       DriverStation.getAlliance()

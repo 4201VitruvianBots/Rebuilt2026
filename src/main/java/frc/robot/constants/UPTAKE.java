@@ -27,7 +27,7 @@ public class UPTAKE {
   public enum UPTAKE_SPEED {
     IDLE(0.0),
     INTAKEREVERSING(-0.3),
-    SHOOTING(0.7);
+    SHOOTING(0.9);
 
     private final double value;
 

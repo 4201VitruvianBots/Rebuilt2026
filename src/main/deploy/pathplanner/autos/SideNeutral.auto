@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ShootNearStart"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CrossOverBumpFromShooting"
+            "pathName": "CrossOverBumpFromStart"
           }
         },
         {
@@ -32,18 +26,6 @@
           "type": "path",
           "data": {
             "pathName": "ShootNearStart"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IntakeFromDepot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ShootFromDepot"
           }
         }
       ]

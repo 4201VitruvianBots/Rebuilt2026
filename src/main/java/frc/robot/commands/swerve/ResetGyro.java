@@ -24,9 +24,9 @@ public class ResetGyro extends Command {
   @Override
   public void initialize() {
     if (Controls.isRedAlliance()) {
-      m_swerveDrive.resetGyro(0);
-    } else {
       m_swerveDrive.resetGyro(180);
+    } else {
+      m_swerveDrive.resetGyro(0);
     }
   }
 

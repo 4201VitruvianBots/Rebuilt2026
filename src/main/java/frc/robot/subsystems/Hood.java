@@ -44,12 +44,12 @@ public class Hood extends SubsystemBase {
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
       new TalonFX(
-          CAN.kShooterHoodMotor, CAN.driveBase); // Replace these device ids after motors are set up
+          CAN.kShooterHoodMotor, CAN.roboRIO); // Replace these device ids after motors are set up
 
   private final CANcoder m_cancoder =
       new CANcoder(
           CAN.kShooterHoodCANCoder,
-          CAN.driveBase); // Replace these device ids after motors are set up
+          CAN.roboRIO); // Replace these device ids after motors are set up
 
   private DoublePublisher m_anglePublisher;
 
@@ -58,10 +58,10 @@ public class Hood extends SubsystemBase {
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request =
-      new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(true);
-  private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(true);
+      new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(false);
+  private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(false);
 
-  private Angle m_hoodSetpoint = MANUAL_ANGLE.NOTHING.getAngle();
+  private Angle m_hoodSetpoint = MANUAL_ANGLE.STOWED.getAngle();
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
@@ -85,8 +85,8 @@ public class Hood extends SubsystemBase {
     if (RobotBase.isReal()) {
       encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
       encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
-      // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-      // HOOD.kAbsoluteSensorDiscontinuityPoint;
+      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+          HOOD.kAbsoluteSensorDiscontinuityPoint;
     }
     CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
 
@@ -97,17 +97,18 @@ public class Hood extends SubsystemBase {
     config.Slot0.kS = HOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimitEnable = false;
     config.ClosedLoopGeneral.ContinuousWrap = false;
     if (RobotBase.isReal()) {
-      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     } else {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     }
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    config.Feedback.RotorToSensorRatio = HOOD.gearRatio;
+    config.Feedback.RotorToSensorRatio = HOOD.rotorToSensorRatio;
     config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
+    config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
@@ -120,12 +121,8 @@ public class Hood extends SubsystemBase {
 
     CtreUtils.configureTalonFx(m_motor, config);
 
-    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.NOTHING.getAngle());
-    m_motor.setPosition(
-        getHoodAngle()
-            .times(HOOD.gearRatio)
-            .in(Rotations)); // Multiply by gear ratio to cancel the division from earlier for the
-    // internal sensor
+    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
+    m_motor.setPosition(getHoodAngle().times(HOOD.gearRatio).in(Rotations));
   }
 
   public void setAngle(Angle setpoint) {
@@ -167,7 +164,7 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
-    return (m_hoodSetpoint.in(Degrees) - getHoodAngleDegrees()) <= 1; // Works as good as always
+    return m_hoodSetpoint.minus(getHoodAngle()).lte(Degrees.of(1)); // Works as good as always
   }
 
   public boolean[] isConnected() {
@@ -179,15 +176,18 @@ public class Hood extends SubsystemBase {
   }
 
   public Command manualAgainstHubCommand() {
-    return this.startEnd(() -> setAngle(Degrees.of(6.5)), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.HUB.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   public Command manualAgainstTowerCommand() {
-    return this.startEnd(() -> setAngle(Degrees.of(13.8)), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.TOWER.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   public Command manualPassCommand() {
-    return this.startEnd(() -> setAngle(Degrees.of(22)), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.PASSING.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   @Override

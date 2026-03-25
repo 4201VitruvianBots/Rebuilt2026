@@ -6,7 +6,6 @@ package frc.robot.commands.autos.segments;
 
 import static edu.wpi.first.units.Units.Meters;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -36,8 +35,6 @@ public class IntakeFromNeutral extends Auto {
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
-
       var crossOverBump =
           PathPlannerPath.fromPathFile(
               startingFromShoot ? "CrossOverBumpFromShooting" : "CrossOverBumpFromStart");
@@ -51,16 +48,13 @@ public class IntakeFromNeutral extends Auto {
                   getPathCommand(swerveDrive, crossOverBump, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
           new ParallelDeadlineGroup(
                   getPathCommand(swerveDrive, intakeFromCenter, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Intaking from center..."))
-              .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Finished intaking from center")),
           getPathCommand(swerveDrive, returnToAllianceZone, flipToRight)
-              .andThen(() -> swerveDrive.setControl(stopRequest))
               .andThen(new PrintCommand("[AUTO] Returned to alliance zone")));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());

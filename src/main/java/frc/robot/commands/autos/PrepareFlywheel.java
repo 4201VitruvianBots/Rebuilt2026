@@ -23,6 +23,6 @@ public class PrepareFlywheel extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_flywheel.setRPMOutputFOC(Shoot.getShotForDistance(m_shootingDistance).shooterRPM);
+    m_flywheel.setRPMOutput(Shoot.getShotForDistance(m_shootingDistance).shooterRPM);
   }
 }
