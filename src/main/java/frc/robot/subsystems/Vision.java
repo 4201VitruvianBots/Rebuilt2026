@@ -357,7 +357,7 @@ public class Vision extends SubsystemBase {
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
 
-    if(DriverStation.isDisabled()) {
+    if (DriverStation.isDisabled()) {
       if (lllSuccess) {
         m_swerveDriveTrain.resetGyro(LLL.getLastGoodPose().getRotation().getDegrees());
       } else if (llrSuccess) {
