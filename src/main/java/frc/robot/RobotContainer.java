@@ -34,6 +34,7 @@ import frc.robot.commands.autos.routines.CenterPreload;
 import frc.robot.commands.autos.routines.SideNeutral;
 import frc.robot.commands.autos.routines.SideNeutralDepot;
 import frc.robot.commands.autos.routines.SideNeutralTwice;
+import frc.robot.commands.autos.routines.SimboticsAuto;
 import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.ShootNearStart;
@@ -311,6 +312,7 @@ public class RobotContainer {
     IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
     m_autoChooser.addOption("CenterPreload", new CenterPreload(autoDeps));
+    m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
     m_autoChooser.addOption("SideNeutralDepot", new SideNeutralDepot(autoDeps));
     m_autoChooser.addOption(
         "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
