@@ -20,7 +20,7 @@ public class SimboticsAuto extends Auto {
 
       addCommands(
           m_path1,
-          new AutoShoot(deps, 3.0),
+          new AutoShoot(deps, 2.7),
           m_path2);
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for Simbotics Auto", e.getStackTrace());
