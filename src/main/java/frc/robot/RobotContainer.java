@@ -263,7 +263,7 @@ public class RobotContainer {
 
     m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
     m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
-    
+
     m_driverController
         .x()
         .whileTrue(
