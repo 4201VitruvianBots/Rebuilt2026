@@ -31,6 +31,7 @@ public class Vision extends SubsystemBase {
 
   VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
   VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
+  VISION.Limelight LLB = new VISION.Limelight(CAMERA_SERVER.limelightB);
 
   private boolean m_localized;
 
@@ -355,10 +356,12 @@ public class Vision extends SubsystemBase {
     boolean lllSuccess = processLimelight(LLL);
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
+    //limelight-back
+    boolean llbSuccess = processLimelight(LLB);
 
     if (!m_localized) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
-      m_localized = lllSuccess && llrSuccess;
+      m_localized = lllSuccess && llrSuccess && llbSuccess;
     }
 
     // if (m_swerveDriveTrain != null) {

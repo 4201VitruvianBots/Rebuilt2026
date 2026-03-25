@@ -15,7 +15,9 @@ import edu.wpi.first.units.measure.Distance;
 public final class VISION {
   public enum CAMERA_SERVER {
     limelightL("limelight-left", "10.42.1.12"),
-    limelightR("limelight-right", "10.42.1.11");
+    limelightR("limelight-right", "10.42.1.11"),
+//limelight 3
+    limelightB("limelight-back", "10.42.1.13");
 
     private final String name;
     private final String ip;
