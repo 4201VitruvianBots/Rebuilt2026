@@ -90,6 +90,8 @@ public final class VISION {
     private final BooleanPublisher megatag2Pose;
     private final BooleanPublisher validPose;
 
+    private Pose2d lastGoodPose = Pose2d.kZero;
+
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
       var ntInst = NetworkTableInstance.getDefault();
@@ -152,6 +154,14 @@ public final class VISION {
       hbPub.set(heartbeat);
 
       return lastHeartbeat;
+    }
+
+    public void setLastGoodPose(Pose2d pose) {
+      lastGoodPose = pose;
+    }
+
+    public Pose2d getLastGoodPose() {
+      return lastGoodPose;
     }
 
     public boolean isAlive() {
