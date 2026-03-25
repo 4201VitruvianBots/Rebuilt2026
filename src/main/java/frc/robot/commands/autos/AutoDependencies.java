@@ -4,7 +4,6 @@
 
 package frc.robot.commands.autos;
 
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
@@ -20,7 +19,6 @@ import frc.robot.subsystems.Vision;
  */
 public class AutoDependencies {
   public final CommandSwerveDrivetrain swerveDrive;
-  public final Climber climber;
   public final Intake intake;
   public final Vision vision;
   public final Flywheel flywheel;
@@ -31,7 +29,6 @@ public class AutoDependencies {
 
   public AutoDependencies(
       CommandSwerveDrivetrain swerveDrive,
-      Climber climber,
       Intake intake,
       Vision vision,
       Flywheel flywheel,
@@ -40,7 +37,6 @@ public class AutoDependencies {
       Indexer indexer,
       Uptake uptake) {
     this.swerveDrive = swerveDrive;
-    this.climber = climber;
     this.intake = intake;
     this.vision = vision;
     this.flywheel = flywheel;

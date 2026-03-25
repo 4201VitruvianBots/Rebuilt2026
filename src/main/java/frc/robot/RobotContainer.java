@@ -88,9 +88,6 @@ public class RobotContainer {
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake;
 
-  // @Logged(name = "Climber", importance = Logged.Importance.INFO)
-  @NotLogged private Climber m_climber;
-
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led;
 
@@ -149,7 +146,7 @@ public class RobotContainer {
     initSmartDashboard();
 
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    field = new Field2d();
+    Field2d field = new Field2d();
     SmartDashboard.putData("Field", field);
 
     // Logging callback for current robot pose
@@ -218,7 +215,7 @@ public class RobotContainer {
       m_telemetry.registerFieldSim(m_fieldSim);
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
-          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
+          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
 
       DriverStation.silenceJoystickConnectionWarning(true);
     }
@@ -323,7 +320,6 @@ public class RobotContainer {
     var autoDeps =
         new AutoDependencies(
             m_swerveDrive,
-            m_climber,
             m_intake,
             m_vision,
             m_flywheel,
@@ -408,10 +404,6 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     // if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
-  }
-
-  public void disabledPeriodic() {
-    if (m_vision != null) m_vision.disabledPeriodic();
   }
 
   public void disabledPeriodic() {
