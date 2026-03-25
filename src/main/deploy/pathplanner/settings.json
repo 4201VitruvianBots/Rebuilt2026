@@ -3,10 +3,10 @@
   "robotLength": 0.775,
   "holonomicMode": true,
   "pathFolders": [
+    "1678 Auto",
     "CenterPreload",
     "IntakeAndShootFromDepot",
     "IntakeFromNeutral",
-    "1114 Auto",
     "ShootNearStart"
   ],
   "autoFolders": [],
