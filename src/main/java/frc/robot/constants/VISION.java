@@ -6,11 +6,16 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import frc.team4201.lib.vision.LimelightHelpers;
 
 public final class VISION {
   public enum CAMERA_SERVER {
@@ -82,6 +87,7 @@ public final class VISION {
     private final DoubleSubscriber hbSub;
     private double lastHeartbeat = -1.0;
     private boolean isAlive = false;
+    private final DoubleArraySubscriber stddevsSub;
 
     private final DoublePublisher hbPub;
     private final DoublePublisher estimatedTimestamp;
@@ -90,13 +96,15 @@ public final class VISION {
     private final BooleanPublisher megatag2Pose;
     private final BooleanPublisher validPose;
 
-    private Pose2d lastGoodPose = Pose2d.kZero;
+    private LimelightHelpers.PoseEstimate lastGoodEstimate = new LimelightHelpers.PoseEstimate();
+    private Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);
 
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
       var ntInst = NetworkTableInstance.getDefault();
       var llSubTable = ntInst.getTable(limelight.name);
       hbSub = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
+      stddevsSub = llSubTable.getDoubleArrayTopic("stddevs").subscribe(new double[12]);
 
       var llPubTable = ntInst.getTable("llTable").getSubTable(limelight.name);
       hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
@@ -156,12 +164,27 @@ public final class VISION {
       return lastHeartbeat;
     }
 
-    public void setLastGoodPose(Pose2d pose) {
-      lastGoodPose = pose;
+    public Matrix<N3, N1> getStdDev(boolean mt2) {
+      var stddevArray = stddevsSub.get();
+      if (!mt2) {
+        stdDevs = VecBuilder.fill(stddevArray[0], stddevArray[1], stddevArray[5]);
+      } else {
+        stdDevs = VecBuilder.fill(stddevArray[6], stddevArray[7], stddevArray[11]);
+      }
+
+      return stdDevs;
     }
 
-    public Pose2d getLastGoodPose() {
-      return lastGoodPose;
+    public Matrix<N3, N1> getStdDev() {
+      return stdDevs;
+    }
+
+    public void setLastGoodEstimate(LimelightHelpers.PoseEstimate estimate) {
+      lastGoodEstimate = estimate;
+    }
+
+    public LimelightHelpers.PoseEstimate getLastGoodEstimate() {
+      return lastGoodEstimate;
     }
 
     public boolean isAlive() {
