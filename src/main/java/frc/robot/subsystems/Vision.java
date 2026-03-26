@@ -190,6 +190,7 @@ public class Vision extends SubsystemBase {
     if (validResult) {
       // Only good updates reach this point, so use them for updating the robot pose
       assert limelightMeasurement != null;
+      limelight.setLastGoodPose(limelightMeasurement.pose);
       m_swerveDriveTrain.addVisionMeasurement(
           limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
 
@@ -355,6 +356,14 @@ public class Vision extends SubsystemBase {
     boolean lllSuccess = processLimelight(LLL);
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
+
+    if (DriverStation.isDisabled()) {
+      if (lllSuccess) {
+        m_swerveDriveTrain.resetGyro(LLL.getLastGoodPose().getRotation().getDegrees());
+      } else if (llrSuccess) {
+        m_swerveDriveTrain.resetGyro(LLR.getLastGoodPose().getRotation().getDegrees());
+      }
+    }
 
     if (!m_localized) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
