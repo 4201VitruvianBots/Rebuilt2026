@@ -10,6 +10,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -123,6 +124,8 @@ public class RobotContainer {
   private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest =
       new SwerveRequest.SwerveDriveBrake();
 
+  private SlewRateLimiter driveAccelLimiter = new SlewRateLimiter(10, -3, 0);
+
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry =
       new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
@@ -162,12 +165,12 @@ public class RobotContainer {
             () ->
                 drive
                     .withVelocityX(
-                        MaxSpeed.times(
+                        MaxSpeed.times(driveAccelLimiter.calculate(
                             -m_driverController
-                                .getLeftY())) // Drive forward with negative Y (forward)
+                                .getLeftY()))) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        MaxSpeed.times(
-                            -m_driverController.getLeftX())) // Drive left with negative X (left)
+                        MaxSpeed.times(driveAccelLimiter.calculate(
+                            -m_driverController.getLeftX()))) // Drive left with negative X (left)
                     .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
