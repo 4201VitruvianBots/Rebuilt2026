@@ -256,6 +256,10 @@ public class Vision extends SubsystemBase {
   public boolean llrConnected() {
     return LLR.isAlive();
   }
+  @Logged(name = "LLB Connected", importance = Logged.Importance.INFO)
+  public boolean llbConnected() {
+    return LLB.isAlive();
+  }
 
   /** Stop the nearest target from updating when we want to score to avoid target switching */
   public void setTargetLock(boolean set) {
