@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.hammerheads5000.FuelSim;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.*;
 import frc.robot.commands.swerve.AutoAlignDrive;
@@ -141,11 +142,11 @@ public class RobotContainer {
                     .withVelocityX(
                         MaxSpeed.times(
                             -m_driverController
-                                .getLeftY())) // Drive forward with negative Y (forward)
+                                .getLeftY() * 0.2)) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         MaxSpeed.times(
-                            -m_driverController.getLeftX())) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
+                            -m_driverController.getLeftX() * 0.2)) // Drive left with negative X (left)
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX() * 0.1))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -190,45 +191,62 @@ public class RobotContainer {
     //       .toggleOnTrue(
     //           new AutoAlignDrive(
     //               m_swerveDrive,
-    //               m_vision,P
+    //               m_vision,
     //               m_driverController::getLeftY,
     //               m_driverController::getLeftX));
     // }
 
-    m_driverController
-        .y()
-        .whileTrue(
-            new AutoAlignDrive(
-                m_swerveDrive,
-                m_vision,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
+    // m_driverController
+    //     .y()
+    //     .whileTrue(
+    //         new AutoAlignDrive(
+    //             m_swerveDrive,
+    //             m_vision,
+    //             m_driverController::getLeftY,
+    //             m_driverController::getLeftX));
     m_driverController
         .x()
         .whileTrue(
             new ParallelCommandGroup(
                 m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
+    // m_driverController
+    //     .leftBumper()
+    //     .whileTrue(
+    //         new Shoot(
+    //             m_flywheel,
+    //             m_hood,
+    //             m_vision,
+    //             m_driverController,
+    //             m_swerveDrive,
+    //             m_driverController::getLeftY,
+    //             m_driverController::getLeftX));
+
+    // m_driverController
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
+    
     m_driverController
         .leftBumper()
-        .whileTrue(
-            new Shoot(
-                m_flywheel,
-                m_hood,
-                m_vision,
-                m_driverController,
-                m_swerveDrive,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
+        .whileTrue(new IntakeCommand(m_intake, null, m_indexer, m_uptake));
 
+        
     m_driverController
         .leftTrigger()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
+        .whileTrue(new IntakeCommand(m_intake, null, m_indexer, m_uptake));
 
     m_driverController
         .rightTrigger()
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_intake.command(INTAKE_SPEED.INTAKING),
+                m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
+                m_uptake.percentCommand(0.7)));
+    
+    m_driverController
+        .rightBumper()
         .whileTrue(
             new ParallelCommandGroup(
                 m_intake.command(INTAKE_SPEED.INTAKING),
