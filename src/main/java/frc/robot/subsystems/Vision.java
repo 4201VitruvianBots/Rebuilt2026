@@ -256,6 +256,7 @@ public class Vision extends SubsystemBase {
   public boolean llrConnected() {
     return LLR.isAlive();
   }
+
   @Logged(name = "LLB Connected", importance = Logged.Importance.INFO)
   public boolean llbConnected() {
     return LLB.isAlive();
@@ -360,7 +361,7 @@ public class Vision extends SubsystemBase {
     boolean lllSuccess = processLimelight(LLL);
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
-    //limelight-back
+    // limelight-back
     boolean llbSuccess = processLimelight(LLB);
 
     if (!m_localized) {
