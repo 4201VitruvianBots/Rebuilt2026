@@ -10,20 +10,20 @@ import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakePivot;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
+import frc.robot.subsystems.IntakePivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class JostleIntake extends Command {
 
   private final IntakePivot m_intakePivot;
   private Timer m_sineWaveTimer = new Timer();
+
   /** Creates a new JostleIntake. */
   public JostleIntake(IntakePivot intakePivot) {
     m_intakePivot = intakePivot;
 
-    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakePivot);
   }
@@ -38,7 +38,12 @@ public class JostleIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Angle angle = Degrees.of(PIVOT.maxAngle.in(Degrees) * -Math.cos((m_sineWaveTimer.get() * Math.PI * 2 / PIVOT.pivotCycleTime.in(Seconds))) + PIVOT.maxAngle.abs(Degrees));
+    Angle angle =
+        Degrees.of(
+            PIVOT.maxAngle.in(Degrees)
+                    * -Math.cos(
+                        (m_sineWaveTimer.get() * Math.PI * 2 / PIVOT.pivotCycleTime.in(Seconds)))
+                + PIVOT.maxAngle.abs(Degrees));
     m_intakePivot.setAngle(angle);
   }
 

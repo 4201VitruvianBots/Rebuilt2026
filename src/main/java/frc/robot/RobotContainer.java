@@ -272,12 +272,9 @@ public class RobotContainer {
       m_driverController
           .y()
           .whileTrue(
-                // m_intakePivot.jostle()
-                new JostleIntake(m_intakePivot)
-              );
+              // m_intakePivot.jostle()
+              new JostleIntake(m_intakePivot));
     }
-
-
 
     m_driverController
         .leftBumper()

@@ -91,7 +91,7 @@ public class INTAKE {
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.Clockwise_Positive;
 
-    public static final Time pivotCycleTime = Seconds.of(1.65); //TODO: measure and tune this time.
+    public static final Time pivotCycleTime = Seconds.of(1.65); // TODO: measure and tune this time.
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(55.0)),
