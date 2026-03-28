@@ -18,7 +18,7 @@ import frc.robot.commands.autos.PrepareFlywheel;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
-public class IntakeFromNeutral extends Auto {
+public class IntakeFromNeutralSecondPass extends Auto {
 
   public static void registerNamedCommands(AutoDependencies deps) {
     NamedCommands.registerCommand(
@@ -27,7 +27,7 @@ public class IntakeFromNeutral extends Auto {
             .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
   }
 
-  public IntakeFromNeutral(
+  public IntakeFromNeutralSecondPass(
       AutoDependencies deps, boolean startingFromShoot, BooleanSupplier flipToRight) {
     try {
       var swerveDrive = deps.swerveDrive;
@@ -35,27 +35,15 @@ public class IntakeFromNeutral extends Auto {
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var crossOverBump =
-          PathPlannerPath.fromPathFile(
-              startingFromShoot ? "CrossOverBumpFromShooting" : "CrossOverBumpFromStart");
-
-      var intakeFromCenter = PathPlannerPath.fromPathFile("IntakeFromCenter");
-
-      var returnToAllianceZone = PathPlannerPath.fromPathFile("ReturnToAllianceZone");
+      var path =
+          PathPlannerPath.fromPathFile("1678pt2");
 
       addCommands(
           new ParallelDeadlineGroup(
-                  getPathCommand(swerveDrive, crossOverBump, flipToRight),
+                  getPathCommand(swerveDrive, path, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
-          new ParallelDeadlineGroup(
-                  getPathCommand(swerveDrive, intakeFromCenter, flipToRight),
-                  new IntakeCommand(intake, intakePivot, uptake),
-                  new PrintCommand("[AUTO] Intaking from center..."))
-              .andThen(new PrintCommand("[AUTO] Finished intaking from center")),
-          getPathCommand(swerveDrive, returnToAllianceZone, flipToRight)
-              .andThen(new PrintCommand("[AUTO] Returned to alliance zone")));
+              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());

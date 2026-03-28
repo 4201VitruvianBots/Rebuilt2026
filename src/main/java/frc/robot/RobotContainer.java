@@ -37,7 +37,7 @@ import frc.robot.commands.autos.routines.SideNeutralDepot;
 import frc.robot.commands.autos.routines.SideNeutralTwice;
 import frc.robot.commands.autos.routines.SimboticsAuto;
 import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
-import frc.robot.commands.autos.segments.IntakeFromNeutral;
+import frc.robot.commands.autos.segments.IntakeFromNeutralFirstPass;
 import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
@@ -124,7 +124,12 @@ public class RobotContainer {
   private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest =
       new SwerveRequest.SwerveDriveBrake();
 
-  private SlewRateLimiter driveAccelLimiter = new SlewRateLimiter(10, -3, 0);
+  // Units per second, where 100% = 1 unit. Multiply by our robot's max speed to get m/s accel limit
+  //TODO: Change these values
+  // Needs seperate filters because each filter takes in different values 
+  // The robot base is also a square so acceleration limits will be different depending on direction
+  private SlewRateLimiter driveXAccelLimiter = new SlewRateLimiter(SWERVE.kXAccelRateLimit, SWERVE.kXDeccelRateLimit, 0); 
+  private SlewRateLimiter driveYAccelLimiter = new SlewRateLimiter(SWERVE.kYAccelRateLimit, SWERVE.kYDeccelRateLimit, 0); 
 
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry =
@@ -165,11 +170,11 @@ public class RobotContainer {
             () ->
                 drive
                     .withVelocityX(
-                        MaxSpeed.times(driveAccelLimiter.calculate(
+                        MaxSpeed.times(driveYAccelLimiter.calculate(
                             -m_driverController
                                 .getLeftY()))) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        MaxSpeed.times(driveAccelLimiter.calculate(
+                        MaxSpeed.times(driveXAccelLimiter.calculate(
                             -m_driverController.getLeftX()))) // Drive left with negative X (left)
                     .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
     m_flywheel = new Flywheel();
@@ -311,7 +316,7 @@ public class RobotContainer {
             m_indexer,
             m_uptake);
 
-    IntakeFromNeutral.registerNamedCommands(autoDeps);
+    IntakeFromNeutralFirstPass.registerNamedCommands(autoDeps);
     IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
     m_autoChooser.addOption("CenterPreload", new CenterPreload(autoDeps));
@@ -325,7 +330,7 @@ public class RobotContainer {
     m_autoChooser.addOption(
         "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
-        "Test - Intake from Neutral", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
+        "Test - Intake from Neutral", new IntakeFromNeutralFirstPass(autoDeps, false, () -> m_flipToRight));
   }
 
   private void initSideChooser() {
