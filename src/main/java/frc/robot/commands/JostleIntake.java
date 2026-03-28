@@ -38,7 +38,7 @@ public class JostleIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Angle angle = Degrees.of(PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees) * Math.cos((PIVOT.pivotCycleTime.abs(Seconds) * m_sineWaveTimer.get() * Math.PI * 2)) + PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees));
+    Angle angle = Degrees.of(PIVOT.maxAngle.in(Degrees) * -Math.cos((m_sineWaveTimer.get() * Math.PI * 2 / PIVOT.pivotCycleTime.in(Seconds))) + PIVOT.maxAngle.abs(Degrees));
     m_intakePivot.setAngle(angle);
   }
 
@@ -46,6 +46,7 @@ public class JostleIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     m_sineWaveTimer.stop();
+    m_intakePivot.setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
   }
 
   // Returns true when the command should end.

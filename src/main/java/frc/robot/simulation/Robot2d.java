@@ -237,6 +237,7 @@ public class Robot2d extends SubsystemBase {
       //   wasd = walk
       //   spacebar = jump
       //   helloWorld("print");
+      //   fuel physics = highly accurate and exaggerated
       // thank you joaquin
     }
   }
