@@ -91,7 +91,7 @@ public class Robot2d extends SubsystemBase {
                   "Intake Pivot",
                   m_colorIntake,
                   Degrees.of(
-                      159), // Angle between chassis and first segment of intake when extended
+                      105), // Angle between chassis and first segment of intake when extended
                   Inches.of(10.735) // Length of first segment of intake
                   )
               .withLineWidth(
@@ -274,7 +274,7 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("IntakePivot")) {
       var intakePivotSubsystem = (IntakePivot) m_subsystemMap.get("IntakePivot");
       m_intakePivot.update(
-          Degrees.of(-159).plus(INTAKE.PIVOT.maxAngle).minus(intakePivotSubsystem.getAngle()));
+          Degrees.of(-105).plus(INTAKE.PIVOT.maxAngle).minus(intakePivotSubsystem.getAngle()));
       var pivotAngle = intakePivotSubsystem.getAngle();
       componentPoses[0] =
           new Pose3d(
