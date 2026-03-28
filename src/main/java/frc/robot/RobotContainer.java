@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -47,6 +48,7 @@ import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
+import frc.robot.constants.SWERVE.MOTOR_TYPE;
 import frc.robot.constants.SWERVE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
@@ -158,6 +160,10 @@ public class RobotContainer {
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
+  public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype){
+    return m_swerveDrive.runOnce(() -> m_swerveDrive.setNeutralMode(motortype, neutralmode));
+  }
+
   private void initializeSubSystems() {
     if (ROBOT.robotID.equals(ROBOT_ID.V1)) {
       m_swerveDrive = V1Constants.createDrivetrain();
@@ -245,14 +251,14 @@ public class RobotContainer {
     //             m_driverController::getLeftY,
     //             m_driverController::getLeftX));
 
-    m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-    m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
+    // m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    // m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
     
-    m_driverController
-        .x()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+    // m_driverController
+    //     .x()
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
     m_driverController
         .leftBumper()
@@ -293,10 +299,8 @@ public class RobotContainer {
     // }
 
     // if (m_swerveDrive != null) {
-    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
-    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
-    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
-    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast, MOTOR_TYPE.STEER));
+    //   m_driverController.b().whileTrue(setDrivetrainMode(NeutralModeValue.Brake, MOTOR_TYPE.STEER));
     // }
   }
 
