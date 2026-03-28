@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.135430346051464,
-        "y": 4.996725820763088
+        "x": 2.9100887311446315,
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0681065803224654,
-        "y": 5.7491701360795595
+        "x": 0.8427649654156331,
+        "y": 6.252444315316471
       },
       "isLocked": false,
       "linkedName": "ShootingPoint"
@@ -64,7 +64,7 @@
   "folder": "Zold - SideNeutralClimb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -31.798912824294426
+    "rotation": -38.60547407180937
   },
   "useDefaultConstraints": true
 }

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.591361607142857,
-        "y": 5.5
+        "x": 3.586113575865128,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.613293628609762,
-        "y": 5.487173524150268
+        "x": 4.608045597332033,
+        "y": 5.523109637726133
       },
       "isLocked": false,
       "linkedName": "SideStartPoint"
@@ -57,7 +57,7 @@
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -51.792
   },
   "useDefaultConstraints": false
 }

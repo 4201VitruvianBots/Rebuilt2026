@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.591361607142857,
-        "y": 5.5
+        "x": 3.586113575865128,
+        "y": 5.535936113575865
       },
       "prevControl": {
-        "x": 2.591361607142857,
-        "y": 5.5
+        "x": 2.586113575865128,
+        "y": 5.535936113575865
       },
       "nextControl": null,
       "isLocked": false,
@@ -59,7 +59,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -51.792
   },
   "reversed": false,
   "folder": "IntakeFromNeutral",

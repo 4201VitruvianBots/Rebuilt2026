@@ -25,7 +25,7 @@ public class ShootNearStart extends Auto {
 
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var path = PathPlannerPath.fromPathFile("ShootNearStart");
+      var path = PathPlannerPath.fromPathFile("1678pt1");
 
       addCommands(
           new PrepareFlywheel(flywheel, Meters.of(1.45650895207174))
