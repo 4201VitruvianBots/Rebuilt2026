@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.Utils;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.Matrix;
@@ -294,12 +295,16 @@ public class Vision extends SubsystemBase {
     limelight.publishValid(validResult);
     if (limelightMeasurement != null) {
       limelight.publishTimestamp(limelightMeasurement.timestampSeconds);
+      limelight.publishRobotTimestamp(Utils.getCurrentTimeSeconds());
       limelight.publishPose(limelightMeasurement.pose);
+      limelight.publishPoseStdDevs(limelight.getStdDev(limelightMeasurement.isMegaTag2));
       limelight.publishTagCount(limelightMeasurement.tagCount);
       limelight.publishMegatag2Pose(limelightMeasurement.isMegaTag2);
     } else {
       limelight.publishTimestamp(-1);
+      limelight.publishRobotTimestamp(-1);
       limelight.publishPose(new Pose2d(-1, -1, Rotation2d.kZero));
+      limelight.publishPoseStdDevs(VecBuilder.fill(0, 0, 0));
       limelight.publishTagCount(-1);
       limelight.publishMegatag2Pose(false);
     }

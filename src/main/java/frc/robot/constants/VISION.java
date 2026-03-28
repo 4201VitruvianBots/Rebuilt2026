@@ -91,7 +91,9 @@ public final class VISION {
 
     private final DoublePublisher hbPub;
     private final DoublePublisher estimatedTimestamp;
+    private final DoublePublisher robotTimestamp;
     private final StructPublisher<Pose2d> estimatedPose;
+    private final DoubleArrayPublisher estimatedPoseStdDevs;
     private final IntegerPublisher numTags;
     private final BooleanPublisher megatag2Pose;
     private final BooleanPublisher validPose;
@@ -110,8 +112,12 @@ public final class VISION {
       hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
       estimatedTimestamp = llPubTable.getDoubleTopic("estTimestamp").publish();
       estimatedTimestamp.setDefault(-1);
+      robotTimestamp = llPubTable.getDoubleTopic("robotTimestamp").publish();
+      robotTimestamp.setDefault(-1);
       estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
       estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
+      estimatedPoseStdDevs = llPubTable.getDoubleArrayTopic("stddevs").publish();
+      estimatedPoseStdDevs.setDefault(new double[3]);
       numTags = llPubTable.getIntegerTopic("numTags").publish();
       numTags.setDefault(-1);
       megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();
@@ -134,8 +140,16 @@ public final class VISION {
       estimatedTimestamp.set(timestamp);
     }
 
+    public void publishRobotTimestamp(double timestamp) {
+      robotTimestamp.set(timestamp);
+    }
+
     public void publishPose(Pose2d pose) {
       estimatedPose.set(pose);
+    }
+
+    public void publishPoseStdDevs(Matrix<N3, N1> stdDevs) {
+      estimatedPoseStdDevs.set(stdDevs.getData());
     }
 
     public void publishTagCount(int tags) {
