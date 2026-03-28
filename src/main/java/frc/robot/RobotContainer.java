@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -56,6 +57,8 @@ import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.POVUtils;
 import frc.team4201.lib.utils.Telemetry;
+
+import java.util.List;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -146,28 +149,26 @@ public class RobotContainer {
     initSmartDashboard();
 
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    Field2d field = new Field2d();
-    SmartDashboard.putData("Field", field);
 
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback(
         (pose) -> {
           // Do whatever you want with the pose here
-          field.setRobotPose(pose);
+          m_fieldSim.addPoses("PP_RobotPose", pose);
         });
 
     // Logging callback for target robot pose
     PathPlannerLogging.setLogTargetPoseCallback(
         (pose) -> {
           // Do whatever you want with the pose here
-          field.getObject("target pose").setPose(pose);
+          m_fieldSim.addPoses("PP_TargetPose", pose);
         });
 
     // Logging callback for the active path, this is sent as a list of poses
     PathPlannerLogging.setLogActivePathCallback(
         (poses) -> {
           // Do whatever you want with the poses here
-          field.getObject("path").setPoses(poses);
+          m_fieldSim.addPoses("PP_Trajectory", poses.toArray(new Pose2d[0]));
         });
   }
 
@@ -198,6 +199,7 @@ public class RobotContainer {
     m_uptake = new Uptake();
     m_indexer = new Indexer();
     m_controls.registerSubsystem(m_vision);
+    m_fieldSim = new FieldSim();
 
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
       m_intakePivot = new IntakePivot();
@@ -208,7 +210,6 @@ public class RobotContainer {
     }
 
     if (Robot.isSimulation()) {
-      m_fieldSim = new FieldSim();
       m_fuelSim = new FuelSim();
       m_telemetry.registerFieldSim(m_fieldSim);
       m_vision.registerFieldSim(m_fieldSim);
