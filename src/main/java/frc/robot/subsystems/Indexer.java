@@ -61,7 +61,7 @@ public class Indexer extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = INDEXER.kP;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = INDEXER.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = INDEXER.peakReverseOutput;
     config.Feedback.SensorToMechanismRatio = INDEXER.gearRatio;
@@ -69,7 +69,7 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = INDEXER.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     CtreUtils.configureTalonFx(m_indexerMotor2, config);
 
     // m_indexerMotor2.setControl(
