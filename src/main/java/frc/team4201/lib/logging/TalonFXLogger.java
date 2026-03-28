@@ -2,14 +2,12 @@ package frc.team4201.lib.logging;
 
 import static edu.wpi.first.units.Units.Hertz;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.epilogue.CustomLoggerFor;
 import edu.wpi.first.epilogue.logging.ClassSpecificLogger;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import frc.robot.constants.CAN;
-
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
@@ -38,11 +36,13 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
           motor.getClosedLoopReference(),
           motor.getClosedLoopError());
 
-      if(Objects.equals(motor.getNetwork(), CAN.roboRIO)) {
-        System.out.printf("Adding TalonFX %02d to be logged from roboRIO\n", motor.getDeviceID());
+      if (Objects.equals(motor.getNetwork(), CAN.roboRIO)) {
+        System.out.printf("Adding TalonFX %02d (%s) to be logged from roboRIO\n",
+            motor.getDeviceID(), motor.getDescription());
         signals.setUpdateFrequencyForAll(Hertz.of(50));
       } else {
-        System.out.printf("Adding TalonFX %02d to be logged from canivore\n", motor.getDeviceID());
+        System.out.printf("Adding TalonFX %02d (%s) to be logged from canivore\n",
+            motor.getDeviceID(), motor.getDescription());
         signals.setUpdateFrequencyForAll(Hertz.of(250));
       }
       motor.optimizeBusUtilization(Hertz.of(1));

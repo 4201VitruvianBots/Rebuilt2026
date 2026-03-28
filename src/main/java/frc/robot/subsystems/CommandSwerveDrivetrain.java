@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -48,18 +49,37 @@ import org.json.simple.parser.ParseException;
  * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements SwerveSubsystem {
+
+  @Logged(name = "FL_driveMotor", importance = Logged.Importance.INFO)
+  private final TalonFX FL_driveMotor = getModule(0).getDriveMotor();
+  @Logged(name = "FR_driveMotor", importance = Logged.Importance.INFO)
+  private final TalonFX FR_driveMotor = getModule(1).getDriveMotor();
+  @Logged(name = "BL_driveMotor", importance = Logged.Importance.INFO)
+  private final TalonFX BL_driveMotor = getModule(2).getDriveMotor();
+  @Logged(name = "BR_driveMotor", importance = Logged.Importance.INFO)
+  private final TalonFX BR_driveMotor = getModule(3).getDriveMotor();
+
+  @Logged(name = "FL_steerMotor", importance = Logged.Importance.INFO)
+  private final TalonFX FL_steerMotor = getModule(0).getSteerMotor();
+  @Logged(name = "FR_steerMotor", importance = Logged.Importance.INFO)
+  private final TalonFX FR_steerMotor = getModule(1).getSteerMotor();
+  @Logged(name = "BL_steerMotor", importance = Logged.Importance.INFO)
+  private final TalonFX BL_steerMotor = getModule(2).getSteerMotor();
+  @Logged(name = "BR_steerMotor", importance = Logged.Importance.INFO)
+  private final TalonFX BR_steerMotor = getModule(3).getSteerMotor();
+
   private final TalonFX[] driveMotors = {
-    getModule(0).getDriveMotor(),
-    getModule(1).getDriveMotor(),
-    getModule(2).getDriveMotor(),
-    getModule(3).getDriveMotor()
+    FL_driveMotor,
+    FR_driveMotor,
+    BL_driveMotor,
+    BR_driveMotor
   };
 
   private final TalonFX[] steerMotors = {
-    getModule(0).getSteerMotor(),
-    getModule(1).getSteerMotor(),
-    getModule(2).getSteerMotor(),
-    getModule(3).getSteerMotor()
+    FL_steerMotor,
+    FR_steerMotor,
+    BL_steerMotor,
+    BR_steerMotor
   };
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
