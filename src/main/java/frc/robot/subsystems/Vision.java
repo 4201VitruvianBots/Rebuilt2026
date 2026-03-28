@@ -24,6 +24,7 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 import frc.robot.constants.VISION.TARGET;
 import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.vision.Limelight;
 import frc.team4201.lib.vision.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
@@ -57,6 +58,8 @@ public class Vision extends SubsystemBase {
 
   private final StructPublisher<Pose2d> estPoseLLL =
       table.getStructTopic("estPoseLLL", Pose2d.struct).publish();
+
+  private int[] excludeTrenchTags = {2,3,4,5,8,9,10,11,13,14,15,16,18,19,20,21,24,25,26,27,29,30,31,32};
 
   public Vision(Controls controls) {
     m_controls = controls;
@@ -209,6 +212,7 @@ public class Vision extends SubsystemBase {
         if (limelightMeasurement.tagCount < 2) {
           return false;
         }
+        LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, excludeTrenchTags);
 
         hasInitialPose = true;
         // Set Standard Deviations for MegaTag1
@@ -218,6 +222,7 @@ public class Vision extends SubsystemBase {
         if (m_swerveDriveTrain.getGyroYawRate().abs(DegreesPerSecond) > 720.0) {
           return false;
         }
+        LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, excludeTrenchTags);
 
         // Set Standard Deviations for MegaTag2
         m_swerveDriveTrain.setVisionMeasurementStdDevs(VecBuilder.fill(.4, .4, 9999999));
