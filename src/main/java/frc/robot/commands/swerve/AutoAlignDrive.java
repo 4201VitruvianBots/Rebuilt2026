@@ -19,9 +19,9 @@ public class AutoAlignDrive extends Command {
   /** Creates a new AutoAlign. */
   public AutoAlignDrive(
       CommandSwerveDrivetrain commandSwerveDrivetrain,
-      Vision vision,
       DoubleSupplier throttleInput,
-      DoubleSupplier strafeInput) {
+      DoubleSupplier strafeInput,
+      Vision vision) {
     m_vision = vision;
     m_swerveDrivetrain = commandSwerveDrivetrain;
     m_throttleInput = throttleInput;

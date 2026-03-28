@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 5.5
+        "x": 3.586113575865128,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5,
-        "y": 4.879187278863658
+        "x": 3.964950178127934,
+        "y": 5.535936113575865
       },
       "isLocked": false,
       "linkedName": "SideStartPoint"
     },
     {
       "anchor": {
-        "x": 3.25,
-        "y": 4.5
+        "x": 3.135430346051464,
+        "y": 4.996725820763088
       },
       "prevControl": {
-        "x": 3.25,
-        "y": 4.817424138370334
+        "x": 3.249534405627019,
+        "y": 5.2654425592681395
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,11 +31,22 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": -28.500000000000004
+      "rotationDegrees": -29.999999999999996
     }
   ],
   "constraintZones": [],
-  "pointTowardsZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.63,
+        "y": 4.05
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.5008976660682227,
+      "maxWaypointRelativePos": 1.0,
+      "name": "Point Towards Zone"
+    }
+  ],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
@@ -46,8 +57,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -35.0
+    "velocity": 0.0,
+    "rotation": -31.798912824294426
   },
   "reversed": false,
   "folder": "ShootNearStart",

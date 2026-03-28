@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 5.5
+        "x": 3.586113575865128,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.521932021466905,
-        "y": 5.487173524150268
+        "x": 4.608045597332033,
+        "y": 5.523109637726133
       },
       "isLocked": false,
       "linkedName": "SideStartPoint"
     },
     {
       "anchor": {
-        "x": 6.0,
-        "y": 5.5
+        "x": 5.705,
+        "y": 5.536
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 5.5
+        "x": 3.6608296362023065,
+        "y": 5.536
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,40 +40,17 @@
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "MeasureIntakeBefore",
-      "waypointRelativePos": 0.19928186714542165,
-      "endWaypointRelativePos": 0.7109515260323171,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "measureIntakeBefore"
-        }
-      }
-    },
-    {
-      "name": "MeasureIntakeAfter",
-      "waypointRelativePos": 0.7055655296229802,
-      "endWaypointRelativePos": 1.0,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "measureIntakeAfter"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.6764,
-    "maxAcceleration": 1.676,
+    "maxVelocity": 2.2,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 1.5,
     "rotation": 0.0
   },
   "reversed": false,

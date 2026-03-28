@@ -7,49 +7,61 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice1"
+            "pathName": "ShootNearStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice2"
+            "pathName": "CrossOverBumpFromShooting"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice3"
+            "pathName": "IntakeFromCenter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice4"
+            "pathName": "ReturnToAllianceZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice5"
+            "pathName": "ShootNearStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice6"
+            "pathName": "CrossOverBumpFromShooting"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralTwice7"
+            "pathName": "IntakeFromCenter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ReturnToAllianceZone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ShootNearStart"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Old",
+  "folder": null,
   "choreoAuto": false
 }

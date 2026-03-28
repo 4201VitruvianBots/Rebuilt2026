@@ -7,43 +7,55 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralDepotClimb1"
+            "pathName": "CrossOverBumpFromStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralDepotClimb2"
+            "pathName": "IntakeFromCenter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralDepotClimb3"
+            "pathName": "ReturnToAllianceZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralDepotClimb4"
+            "pathName": "ShootNearStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralDepotClimb5"
+            "pathName": "CrossOverBumpFromShooting"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralDepotClimb6"
+            "pathName": "IntakeFromCenter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ReturnToAllianceZone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ShootNearStart"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Old",
+  "folder": null,
   "choreoAuto": false
 }

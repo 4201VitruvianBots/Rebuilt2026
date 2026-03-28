@@ -35,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
-import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
@@ -87,7 +86,7 @@ public class Hood extends SubsystemBase {
       encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
       encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
       encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-      HOOD.kAbsoluteSensorDiscontinuityPoint;
+          HOOD.kAbsoluteSensorDiscontinuityPoint;
     }
     CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
 
@@ -115,7 +114,6 @@ public class Hood extends SubsystemBase {
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
     config.MotionMagic.MotionMagicJerk = HOOD.motionMagicJerk;
 
-
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = HOOD.maxAngle.in(Rotations);
@@ -124,10 +122,7 @@ public class Hood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
-    m_motor.setPosition(
-        getHoodAngle()
-            .times(HOOD.gearRatio)
-            .in(Rotations)); 
+    m_motor.setPosition(getHoodAngle().times(HOOD.gearRatio).in(Rotations));
   }
 
   public void setAngle(Angle setpoint) {
@@ -135,7 +130,7 @@ public class Hood extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
   }
 
   @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)
@@ -158,7 +153,8 @@ public class Hood extends SubsystemBase {
     return m_cancoder
         .getPosition()
         .refresh()
-        .getValue().div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
+        .getValue()
+        .div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)
@@ -168,7 +164,7 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
   public boolean atSetpoint() {
-    return (m_hoodSetpoint.in(Degrees) - getHoodAngleDegrees()) <= 1; // Works as good as always
+    return m_hoodSetpoint.minus(getHoodAngle()).lte(Degrees.of(1)); // Works as good as always
   }
 
   public boolean[] isConnected() {
@@ -180,15 +176,18 @@ public class Hood extends SubsystemBase {
   }
 
   public Command manualAgainstHubCommand() {
-    return this.startEnd(() -> setAngle(MANUAL_ANGLE.HUB.getAngle()), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.HUB.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   public Command manualAgainstTowerCommand() {
-    return this.startEnd(() -> setAngle(MANUAL_ANGLE.TOWER.getAngle()), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.TOWER.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   public Command manualPassCommand() {
-    return this.startEnd(() -> setAngle(MANUAL_ANGLE.PASSING.getAngle()), () -> setAngle(Degrees.of(0.0)));
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.PASSING.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   @Override

@@ -7,37 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb1"
+            "pathName": "CrossOverBumpFromStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb2"
+            "pathName": "IntakeFromCenter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb3"
+            "pathName": "ReturnToAllianceZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SideNeutralClimb4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SideNeutralClimb5Depot"
+            "pathName": "ShootNearStart"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Old",
+  "folder": null,
   "choreoAuto": false
 }

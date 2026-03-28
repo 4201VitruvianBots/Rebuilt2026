@@ -22,7 +22,7 @@ public class V2Constants {
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
-    new Slot0Configs()
+      new Slot0Configs()
           .withKP(35.17) // Previous value 100
           .withKI(0) // Previous value 0
           .withKD(1.6779) // Previous value 0.5
@@ -65,8 +65,7 @@ public class V2Constants {
           .withCurrentLimits(
               new CurrentLimitsConfigs()
                   // Swerve azimuth does not require much torque output, so we can set a relatively
-                  // low
-                  // stator current limit to help avoid brownouts without impacting performance.
+                  // low stator current limit to help avoid brownouts without impacting performance.
                   .withStatorCurrentLimit(Amps.of(20))
                   .withStatorCurrentLimitEnable(true));
   private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
@@ -137,7 +136,7 @@ public class V2Constants {
   private static final int kFrontLeftDriveMotorId = 20;
   private static final int kFrontLeftSteerMotorId = 21;
   private static final int kFrontLeftEncoderId = 10;
-  private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.170654296875);
+  private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.170166015625);
   private static final boolean kFrontLeftSteerMotorInverted = false;
   private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -148,7 +147,7 @@ public class V2Constants {
   private static final int kFrontRightDriveMotorId = 22;
   private static final int kFrontRightSteerMotorId = 23;
   private static final int kFrontRightEncoderId = 11;
-  private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.1875);
+  private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.193603515625);
   private static final boolean kFrontRightSteerMotorInverted = false;
   private static final boolean kFrontRightEncoderInverted = false;
 
@@ -159,7 +158,7 @@ public class V2Constants {
   private static final int kBackLeftDriveMotorId = 24;
   private static final int kBackLeftSteerMotorId = 25;
   private static final int kBackLeftEncoderId = 12;
-  private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.312744140625);
+  private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.31494140625);
   private static final boolean kBackLeftSteerMotorInverted = false;
   private static final boolean kBackLeftEncoderInverted = false;
 
@@ -170,7 +169,7 @@ public class V2Constants {
   private static final int kBackRightDriveMotorId = 26;
   private static final int kBackRightSteerMotorId = 27;
   private static final int kBackRightEncoderId = 13;
-  private static final Angle kBackRightEncoderOffset = Rotations.of(-0.486328125);
+  private static final Angle kBackRightEncoderOffset = Rotations.of(-0.483154296875);
   private static final boolean kBackRightSteerMotorInverted = false;
   private static final boolean kBackRightEncoderInverted = false;
 

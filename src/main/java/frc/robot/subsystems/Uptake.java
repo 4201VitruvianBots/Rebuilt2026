@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.UPTAKE;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Uptake extends SubsystemBase {
@@ -95,7 +94,7 @@ public class Uptake extends SubsystemBase {
     return m_motor.isConnected();
   }
 
-  public boolean isShooting(){
+  public boolean isShooting() {
     return getPercentOutput() > 0.01;
   }
 

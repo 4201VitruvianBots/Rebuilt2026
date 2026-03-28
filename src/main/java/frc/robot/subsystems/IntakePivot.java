@@ -13,7 +13,6 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -52,8 +51,7 @@ public class IntakePivot extends SubsystemBase {
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
 
-  private final MotionMagicVoltage m_request =
-      new MotionMagicVoltage(Rotations.of(0.0));
+  private final MotionMagicVoltage m_request = new MotionMagicVoltage(Rotations.of(0.0));
 
   private static Angle m_desiredAngle = PIVOT_SETPOINT.INTAKING.getAngle();
 
@@ -153,7 +151,7 @@ public class IntakePivot extends SubsystemBase {
   // placeholder, idea (in the future) is to find
   // way to track previous setpoint and use that for jostling (like if the previous was stowed then
   // not be able to jostle on accident)
-  // public Boolean PrevSetpointIsIntaking() { 
+  // public Boolean PrevSetpointIsIntaking() {
   //  return m_desiredAngle
   // }
 

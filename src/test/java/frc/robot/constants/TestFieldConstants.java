@@ -27,6 +27,9 @@ public class TestFieldConstants {
     Controls controls = new Controls();
     FIELD.initializeConstants();
 
+    // Test Red Alliance
+    TestUtils.setPrivateField(controls, "m_allianceColor", DriverStation.Alliance.Red);
+    FIELD.updateConstants();
     Map<Pose2d, FIELD.SECTOR> redSectors = new HashMap<>();
     redSectors.put(new Pose2d(1, 1, Rotation2d.kZero), FIELD.SECTOR.BLUE_LEFT);
     redSectors.put(new Pose2d(1, 8, Rotation2d.kZero), FIELD.SECTOR.BLUE_RIGHT);

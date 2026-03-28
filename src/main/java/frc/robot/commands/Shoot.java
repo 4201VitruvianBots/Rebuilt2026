@@ -55,30 +55,20 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees.
-    distanceToShotMap.put(Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(1), 0.9)); //
+    distanceToShotMap.put(Meters.of(1.10695), new Shot(RPM.of(1260), Degrees.of(0), 0.9)); //
     distanceToShotMap.put(
-        Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(2), 1.0)); // Tuned
+        Meters.of(2.0749597158415), new Shot(RPM.of(1540), Degrees.of(0), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(3), 1.09)); // Tuned
+        Meters.of(2.31209), new Shot(RPM.of(1553), Degrees.of(0.4), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(5.3), 1.1)); // Tuned
+        Meters.of(2.5916617555783), new Shot(RPM.of(1570), Degrees.of(2.2), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(6.5), 1.1)); // Tuned
+        Meters.of(3.152353828396097), new Shot(RPM.of(1648), Degrees.of(3.5), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(3.166696048347548), new Shot(RPM.of(1740), Degrees.of(9.1), 1.11));
+        Meters.of(3.97453), new Shot(RPM.of(1764.3), Degrees.of(6.234), 1.1)); // Tuned
+    distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
     distanceToShotMap.put(
-        Meters.of(3.404527735240185),
-        new Shot(RPM.of(1780), Degrees.of(10), 1.115)); // Half Tuned
-    // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21),
-    // 1.286));
-    // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8),
-    // 1.286));
-    distanceToShotMap.put(
-        Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(12), 1.1));
-    distanceToShotMap.put(
-        Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(13), 1.12));
-    distanceToShotMap.put(
-        Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(16.5), 1.16));
+        Meters.of(5.44820580711993), new Shot(RPM.of(1945), Degrees.of(14), 1.16));
   }
 
   private final Vision m_vision;
@@ -120,7 +110,7 @@ public class Shoot extends Command {
     m_shooterHood = shooterHood;
     m_vision = vision;
 
-    addRequirements(flywheel, shooterHood, swerveDrive);
+    addRequirements(flywheel, shooterHood);
     SmartDashboard.putData(this);
   }
 
@@ -211,10 +201,23 @@ public class Shoot extends Command {
         m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     }
 
-    m_swerveDrivetrain.setChassisSpeedsWithHeading(
-        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
+    Rotation2d moduleAngle = new Rotation2d();
+    moduleAngle = m_swerveDrivetrain.getState().clone().ModuleStates[0].angle;
+    double moduleAngleDelta =
+        54
+            - Math.abs(
+                moduleAngle
+                    .getDegrees()); // Since our drivetrain is square, swerve drive brake is 53.75
+    // degrees instead of 45
+    int moduleAngleDeltaInt = (int) Math.round(moduleAngleDelta);
+    boolean isBraking = moduleAngleDeltaInt == 0;
+
+    if (!isBraking) {
+      m_swerveDrivetrain.setChassisSpeedsWithHeading(
+          SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+          SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+          Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
+    }
   }
 
   // Called once the command ends or is interrupted.
