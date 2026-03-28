@@ -4,9 +4,15 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Seconds;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakePivot;
+import frc.robot.constants.INTAKE.PIVOT;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class JostleIntake extends Command {
@@ -32,7 +38,8 @@ public class JostleIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      
+    Angle angle = Degrees.of(PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees) * Math.cos((PIVOT.pivotCycleTime.abs(Seconds) * m_sineWaveTimer.get() * Math.PI * 2)) + PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees));
+    m_intakePivot.setAngle(angle);
   }
 
   // Called once the command ends or is interrupted.

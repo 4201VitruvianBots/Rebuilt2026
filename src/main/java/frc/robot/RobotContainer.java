@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.JostleIntake;
 import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
@@ -272,7 +273,7 @@ public class RobotContainer {
           .y()
           .whileTrue(
                 // m_intakePivot.jostle()
-                null
+                new JostleIntake(m_intakePivot)
               );
     }
 
