@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 2.9100887311446315,
-        "y": 5.5
+        "x": 2.9744720496894406,
+        "y": 5.535936113575865
       },
       "prevControl": {
-        "x": 2.9375776200335206,
-        "y": 6.253055555555555
+        "x": 3.0019609385783297,
+        "y": 6.28899166913142
       },
       "nextControl": null,
       "isLocked": false,
@@ -63,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -38.60547407180937
+    "rotation": -39.52263127117106
   },
   "reversed": false,
   "folder": "Zold - PreloadSideNeutralTwice",
