@@ -12,7 +12,6 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.constants.INTAKE;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED_RPM;
 import frc.robot.subsystems.Intake;
 
 public class CenterDepot extends SequentialCommandGroup {
