@@ -4,7 +4,7 @@ import com.ctre.phoenix6.CANBus;
 
 public class CAN {
   public static final CANBus roboRIO = new CANBus("rio");
-  public static final CANBus driveBase = new CANBus("drivebase");
+  public static final CANBus driveBase = new CANBus("drivebase", "./logs/example.hoot");
 
   public static final int pigeon = 9;
 

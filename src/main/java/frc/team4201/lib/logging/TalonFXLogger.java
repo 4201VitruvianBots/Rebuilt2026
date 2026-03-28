@@ -1,18 +1,22 @@
 package frc.team4201.lib.logging;
 
+import static edu.wpi.first.units.Units.Hertz;
+
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.epilogue.CustomLoggerFor;
 import edu.wpi.first.epilogue.logging.ClassSpecificLogger;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
+import frc.robot.constants.CAN;
 
 import java.util.LinkedHashMap;
-
-import static edu.wpi.first.units.Units.Hertz;
+import java.util.Objects;
 
 @CustomLoggerFor(TalonFX.class)
 public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
-  private static final LinkedHashMap<TalonFX, StatusSignalCollection> m_signalMap = new LinkedHashMap<>();
+  private static final LinkedHashMap<TalonFX, StatusSignalCollection> m_signalMap =
+      new LinkedHashMap<>();
 
   public TalonFXLogger() {
     super(TalonFX.class);
@@ -20,8 +24,7 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
 
   @Override
   public void update(EpilogueBackend backend, TalonFX motor) {
-    if(!m_signalMap.containsKey(motor)) {
-      System.out.printf("Adding TalonFX %02d to be logged\n", motor.getDeviceID());
+    if (!m_signalMap.containsKey(motor)) {
       var signals = new StatusSignalCollection();
       signals.addSignals(
           motor.getSupplyVoltage(),
@@ -33,9 +36,15 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
           motor.getVelocity(),
           motor.getAcceleration(),
           motor.getClosedLoopReference(),
-          motor.getClosedLoopError()
-          );
-      signals.setUpdateFrequencyForAll(Hertz.of(50));
+          motor.getClosedLoopError());
+
+      if(Objects.equals(motor.getNetwork(), CAN.roboRIO)) {
+        System.out.printf("Adding TalonFX %02d to be logged from roboRIO\n", motor.getDeviceID());
+        signals.setUpdateFrequencyForAll(Hertz.of(50));
+      } else {
+        System.out.printf("Adding TalonFX %02d to be logged from canivore\n", motor.getDeviceID());
+        signals.setUpdateFrequencyForAll(Hertz.of(250));
+      }
       motor.optimizeBusUtilization(Hertz.of(1));
       m_signalMap.put(motor, signals);
     }
@@ -56,6 +65,6 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
     backend.log("Setpoint", motor.getClosedLoopReference().getValue());
     backend.log("Error", motor.getClosedLoopError().getValue());
 
-//    System.out.printf("[DEBUG] TalonFX %02d logged data\n", motor.getDeviceID());
+    //    System.out.printf("[DEBUG] TalonFX %02d logged data\n", motor.getDeviceID());
   }
 }
