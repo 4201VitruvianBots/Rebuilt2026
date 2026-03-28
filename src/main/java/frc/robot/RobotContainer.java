@@ -267,6 +267,17 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
+    if (m_intake != null) {
+      m_driverController
+          .y()
+          .whileTrue(
+                // m_intakePivot.jostle()
+                null
+              );
+    }
+
+
+
     m_driverController
         .leftBumper()
         .whileTrue(
@@ -288,13 +299,6 @@ public class RobotContainer {
     POVUtils.povDownWithTilt(m_driverController)
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...
-    // if (m_uptake != null && m_indexer != null && m_intake != null) {
-    //   m_driverController
-    //       .b()
-    //       .whileTrue(
-    //             m_intakePivot.jostle()
-    //           );
-    // }
 
     // if (m_intake != null) {
     //   m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));

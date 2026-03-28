@@ -165,18 +165,21 @@ public class IntakePivot extends SubsystemBase {
   public Command percentCommand(double speed) {
     return this.startEnd(() -> m_motor.set(speed), () -> m_motor.set(0.0));
   }
-
-  @NotLogged
-  public Command jostle() {
-    return new RepeatCommand(
-        this.startEnd(
-                () -> setAngle(PIVOT_SETPOINT.JOSTLING.getAngle()),
-                () -> {
-                  setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
-                })
-            .withTimeout(0.15)
-            .andThen(new WaitCommand(0.1)));
-  }
+  // Commented out because it was old, am replacing with seperate command file
+  // @NotLogged
+  // public Command jostle() {
+  //   // return new RepeatCommand(
+  //   //     this.startRun(
+  //   //             () -> {
+                  
+  //   //             },
+  //   //             () -> {
+  //   //               setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
+  //   //             })
+  //   //         .withTimeout(0.15)
+  //   //         .andThen(new WaitCommand(0.1)));
+  // }
+  
 
   @Override
   public void periodic() {
