@@ -48,7 +48,7 @@
   "folder": "Zold - PreloadSideNeutralTwice",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -51.792
+    "rotation": -33.5
   },
   "useDefaultConstraints": true
 }
