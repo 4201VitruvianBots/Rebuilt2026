@@ -35,7 +35,7 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Uptake extends SubsystemBase {
 
   @Logged(name = "Uptake Motor", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.driveBase);
+  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.roboRIO);
 
   private final FlywheelSim m_motorSim =
       new FlywheelSim(
@@ -93,6 +93,10 @@ public class Uptake extends SubsystemBase {
 
   public boolean isConnected() {
     return m_motor.isConnected();
+  }
+
+  public boolean isShooting(){
+    return getPercentOutput() > 0.01;
   }
 
   public double getPercentOutput() {

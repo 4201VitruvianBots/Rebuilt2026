@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
           // config.backend = new FileBackend(DataLogManager.getLog());
 
           ROBOT.initializeConstants();
+          config.minimumImportance = ROBOT.logMode;
 
           config.root = "EpilogueTelemetry";
         });

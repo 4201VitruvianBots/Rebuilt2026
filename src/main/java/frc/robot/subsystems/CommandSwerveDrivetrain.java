@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
+import frc.robot.constants.VISION;
 import frc.robot.generated.V1Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.TrajectoryUtils;
@@ -81,12 +82,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   // TODO: Check if a constructor with different PID values is needed for different use cases
   // PID Constants taken from Shoot(OnTheMove)
-  //  private Double kTeleP_Theta = 12.0;
+  //  private Double kTeleP_Theta = 7.0;
   //  private Double kTeleD_Theta = 0.0;
   //  public static final double kTeleI_Theta = 0.0;
   // PID Constants taken from AutoAlignDrive
   SwerveRequest.FieldCentricFacingAngle m_driveWithHeadingRequest =
-      new SwerveRequest.FieldCentricFacingAngle().withHeadingPID(12.0, 0.0, 0.0);
+      new SwerveRequest.FieldCentricFacingAngle().withHeadingPID(7.1, 0.0, 0.1);
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
@@ -101,8 +102,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private final SysIdRoutine m_sysIdRoutineTranslation =
       new SysIdRoutine(
           new SysIdRoutine.Config(
-              null, // Use default ramp rate (1 V/s)
-              Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+              Volts.of(0.5).per(Second), // Use default ramp rate (1 V/s)
+              Volts.of(2), // Reduce dynamic step voltage to 4 V to prevent brownout
               null, // Use default timeout (10 s)
               // Log state with SignalLogger class
               state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
@@ -151,7 +152,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               this));
 
   /* The SysId routine to test */
-  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
+  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -453,6 +454,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   public void addVisionMeasurement(
       Pose2d pose, double timestampSeconds, Matrix<N3, N1> standardDevs) {
     super.addVisionMeasurement(pose, Utils.fpgaToCurrentTime(timestampSeconds), standardDevs);
+  }
+
+  public void addVisionMeasurement(VISION.Limelight limelight) {
+    super.addVisionMeasurement(
+        limelight.getLastGoodEstimate().pose,
+        Utils.fpgaToCurrentTime(limelight.getLastGoodEstimate().timestampSeconds),
+        limelight.getStdDev());
   }
 
   @Override

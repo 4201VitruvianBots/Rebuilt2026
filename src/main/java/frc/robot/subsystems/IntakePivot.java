@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -44,17 +45,17 @@ import frc.team4201.lib.utils.CtreUtils;
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.driveBase);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.roboRIO);
 
-  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder, CAN.driveBase);
+  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder, CAN.roboRIO);
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
 
-  private final MotionMagicTorqueCurrentFOC m_request =
-      new MotionMagicTorqueCurrentFOC(Rotations.of(0.0));
+  private final MotionMagicVoltage m_request =
+      new MotionMagicVoltage(Rotations.of(0.0));
 
-  private static Angle m_desiredAngle = PIVOT_SETPOINT.STOWED.getAngle();
+  private static Angle m_desiredAngle = PIVOT_SETPOINT.INTAKING.getAngle();
 
   private final TalonFXSimState m_motorSimState = m_motor.getSimState();
   private final CANcoderSimState m_cancoderSimState = m_canCoder.getSimState();
@@ -93,11 +94,11 @@ public class IntakePivot extends SubsystemBase {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
+    config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
 
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    config.CurrentLimits.StatorCurrentLimit = 80;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     // config.ClosedLoopGeneral.ContinuousWrap = false;
 
@@ -123,7 +124,6 @@ public class IntakePivot extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)
@@ -150,15 +150,22 @@ public class IntakePivot extends SubsystemBase {
     return m_motor.isConnected();
   }
 
-  // public Boolean PrevSetpointIsIntaking() {     //placeholder, idea (in the future) is to find
-  // way to track previous setpoint and use that for jostling (like if the previous was storwed then
-  // not beable to jostle on accident)
-  // return m_desiredAngle
+  // placeholder, idea (in the future) is to find
+  // way to track previous setpoint and use that for jostling (like if the previous was stowed then
+  // not be able to jostle on accident)
+  // public Boolean PrevSetpointIsIntaking() { 
+  //  return m_desiredAngle
   // }
 
   @NotLogged
   public Command command(PIVOT_SETPOINT setpoint) {
     return this.runOnce(() -> setAngle(setpoint.getAngle()));
+  }
+
+  // TODO: don't use this
+  @NotLogged
+  public Command percentCommand(double speed) {
+    return this.startEnd(() -> m_motor.set(speed), () -> m_motor.set(0.0));
   }
 
   @NotLogged
@@ -169,15 +176,13 @@ public class IntakePivot extends SubsystemBase {
                 () -> {
                   setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
                 })
-            .withTimeout(0.3)
-            .andThen(new WaitCommand(0.3)));
+            .withTimeout(0.15)
+            .andThen(new WaitCommand(0.1)));
   }
 
   @Override
   public void periodic() {
-    if (getAngleDegrees() > PIVOT.maxAngle.in(Degrees)) {
-      m_motor.setControl(m_request.withPosition(PIVOT.maxAngle.in(Rotations)));
-    }
+    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
   }
 
   @Override

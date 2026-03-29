@@ -55,39 +55,19 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees.
-    distanceToShotMap.put(Meters.of(1.391736631), new Shot(RPM.of(1470), Degrees.of(6.5), 0.9)); //
+    distanceToShotMap.put(Meters.of(1.10695), new Shot(RPM.of(1260), Degrees.of(0), 0.9)); //
     distanceToShotMap.put(
-        Meters.of(1.45650895207174), new Shot(RPM.of(1470), Degrees.of(7.5), 1.0)); // Tuned
+        Meters.of(2.0749597158415), new Shot(RPM.of(1540), Degrees.of(0), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(1.9791021529687), new Shot(RPM.of(1530), Degrees.of(8.5), 1.09)); // Tuned
+        Meters.of(2.31209), new Shot(RPM.of(1553), Degrees.of(0.4), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.0749597158415), new Shot(RPM.of(1600), Degrees.of(10.8), 1.1)); // Tuned
+        Meters.of(2.5916617555783), new Shot(RPM.of(1570), Degrees.of(2.2), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.5916617555783), new Shot(RPM.of(1600), Degrees.of(12), 1.1)); // Tuned
+        Meters.of(3.97453), new Shot(RPM.of(1764.3), Degrees.of(6.234), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(3.166696048347548), new Shot(RPM.of(1740), Degrees.of(14.6), 1.11));
+        Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
     distanceToShotMap.put(
-        Meters.of(3.404527735240185),
-        new Shot(RPM.of(1780), Degrees.of(15.5), 1.115)); // Half Tuned
-    // distanceToShotMap.put(Meters.of(3.44235025242724), new Shot(RPM.of(1678), Degrees.of(21),
-    // 1.286));
-    // distanceToShotMap.put(Meters.of(3.55309150390832), new Shot(RPM.of(1710), Degrees.of(19.8),
-    // 1.286));
-    distanceToShotMap.put(
-        Meters.of(3.815967642543882), new Shot(RPM.of(1800), Degrees.of(17.5), 1.1));
-    distanceToShotMap.put(
-        Meters.of(4.6722084908365), new Shot(RPM.of(2000), Degrees.of(18.5), 1.12));
-    distanceToShotMap.put(
-        Meters.of(5.44820580711993), new Shot(RPM.of(2100), Degrees.of(22), 1.16));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
-    // distanceToShotMap.put(Meters.of(2.13), new Shot(RPM.of(1500), Degrees.of(5), 1.286));
+        Meters.of(5.44820580711993), new Shot(RPM.of(1945), Degrees.of(14), 1.16));
   }
 
   private final Vision m_vision;
@@ -209,7 +189,7 @@ public class Shoot extends Command {
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
     lastHoodAngle = hoodAngle;
     // all of the logic for angle is above this Comment
-    m_flywheel.setRPMOutputFOC(shot.shooterRPM);
+    m_flywheel.setRPMOutput(shot.shooterRPM);
     m_shooterHood.setAngle(Radians.of(hoodAngle));
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
@@ -231,8 +211,7 @@ public class Shoot extends Command {
   public void end(boolean interrupted) {
     if (m_driverController != null)
       m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
-    m_flywheel.setTorqueCurrentOutputFOC(Volts.of(0.0));
-    m_flywheel.setRPMOutputFOC(RPM.of(0.0));
+    m_flywheel.setVoltageOutput(Volts.of(0.0));
   }
 
   // Returns true when the command should end.

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.609033989266547,
-        "y": 5.5
+        "x": 5.710763087843833,
+        "y": 5.7693256433007996
       },
       "prevControl": {
-        "x": 3.6076616123282115,
-        "y": 5.509149327321151
+        "x": 3.709390710905497,
+        "y": 5.778474970621951
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OverBumpPointStart"
+      "linkedName": "OverBumpPointEnd"
     }
   ],
   "rotationTargets": [
@@ -51,7 +51,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "reversed": false,
   "folder": "IntakeFromNeutral",

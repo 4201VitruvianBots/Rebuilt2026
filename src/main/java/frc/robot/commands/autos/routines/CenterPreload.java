@@ -25,9 +25,9 @@ public class CenterPreload extends Auto {
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
       var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadClimb1");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload1");
       var m_path2 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreloadClimb2");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload2");
 
       addCommands(
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
@@ -36,7 +36,7 @@ public class CenterPreload extends Auto {
                   uptake.percentCommand(UPTAKE_SPEED.SHOOTING.get()))
               .withTimeout(3));
     } catch (Exception e) {
-      DriverStation.reportError("Failed to load path for CenterPreloadOnly", e.getStackTrace());
+      DriverStation.reportError("Failed to load path for CenterPreload", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

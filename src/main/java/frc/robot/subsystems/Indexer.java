@@ -32,10 +32,10 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.driveBase);
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.roboRIO);
 
   @Logged(name = "Indexer Motor 2", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.driveBase);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.roboRIO);
 
   // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
@@ -61,7 +61,7 @@ public class Indexer extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = INDEXER.kP;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = INDEXER.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = INDEXER.peakReverseOutput;
     config.Feedback.SensorToMechanismRatio = INDEXER.gearRatio;
@@ -69,7 +69,7 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = INDEXER.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_indexerMotor2, config);
 
     // m_indexerMotor2.setControl(
