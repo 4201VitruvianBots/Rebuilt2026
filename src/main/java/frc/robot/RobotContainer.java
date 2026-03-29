@@ -212,8 +212,6 @@ public class RobotContainer {
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
-    m_controls.registerSubsystem(m_vision);
-
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
       m_intakePivot = new IntakePivot();
       m_led = new LEDs();
@@ -499,6 +497,6 @@ public class RobotContainer {
   public void resetFuelSim() {
     m_fuelSim.clearFuel();
     m_fuelSim.spawnStartingFuel();
-    m_intake.setStoredFuel(8); // preload
+    if (m_intake != null) m_intake.setStoredFuel(8); // preload
   }
 }
