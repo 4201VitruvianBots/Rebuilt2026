@@ -14,7 +14,6 @@ import java.util.function.BooleanSupplier;
 
 public class SideNeutralTwice extends Auto {
   public SideNeutralTwice(AutoDependencies deps, BooleanSupplier flipPath, boolean rushCenter) {
-
     addCommands(
         rushCenter ? new InstantCommand() : new ShootNearStart(deps, flipPath),
         new IntakeFromNeutralFirstPass(deps, !rushCenter, flipPath),
