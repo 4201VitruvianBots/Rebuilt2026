@@ -166,13 +166,13 @@ public class RobotContainer {
                         MaxSpeed.times(
                             -m_driverController.getLeftX())) // Drive left with negative X (left)
                     .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
-    // m_flywheel = new Flywheel();
+    m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
-    // m_hood = new Hood();
-    // m_intake = new Intake();
-    // m_uptake = new Uptake();
-    // m_indexer = new Indexer();
+    m_hood = new Hood();
+    m_intake = new Intake();
+    m_uptake = new Uptake();
+    m_indexer = new Indexer();
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
         m_intakePivot = new IntakePivot();
         m_led = new LEDs();
@@ -455,6 +455,6 @@ public class RobotContainer {
   public void resetFuelSim() {
     m_fuelSim.clearFuel();
     m_fuelSim.spawnStartingFuel();
-    m_intake.setStoredFuel(8); // preload
+    if (m_intake != null) m_intake.setStoredFuel(8); // preload
   }
 }

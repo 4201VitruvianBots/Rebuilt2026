@@ -17,7 +17,7 @@ public class AutoShoot extends ParallelDeadlineGroup {
   /** Creates a new AutoShoot. */
   public AutoShoot(AutoDependencies deps, double fireDurationSeconds) {
     super(Commands.waitUntil(
-        () -> (deps.flywheel.isAtRPMsetpoint() && deps.hood.atSetpoint() && deps.vision.isPointingAtGoal(FIELD.TARGET.CURRENT_TARGET.getTargetPosition().toTranslation2d(), AUTO_ALIGN.kRotationTolerance.getDegrees(), true))).withTimeout(fireDurationSeconds)
+        () -> (deps.flywheel.isAtRPMsetpoint() && deps.hood.atSetpoint() && deps.vision.isOnTarget())).withTimeout(fireDurationSeconds)
         .andThen(new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds))
     );
     addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));

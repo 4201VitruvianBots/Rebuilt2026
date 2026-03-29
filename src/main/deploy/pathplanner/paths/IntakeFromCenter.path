@@ -140,7 +140,7 @@
   "folder": "IntakeFromNeutral",
   "idealStartingState": {
     "velocity": 1.5,
-    "rotation": -45.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }

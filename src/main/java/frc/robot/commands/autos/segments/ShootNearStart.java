@@ -20,13 +20,7 @@ import java.util.function.BooleanSupplier;
 public class ShootNearStart extends Auto {
   public ShootNearStart(AutoDependencies deps, BooleanSupplier flipToRight) {
     try {
-      var swerveDrive = deps.swerveDrive;
       var flywheel = deps.flywheel;
-
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
-
-      var path = PathPlannerPath.fromPathFile("1678pt1");
-
       addCommands(
           new PrepareFlywheel(flywheel, Meters.of(1.45650895207174))
               .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")),
