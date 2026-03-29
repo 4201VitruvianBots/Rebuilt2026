@@ -203,15 +203,20 @@ public class Shoot extends Command {
 
     Rotation2d moduleAngle = new Rotation2d();
     moduleAngle = m_swerveDrivetrain.getState().clone().ModuleStates[0].angle;
-    double moduleAngleDelta = 54 - Math.abs(moduleAngle.getDegrees()); // Since our drivetrain is square, swerve drive brake is 53.75 degrees instead of 45
+    double moduleAngleDelta =
+        54
+            - Math.abs(
+                moduleAngle
+                    .getDegrees()); // Since our drivetrain is square, swerve drive brake is 53.75
+    // degrees instead of 45
     int moduleAngleDeltaInt = (int) Math.round(moduleAngleDelta);
     boolean isBraking = moduleAngleDeltaInt == 0;
 
-    if (!isBraking){
+    if (!isBraking) {
       m_swerveDrivetrain.setChassisSpeedsWithHeading(
-        SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-        SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
+          SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+          SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+          Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
     }
   }
 

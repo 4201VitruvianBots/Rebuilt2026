@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -16,6 +17,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,9 +92,6 @@ public class RobotContainer {
   @Logged(name = "Uptake", importance = Logged.Importance.INFO)
   private Uptake m_uptake;
 
-  // @Logged(name = "Climber", importance = Logged.Importance.INFO)
-  @NotLogged private Climber m_climber;
-
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led;
 
@@ -158,6 +157,29 @@ public class RobotContainer {
     initSmartDashboard();
 
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
+    Field2d field = new Field2d();
+    SmartDashboard.putData("Field", field);
+
+    // Logging callback for current robot pose
+    PathPlannerLogging.setLogCurrentPoseCallback(
+        (pose) -> {
+          // Do whatever you want with the pose here
+          field.setRobotPose(pose);
+        });
+
+    // Logging callback for target robot pose
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (pose) -> {
+          // Do whatever you want with the pose here
+          field.getObject("target pose").setPose(pose);
+        });
+
+    // Logging callback for the active path, this is sent as a list of poses
+    PathPlannerLogging.setLogActivePathCallback(
+        (poses) -> {
+          // Do whatever you want with the poses here
+          field.getObject("path").setPoses(poses);
+        });
   }
 
   public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype){
@@ -208,7 +230,7 @@ public class RobotContainer {
       m_telemetry.registerFieldSim(m_fieldSim);
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
-          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood, m_climber);
+          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
 
       DriverStation.silenceJoystickConnectionWarning(true);
     }
@@ -251,14 +273,14 @@ public class RobotContainer {
     //             m_driverController::getLeftY,
     //             m_driverController::getLeftX));
 
-    // m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-    // m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
-    
-    // m_driverController
-    //     .x()
-    //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+    m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
+
+    m_driverController
+        .x()
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
     m_driverController
         .leftBumper()
@@ -311,7 +333,6 @@ public class RobotContainer {
     var autoDeps =
         new AutoDependencies(
             m_swerveDrive,
-            m_climber,
             m_intake,
             m_vision,
             m_flywheel,
@@ -386,9 +407,8 @@ public class RobotContainer {
     // if (m_uptake != null) m_uptake.testInit();
     // if (m_indexer != null) m_indexer.testInit();
     if (m_intakePivot != null) m_intakePivot.testInit();
-    if (m_intake != null) m_intake.testInit();
+    // if (m_intake != null) m_intake.testInit();
     if (m_hood != null) m_hood.testInit();
-    if (m_climber != null) m_climber.testInit();
   }
 
   public void testPeriodic() {
@@ -398,7 +418,6 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     // if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
-    if (m_climber != null) m_climber.testPeriodic();
   }
 
   public void disabledPeriodic() {
