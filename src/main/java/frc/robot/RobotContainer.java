@@ -331,12 +331,14 @@ public class RobotContainer {
     IntakeFromNeutral.registerNamedCommands(autoDeps);
     IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
+    
+
     m_autoChooser.addOption("CenterPreload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("SideNeutralDepot", new SideNeutralDepot(autoDeps));
     m_autoChooser.addOption(
-        "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
+        "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
-        "SideNeutralTwice - No Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
+        "SideNeutralTwice - No Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption("SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
         "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight));

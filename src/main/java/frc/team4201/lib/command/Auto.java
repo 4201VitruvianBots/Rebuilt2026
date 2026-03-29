@@ -11,6 +11,9 @@ import java.util.function.BooleanSupplier;
 // The default side for a path should be the depot side, thus it is only flipped if the autoSide
 // input is on the outpost.
 public abstract class Auto extends SequentialCommandGroup {
+
+  PathPlannerPath m_initialPath;
+
   protected final Command getPathCommand(
       CommandSwerveDrivetrain swerveDrive, PathPlannerPath path, BooleanSupplier flipToRight) {
     return Commands.defer(
@@ -39,5 +42,13 @@ public abstract class Auto extends SequentialCommandGroup {
           }
         },
         Set.of(swerveDrive));
+  }
+
+  public void setInitialPath(PathPlannerPath path) {
+    m_initialPath = path;
+  }
+
+  public PathPlannerPath getInitialPath() {
+    return m_initialPath;
   }
 }

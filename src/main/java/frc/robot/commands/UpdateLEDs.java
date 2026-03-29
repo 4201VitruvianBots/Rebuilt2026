@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -14,6 +16,8 @@ import frc.robot.constants.LED.LED_STATES;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.utils.HubTracker;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -21,12 +25,16 @@ public class UpdateLEDs extends Command {
   private final LEDs m_led;
   private final Intake m_intake; // Used to track intaking state
   private final Flywheel m_flywheel; // Used to track shooting state
+  private final CommandSwerveDrivetrain m_drivetrain; // used to track apriltags and vision
+  private final Supplier<Auto> m_autoSupplier;
 
   /** Creates a new UpdateLEDs. */
-  public UpdateLEDs(LEDs led, Intake intake, Flywheel flywheel) {
+  public UpdateLEDs(LEDs led, Intake intake, Flywheel flywheel, CommandSwerveDrivetrain swerve, Supplier<Auto> selectedAuto) {
     m_led = led;
     m_intake = intake;
     m_flywheel = flywheel;
+    m_drivetrain = swerve;
+    m_autoSupplier = selectedAuto;
 
     addRequirements(led);
   }
@@ -69,7 +77,11 @@ public class UpdateLEDs extends Command {
       m_led.setState(LED_STATES.INTAKING);
     } else if (DriverStation.isEnabled()) {
       m_led.setState(LED_STATES.IDLE);
-    } else {
+    }
+      else if (m_drivetrain.getState().Pose.minus(m_autoSupplier.get().getInitialPath().getStartingHolonomicPose()) ) {
+
+    }
+     else {
       m_led.setState(LED_STATES.DISABLED);
     }
   }

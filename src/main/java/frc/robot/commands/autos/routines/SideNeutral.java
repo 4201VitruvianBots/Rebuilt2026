@@ -12,6 +12,11 @@ import java.util.function.BooleanSupplier;
 
 public class SideNeutral extends Auto {
   public SideNeutral(AutoDependencies deps, BooleanSupplier flipPath) {
-    addCommands(new IntakeFromNeutral(deps, false, flipPath), new ShootNearStart(deps, flipPath));
+    Auto firstSegment = new IntakeFromNeutral(deps, false, flipPath);
+
+    setInitialPath(firstSegment.getInitialPath());
+    addCommands(
+      firstSegment,
+      new ShootNearStart(deps, flipPath));
   }
 }
