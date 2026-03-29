@@ -339,7 +339,7 @@ public class Vision extends SubsystemBase {
         if (poseEstimate.tagCount < 2) {
           return false;
         }
-        LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, excludeTrenchTags);
+        LimelightHelpers.SetFiducialIDFiltersOverride(limelight.getName(), excludeTrenchTags);
 
         hasInitialPose = true;
       } else {
@@ -347,7 +347,7 @@ public class Vision extends SubsystemBase {
         if (m_swerveDriveTrain.getGyroYawRate().abs(DegreesPerSecond) > 720.0) {
           return false;
         }
-        LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, excludeTrenchTags);
+        LimelightHelpers.SetFiducialIDFiltersOverride(limelight.getName(), excludeTrenchTags);
 
         // Set Standard Deviations for MegaTag2
         m_swerveDriveTrain.setVisionMeasurementStdDevs(VecBuilder.fill(.4, .4, 9999999));

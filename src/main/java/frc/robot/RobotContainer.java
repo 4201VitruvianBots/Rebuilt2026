@@ -305,7 +305,6 @@ public class RobotContainer {
     m_autoChooser.addOption("CenterPreload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("SideNeutralDepot", new SideNeutralDepot(autoDeps));
     m_autoChooser.addOption("Auto 0", new CenterPreload(autoDeps));
-    m_autoChooser.addOption("Auto 1 - CenterDepot", new CenterDepot(autoDeps));
     m_autoChooser.addOption(
         "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
