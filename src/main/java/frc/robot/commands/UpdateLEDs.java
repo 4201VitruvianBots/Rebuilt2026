@@ -8,11 +8,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.LED.LED_STATES;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.Uptake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class UpdateLEDs extends Command {
@@ -21,8 +19,7 @@ public class UpdateLEDs extends Command {
   private final Flywheel m_flywheel; // Used to track shooting state
 
   /** Creates a new UpdateLEDs. */
-  public UpdateLEDs(
-      LEDs led, Intake intake, Flywheel flywheel) {
+  public UpdateLEDs(LEDs led, Intake intake, Flywheel flywheel) {
     m_led = led;
     m_intake = intake;
     m_flywheel = flywheel;
@@ -44,8 +41,11 @@ public class UpdateLEDs extends Command {
      * If the flywheel is running to shoot, set to SHOOTING state
      */
     if (m_flywheel != null && m_flywheel.getRPMSetpoint() > 0) {
-      m_led.setState(LED_STATES.SHOOTING, () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
-    } else if (m_intake != null && MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
+      m_led.setState(
+          LED_STATES.SHOOTING,
+          () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
+    } else if (m_intake != null
+        && MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
       m_led.setState(LED_STATES.INTAKING, () -> 0.0);
     } else if (DriverStation.isEnabled()) {
       m_led.setState(LED_STATES.IDLE, () -> 0.0);

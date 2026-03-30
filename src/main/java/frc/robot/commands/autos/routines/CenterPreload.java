@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
+import frc.robot.commands.swerve.ResetGyroWithAngle;
+import frc.robot.constants.UPTAKE;
 import frc.team4201.lib.command.Auto;
 
 public class CenterPreload extends Auto {
@@ -24,16 +25,15 @@ public class CenterPreload extends Auto {
 
       var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
 
-      var m_path1 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload1");
-      var m_path2 =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload2");
+      var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload1");
+      var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload2");
 
       addCommands(
+          new ResetGyroWithAngle(deps.swerveDrive, deps.vision::getVisionAngle),
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new ParallelCommandGroup(
                   new Shoot(flywheel, hood, vision, swerveDrive),
-                  uptake.percentCommand(UPTAKE_SPEED.SHOOTING.get()))
+                  uptake.percentCommand(UPTAKE.UPTAKE_SPEED.SHOOTING.get()))
               .withTimeout(3));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for CenterPreload", e.getStackTrace());

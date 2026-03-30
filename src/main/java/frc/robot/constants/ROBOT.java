@@ -86,7 +86,7 @@ public class ROBOT {
   public static void initV1() {
     robotID = ROBOT_ID.V1;
   }
-  
+
   public static void initV2() {
     robotID = ROBOT_ID.V2;
   }

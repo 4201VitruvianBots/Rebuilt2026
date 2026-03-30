@@ -15,12 +15,14 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import frc.robot.subsystems.Vision;
 import frc.team4201.lib.vision.LimelightHelpers;
 
 public final class VISION {
   public enum CAMERA_SERVER {
     limelightR("limelight-right", "10.42.1.11"),
-    limelightL("limelight-left", "10.42.1.12");
+    limelightL("limelight-left", "10.42.1.12"),
+    limelightF("limelight-front", "10.42.1.12");
 
     private final String name;
     private final String ip;
@@ -197,6 +199,14 @@ public final class VISION {
 
     public boolean isAlive() {
       return isAlive;
+    }
+
+    public Vision.VisionFieldPoseEstimate getFieldPoseEstimate() {
+      return new Vision.VisionFieldPoseEstimate(
+          getLastGoodEstimate().pose,
+          getLastGoodEstimate().timestampSeconds,
+          getStdDev(),
+          getLastGoodEstimate().tagCount);
     }
   }
 }

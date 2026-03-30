@@ -22,7 +22,6 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,6 +38,7 @@ public class Intake extends SubsystemBase {
 
   @Logged(name = "Intake Motor", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.roboRIO);
+
   @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.roboRIO);
 
@@ -132,11 +132,11 @@ public class Intake extends SubsystemBase {
     return currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
   }
 
-  public void setIntakeState(INTAKE_STATE state){
+  public void setIntakeState(INTAKE_STATE state) {
     m_state = state;
   }
 
-  public Command commandIntakeState(INTAKE_STATE state){
+  public Command commandIntakeState(INTAKE_STATE state) {
     return this.startEnd(() -> setIntakeState(state), () -> setIntakeState(INTAKE_STATE.IDLE));
   }
 
@@ -145,7 +145,7 @@ public class Intake extends SubsystemBase {
     if (runCurrentFilter) {
       currentFilter.calculate(m_motor.getStatorCurrent().getValueAsDouble());
     }
-    switch (m_state){
+    switch (m_state) {
       case IDLE:
       default:
         setOutputPercent(INTAKE_SPEED.ZERO.get());
@@ -155,7 +155,8 @@ public class Intake extends SubsystemBase {
         break;
       case SHOOTING:
         boolean shouldReverse = Math.round(Timer.getFPGATimestamp()) % 2 == 0;
-        setOutputPercent(shouldReverse ? INTAKE_SPEED.SHOTREVERSING.get() : INTAKE_SPEED.SHOOTING.get());
+        setOutputPercent(
+            shouldReverse ? INTAKE_SPEED.SHOTREVERSING.get() : INTAKE_SPEED.SHOOTING.get());
         break;
       case MANUAL:
         setOutputPercent(m_outputSubscriber.get());

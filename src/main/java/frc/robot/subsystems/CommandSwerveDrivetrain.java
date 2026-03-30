@@ -463,6 +463,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
         limelight.getStdDev());
   }
 
+  public void addVisionMeasurement(Vision.VisionFieldPoseEstimate poseEstimate) {
+    super.addVisionMeasurement(
+        poseEstimate.getVisionRobotPoseMeters(),
+        poseEstimate.getTimestampSeconds(),
+        poseEstimate.getVisionMeasurementStdDevs());
+  }
+
   @Override
   public AngularVelocity getYawRate() {
     // TODO Auto-generated method stub

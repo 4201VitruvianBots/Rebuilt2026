@@ -9,10 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -24,7 +21,6 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.TimeUnit;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Energy;
@@ -36,11 +32,9 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
-import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
 
 public class Flywheel extends SubsystemBase {
@@ -120,7 +114,7 @@ public class Flywheel extends SubsystemBase {
     m_rpmSetpoint = rpm;
   }
 
-  public void setVoltageOutput(Voltage voltage){
+  public void setVoltageOutput(Voltage voltage) {
     m_motor1.setControl(m_voltageOut.withOutput(voltage.abs(Volts)));
     m_rpmSetpoint = RPM.of(0);
   }
@@ -143,22 +137,22 @@ public class Flywheel extends SubsystemBase {
     return new boolean[] {m_motor1.isConnected()};
   }
 
-  public Current getSupplyCurrent(){
+  public Current getSupplyCurrent() {
     return m_motor1.getSupplyCurrent().refresh().getValue();
   }
 
-  public Power getPowerDraw(){
+  public Power getPowerDraw() {
     double power = (getSupplyCurrent().times(RobotController.getBatteryVoltage())).in(Amp);
     return Watts.of(power);
   }
 
-  public void updateEnergyUsed(){
+  public void updateEnergyUsed() {
     double newEnergy = (getPowerDraw().in(Watts) * 0.02);
     m_totalEnergyUsed = m_totalEnergyUsed.plus(Joules.of(newEnergy));
   }
 
   @Logged(name = "Total Energy Used by Flywheel", importance = Importance.INFO)
-  public Energy getEnergyUsed(){
+  public Energy getEnergyUsed() {
     return m_totalEnergyUsed;
   }
 

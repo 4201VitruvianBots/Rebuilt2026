@@ -13,11 +13,11 @@ import frc.robot.subsystems.LEDs;
 public class TestLEDs extends Command {
   private final LEDs m_led;
   private Timer m_time_since_led_start = new Timer();
-  
+
   /** Creates a new TestLEDs. */
   public TestLEDs(LEDs led) {
     m_led = led;
-    
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(led);
   }
@@ -33,7 +33,7 @@ public class TestLEDs extends Command {
   @Override
   public void execute() {
     // Every 2 seconds, cycle to the next LED state
-    int state_index = (int)(m_time_since_led_start.get() / 2) % LED_STATES.values().length;
+    int state_index = (int) (m_time_since_led_start.get() / 2) % LED_STATES.values().length;
     m_led.setState(LED_STATES.values()[state_index], () -> (m_time_since_led_start.get() % 2 / 2));
   }
 
@@ -46,7 +46,7 @@ public class TestLEDs extends Command {
   public boolean isFinished() {
     return false;
   }
-  
+
   @Override
   public boolean runsWhenDisabled() {
     return true;

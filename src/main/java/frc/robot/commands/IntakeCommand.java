@@ -18,7 +18,9 @@ public class IntakeCommand extends ParallelCommandGroup {
   public IntakeCommand(Intake intake, IntakePivot intakePivot, Uptake uptake) {
     addCommands(
         (intake != null) ? intake.commandIntakeState(INTAKE_STATE.INTAKING) : new InstantCommand(),
-        (uptake != null) ? uptake.percentCommand(UPTAKE_SPEED.INTAKEREVERSING.get()) : new InstantCommand(),
+        (uptake != null)
+            ? uptake.percentCommand(UPTAKE_SPEED.INTAKEREVERSING.get())
+            : new InstantCommand(),
         (intakePivot != null)
             ? intakePivot.command(PIVOT_SETPOINT.INTAKING)
             : new InstantCommand());
