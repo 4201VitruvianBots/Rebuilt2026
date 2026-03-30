@@ -13,9 +13,9 @@ import frc.team4201.lib.command.Auto;
 public class SideNeutralDepot extends Auto {
   public SideNeutralDepot(AutoDependencies deps) {
     addCommands(
-        new ShootNearStart(deps, () -> false),
+        new ShootNearStart(deps, () -> false, 1.0),
         new IntakeFromNeutral(deps, true, () -> false),
-        new ShootNearStart(deps, () -> false),
+        new ShootNearStart(deps, () -> false, 3.0),
         new IntakeAndShootFromDepot(deps)
         );
   }

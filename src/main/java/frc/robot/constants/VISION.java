@@ -67,6 +67,7 @@ public final class VISION {
   public static final Angle posePitchTolerance = Degrees.of(4);
   public static final Angle poseRollTolerance = Degrees.of(4);
   public static final Angle poseYawTolerance = Degrees.of(4);
+  public static final double stdScaler = 1;
 
   public enum TARGET {
     LEFT_FRONT_TOWER,
@@ -177,7 +178,7 @@ public final class VISION {
       if (!mt2) {
         stdDevs = VecBuilder.fill(stddevArray[0], stddevArray[1], stddevArray[5]);
       } else {
-        stdDevs = VecBuilder.fill(stddevArray[6], stddevArray[7], stddevArray[11]);
+        stdDevs = VecBuilder.fill(stddevArray[6] * stdScaler, stddevArray[7] * stdScaler, stddevArray[11]);
       }
 
       return stdDevs;

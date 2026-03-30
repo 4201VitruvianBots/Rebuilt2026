@@ -473,21 +473,13 @@ public class Vision extends SubsystemBase {
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
 
-    if (DriverStation.isDisabled()) {
-      if (lllSuccess) {
-        m_swerveDriveTrain.resetGyro(LLL.getLastGoodEstimate().pose.getRotation().getDegrees());
-      } else if (llrSuccess) {
-        m_swerveDriveTrain.resetGyro(LLR.getLastGoodEstimate().pose.getRotation().getDegrees());
+   
+      if (!m_localized) {
+        // TODO: Change this to check if the robotPose and both limelight are all close to each other
+        m_localized = lllSuccess && llrSuccess;
       }
-    }
-
-    if (!m_localized) {
-      // TODO: Change this to check if the robotPose and both limelight are all close to each other
-      m_localized = lllSuccess && llrSuccess;
-    }
-
-    // Only good updates reach this point, so use them for updating the robot pose
-    if (lllSuccess && llrSuccess) {
+     // Only good updates reach this point, so use them for updating the robot pose
+     if (lllSuccess && llrSuccess) {
       fuseEstimates(
           new VisionFieldPoseEstimate(
               LLL.getLastGoodEstimate().pose,

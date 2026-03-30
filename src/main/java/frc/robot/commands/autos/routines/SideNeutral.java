@@ -13,9 +13,9 @@ import java.util.function.BooleanSupplier;
 public class SideNeutral extends Auto {
   public SideNeutral(AutoDependencies deps, BooleanSupplier flipPath) {
     addCommands(
-        new ShootNearStart(deps, flipPath),
+        new ShootNearStart(deps, flipPath, 2.1),
         new IntakeFromNeutral(deps, true, flipPath),
-        new ShootNearStart(deps, flipPath)
+        new ShootNearStart(deps, flipPath, 2.0)
         );
   }
 }
