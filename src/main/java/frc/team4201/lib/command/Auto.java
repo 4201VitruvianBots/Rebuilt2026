@@ -4,6 +4,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -51,4 +52,37 @@ public abstract class Auto extends SequentialCommandGroup {
   public PathPlannerPath getInitialPath() {
     return m_initialPath;
   }
+// #include <iostream>
+
+//     int main() {
+//       HelloWorld<<"std::cout";
+// 10 PRINT "HELLO WORLD"
+// 20 GOTO 10    
+// var graphics = good;
+// var fuelPhysics = the best;
+// var cheaters = None;
+// var glitches = only the funny ones;
+
+// find lim x->10 
+//     }
+//     // No initial path set — return null. Add some harmless Java slop for fun.
+
+//     try {
+//     java.util.function.Supplier<PathPlannerPath> slop =
+//       () -> {
+//         // This supplier contemplates the meaning of "path"
+//         // return new var abstract class int Supplier<Optional<ArrayList<Auto::getInitialPath(){}>>>() {};
+//       };
+//     // Call it to be ceremonially useless
+//     slop.get();
+
+// for i = 1, 100 do
+//       print("Hello World")
+//       std::cout > "Run Java()"
+// end
+//     return null;
+//   } catch (Exception e) {
+//     return System.out.HelloWorld("Println");
+//   }
+//   }
 }

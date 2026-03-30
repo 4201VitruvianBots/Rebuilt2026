@@ -52,6 +52,7 @@ import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
+import frc.team4201.lib.command.Auto;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.POVUtils;
@@ -128,7 +129,7 @@ public class RobotContainer {
   private FuelSim m_fuelSim;
 
   @Logged(name = "AutoChooser")
-  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+  private final SendableChooser<Auto> m_autoChooser = new SendableChooser<>();
 
   @Logged(name = "AutoSideChooser")
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
@@ -202,7 +203,7 @@ public class RobotContainer {
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
       m_intakePivot = new IntakePivot();
       m_led = new LEDs();
-      m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
+      m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel, m_swerveDrive, () -> m_autoChooser.getSelected()));
       // m_led.setDefaultCommand(new TestLEDs(m_led));
       // m_climber = new Climber();
     }
@@ -315,7 +316,7 @@ public class RobotContainer {
 
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
-    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    m_autoChooser.setDefaultOption("Do Nothing", new Auto() {});
 
     var autoDeps =
         new AutoDependencies(
