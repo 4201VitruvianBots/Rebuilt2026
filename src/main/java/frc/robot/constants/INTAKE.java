@@ -59,22 +59,23 @@ public class INTAKE {
 
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-    public static final double kP = 60.0;
+    public static final double kP = 8.0;
     public static final double kD =
         0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
     // public static final double kV = 0; // Recalc these
     // public static final double kA = 0;
-    public static final double kG = 0.0;
+    public static final double kG = 0.85;
 
-    public static final double gearRatio = 35.0 / 1.0; // encoder is after gear ratio
+    public static final double gearRatio = 175.0 / 9.0; // encoder is after gear ratio
+    public static final double SensorToMechanismRatio = 3.0 / 1.0;
     public static final double motionMagicAcceleration = 15.0;
     public static final double motionMagicCruiseVelocity = 12.0;
     public static final double motionMagicJerk = 0.0;
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(55.0);
+    public static final Angle maxAngle = Degrees.of(101.0);
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -85,12 +86,13 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.3076171875;
+    public static final double encoderOffset = 0.869140625;
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.Clockwise_Positive;
+    public static final double kAbsoluteSensorDiscontinuityPoint = 0.0;
 
     public enum PIVOT_SETPOINT {
-      STOWED(Degrees.of(55.0)),
+      STOWED(Degrees.of(95.0)),
       INTAKING(Degrees.of(0.0)),
       JOSTLING(Degrees.of(20.0));
 

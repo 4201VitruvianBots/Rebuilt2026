@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.CAN;
+import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
@@ -76,6 +77,7 @@ public class IntakePivot extends SubsystemBase {
     if (RobotBase.isReal()) {
       encoderConfig.MagnetSensor.MagnetOffset = PIVOT.encoderOffset;
       encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
+      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = PIVOT.kAbsoluteSensorDiscontinuityPoint;
     }
 
     CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
@@ -89,12 +91,13 @@ public class IntakePivot extends SubsystemBase {
     // config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
+    config.Feedback.SensorToMechanismRatio = PIVOT.SensorToMechanismRatio;
+    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
 
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -114,7 +117,7 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
       m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
-    m_motor.setPosition(getAngle().in(Rotations));
+    m_motor.setPosition(getAngle().times(PIVOT.SensorToMechanismRatio).in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -131,7 +134,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Logged(name = "Pivot Angle Radians", importance = Importance.DEBUG)
   public Angle getAngle() {
-    return m_canCoder.getAbsolutePosition().refresh().getValue();
+    return m_canCoder.getPosition().refresh().getValue().div(PIVOT.SensorToMechanismRatio);
   }
 
   @Logged(name = "Pivot Angle Degrees", importance = Importance.INFO)
@@ -151,7 +154,7 @@ public class IntakePivot extends SubsystemBase {
   // placeholder, idea (in the future) is to find
   // way to track previous setpoint and use that for jostling (like if the previous was stowed then
   // not be able to jostle on accident)
-  // public Boolean PrevSetpointIsIntaking() {
+  // public Boolean prevSetpointIsIntaking() {
   //  return m_desiredAngle
   // }
 
@@ -180,7 +183,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
+    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations) * PIVOT.SensorToMechanismRatio));
   }
 
   @Override
