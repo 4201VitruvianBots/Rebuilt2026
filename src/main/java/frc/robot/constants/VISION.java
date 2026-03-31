@@ -14,10 +14,18 @@ import edu.wpi.first.units.measure.Distance;
 
 public final class VISION {
   public enum CAMERA_SERVER {
-    limelightL("limelight-left", "10.42.1.12"),
+    // v2.0 configuration:
+    // Limelight left (now front) -> 10.42.1.12
+    // Limelight right -> 10.42.1.11
+    
+    // v2.5 configuration:
+    // Limelight front (formerly left) -> 10.42.1.12
+    // Limelight left (new) -> 10.42.1.13
+    // Limelight right -> 10.42.1.11
+    
+    limelightF("limelight-front", "10.42.1.12"),
     limelightR("limelight-right", "10.42.1.11"),
-    // limelight 3
-    limelightB("limelight-back", "10.42.1.13");
+    limelightL("limelight-left", "10.42.1.13");
 
     private final String name;
     private final String ip;
@@ -46,23 +54,6 @@ public final class VISION {
   public static final Angle kLimelight4HFOV = Degrees.of(82.0);
   public static final Angle kLimelight4VFOV = Degrees.of(56.2);
   public static final Angle kLimelight4DFOV = Degrees.of(75.07);
-
-  // TODO: Update values
-  // Camera offset from robot center. Camera F is positioned on the hopper
-  public static final Transform3d limelightFPosition =
-      new Transform3d(
-          new Translation3d(
-              Meters.of(0).magnitude(), Meters.of(0).magnitude(), Meters.of(0).magnitude()),
-          new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(180)));
-
-  // TODO: Update values
-  // Camera offset from robot center. Camera B is facing out of the rear of the robot (On the
-  // EndEffector side)
-  public static final Transform3d limelightBPosition =
-      new Transform3d(
-          new Translation3d(
-              Meters.of(0).magnitude(), Meters.of(0).magnitude(), Meters.of(0).magnitude()),
-          new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(180)));
 
   public static final Distance poseXTolerance = Inches.of(4);
   public static final Distance poseYTolerance = Inches.of(4);

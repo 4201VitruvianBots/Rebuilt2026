@@ -29,9 +29,9 @@ public class Vision extends SubsystemBase {
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
-  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
+  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightF);
   VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
-  VISION.Limelight LLB = new VISION.Limelight(CAMERA_SERVER.limelightB);
+  VISION.Limelight LLB = new VISION.Limelight(CAMERA_SERVER.limelightL);
 
   private boolean m_localized;
 
