@@ -7,6 +7,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -36,8 +37,9 @@ public class Vision extends SubsystemBase {
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
-  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
+  VISION.Limelight LLF = new VISION.Limelight(CAMERA_SERVER.limelightF);
   VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
+  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
 
   private boolean m_localized;
 
@@ -46,6 +48,10 @@ public class Vision extends SubsystemBase {
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
+
+  private boolean matchStarted = false;
+  private final MedianFilter avgStartingAngle = new MedianFilter(100);
+  private double visionAngle = 0;
 
   // NetworkTables publisher setup
   public final DoubleSubscriber m_kPAutoAlignSubscriber;
@@ -135,7 +141,7 @@ public class Vision extends SubsystemBase {
   private final ConcurrentTimeInterpolatableBuffer<Pose2d> fieldToRobot =
       ConcurrentTimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
 
-  public class VisionFieldPoseEstimate {
+  public static class VisionFieldPoseEstimate {
 
     private final Pose2d visionRobotPoseMeters;
     private final double timestampSeconds;
@@ -361,6 +367,10 @@ public class Vision extends SubsystemBase {
     return true;
   }
 
+  public double getVisionAngle() {
+    return visionAngle;
+  }
+
   @Logged(name = "Has Initial Pose", importance = Logged.Importance.INFO)
   public boolean getInitialPose() {
     return this.hasInitialPose;
@@ -368,7 +378,7 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "LLL Connected", importance = Logged.Importance.INFO)
   public boolean lllConnected() {
-    return LLL.isAlive();
+    return LLF.isAlive();
   }
 
   @Logged(name = "LLR Connected", importance = Logged.Importance.INFO)
@@ -469,33 +479,48 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // limelight-left
-    boolean lllSuccess = processLimelight(LLL);
+    // limelight-front
+    boolean llfSuccess = processLimelight(LLF);
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
+    // limelight-left
+    boolean lllSuccess = processLimelight(LLR);
 
-   
-      if (!m_localized) {
-        // TODO: Change this to check if the robotPose and both limelight are all close to each other
-        m_localized = lllSuccess && llrSuccess;
-      }
-     // Only good updates reach this point, so use them for updating the robot pose
-     if (lllSuccess && llrSuccess) {
-      fuseEstimates(
-          new VisionFieldPoseEstimate(
-              LLL.getLastGoodEstimate().pose,
-              LLL.getLastGoodEstimate().timestampSeconds,
-              LLL.getStdDev(),
-              LLL.getLastGoodEstimate().tagCount),
-          new VisionFieldPoseEstimate(
-              LLR.getLastGoodEstimate().pose,
-              LLR.getLastGoodEstimate().timestampSeconds,
-              LLR.getStdDev(),
-              LLR.getLastGoodEstimate().tagCount));
-    } else if (lllSuccess) {
+    if (!m_localized) {
+      // TODO: Change this to check if the robotPose and both limelight are all close to each other
+      m_localized = llfSuccess && llrSuccess && lllSuccess;
+    }
+
+    // Only good updates reach this point, so use them for updating the robot pose
+    if(llfSuccess && llrSuccess && lllSuccess) {
+      m_swerveDriveTrain.addVisionMeasurement(LLF);
       m_swerveDriveTrain.addVisionMeasurement(LLL);
+      m_swerveDriveTrain.addVisionMeasurement(LLR);
+    } else if (llfSuccess && llrSuccess) {
+      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate()));
+    } else if (llfSuccess && lllSuccess) {
+      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLF.getFieldPoseEstimate(), LLL.getFieldPoseEstimate()));
+    } else if (llrSuccess && lllSuccess) {
+      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLR.getFieldPoseEstimate(), LLL.getFieldPoseEstimate()));
+    } else if (llfSuccess) {
+      m_swerveDriveTrain.addVisionMeasurement(LLF);
     } else if (llrSuccess) {
       m_swerveDriveTrain.addVisionMeasurement(LLR);
+    } else if (lllSuccess) {
+      m_swerveDriveTrain.addVisionMeasurement(LLL);
+    }
+
+    if (DriverStation.isFMSAttached() && DriverStation.isAutonomous()) {
+      matchStarted = true;
+    }
+
+    if(!matchStarted) {
+      if(llfSuccess)
+        visionAngle = avgStartingAngle.calculate(LLF.getLastGoodEstimate().pose.getRotation().getDegrees());
+      if(llrSuccess)
+        visionAngle = avgStartingAngle.calculate(LLR.getLastGoodEstimate().pose.getRotation().getDegrees());
+      if(lllSuccess)
+        visionAngle = avgStartingAngle.calculate(LLL.getLastGoodEstimate().pose.getRotation().getDegrees());
     }
   }
 
