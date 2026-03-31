@@ -37,9 +37,9 @@ public class Vision extends SubsystemBase {
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
-  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightF);
+  VISION.Limelight LLF = new VISION.Limelight(CAMERA_SERVER.limelightF);
   VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
-  VISION.Limelight LLB = new VISION.Limelight(CAMERA_SERVER.limelightL);
+  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
 
   private boolean m_localized;
 
@@ -369,8 +369,8 @@ public class Vision extends SubsystemBase {
     return this.hasInitialPose;
   }
 
-  @Logged(name = "LLL Connected", importance = Logged.Importance.INFO)
-  public boolean lllConnected() {
+  @Logged(name = "LLF Connected", importance = Logged.Importance.INFO)
+  public boolean llfConnected() {
     return LLF.isAlive();
   }
 
@@ -379,9 +379,9 @@ public class Vision extends SubsystemBase {
     return LLR.isAlive();
   }
 
-  @Logged(name = "LLB Connected", importance = Logged.Importance.INFO)
-  public boolean llbConnected() {
-    return LLB.isAlive();
+  @Logged(name = "LLL Connected", importance = Logged.Importance.INFO)
+  public boolean lllConnected() {
+    return LLL.isAlive();
   }
 
   /** Stop the nearest target from updating when we want to score to avoid target switching */
@@ -481,8 +481,8 @@ public class Vision extends SubsystemBase {
     boolean llfSuccess = processLimelight(LLF);
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
-    // limelight-back
-    boolean llbSuccess = processLimelight(LLB);
+    // limelight-left
+    boolean lllSuccess = processLimelight(LLL);
 
     if (!m_localized) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
@@ -492,20 +492,20 @@ public class Vision extends SubsystemBase {
     // Only good updates reach this point, so use them for updating the robot pose
     if(llfSuccess && llrSuccess && lllSuccess) {
       m_swerveDriveTrain.addVisionMeasurement(LLF);
-      m_swerveDriveTrain.addVisionMeasurement(LLL);
+      m_swerveDriveTrain.addVisionMeasurement(LLF);
       m_swerveDriveTrain.addVisionMeasurement(LLR);
     } else if (llfSuccess && llrSuccess) {
       m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate()));
     } else if (llfSuccess && lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLF.getFieldPoseEstimate(), LLL.getFieldPoseEstimate()));
+      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLF.getFieldPoseEstimate(), LLF.getFieldPoseEstimate()));
     } else if (llrSuccess && lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLR.getFieldPoseEstimate(), LLL.getFieldPoseEstimate()));
+      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLR.getFieldPoseEstimate(), LLF.getFieldPoseEstimate()));
     } else if (llfSuccess) {
       m_swerveDriveTrain.addVisionMeasurement(LLF);
     } else if (llrSuccess) {
       m_swerveDriveTrain.addVisionMeasurement(LLR);
     } else if (lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLL);
+      m_swerveDriveTrain.addVisionMeasurement(LLF);
     }
 
     if (DriverStation.isFMSAttached() && DriverStation.isAutonomous()) {
@@ -518,7 +518,7 @@ public class Vision extends SubsystemBase {
       if(llrSuccess)
         visionAngle = avgStartingAngle.calculate(LLR.getLastGoodEstimate().pose.getRotation().getDegrees());
       if(lllSuccess)
-        visionAngle = avgStartingAngle.calculate(LLL.getLastGoodEstimate().pose.getRotation().getDegrees());
+        visionAngle = avgStartingAngle.calculate(LLF.getLastGoodEstimate().pose.getRotation().getDegrees());
     }
   }
 
