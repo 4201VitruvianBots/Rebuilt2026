@@ -31,6 +31,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -97,7 +98,7 @@ public class IntakePivot extends SubsystemBase {
     config.Feedback.SensorToMechanismRatio = PIVOT.SensorToMechanismRatio;
     config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
 
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -117,6 +118,7 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
       m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
+
     m_motor.setPosition(getAngle().times(PIVOT.SensorToMechanismRatio).in(Rotations));
   }
 
@@ -183,7 +185,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations) * PIVOT.SensorToMechanismRatio));
+    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
   }
 
   @Override

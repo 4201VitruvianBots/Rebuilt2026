@@ -40,7 +40,7 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.7),
+      INTAKING(0.85),
       SHOOTING(0.3),
       SHOTREVERSING(0.13),
       REVERSE(-0.6);
@@ -59,7 +59,7 @@ public class INTAKE {
 
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-    public static final double kP = 8.0;
+    public static final double kP = 22.0;
     public static final double kD =
         0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
@@ -86,14 +86,14 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.869140625;
+    public static final double encoderOffset = -0.963623046875;
     public static final SensorDirectionValue encoderDirection =
-        SensorDirectionValue.Clockwise_Positive;
-    public static final double kAbsoluteSensorDiscontinuityPoint = 0.0;
+        SensorDirectionValue.CounterClockwise_Positive;
+    public static final double kAbsoluteSensorDiscontinuityPoint = 1;
 
     public enum PIVOT_SETPOINT {
-      STOWED(Degrees.of(95.0)),
-      INTAKING(Degrees.of(0.0)),
+      STOWED(Degrees.of(0.0)),
+      INTAKING(Degrees.of(101.0)),
       JOSTLING(Degrees.of(20.0));
 
       private final Angle angle;

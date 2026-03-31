@@ -270,17 +270,20 @@ public class RobotContainer {
     //             m_vision,
     //             m_driverController::getLeftY,
     //             m_driverController::getLeftX));
+    if (m_intake != null) m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    if (m_indexer != null && m_uptake != null) m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
 
-    m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-    m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
-
-    m_driverController
+    if (m_flywheel != null && m_hood != null) {
+      m_driverController
         .x()
         .whileTrue(
             new ParallelCommandGroup(
                 m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+    }
 
-    m_driverController
+
+    if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null){
+      m_driverController
         .leftBumper()
         .whileTrue(
             new Shoot(
@@ -291,10 +294,14 @@ public class RobotContainer {
                 m_swerveDrive,
                 m_driverController::getLeftY,
                 m_driverController::getLeftX));
+    }
 
-    m_driverController
+
+    if (m_intake != null) {
+      m_driverController
         .leftTrigger()
         .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+    }
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 

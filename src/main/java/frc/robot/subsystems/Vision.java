@@ -504,10 +504,10 @@ public class Vision extends SubsystemBase {
       m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLR.getFieldPoseEstimate(), LLL.getFieldPoseEstimate()));
     } else if (llfSuccess) {
       m_swerveDriveTrain.addVisionMeasurement(LLF);
-    } else if (llrSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLR);
     } else if (lllSuccess) {
       m_swerveDriveTrain.addVisionMeasurement(LLL);
+    } else if (llrSuccess) {
+      m_swerveDriveTrain.addVisionMeasurement(LLR);
     }
 
     if (DriverStation.isFMSAttached() && DriverStation.isAutonomous()) {
