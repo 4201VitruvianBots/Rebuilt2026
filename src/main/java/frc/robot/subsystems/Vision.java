@@ -36,8 +36,9 @@ public class Vision extends SubsystemBase {
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
-  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
+  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightF);
   VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
+  VISION.Limelight LLB = new VISION.Limelight(CAMERA_SERVER.limelightL);
 
   private boolean m_localized;
 
@@ -369,6 +370,11 @@ public class Vision extends SubsystemBase {
     return LLR.isAlive();
   }
 
+  @Logged(name = "LLB Connected", importance = Logged.Importance.INFO)
+  public boolean llbConnected() {
+    return LLB.isAlive();
+  }
+
   /** Stop the nearest target from updating when we want to score to avoid target switching */
   public void setTargetLock(boolean set) {
     lockTarget = set;
@@ -466,6 +472,8 @@ public class Vision extends SubsystemBase {
     boolean lllSuccess = processLimelight(LLL);
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
+    // limelight-back
+    boolean llbSuccess = processLimelight(LLB);
 
     if (DriverStation.isDisabled()) {
       if (lllSuccess) {
@@ -477,7 +485,7 @@ public class Vision extends SubsystemBase {
 
     if (!m_localized) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
-      m_localized = lllSuccess && llrSuccess;
+      m_localized = lllSuccess && llrSuccess && llbSuccess;
     }
 
     // Only good updates reach this point, so use them for updating the robot pose
