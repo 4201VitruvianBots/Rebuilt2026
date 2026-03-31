@@ -8,7 +8,10 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -41,6 +44,8 @@ public class Intake extends SubsystemBase {
 
   @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.roboRIO);
+
+  private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0).withEnableFOC(true);
 
   private DoubleSubscriber m_outputSubscriber;
   private DoublePublisher m_outputPublisher;
@@ -81,7 +86,8 @@ public class Intake extends SubsystemBase {
   }
 
   public void setOutputPercent(double speed) {
-    m_motor.set(speed);
+    m_dutyCycleOut.Output = speed;
+    m_motor.setControl(m_dutyCycleOut);
   }
 
   public boolean isConnected() {
