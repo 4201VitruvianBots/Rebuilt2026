@@ -305,7 +305,7 @@ public class RobotContainer {
                 m_driverController::getLeftY,
                 m_driverController::getLeftX,
                 () -> m_manualHoodAngleShift,
-                () -> m_manualRPMshift))
+                () -> m_manualRPMshift));
 
     m_driverController
         .leftTrigger()
