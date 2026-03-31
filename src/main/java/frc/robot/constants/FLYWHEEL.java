@@ -34,7 +34,9 @@ public class FLYWHEEL {
   public static final Distance fuelLaunchHeight = Inches.of(26.15);
   public static final Distance radius = Inches.of(2.0);
 
-  public static final int ballsPerSecond = 18;
+  public static final int ballsPerSecond = 20;
+
+  public static final AngularVelocity rpmShiftIncrement = RPM.of(5.0);
 
   public static class Shot {
     public final AngularVelocity shooterRPM;
@@ -85,6 +87,8 @@ public class FLYWHEEL {
     public static final Angle maxAngle = Degrees.of(19.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+
+    public static final Angle angleShiftIncrement = Degrees.of(0.25);
 
     public enum MANUAL_ANGLE {
       STOWED(Degrees.of(0.0)),
