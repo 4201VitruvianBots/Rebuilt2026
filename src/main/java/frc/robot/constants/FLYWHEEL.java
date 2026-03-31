@@ -35,6 +35,7 @@ public class FLYWHEEL {
   public static final Distance radius = Inches.of(2.0);
 
   public static final int ballsPerSecond = 18;
+  public static final double defaultFireDurationSeconds = 2.7;
 
   public static class Shot {
     public final AngularVelocity shooterRPM;

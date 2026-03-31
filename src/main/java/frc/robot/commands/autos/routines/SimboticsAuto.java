@@ -15,6 +15,7 @@ public class SimboticsAuto extends Auto {
     try {
       var swerveDrive = deps.swerveDrive;
 
+      // Only for testing purposes, this auto is dysfunctional
       var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("1678pt1");
       var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("1678pt2");
 

@@ -10,6 +10,7 @@ import frc.robot.commands.autos.segments.IntakeFromNeutralFirstPass;
 import frc.robot.commands.autos.segments.IntakeFromNeutralSecondPass;
 import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.robot.commands.swerve.ResetGyroWithAngle;
+import frc.robot.constants.FLYWHEEL;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
@@ -18,7 +19,7 @@ public class SideNeutralTwice extends Auto {
     addCommands(
         rushCenter ? new InstantCommand() : new ShootNearStart(deps, flipPath, 2.1),
         new IntakeFromNeutralFirstPass(deps, !rushCenter, flipPath),
-        new ShootNearStart(deps, flipPath, 2.2),
+        new ShootNearStart(deps, flipPath, FLYWHEEL.defaultFireDurationSeconds),
         new IntakeFromNeutralSecondPass(deps, true, flipPath),
         new ShootNearStart(deps, flipPath, 1.8));
   }
