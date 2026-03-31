@@ -12,8 +12,11 @@ import frc.team4201.lib.command.Auto;
 
 public class SideNeutralDepot extends Auto {
   public SideNeutralDepot(AutoDependencies deps) {
+    Auto firstSegment = new ShootNearStart(deps, () -> false);
+
+    setInitialPath(firstSegment.getInitialPath());
     addCommands(
-        new ShootNearStart(deps, () -> false),
+        firstSegment,
         new IntakeFromNeutral(deps, true, () -> false),
         new ShootNearStart(deps, () -> false),
         new IntakeAndShootFromDepot(deps));

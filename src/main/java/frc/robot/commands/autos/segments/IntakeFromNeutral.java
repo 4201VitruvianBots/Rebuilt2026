@@ -35,9 +35,10 @@ public class IntakeFromNeutral extends Auto {
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var crossOverBump =
-          PathPlannerPath.fromPathFile(
-              startingFromShoot ? "CrossOverBumpFromShooting" : "CrossOverBumpFromStart");
+      PathPlannerPath crossOverBump =
+          PathPlannerPath.fromPathFile("CrossOverBumpFromStart");
+
+      setInitialPath(crossOverBump);
 
       var intakeFromCenter = PathPlannerPath.fromPathFile("IntakeFromCenter");
 

@@ -55,6 +55,11 @@ public class LEDs extends SubsystemBase {
     if (state != currentState) {
       currentState = state;
       switch (currentState) {
+        case DISABLED_NOT_READY:
+          base = LEDPattern.steps(Map.of(0, Color.kDarkRed, 0.33, Color.kBlack, 0.67, Color.kDarkRed));
+          m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(100));
+          workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
+          break;
         case DISABLED:
           base = LEDPattern.rainbow(255, 127);
           m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));

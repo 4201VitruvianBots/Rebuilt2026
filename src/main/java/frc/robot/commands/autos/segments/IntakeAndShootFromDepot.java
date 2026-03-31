@@ -6,8 +6,10 @@ package frc.robot.commands.autos.segments;
 
 import static edu.wpi.first.units.Units.Meters;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
+// import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -31,10 +33,12 @@ public class IntakeAndShootFromDepot extends Auto {
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
+      // var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
+
+      PathPlannerPath intakeFromDepotPath = PathPlannerPath.fromPathFile("IntakeFromDepot");
 
       var intakeFromDepot =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("IntakeFromDepot");
+          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(intakeFromDepotPath);
       var shootFromDepot =
           swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("ShootFromDepot");
 
