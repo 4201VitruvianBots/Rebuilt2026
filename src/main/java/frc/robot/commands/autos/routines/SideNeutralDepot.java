@@ -8,6 +8,7 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.ShootNearStart;
+import frc.robot.commands.swerve.ResetGyroWithAngle;
 import frc.team4201.lib.command.Auto;
 
 public class SideNeutralDepot extends Auto {
@@ -16,6 +17,7 @@ public class SideNeutralDepot extends Auto {
 
     setInitialPath(firstSegment.getInitialPath());
     addCommands(
+        new ResetGyroWithAngle(deps.swerveDrive, deps.vision::getVisionAngle),
         firstSegment,
         new IntakeFromNeutral(deps, true, () -> false),
         new ShootNearStart(deps, () -> false),

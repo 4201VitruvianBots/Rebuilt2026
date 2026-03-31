@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShootManual;
+import frc.robot.commands.swerve.ResetGyroWithAngle;
 import frc.team4201.lib.command.Auto;
 
 public class CenterPreload extends Auto {
@@ -28,6 +29,7 @@ public class CenterPreload extends Auto {
       setInitialPath(m_path1);
 
       addCommands(
+          new ResetGyroWithAngle(deps.swerveDrive, deps.vision::getVisionAngle),
           m_command1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new AutoShootManual(deps, 3.0),
           m_command2.andThen(() -> swerveDrive.setControl(stopRequest)));

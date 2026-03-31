@@ -8,6 +8,7 @@ package frc.robot.commands.autos.routines;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.ShootNearStart;
+import frc.robot.commands.swerve.ResetGyroWithAngle;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
@@ -17,6 +18,7 @@ public class SideNeutralTwice extends Auto {
     Auto firstSegment = new IntakeFromNeutral(deps, false, flipPath);
     setInitialPath(firstSegment.getInitialPath());
     addCommands(
+        new ResetGyroWithAngle(deps.swerveDrive, deps.vision::getVisionAngle),
         firstSegment,
         new ShootNearStart(deps, flipPath),
         new IntakeFromNeutral(deps, true, flipPath),
