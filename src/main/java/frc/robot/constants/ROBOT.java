@@ -39,7 +39,7 @@ public class ROBOT {
 
     // Robot Serial Numbers (2026)
     WOOD_BOT("030cbc95"), // Rio 1.0
-    V1("030cbcf0"),
+    V1("032381fb"),
     V2("032398ed"),
     SIM("");
 
