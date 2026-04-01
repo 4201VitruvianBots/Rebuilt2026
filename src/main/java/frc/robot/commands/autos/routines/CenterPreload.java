@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShootManual;
-import frc.robot.commands.swerve.ResetGyroWithAngle;
 import frc.team4201.lib.command.Auto;
 
 public class CenterPreload extends Auto {
@@ -23,7 +22,6 @@ public class CenterPreload extends Auto {
       var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload2");
 
       addCommands(
-          new ResetGyroWithAngle(deps.swerveDrive, deps.vision::getVisionAngle),
           m_path1.andThen(() -> swerveDrive.setControl(stopRequest)),
           new AutoShootManual(deps, 3.0),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)));

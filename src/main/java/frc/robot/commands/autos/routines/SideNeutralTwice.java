@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.ShootNearStart;
-import frc.robot.commands.swerve.ResetGyroWithAngle;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
@@ -16,7 +15,6 @@ public class SideNeutralTwice extends Auto {
   public SideNeutralTwice(AutoDependencies deps, BooleanSupplier flipPath, boolean rushCenter) {
 
     addCommands(
-        new ResetGyroWithAngle(deps.swerveDrive, deps.vision::getVisionAngle),
         rushCenter ? new InstantCommand() : new ShootNearStart(deps, flipPath),
         new IntakeFromNeutral(deps, !rushCenter, flipPath),
         new ShootNearStart(deps, flipPath),

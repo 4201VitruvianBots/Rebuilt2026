@@ -7,7 +7,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -50,8 +49,6 @@ public class Vision extends SubsystemBase {
   private boolean hasInitialPose = false;
 
   private boolean matchStarted = false;
-  private final MedianFilter avgStartingAngle = new MedianFilter(100);
-  private double visionAngle = 0;
 
   // NetworkTables publisher setup
   public final DoubleSubscriber m_kPAutoAlignSubscriber;
@@ -189,6 +186,11 @@ public class Vision extends SubsystemBase {
 
     // TODO: find out what this is and why they need it
 
+    if (getFieldToRobot(llb.getTimestampSeconds()).isEmpty()
+        || getFieldToRobot(lla.getTimestampSeconds()).isEmpty()) {
+      return null;
+    }
+
     Transform2d a_T_b =
         getFieldToRobot(llb.getTimestampSeconds())
             .get()
@@ -255,7 +257,6 @@ public class Vision extends SubsystemBase {
     String limelightName = limelight.getName();
     if (DriverStation.isDisabled()) {
       // TODO: Determine if we change IMUMode to 0 when not disabled for MegaTag2
-      LimelightHelpers.SetIMUMode(limelightName, 1);
 
       // Only use Reef AprilTags for localization
       // TODO: Update code values before using this
@@ -277,20 +278,21 @@ public class Vision extends SubsystemBase {
       //          VISION.limelightBPosition.getRotation().getMeasureZ().in(Degrees));
     }
 
-    LimelightHelpers.SetRobotOrientation(
-        limelightName,
-        m_swerveDriveTrain.getState().Pose.getRotation().getDegrees(),
-        0,
-        0,
-        0,
-        0,
-        0);
     LimelightHelpers.PoseEstimate limelightMeasurement;
     if (DriverStation.isDisabled()) {
       // Use MegaTag1 when the robot is disabled to set the initial robot pose
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     } else {
       // Use MegaTag2 when the robot is running for more accurate pose updates
+      LimelightHelpers.SetRobotOrientation(
+          limelightName,
+          m_swerveDriveTrain.getState().Pose.getRotation().getDegrees(),
+          0,
+          0,
+          0,
+          0,
+          0);
+
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
     }
 
@@ -358,10 +360,6 @@ public class Vision extends SubsystemBase {
     }
 
     return true;
-  }
-
-  public double getVisionAngle() {
-    return visionAngle;
   }
 
   @Logged(name = "Has Initial Pose", importance = Logged.Importance.INFO)
@@ -479,41 +477,42 @@ public class Vision extends SubsystemBase {
     // limelight-left
     boolean lllSuccess = processLimelight(LLR);
 
-    if (!m_localized) {
-      // TODO: Change this to check if the robotPose and both limelight are all close to each other
-      m_localized = llfSuccess && llrSuccess && lllSuccess;
-    }
-
     // Only good updates reach this point, so use them for updating the robot pose
-    if(llfSuccess && llrSuccess && lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLF);
-      m_swerveDriveTrain.addVisionMeasurement(LLL);
-      m_swerveDriveTrain.addVisionMeasurement(LLR);
+    VisionFieldPoseEstimate newPose = null;
+    if (llfSuccess && llrSuccess && lllSuccess) {
+      newPose =
+          fuseEstimates(
+              fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate()),
+              LLL.getFieldPoseEstimate());
     } else if (llfSuccess && llrSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate()));
+      newPose = fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate());
     } else if (llfSuccess && lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLF.getFieldPoseEstimate(), LLL.getFieldPoseEstimate()));
+      newPose = fuseEstimates(LLF.getFieldPoseEstimate(), LLL.getFieldPoseEstimate());
     } else if (llrSuccess && lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(fuseEstimates(LLR.getFieldPoseEstimate(), LLL.getFieldPoseEstimate()));
+      newPose = fuseEstimates(LLR.getFieldPoseEstimate(), LLL.getFieldPoseEstimate());
     } else if (llfSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLF);
+      newPose = LLF.getFieldPoseEstimate();
     } else if (llrSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLR);
+      newPose = LLR.getFieldPoseEstimate();
     } else if (lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLL);
+      newPose = LLL.getFieldPoseEstimate();
     }
 
+    // Do this to avoid issues with the brief 'disabled' period between auto and teleop
     if (DriverStation.isFMSAttached() && DriverStation.isAutonomous()) {
       matchStarted = true;
     }
 
-    if(!matchStarted) {
-      if(llfSuccess)
-        visionAngle = avgStartingAngle.calculate(LLF.getLastGoodEstimate().pose.getRotation().getDegrees());
-      if(llrSuccess)
-        visionAngle = avgStartingAngle.calculate(LLR.getLastGoodEstimate().pose.getRotation().getDegrees());
-      if(lllSuccess)
-        visionAngle = avgStartingAngle.calculate(LLL.getLastGoodEstimate().pose.getRotation().getDegrees());
+    if (!m_localized && !matchStarted) {
+      // TODO: Change this to check if the robotPose and both limelight are all close to each other
+      if (newPose != null) {
+        m_swerveDriveTrain.resetPose(newPose.getVisionRobotPoseMeters());
+        m_localized = true;
+      }
+    }
+
+    if (newPose != null) {
+      m_swerveDriveTrain.addVisionMeasurement(newPose);
     }
   }
 
