@@ -22,7 +22,8 @@ public class AutoShoot extends ParallelDeadlineGroup {
                         && deps.vision.isOnTarget()))
             .withTimeout(fireDurationSeconds)
             .andThen(
-                new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds)));
+                new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds)
+            ));
     addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
   }
 }

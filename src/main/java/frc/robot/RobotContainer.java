@@ -36,13 +36,9 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterPreload;
-import frc.robot.commands.autos.routines.SideNeutral;
-import frc.robot.commands.autos.routines.SideNeutralDepot;
-import frc.robot.commands.autos.routines.SideNeutralTwice;
+import frc.robot.commands.autos.routines.TwoCycle;
 import frc.robot.commands.autos.routines.SimboticsAuto;
-import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
-import frc.robot.commands.autos.segments.IntakeFromNeutralFirstPass;
-import frc.robot.commands.autos.segments.ShootNearStart;
+import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
@@ -309,7 +305,6 @@ public class RobotContainer {
       m_driverController
           .y()
           .whileTrue(
-              // m_intakePivot.jostle()
               new JostleIntake(m_intakePivot));
     }
 
@@ -351,24 +346,14 @@ public class RobotContainer {
             m_indexer,
             m_uptake);
 
-    IntakeFromNeutralFirstPass.registerNamedCommands(autoDeps);
-    IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
+    IntakeFromNeutral.registerNamedCommands(autoDeps);
 
-    m_autoChooser.addOption("CenterPreload", new CenterPreload(autoDeps));
+    m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption("SideNeutralDepot", new SideNeutralDepot(autoDeps));
-    m_autoChooser.addOption(
-        "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "SideNeutralTwice - No Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
-    m_autoChooser.addOption(
-        "Test - 1678pt1", new ShootNearStart(autoDeps, () -> m_flipToRight, 2.2));
-    m_autoChooser.addOption(
-        "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight, 2.2));
+    m_autoChooser.addOption("Two Cycle", new TwoCycle(autoDeps, () -> m_flipToRight));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
-        new IntakeFromNeutralFirstPass(autoDeps, false, () -> m_flipToRight));
+        new IntakeFromNeutral(autoDeps, () -> m_flipToRight, false));
   }
 
   private void initSideChooser() {

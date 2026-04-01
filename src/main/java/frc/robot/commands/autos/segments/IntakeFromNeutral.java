@@ -18,7 +18,7 @@ import frc.robot.commands.autos.PrepareFlywheel;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
-public class IntakeFromNeutralSecondPass extends Auto {
+public class IntakeFromNeutral extends Auto {
 
   public static void registerNamedCommands(AutoDependencies deps) {
     NamedCommands.registerCommand(
@@ -27,15 +27,20 @@ public class IntakeFromNeutralSecondPass extends Auto {
             .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
   }
 
-  public IntakeFromNeutralSecondPass(
-      AutoDependencies deps, boolean startingFromShoot, BooleanSupplier flipToRight) {
+  public IntakeFromNeutral(
+      AutoDependencies deps, BooleanSupplier flipToRight, boolean secondPass) {
     try {
       var swerveDrive = deps.swerveDrive;
       var intake = deps.intake;
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var path = PathPlannerPath.fromPathFile("1678pt2");
+      PathPlannerPath path;
+      if (secondPass) {
+        path = PathPlannerPath.fromPathFile("1678pt2");
+      } else {
+        path = PathPlannerPath.fromPathFile("1678pt1");
+      }
 
       addCommands(
           new ParallelDeadlineGroup(
