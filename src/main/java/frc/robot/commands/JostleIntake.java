@@ -38,10 +38,11 @@ public class JostleIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // https://www.desmos.com/calculator/agh8canlyu
     Angle angle =
         Degrees.of(
             PIVOT.maxAngle.in(Degrees)
-                    * -Math.cos(
+                    * Math.cos(
                         (m_sineWaveTimer.get() * Math.PI * 2 / PIVOT.pivotCycleTime.in(Seconds)))
                 + PIVOT.maxAngle.abs(Degrees));
     m_intakePivot.setAngle(angle);
