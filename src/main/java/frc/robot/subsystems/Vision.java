@@ -478,24 +478,26 @@ public class Vision extends SubsystemBase {
     boolean lllSuccess = processLimelight(LLR);
 
     // Only good updates reach this point, so use them for updating the robot pose
-    VisionFieldPoseEstimate newPose = null;
-    if (llfSuccess && llrSuccess && lllSuccess) {
-      newPose =
-          fuseEstimates(
-              fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate()),
-              LLL.getFieldPoseEstimate());
-    } else if (llfSuccess && llrSuccess) {
-      newPose = fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate());
-    } else if (llfSuccess && lllSuccess) {
-      newPose = fuseEstimates(LLF.getFieldPoseEstimate(), LLL.getFieldPoseEstimate());
-    } else if (llrSuccess && lllSuccess) {
-      newPose = fuseEstimates(LLR.getFieldPoseEstimate(), LLL.getFieldPoseEstimate());
-    } else if (llfSuccess) {
-      newPose = LLF.getFieldPoseEstimate();
+//    VisionFieldPoseEstimate newPose = null;
+//    if (llfSuccess && llrSuccess && lllSuccess) {
+//      newPose =
+//          fuseEstimates(
+//              fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate()),
+//              LLL.getFieldPoseEstimate());
+//    } else if (llfSuccess && llrSuccess) {
+//      newPose = fuseEstimates(LLF.getFieldPoseEstimate(), LLR.getFieldPoseEstimate());
+//    } else if (llfSuccess && lllSuccess) {
+//      newPose = fuseEstimates(LLF.getFieldPoseEstimate(), LLL.getFieldPoseEstimate());
+//    } else if (llrSuccess && lllSuccess) {
+//      newPose = fuseEstimates(LLR.getFieldPoseEstimate(), LLL.getFieldPoseEstimate());
+//    } else
+    if (llfSuccess) {
+//      newPose = LLF.getFieldPoseEstimate();
+      m_swerveDriveTrain.addVisionMeasurement(LLF.getFieldPoseEstimate());
     } else if (llrSuccess) {
-      newPose = LLR.getFieldPoseEstimate();
+      m_swerveDriveTrain.addVisionMeasurement(LLF.getFieldPoseEstimate());
     } else if (lllSuccess) {
-      newPose = LLL.getFieldPoseEstimate();
+      m_swerveDriveTrain.addVisionMeasurement(LLF.getFieldPoseEstimate());
     }
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
@@ -505,15 +507,15 @@ public class Vision extends SubsystemBase {
 
     if (!m_localized && !matchStarted) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
-      if (newPose != null) {
-        m_swerveDriveTrain.resetPose(newPose.getVisionRobotPoseMeters());
-        m_localized = true;
-      }
+//      if (newPose != null) {
+//        m_swerveDriveTrain.resetPose(newPose.getVisionRobotPoseMeters());
+//        m_localized = true;
+//      }
     }
 
-    if (newPose != null) {
-      m_swerveDriveTrain.addVisionMeasurement(newPose);
-    }
+//    if (newPose != null) {
+//      m_swerveDriveTrain.addVisionMeasurement(newPose);
+//    }
   }
 
   @Override
