@@ -198,12 +198,12 @@ public class RobotContainer {
             () ->
                 drive
                     .withVelocityX(
-                        MaxSpeed.times(driveYAccelLimiter.calculate(
+                        MaxSpeed.times(
                             -m_driverController
-                                .getLeftY()))) // Drive forward with negative Y (forward)
+                                .getLeftY())) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        MaxSpeed.times(driveXAccelLimiter.calculate(
-                            -m_driverController.getLeftX()))) // Drive left with negative X (left)
+                        MaxSpeed.times(
+                            -m_driverController.getLeftX())) // Drive left with negative X (left)
                     .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
