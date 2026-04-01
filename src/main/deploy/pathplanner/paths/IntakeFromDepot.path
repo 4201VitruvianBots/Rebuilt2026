@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.135430346051464,
-        "y": 4.996725820763088
+        "x": 2.9744720496894406,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8735898213959592,
-        "y": 6.5005287993022485
+        "x": 1.712631525033936,
+        "y": 7.039739092115025
       },
       "isLocked": true,
       "linkedName": "ShootingPoint"
@@ -111,7 +111,7 @@
   "folder": "IntakeAndShootFromDepot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -31.798912824294426
+    "rotation": -39.52263127117106
   },
   "useDefaultConstraints": false
 }

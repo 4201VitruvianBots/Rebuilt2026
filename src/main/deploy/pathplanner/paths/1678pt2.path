@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.135430346051464,
-        "y": 4.996725820763088
+        "x": 2.9744720496894406,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.378483539235588,
-        "y": 5.288117537060721
+        "x": 3.2175252428735646,
+        "y": 5.827327829873497
       },
       "isLocked": true,
       "linkedName": "ShootingPoint"
@@ -128,12 +128,12 @@
     },
     {
       "anchor": {
-        "x": 3.135430346051464,
-        "y": 4.996725820763088
+        "x": 2.9744720496894406,
+        "y": 5.535936113575865
       },
       "prevControl": {
-        "x": 2.8785684971859435,
-        "y": 5.097192312674817
+        "x": 2.7176102008239202,
+        "y": 5.636402605487594
       },
       "nextControl": null,
       "isLocked": true,
@@ -197,7 +197,14 @@
       "name": "Point Towards Zone"
     }
   ],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "PrepareFlywheel",
+      "waypointRelativePos": 6.442953020134238,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.4,
     "maxAcceleration": 3.0,
@@ -208,13 +215,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -31.798912824294426
+    "rotation": -39.52263127117106
   },
   "reversed": false,
-  "folder": "1678 Auto",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -31.798912824294426
+    "rotation": -39.52263127117106
   },
   "useDefaultConstraints": false
 }
