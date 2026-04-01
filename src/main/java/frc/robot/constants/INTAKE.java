@@ -75,7 +75,7 @@ public class INTAKE {
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(101.0);
+    public static final Angle maxAngle = Degrees.of(106.0);
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -93,7 +93,7 @@ public class INTAKE {
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),
-      INTAKING(Degrees.of(101.0)),
+      INTAKING(Degrees.of(106.0)),
       JOSTLING(Degrees.of(20.0));
 
       private final Angle angle;

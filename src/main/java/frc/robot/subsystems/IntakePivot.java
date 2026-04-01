@@ -210,7 +210,7 @@ public class IntakePivot extends SubsystemBase {
             .getDoubleTopic("Intake Angle Setpoint");
     m_angleSubscriber = topic.subscribe(0.0);
     m_anglePublisher = topic.publish();
-    m_anglePublisher.set(0.0);
+    m_anglePublisher.set(PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees));
   }
 
   public void testPeriodic() {
