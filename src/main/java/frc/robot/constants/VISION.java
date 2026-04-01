@@ -6,23 +6,18 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import frc.robot.subsystems.Vision;
-import frc.team4201.lib.vision.LimelightHelpers;
 
 public final class VISION {
   public enum CAMERA_SERVER {
     limelightF("limelight-front", "10.42.1.12"),
     limelightR("limelight-right", "10.42.1.11"),
     limelightL("limelight-left", "10.42.1.13");
+
 
     private final String name;
     private final String ip;
@@ -89,37 +84,26 @@ public final class VISION {
     private final DoubleSubscriber hbSub;
     private double lastHeartbeat = -1.0;
     private boolean isAlive = false;
-    private final DoubleArraySubscriber stddevsSub;
 
     private final DoublePublisher hbPub;
     private final DoublePublisher estimatedTimestamp;
-    private final DoublePublisher robotTimestamp;
     private final StructPublisher<Pose2d> estimatedPose;
-    private final DoubleArrayPublisher estimatedPoseStdDevs;
     private final IntegerPublisher numTags;
     private final BooleanPublisher megatag2Pose;
     private final BooleanPublisher validPose;
-
-    private LimelightHelpers.PoseEstimate lastGoodEstimate = new LimelightHelpers.PoseEstimate();
-    private Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);
 
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
       var ntInst = NetworkTableInstance.getDefault();
       var llSubTable = ntInst.getTable(limelight.name);
       hbSub = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
-      stddevsSub = llSubTable.getDoubleArrayTopic("stddevs").subscribe(new double[12]);
 
       var llPubTable = ntInst.getTable("llTable").getSubTable(limelight.name);
       hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
       estimatedTimestamp = llPubTable.getDoubleTopic("estTimestamp").publish();
       estimatedTimestamp.setDefault(-1);
-      robotTimestamp = llPubTable.getDoubleTopic("robotTimestamp").publish();
-      robotTimestamp.setDefault(-1);
       estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
       estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
-      estimatedPoseStdDevs = llPubTable.getDoubleArrayTopic("stddevs").publish();
-      estimatedPoseStdDevs.setDefault(new double[3]);
       numTags = llPubTable.getIntegerTopic("numTags").publish();
       numTags.setDefault(-1);
       megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();
@@ -142,16 +126,8 @@ public final class VISION {
       estimatedTimestamp.set(timestamp);
     }
 
-    public void publishRobotTimestamp(double timestamp) {
-      robotTimestamp.set(timestamp);
-    }
-
     public void publishPose(Pose2d pose) {
       estimatedPose.set(pose);
-    }
-
-    public void publishPoseStdDevs(Matrix<N3, N1> stdDevs) {
-      estimatedPoseStdDevs.set(stdDevs.getData());
     }
 
     public void publishTagCount(int tags) {
@@ -180,39 +156,8 @@ public final class VISION {
       return lastHeartbeat;
     }
 
-    public Matrix<N3, N1> getStdDev(boolean mt2) {
-      var stddevArray = stddevsSub.get();
-      if (!mt2) {
-        stdDevs = VecBuilder.fill(stddevArray[0], stddevArray[1], stddevArray[5]);
-      } else {
-        stdDevs = VecBuilder.fill(stddevArray[6], stddevArray[7], stddevArray[11]);
-      }
-
-      return stdDevs;
-    }
-
-    public Matrix<N3, N1> getStdDev() {
-      return stdDevs;
-    }
-
-    public void setLastGoodEstimate(LimelightHelpers.PoseEstimate estimate) {
-      lastGoodEstimate = estimate;
-    }
-
-    public LimelightHelpers.PoseEstimate getLastGoodEstimate() {
-      return lastGoodEstimate;
-    }
-
     public boolean isAlive() {
       return isAlive;
-    }
-
-    public Vision.VisionFieldPoseEstimate getFieldPoseEstimate() {
-      return new Vision.VisionFieldPoseEstimate(
-          getLastGoodEstimate().pose,
-          getLastGoodEstimate().timestampSeconds,
-          getStdDev(),
-          getLastGoodEstimate().tagCount);
     }
   }
 }

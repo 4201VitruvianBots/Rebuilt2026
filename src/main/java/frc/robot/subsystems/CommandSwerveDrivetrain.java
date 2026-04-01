@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
-import frc.robot.constants.VISION;
 import frc.robot.generated.V2Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.TrajectoryUtils;
@@ -454,20 +453,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   public void addVisionMeasurement(
       Pose2d pose, double timestampSeconds, Matrix<N3, N1> standardDevs) {
     super.addVisionMeasurement(pose, Utils.fpgaToCurrentTime(timestampSeconds), standardDevs);
-  }
-
-  public void addVisionMeasurement(VISION.Limelight limelight) {
-    super.addVisionMeasurement(
-        limelight.getLastGoodEstimate().pose,
-        Utils.fpgaToCurrentTime(limelight.getLastGoodEstimate().timestampSeconds),
-        limelight.getStdDev());
-  }
-
-  public void addVisionMeasurement(Vision.VisionFieldPoseEstimate poseEstimate) {
-    super.addVisionMeasurement(
-        poseEstimate.getVisionRobotPoseMeters(),
-        poseEstimate.getTimestampSeconds(),
-        poseEstimate.getVisionMeasurementStdDevs());
   }
 
   @Override

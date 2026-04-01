@@ -15,7 +15,6 @@ import frc.team4201.lib.command.Auto;
 public class SideNeutralDepot extends Auto {
   public SideNeutralDepot(AutoDependencies deps) {
     addCommands(
-        new ResetGyroWithAngle(deps.swerveDrive, deps.vision::getVisionAngle),
         new ShootNearStart(deps, () -> false, FLYWHEEL.defaultFireDurationSeconds),
         new IntakeFromNeutralFirstPass(deps, true, () -> false),
         new ShootNearStart(deps, () -> false, FLYWHEEL.defaultFireDurationSeconds),
