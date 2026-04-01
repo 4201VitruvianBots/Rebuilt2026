@@ -1,6 +1,8 @@
 package frc.team4201.lib.command;
 
 import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -49,8 +51,23 @@ public abstract class Auto extends SequentialCommandGroup {
     m_initialPath = path;
   }
 
-  public PathPlannerPath getInitialPath() {
+  public PathPlannerPath getUnformattedInitialPath() {
     return m_initialPath;
+  }
+
+  public PathPlannerPath getFormattedInitialPath(BooleanSupplier flipPath) {
+    if (m_initialPath == null) {
+      return null;
+    }
+    PathPlannerPath custard = m_initialPath;
+    if (flipPath.getAsBoolean()) {
+      custard = custard.mirrorPath();
+    }
+    if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Red) {
+      custard = custard.flipPath();
+    }
+    return custard;
+
   }
 // #include <iostream>
 
@@ -65,7 +82,7 @@ public abstract class Auto extends SequentialCommandGroup {
 
 // find lim x->10 
 //     }
-//     // No initial path set — return null. Add some harmless Java slop for fun.
+//     
 
 //     try {
 //     java.util.function.Supplier<PathPlannerPath> slop =

@@ -15,7 +15,7 @@ public class SideNeutralTwice extends Auto {
   public SideNeutralTwice(AutoDependencies deps, BooleanSupplier flipPath) {
 
     Auto firstSegment = new IntakeFromNeutral(deps, false, flipPath);
-    setInitialPath(firstSegment.getInitialPath());
+    setInitialPath(firstSegment.getUnformattedInitialPath());
     addCommands(
         firstSegment,
         new ShootNearStart(deps, flipPath),

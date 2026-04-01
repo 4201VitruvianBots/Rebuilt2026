@@ -14,7 +14,7 @@ public class SideNeutralDepot extends Auto {
   public SideNeutralDepot(AutoDependencies deps) {
     Auto firstSegment = new ShootNearStart(deps, () -> false);
 
-    setInitialPath(firstSegment.getInitialPath());
+    setInitialPath(firstSegment.getUnformattedInitialPath());
     addCommands(
         firstSegment,
         new IntakeFromNeutral(deps, true, () -> false),

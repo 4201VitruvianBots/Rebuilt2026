@@ -37,6 +37,8 @@ public class IntakeAndShootFromDepot extends Auto {
 
       PathPlannerPath intakeFromDepotPath = PathPlannerPath.fromPathFile("IntakeFromDepot");
 
+      setInitialPath(intakeFromDepotPath);
+
       var intakeFromDepot =
           swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand(intakeFromDepotPath);
       var shootFromDepot =

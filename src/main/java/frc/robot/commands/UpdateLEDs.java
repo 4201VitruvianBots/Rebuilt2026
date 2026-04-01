@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.LED.LED_STATES;
@@ -29,6 +31,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.team4201.lib.command.Auto;
+import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -38,14 +41,18 @@ public class UpdateLEDs extends Command {
   private final Flywheel m_flywheel; // Used to track shooting state
   private final CommandSwerveDrivetrain m_drivetrain; // used to track apriltags and vision
   private final Supplier<Auto> m_autoSupplier;
+  private final FieldSim m_fieldSim;
+  private final BooleanSupplier m_flipPath;
 
   /** Creates a new UpdateLEDs. */
-  public UpdateLEDs(LEDs led, Intake intake, Flywheel flywheel, CommandSwerveDrivetrain swerve, Supplier<Auto> selectedAuto) {
+  public UpdateLEDs(LEDs led, Intake intake, Flywheel flywheel, CommandSwerveDrivetrain swerve, Supplier<Auto> selectedAuto, FieldSim fieldSim, BooleanSupplier flipPath) {
     m_led = led;
     m_intake = intake;
     m_flywheel = flywheel;
     m_drivetrain = swerve;
     m_autoSupplier = selectedAuto;
+    m_fieldSim = fieldSim;
+    m_flipPath = flipPath;
 
     addRequirements(led);
   }
@@ -60,19 +67,21 @@ public class UpdateLEDs extends Command {
     //same stuff as in shoot, estimating pose of robot
     Pose2d robotPose = m_drivetrain.getState().Pose;
 
-    PathPlannerPath autoInitialPath = m_autoSupplier.get().getInitialPath();
+    PathPlannerPath autoInitialPath = m_autoSupplier.get().getFormattedInitialPath(m_flipPath);
     Pose2d autoStartingPose;
     if (autoInitialPath != null) {
-      autoStartingPose = m_autoSupplier.get().getInitialPath().getStartingHolonomicPose().orElseThrow();
+      autoStartingPose = m_autoSupplier.get().getFormattedInitialPath(m_flipPath).getStartingHolonomicPose().orElseThrow();
     } else {
       autoStartingPose = robotPose;
     }
+    m_fieldSim.addPoses("Auto StartPos", autoStartingPose);
 
     Distance robotToAuto = Meters.of(robotPose.getTranslation().getDistance(autoStartingPose.getTranslation()));
     Angle robotToAutoAngle = Radians.of(robotPose.getTranslation().minus(autoStartingPose.getTranslation()).getAngle().plus(robotPose.getRotation()).getRadians());
 
     //debugging purposes
     // System.out.println(robotToAuto + " " + robotToAutoAngle); 
+    // System.out.println(robotPose + " " + autoStartingPose);
 
     /*
      * When disabled, DISABLED state always takes priority
@@ -106,7 +115,7 @@ public class UpdateLEDs extends Command {
     } else if (DriverStation.isEnabled()) {
       m_led.setState(LED_STATES.IDLE);
     }
-      else if (robotToAuto.gte(Inches.of(2)) && robotToAutoAngle.gte(Degrees.of(5))) {
+      else if ((robotToAuto.gt(Inches.of(2.0)) || robotToAutoAngle.gte(Degrees.of(5))) && RobotState.isDisabled()) {
         m_led.setState(LED_STATES.DISABLED_NOT_READY);
     }
      else {

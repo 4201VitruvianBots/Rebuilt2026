@@ -6,8 +6,13 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -200,13 +205,7 @@ public class RobotContainer {
     m_indexer = new Indexer();
     m_controls.registerSubsystem(m_vision);
 
-    if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
-      m_intakePivot = new IntakePivot();
-      m_led = new LEDs();
-      m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel, m_swerveDrive, () -> m_autoChooser.getSelected()));
-      // m_led.setDefaultCommand(new TestLEDs(m_led));
-      // m_climber = new Climber();
-    }
+
 
     if (Robot.isSimulation()) {
       m_fieldSim = new FieldSim();
@@ -222,6 +221,14 @@ public class RobotContainer {
     }
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
+
+        if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
+      m_intakePivot = new IntakePivot();
+      m_led = new LEDs();
+      m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel, m_swerveDrive, () -> m_autoChooser.getSelected(), m_fieldSim, () -> m_flipToRight));
+      // m_led.setDefaultCommand(new TestLEDs(m_led));
+      // m_climber = new Climber();
+    }
   }
 
   private void configureBindings() {
@@ -316,7 +323,7 @@ public class RobotContainer {
 
   private void initAutoChooser() {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
-    m_autoChooser.setDefaultOption("Do Nothing", new Auto() {});
+      m_autoChooser.setDefaultOption("Do Nothing", new Auto() {});
 
     var autoDeps =
         new AutoDependencies(
