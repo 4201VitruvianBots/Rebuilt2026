@@ -3,6 +3,7 @@ package frc.robot.constants;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -10,6 +11,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Time;
 
 public class INTAKE {
   public static class ROLLERS {
@@ -90,6 +92,8 @@ public class INTAKE {
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.CounterClockwise_Positive;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1;
+
+    public static final Time pivotCycleTime = Seconds.of(1.65); // TODO: measure and tune this time.
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),

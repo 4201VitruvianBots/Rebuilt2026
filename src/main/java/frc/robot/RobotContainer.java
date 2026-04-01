@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.JostleIntake;
 import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
@@ -304,19 +305,19 @@ public class RobotContainer {
           .leftTrigger()
           .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
+    if (m_intake != null) {
+      m_driverController
+          .y()
+          .whileTrue(
+              // m_intakePivot.jostle()
+              new JostleIntake(m_intakePivot));
+    }
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
     POVUtils.povDownWithTilt(m_driverController)
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
     // // I foresee a state machine in the future...
-    // if (m_uptake != null && m_indexer != null && m_intake != null) {
-    //   m_driverController
-    //       .b()
-    //       .whileTrue(
-    //             m_intakePivot.jostle()
-    //           );
-    // }
 
     // if (m_intake != null) {
     //   m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));

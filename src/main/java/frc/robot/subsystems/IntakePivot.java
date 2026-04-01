@@ -33,9 +33,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
@@ -170,17 +168,20 @@ public class IntakePivot extends SubsystemBase {
     return this.startEnd(() -> m_motor.set(speed), () -> m_motor.set(0.0));
   }
 
-  @NotLogged
-  public Command jostle() {
-    return new RepeatCommand(
-        this.startEnd(
-                () -> setAngle(PIVOT_SETPOINT.JOSTLING.getAngle()),
-                () -> {
-                  setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
-                })
-            .withTimeout(0.15)
-            .andThen(new WaitCommand(0.1)));
-  }
+  // Commented out because it was old, am replacing with seperate command file
+  // @NotLogged
+  // public Command jostle() {
+  //   // return new RepeatCommand(
+  //   //     this.startRun(
+  //   //             () -> {
+
+  //   //             },
+  //   //             () -> {
+  //   //               setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
+  //   //             })
+  //   //         .withTimeout(0.15)
+  //   //         .andThen(new WaitCommand(0.1)));
+  // }
 
   @Override
   public void periodic() {
