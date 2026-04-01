@@ -67,7 +67,7 @@ public class INTAKE {
     // public static final double kA = 0;
     public static final double kG = 0.0;
 
-    public static final double gearRatio = 35.0 / 1.0; // encoder is after gear ratio
+    public static final double gearRatio = 48.0 / 16.0; // v2.5 gear ratio is changed, previous 35.0 / 1.0
     public static final double motionMagicAcceleration = 15.0;
     public static final double motionMagicCruiseVelocity = 12.0;
     public static final double motionMagicJerk = 0.0;
