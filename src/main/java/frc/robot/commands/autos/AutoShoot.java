@@ -6,7 +6,9 @@ package frc.robot.commands.autos;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Fire;
+import frc.robot.commands.JostleIntake;
 import frc.robot.commands.Shoot;
 
 // Begins firing once the shooter is up to speed, and continues firing for a given duration. Used in
@@ -22,7 +24,10 @@ public class AutoShoot extends ParallelDeadlineGroup {
                         && deps.vision.isOnTarget()))
             .withTimeout(fireDurationSeconds)
             .andThen(
-                new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds)
+                new ParallelDeadlineGroup(
+                    new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds),
+                    new WaitCommand(1.0).andThen(new JostleIntake(deps.intakePivot))
+                )
             ));
     addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
   }
