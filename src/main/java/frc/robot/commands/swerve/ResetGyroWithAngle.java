@@ -2,13 +2,12 @@ package frc.robot.commands.swerve;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Controls;
-
 import java.util.function.DoubleSupplier;
 
 public class ResetGyroWithAngle extends Command {
   /** Creates a new ResetGyro. */
   private final CommandSwerveDrivetrain m_swerveDrive;
+
   private final DoubleSupplier m_angleSupplier;
 
   public ResetGyroWithAngle(CommandSwerveDrivetrain swerveDrive, DoubleSupplier angleSupplier) {

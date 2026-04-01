@@ -18,7 +18,6 @@ public final class VISION {
     limelightR("limelight-right", "10.42.1.11"),
     limelightL("limelight-left", "10.42.1.13");
 
-
     private final String name;
     private final String ip;
     private final int lastOctet;

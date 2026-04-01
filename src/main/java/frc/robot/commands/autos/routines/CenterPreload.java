@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShootManual;
-import frc.robot.commands.swerve.ResetGyroWithAngle;
 import frc.robot.constants.FLYWHEEL;
 import frc.team4201.lib.command.Auto;
 

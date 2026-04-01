@@ -35,8 +35,7 @@ public class IntakeFromNeutralFirstPass extends Auto {
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var path =
-          PathPlannerPath.fromPathFile("1678pt1");
+      var path = PathPlannerPath.fromPathFile("1678pt1");
 
       addCommands(
           new ParallelDeadlineGroup(

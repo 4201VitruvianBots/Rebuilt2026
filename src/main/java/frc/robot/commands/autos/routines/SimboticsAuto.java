@@ -19,11 +19,7 @@ public class SimboticsAuto extends Auto {
       var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("1678pt1");
       var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("1678pt2");
 
-      addCommands(
-          m_path1,
-          new AutoShoot(deps, 2.7),
-          m_path2, 
-          new AutoShoot(deps, 2.7));
+      addCommands(m_path1, new AutoShoot(deps, 2.7), m_path2, new AutoShoot(deps, 2.7));
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for Simbotics Auto", e.getStackTrace());
       addCommands(new InstantCommand());

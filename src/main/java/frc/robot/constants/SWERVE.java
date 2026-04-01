@@ -41,7 +41,8 @@ public class SWERVE {
   // Made up values
   public static final LinearVelocity kMaxSpeedBump = FeetPerSecond.of(5.5);
   public static final LinearAcceleration kMaxAccelerationBump = FeetPerSecondPerSecond.of(3.0);
-  // In units, where one unit is the max speed of the robot because 100% output of the joystick will translate to max speed.
+  // In units, where one unit is the max speed of the robot because 100% output of the joystick will
+  // translate to max speed.
   public static final double kXAccelRateLimit = 10.0;
   public static final double kYAccelRateLimit = 10.0;
   public static final double kXDeccelRateLimit = -3.0;

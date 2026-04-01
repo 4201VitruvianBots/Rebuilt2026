@@ -31,14 +31,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.CAN;
-import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
@@ -78,7 +76,8 @@ public class IntakePivot extends SubsystemBase {
     if (RobotBase.isReal()) {
       encoderConfig.MagnetSensor.MagnetOffset = PIVOT.encoderOffset;
       encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
-      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = PIVOT.kAbsoluteSensorDiscontinuityPoint;
+      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+          PIVOT.kAbsoluteSensorDiscontinuityPoint;
     }
 
     CtreUtils.configureCANCoder(m_canCoder, encoderConfig);

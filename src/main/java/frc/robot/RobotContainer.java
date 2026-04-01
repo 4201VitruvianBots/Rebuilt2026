@@ -50,8 +50,8 @@ import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
-import frc.robot.constants.SWERVE.MOTOR_TYPE;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.SWERVE.MOTOR_TYPE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
@@ -126,11 +126,13 @@ public class RobotContainer {
       new SwerveRequest.SwerveDriveBrake();
 
   // Units per second, where 100% = 1 unit. Multiply by our robot's max speed to get m/s accel limit
-  //TODO: Change these values
-  // Needs seperate filters because each filter takes in different values 
+  // TODO: Change these values
+  // Needs seperate filters because each filter takes in different values
   // The robot base is also a square so acceleration limits will be different depending on direction
-  private SlewRateLimiter driveXAccelLimiter = new SlewRateLimiter(SWERVE.kXAccelRateLimit, SWERVE.kXDeccelRateLimit, 0); 
-  private SlewRateLimiter driveYAccelLimiter = new SlewRateLimiter(SWERVE.kYAccelRateLimit, SWERVE.kYDeccelRateLimit, 0); 
+  private SlewRateLimiter driveXAccelLimiter =
+      new SlewRateLimiter(SWERVE.kXAccelRateLimit, SWERVE.kXDeccelRateLimit, 0);
+  private SlewRateLimiter driveYAccelLimiter =
+      new SlewRateLimiter(SWERVE.kYAccelRateLimit, SWERVE.kYDeccelRateLimit, 0);
 
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry =
@@ -182,7 +184,7 @@ public class RobotContainer {
         });
   }
 
-  public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype){
+  public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype) {
     return m_swerveDrive.runOnce(() -> m_swerveDrive.setNeutralMode(motortype, neutralmode));
   }
 
@@ -270,37 +272,37 @@ public class RobotContainer {
     //             m_vision,
     //             m_driverController::getLeftY,
     //             m_driverController::getLeftX));
-    if (m_intake != null) m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-    if (m_indexer != null && m_uptake != null) m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
+    if (m_intake != null)
+      m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    if (m_indexer != null && m_uptake != null)
+      m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
 
     if (m_flywheel != null && m_hood != null) {
       m_driverController
-        .x()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+          .x()
+          .whileTrue(
+              new ParallelCommandGroup(
+                  m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
     }
 
-
-    if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null){
+    if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
       m_driverController
-        .leftBumper()
-        .whileTrue(
-            new Shoot(
-                m_flywheel,
-                m_hood,
-                m_vision,
-                m_driverController,
-                m_swerveDrive,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
+          .leftBumper()
+          .whileTrue(
+              new Shoot(
+                  m_flywheel,
+                  m_hood,
+                  m_vision,
+                  m_driverController,
+                  m_swerveDrive,
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX));
     }
-
 
     if (m_intake != null) {
       m_driverController
-        .leftTrigger()
-        .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+          .leftTrigger()
+          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
@@ -326,8 +328,10 @@ public class RobotContainer {
     // }
 
     // if (m_swerveDrive != null) {
-    //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast, MOTOR_TYPE.STEER));
-    //   m_driverController.b().whileTrue(setDrivetrainMode(NeutralModeValue.Brake, MOTOR_TYPE.STEER));
+    //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
+    // MOTOR_TYPE.STEER));
+    //   m_driverController.b().whileTrue(setDrivetrainMode(NeutralModeValue.Brake,
+    // MOTOR_TYPE.STEER));
     // }
   }
 
@@ -362,7 +366,8 @@ public class RobotContainer {
     m_autoChooser.addOption(
         "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight, 2.2));
     m_autoChooser.addOption(
-        "Test - Intake from Neutral", new IntakeFromNeutralFirstPass(autoDeps, false, () -> m_flipToRight));
+        "Test - Intake from Neutral",
+        new IntakeFromNeutralFirstPass(autoDeps, false, () -> m_flipToRight));
   }
 
   private void initSideChooser() {

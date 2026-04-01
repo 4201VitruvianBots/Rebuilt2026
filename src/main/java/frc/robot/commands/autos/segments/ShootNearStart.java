@@ -6,12 +6,9 @@ package frc.robot.commands.autos.segments;
 
 import static edu.wpi.first.units.Units.Meters;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.PrepareFlywheel;
@@ -19,7 +16,8 @@ import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
 public class ShootNearStart extends Auto {
-  public ShootNearStart(AutoDependencies deps, BooleanSupplier flipToRight, double fireDurationSeconds) {
+  public ShootNearStart(
+      AutoDependencies deps, BooleanSupplier flipToRight, double fireDurationSeconds) {
     try {
       var flywheel = deps.flywheel;
       addCommands(

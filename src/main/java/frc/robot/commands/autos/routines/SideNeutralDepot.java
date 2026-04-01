@@ -8,7 +8,6 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
 import frc.robot.commands.autos.segments.IntakeFromNeutralFirstPass;
 import frc.robot.commands.autos.segments.ShootNearStart;
-import frc.robot.commands.swerve.ResetGyroWithAngle;
 import frc.robot.constants.FLYWHEEL;
 import frc.team4201.lib.command.Auto;
 
