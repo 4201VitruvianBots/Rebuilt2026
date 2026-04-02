@@ -6,7 +6,7 @@ package frc.robot.commands.autos.routines;
 
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
-import frc.robot.commands.autos.segments.IntakeAndShoot;
+import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
@@ -16,7 +16,11 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 public class TwoCycle extends Auto {
   public TwoCycle(AutoDependencies deps, BooleanSupplier flipPath, boolean partnerFriendly) {
     addCommands(
-        new IntakeAndShoot(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS),
-        new IntakeAndShoot(deps, flipPath, partnerFriendly ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY : TWO_CYCLE_PATH.SECOND_PASS));
+        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS),
+        new AutoShoot(deps, 3.0)
+              .andThen(new PrintCommand("[AUTO] Finished shooting")),
+        new IntakeFromNeutral(deps, flipPath, partnerFriendly ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY : TWO_CYCLE_PATH.SECOND_PASS),
+        new AutoShoot(deps, 1.8)
+              .andThen(new PrintCommand("[AUTO] Finished shooting")));
   }
 }

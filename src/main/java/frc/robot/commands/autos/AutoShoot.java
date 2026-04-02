@@ -22,7 +22,7 @@ public class AutoShoot extends ParallelDeadlineGroup {
                     (deps.flywheel.isAtRPMsetpoint()
                         && deps.hood.atSetpoint()
                         && deps.vision.isOnTarget()))
-            .withTimeout(0.8)
+            .withTimeout(1.0)
             .andThen(
                 new ParallelDeadlineGroup(
                     new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds),
