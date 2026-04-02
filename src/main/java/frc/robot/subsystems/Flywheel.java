@@ -26,6 +26,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Energy;
 import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -211,7 +212,11 @@ public class Flywheel extends SubsystemBase {
   }
 
   public boolean isAtRPMsetpoint() {
-    return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThreshold;
+    if (DriverStation.isAutonomous()) {
+        return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdAuto;
+    } else {
+        return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdTeleop;
+    }
   }
 
   public double getRPMerror() {

@@ -286,7 +286,11 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
-    return getAngleToTarget().getDegrees() < 0.5;
+    if (DriverStation.isAutonomous()) {
+        return getAngleToTarget().getDegrees() < 2.0;
+    } else {
+        return getAngleToTarget().getDegrees() < 0.5;
+    }
   }
 
   public boolean isPointingAtGoal(
