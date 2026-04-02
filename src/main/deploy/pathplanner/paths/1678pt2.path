@@ -192,7 +192,7 @@
         "y": 4.03
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 7.302013422818796,
+      "minWaypointRelativePos": 6.65,
       "maxWaypointRelativePos": 8.0,
       "name": "Point Towards Zone"
     }
@@ -208,12 +208,23 @@
           "name": "prepareFlywheelForNearHub"
         }
       }
+    },
+    {
+      "name": "startShootCommand",
+      "waypointRelativePos": 6.725423728813532,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "startShootCommand"
+        }
+      }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 3.8,
     "maxAcceleration": 3.6,
-    "maxAngularVelocity": 720.0,
+    "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false

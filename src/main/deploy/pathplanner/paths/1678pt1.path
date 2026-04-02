@@ -133,7 +133,7 @@
       "maxWaypointRelativePos": 4.026845637583891,
       "constraints": {
         "maxVelocity": 2.5,
-        "maxAcceleration": 2.2,
+        "maxAcceleration": 2.7,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -154,7 +154,18 @@
       }
     }
   ],
-  "pointTowardsZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.63,
+        "y": 4.03
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 4.66,
+      "maxWaypointRelativePos": 6.0,
+      "name": "Point Towards Zone"
+    }
+  ],
   "eventMarkers": [
     {
       "name": "prepareFlywheelForNearHub",
@@ -164,6 +175,17 @@
         "type": "named",
         "data": {
           "name": "prepareFlywheelForNearHub"
+        }
+      }
+    },
+    {
+      "name": "startShootCommand",
+      "waypointRelativePos": 4.861016949152541,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "startShootCommand"
         }
       }
     }
