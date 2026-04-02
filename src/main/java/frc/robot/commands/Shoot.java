@@ -16,6 +16,7 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +32,8 @@ import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
+
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -135,6 +138,7 @@ public class Shoot extends Command {
   }
 
   // Called every time the scheduler runs while the command is scheduled.
+  @SuppressWarnings("deprecation")
   @Override
   public void execute() {
     // Calculate estimated pose while accounting for phase delay
@@ -213,19 +217,27 @@ public class Shoot extends Command {
     boolean isBraking = moduleAngleDeltaInt == 0;
 
     if (!isBraking) {
-      m_swerveDrivetrain.setChassisSpeedsWithHeading(
-          SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-          SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-          Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
+      if (DriverStation.isAutonomous()) {
+        PPHolonomicDriveController.setRotationTargetOverride(() -> java.util.Optional.of(Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle));
+      } else {
+        m_swerveDrivetrain.setChassisSpeedsWithHeading(
+            SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+            SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+            Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
+      }
     }
   }
 
   // Called once the command ends or is interrupted.
+  @SuppressWarnings("deprecation")
   @Override
   public void end(boolean interrupted) {
     if (m_driverController != null)
       m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     m_flywheel.setVoltageOutput(Volts.of(0.0));
+    if (DriverStation.isAutonomous()) {
+      PPHolonomicDriveController.setRotationTargetOverride(() -> java.util.Optional.empty());
+    }
   }
 
   // Returns true when the command should end.

@@ -14,21 +14,24 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
+import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.PrepareFlywheel;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
-public class IntakeFromNeutral extends Auto {
+public class IntakeAndShoot extends Auto {
 
   public static void registerNamedCommands(AutoDependencies deps) {
     NamedCommands.registerCommand(
         "prepareFlywheelForNearHub",
         new PrepareFlywheel(deps.flywheel, Meters.of(1.45650895207174))
             .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
+    NamedCommands.registerCommand("startShootCommand", new AutoShoot(deps, 2.5)
+              .andThen(new PrintCommand("[AUTO] Finished shooting")));
   }
 
-  public IntakeFromNeutral(
+  public IntakeAndShoot(
       AutoDependencies deps, BooleanSupplier flipToRight, TWO_CYCLE_PATH selectedPath) {
     try {
       var swerveDrive = deps.swerveDrive;
@@ -43,7 +46,8 @@ public class IntakeFromNeutral extends Auto {
                   getPathCommand(swerveDrive, path, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
+              .andThen(new PrintCommand("[AUTO] Finished crossing over bump"))
+        );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());

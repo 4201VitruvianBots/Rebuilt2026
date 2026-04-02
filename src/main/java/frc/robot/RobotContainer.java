@@ -38,7 +38,7 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterPreload;
 import frc.robot.commands.autos.routines.TwoCycle;
 import frc.robot.commands.autos.routines.SimboticsAuto;
-import frc.robot.commands.autos.segments.IntakeFromNeutral;
+import frc.robot.commands.autos.segments.IntakeAndShoot;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
@@ -347,7 +347,7 @@ public class RobotContainer {
             m_indexer,
             m_uptake);
 
-    IntakeFromNeutral.registerNamedCommands(autoDeps);
+    IntakeAndShoot.registerNamedCommands(autoDeps);
 
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
@@ -355,7 +355,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
-        new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
+        new IntakeAndShoot(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
   }
 
   private void initSideChooser() {

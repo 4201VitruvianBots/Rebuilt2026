@@ -208,6 +208,17 @@
           "name": "prepareFlywheelForNearHub"
         }
       }
+    },
+    {
+      "name": "startShootCommand",
+      "waypointRelativePos": 6.725423728813532,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "startShootCommand"
+        }
+      }
     }
   ],
   "globalConstraints": {
