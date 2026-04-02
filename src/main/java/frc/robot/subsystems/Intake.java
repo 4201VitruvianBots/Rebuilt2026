@@ -23,6 +23,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -155,7 +156,11 @@ public class Intake extends SubsystemBase {
         setOutputPercent(INTAKE_SPEED.ZERO.get());
         break;
       case INTAKING:
-        setOutputPercent(INTAKE_SPEED.INTAKING.get());
+        if (DriverStation.isAutonomous()){
+          setOutputPercent(INTAKE_SPEED.AUTOINTAKING.get());
+        } else {
+          setOutputPercent(INTAKE_SPEED.INTAKING.get());
+        }
         break;
       case SHOOTING:
         boolean shouldReverse = Math.round(Timer.getFPGATimestamp()) % 2 == 0;
