@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.Utils;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -40,6 +41,7 @@ public class Vision extends SubsystemBase {
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
+  private boolean matchStarted = false;
 
   // NetworkTables publisher setup
   public final DoubleSubscriber m_kPAutoAlignSubscriber;
@@ -175,19 +177,23 @@ public class Vision extends SubsystemBase {
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
     }
 
-    boolean validResult = isPoseValid(limelightName, limelightMeasurement);
+    boolean validResult = isPoseValid(limelight, limelightMeasurement);
 
     // Log Data
     limelight.getHeartbeat();
     limelight.publishValid(validResult);
     if (limelightMeasurement != null) {
       limelight.publishTimestamp(limelightMeasurement.timestampSeconds);
+      limelight.publishRobotTimestamp(Utils.getCurrentTimeSeconds());
       limelight.publishPose(limelightMeasurement.pose);
+      limelight.publishPoseStdDevs(limelight.getStdDev(limelightMeasurement.isMegaTag2));
       limelight.publishTagCount(limelightMeasurement.tagCount);
       limelight.publishMegatag2Pose(limelightMeasurement.isMegaTag2);
     } else {
       limelight.publishTimestamp(-1);
+      limelight.publishRobotTimestamp(-1);
       limelight.publishPose(new Pose2d(-1, -1, Rotation2d.kZero));
+      limelight.publishPoseStdDevs(VecBuilder.fill(0, 0, 0));
       limelight.publishTagCount(-1);
       limelight.publishMegatag2Pose(false);
     }
@@ -195,22 +201,26 @@ public class Vision extends SubsystemBase {
     if (validResult) {
       // Only good updates reach this point, so use them for updating the robot pose
       assert limelightMeasurement != null;
-      m_swerveDriveTrain.addVisionMeasurement(
-          limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
 
       // Reset the Swerve Pose with MegaTag1 if we are disabled
-      if (DriverStation.isDisabled() && !limelightMeasurement.isMegaTag2) {
+      if (DriverStation.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
+      } else {
+        m_swerveDriveTrain.addVisionMeasurement(
+            limelightMeasurement.pose,
+            limelightMeasurement.timestampSeconds,
+            limelight.getStdDev(limelightMeasurement.isMegaTag2));
       }
     }
 
     return validResult;
   }
 
-  public boolean isPoseValid(String limelightName, LimelightHelpers.PoseEstimate poseEstimate) {
+  public boolean isPoseValid(
+      VISION.Limelight limelight, LimelightHelpers.PoseEstimate poseEstimate) {
     if (poseEstimate == null) {
       if (RobotBase.isReal())
-        DriverStation.reportWarning(limelightName + " is not connected", true);
+        DriverStation.reportWarning(limelight.getName() + " is not connected", true);
       return false;
     } else {
       // Filter out bad AprilTag vision estimates for both MegaTag1 and MegaTag2
@@ -228,19 +238,14 @@ public class Vision extends SubsystemBase {
         if (poseEstimate.tagCount < 2) {
           return false;
         }
-        LimelightHelpers.SetFiducialIDFiltersOverride(limelightName, excludeTrenchTags);
+        LimelightHelpers.SetFiducialIDFiltersOverride(limelight.getName(), excludeTrenchTags);
 
         hasInitialPose = true;
-        // Set Standard Deviations for MegaTag1
-        m_swerveDriveTrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
       } else {
         // Ignore MegaTag2 updates if the robot is spinning too fast
         if (m_swerveDriveTrain.getGyroYawRate().abs(DegreesPerSecond) > 720.0) {
           return false;
         }
-
-        // Set Standard Deviations for MegaTag2
-        m_swerveDriveTrain.setVisionMeasurementStdDevs(VecBuilder.fill(.4, .4, 9999999));
       }
     }
 
@@ -252,14 +257,19 @@ public class Vision extends SubsystemBase {
     return this.hasInitialPose;
   }
 
-  @Logged(name = "LLL Connected", importance = Logged.Importance.INFO)
-  public boolean lllConnected() {
-    return LLL.isAlive();
+  @Logged(name = "LLF Connected", importance = Logged.Importance.INFO)
+  public boolean llfConnected() {
+    return LLF.isAlive();
   }
 
   @Logged(name = "LLR Connected", importance = Logged.Importance.INFO)
   public boolean llrConnected() {
     return LLR.isAlive();
+  }
+
+  @Logged(name = "LLL Connected", importance = Logged.Importance.INFO)
+  public boolean lllConnected() {
+    return LLL.isAlive();
   }
 
   /** Stop the nearest target from updating when we want to score to avoid target switching */
@@ -287,9 +297,9 @@ public class Vision extends SubsystemBase {
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
     if (DriverStation.isAutonomous()) {
-        return getAngleToTarget().getDegrees() < 2.0;
+      return getAngleToTarget().getDegrees() < 2.0;
     } else {
-        return getAngleToTarget().getDegrees() < 0.5;
+      return getAngleToTarget().getDegrees() < 0.5;
     }
   }
 
@@ -373,9 +383,10 @@ public class Vision extends SubsystemBase {
       m_localized = lllSuccess && llrSuccess && llfSuccess;
     }
 
-    // if (m_swerveDriveTrain != null) {
-    //   updateAngleToHub();
-    // }
+    // Do this to avoid issues with the brief 'disabled' period between auto and teleop
+    if (DriverStation.isFMSAttached() && DriverStation.isAutonomous() && matchStarted) {
+      matchStarted = true;
+    }
   }
 
   @Override
