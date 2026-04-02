@@ -33,15 +33,15 @@
     {
       "anchor": {
         "x": 7.610070984915705,
-        "y": 7.008704525288376
+        "y": 6.775314995563442
       },
       "prevControl": {
         "x": 6.808691358723763,
-        "y": 7.386982139282677
+        "y": 7.153592609557743
       },
       "nextControl": {
         "x": 8.12597516284619,
-        "y": 6.765180738185642
+        "y": 6.531791208460708
       },
       "isLocked": false,
       "linkedName": null
@@ -132,8 +132,8 @@
       "minWaypointRelativePos": 1.721476510067117,
       "maxWaypointRelativePos": 4.026845637583891,
       "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 2.1,
+        "maxVelocity": 2.5,
+        "maxAcceleration": 2.7,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -168,7 +168,7 @@
   ],
   "eventMarkers": [
     {
-      "name": "PrepareFlywheel",
+      "name": "prepareFlywheelForNearHub",
       "waypointRelativePos": 4.177852348993294,
       "endWaypointRelativePos": null,
       "command": null
@@ -184,10 +184,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -39.52263127117106
+    "rotation": -42.55691099572577
   },
   "reversed": false,
-  "folder": "TwoCycle",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -33.5
