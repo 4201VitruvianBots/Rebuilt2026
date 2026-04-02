@@ -421,6 +421,10 @@ public class RobotContainer {
   public void disabledPeriodic() {
     if (m_vision != null) m_vision.disabledPeriodic();
   }
+  
+  public void autonomousPeriodic() {
+    System.out.println("Flywheel RPM ready: " + m_flywheel.isAtRPMsetpoint() + ", Hood at setpoint: " + m_hood.atSetpoint() + ", Vision on target: " + m_vision.isOnTarget());
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
