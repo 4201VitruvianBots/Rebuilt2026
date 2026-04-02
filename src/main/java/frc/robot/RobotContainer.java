@@ -51,6 +51,7 @@ import frc.robot.constants.SWERVE;
 import frc.robot.constants.SWERVE.MOTOR_TYPE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
+import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.robot.simulation.Robot2d;
 import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
@@ -350,10 +351,11 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption("Two Cycle", new TwoCycle(autoDeps, () -> m_flipToRight));
+    m_autoChooser.addOption("Two Cycle", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
-        new IntakeFromNeutral(autoDeps, () -> m_flipToRight, false));
+        new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
   }
 
   private void initSideChooser() {

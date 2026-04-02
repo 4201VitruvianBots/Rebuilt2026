@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
+import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
@@ -28,19 +29,14 @@ public class IntakeFromNeutral extends Auto {
   }
 
   public IntakeFromNeutral(
-      AutoDependencies deps, BooleanSupplier flipToRight, boolean secondPass) {
+      AutoDependencies deps, BooleanSupplier flipToRight, TWO_CYCLE_PATH selectedPath) {
     try {
       var swerveDrive = deps.swerveDrive;
       var intake = deps.intake;
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      PathPlannerPath path;
-      if (secondPass) {
-        path = PathPlannerPath.fromPathFile("1678pt2");
-      } else {
-        path = PathPlannerPath.fromPathFile("1678pt1");
-      }
+      PathPlannerPath path = PathPlannerPath.fromPathFile(selectedPath.getPathName());
 
       addCommands(
           new ParallelDeadlineGroup(

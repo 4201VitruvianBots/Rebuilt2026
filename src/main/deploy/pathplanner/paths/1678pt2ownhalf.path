@@ -186,7 +186,12 @@
       "name": "prepareFlywheelForNearHub",
       "waypointRelativePos": 5.442953020134238,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "prepareFlywheelForNearHub"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -202,7 +207,7 @@
     "rotation": -42.55691099572577
   },
   "reversed": false,
-  "folder": null,
+  "folder": "TwoCycle",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -42.55691099572577
