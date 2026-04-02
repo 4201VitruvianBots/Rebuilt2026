@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.RobotController;
 public class ROBOT {
   public static final boolean useSysID = false;
 
-  public static Logged.Importance logMode = Logged.Importance.DEBUG;
+  public static Logged.Importance logMode = Logged.Importance.INFO;
   public static ROBOT_ID robotID = ROBOT_ID.SIM;
 
   public enum CONTROL_MODE {
@@ -25,7 +25,8 @@ public class ROBOT {
   public enum TWO_CYCLE_PATH {
     FIRST_PASS("1678pt1"),
     SECOND_PASS("1678pt2"),
-    SECOND_PASS_PARTNER_FRIENDLY("1678pt2ownhalf");
+    SECOND_PASS_PARTNER_FRIENDLY("1678pt2ownhalf"), 
+    DEPOT("DepotCycle");
     
     private final String pathName;
     

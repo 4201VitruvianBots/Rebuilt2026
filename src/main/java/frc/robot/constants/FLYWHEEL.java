@@ -18,7 +18,7 @@ public class FLYWHEEL {
   public static final double kInertia = 0.01;
   public static final double kStatorCurrentLimit = 70.0;
   public static final double kVelocityErrorThresholdTeleop = 100.0;
-  public static final double kVelocityErrorThresholdAuto = 250.0;
+  public static final double kVelocityErrorThresholdAuto = 150.0;
   public static final double kFuelDragCoefficient =
       0.48; // Estimation based on it's size and relatively smooth shape. TODO: Tune
   public static final double kRumbleStrength = 0.25;

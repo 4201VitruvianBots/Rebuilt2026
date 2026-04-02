@@ -19,6 +19,9 @@ public class TwoCycle extends Auto {
         new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS),
         new AutoShoot(deps, 3.0)
               .andThen(new PrintCommand("[AUTO] Finished shooting")),
+        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT),
+        new AutoShoot(deps, 1.8)
+              .andThen(new PrintCommand("[AUTO] Finished shooting")),
         new IntakeFromNeutral(deps, flipPath, partnerFriendly ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY : TWO_CYCLE_PATH.SECOND_PASS),
         new AutoShoot(deps, 1.8)
               .andThen(new PrintCommand("[AUTO] Finished shooting")));
