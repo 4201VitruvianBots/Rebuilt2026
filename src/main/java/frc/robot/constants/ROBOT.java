@@ -21,6 +21,23 @@ public class ROBOT {
     OPEN_LOOP,
     CLOSED_LOOP
   }
+  
+  public enum TWO_CYCLE_PATH {
+    FIRST_PASS("1678pt1"),
+    SECOND_PASS("1678pt2"),
+    SECOND_PASS_PARTNER_FRIENDLY("1678pt2ownhalf"), 
+    DEPOT("DepotCycle");
+    
+    private final String pathName;
+    
+    TWO_CYCLE_PATH(String pathName) {
+      this.pathName = pathName;
+    }
+    
+    public String getPathName() {
+      return pathName;
+    }
+  }
 
   public enum SUPERSTRUCTURE_STATES {}
 

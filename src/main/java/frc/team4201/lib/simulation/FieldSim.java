@@ -52,6 +52,10 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
     SmartDashboard.putData("Field2D", m_field2D);
   }
 
+  public Field2d getField2d() {
+    return m_field2D;
+  }
+
   public void initializeTranslations(String key, Translation2d... translations) {
     m_field2D
         .getObject(key)

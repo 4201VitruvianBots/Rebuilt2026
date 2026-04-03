@@ -9,6 +9,8 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.FLYWHEEL;
@@ -21,6 +23,7 @@ import frc.robot.constants.ROBOT;
  */
 @Logged(name = "Robot", importance = Logged.Importance.CRITICAL)
 public class Robot extends TimedRobot {
+  private Timer timer = new Timer();
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -33,8 +36,11 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    DataLogManager.start();
     enableLiveWindowInTest(false);
+    LiveWindow.disableAllTelemetry();
+    DataLogManager.logNetworkTables(true);
+    DataLogManager.logConsoleOutput(true);
+    DataLogManager.start();
     Epilogue.configure(
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
@@ -45,6 +51,7 @@ public class Robot extends TimedRobot {
           config.root = "EpilogueTelemetry";
         });
     Epilogue.bind(this);
+    timer.start();
   }
 
   /**
@@ -63,6 +70,12 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     m_robotContainer.robotPeriodic();
+
+    if (timer.hasElapsed(15)) {
+      System.out.println("Restarting DataLogManager");
+      DataLogManager.start();
+      timer.reset();
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -91,7 +104,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    m_robotContainer.autonomousPeriodic();
+  }
 
   @Override
   public void teleopInit() {

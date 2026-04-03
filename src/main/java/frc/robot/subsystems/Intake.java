@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -22,6 +23,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,6 +43,8 @@ public class Intake extends SubsystemBase {
 
   @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
   private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.roboRIO);
+
+  private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0).withEnableFOC(true);
 
   private DoubleSubscriber m_outputSubscriber;
   private DoublePublisher m_outputPublisher;
@@ -66,7 +70,7 @@ public class Intake extends SubsystemBase {
     config.Slot0.kP = ROLLERS.kP;
     config.Feedback.SensorToMechanismRatio = ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = ROLLERS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = ROLLERS.peakReverseOutput;
 
@@ -81,7 +85,8 @@ public class Intake extends SubsystemBase {
   }
 
   public void setOutputPercent(double speed) {
-    m_motor.set(speed);
+    m_dutyCycleOut.Output = speed;
+    m_motor.setControl(m_dutyCycleOut);
   }
 
   public boolean isConnected() {
@@ -151,7 +156,11 @@ public class Intake extends SubsystemBase {
         setOutputPercent(INTAKE_SPEED.ZERO.get());
         break;
       case INTAKING:
-        setOutputPercent(INTAKE_SPEED.INTAKING.get());
+        if (DriverStation.isAutonomous()){
+          setOutputPercent(INTAKE_SPEED.AUTOINTAKING.get());
+        } else {
+          setOutputPercent(INTAKE_SPEED.INTAKING.get());
+        }
         break;
       case SHOOTING:
         boolean shouldReverse = Math.round(Timer.getFPGATimestamp()) % 2 == 0;

@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -31,6 +33,7 @@ public class Vision extends SubsystemBase {
 
   VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
   VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
+  VISION.Limelight LLF = new VISION.Limelight(CAMERA_SERVER.limelightF);
 
   private boolean m_localized;
 
@@ -39,6 +42,7 @@ public class Vision extends SubsystemBase {
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
+  private boolean matchStarted = false;
 
   // NetworkTables publisher setup
   public final DoubleSubscriber m_kPAutoAlignSubscriber;
@@ -46,6 +50,10 @@ public class Vision extends SubsystemBase {
 
   public final DoublePublisher m_kPAutoAlignPublisher;
   public final DoublePublisher m_kDAutoAlignPublisher;
+
+  private int[] excludeTrenchTags = {
+    2, 3, 4, 5, 8, 9, 10, 11, 13, 14, 15, 16, 18, 19, 20, 21, 24, 25, 26, 27, 29, 30, 31, 32
+  };
 
   public Vision(Controls controls) {
     m_controls = controls;
@@ -170,18 +178,20 @@ public class Vision extends SubsystemBase {
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
     }
 
-    boolean validResult = isPoseValid(limelightName, limelightMeasurement);
+    boolean validResult = isPoseValid(limelight, limelightMeasurement);
 
     // Log Data
     limelight.getHeartbeat();
     limelight.publishValid(validResult);
     if (limelightMeasurement != null) {
       limelight.publishTimestamp(limelightMeasurement.timestampSeconds);
+      limelight.publishRobotTimestamp(Utils.getCurrentTimeSeconds());
       limelight.publishPose(limelightMeasurement.pose);
       limelight.publishTagCount(limelightMeasurement.tagCount);
       limelight.publishMegatag2Pose(limelightMeasurement.isMegaTag2);
     } else {
       limelight.publishTimestamp(-1);
+      limelight.publishRobotTimestamp(-1);
       limelight.publishPose(new Pose2d(-1, -1, Rotation2d.kZero));
       limelight.publishTagCount(-1);
       limelight.publishMegatag2Pose(false);
@@ -190,22 +200,25 @@ public class Vision extends SubsystemBase {
     if (validResult) {
       // Only good updates reach this point, so use them for updating the robot pose
       assert limelightMeasurement != null;
-      m_swerveDriveTrain.addVisionMeasurement(
-          limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
 
       // Reset the Swerve Pose with MegaTag1 if we are disabled
-      if (DriverStation.isDisabled() && !limelightMeasurement.isMegaTag2) {
+      if (DriverStation.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
+      } else {
+        m_swerveDriveTrain.addVisionMeasurement(
+            limelightMeasurement.pose,
+            limelightMeasurement.timestampSeconds);
       }
     }
 
     return validResult;
   }
 
-  public boolean isPoseValid(String limelightName, LimelightHelpers.PoseEstimate poseEstimate) {
+  public boolean isPoseValid(
+      VISION.Limelight limelight, LimelightHelpers.PoseEstimate poseEstimate) {
     if (poseEstimate == null) {
       if (RobotBase.isReal())
-        DriverStation.reportWarning(limelightName + " is not connected", true);
+        DriverStation.reportWarning(limelight.getName() + " is not connected", true);
       return false;
     } else {
       // Filter out bad AprilTag vision estimates for both MegaTag1 and MegaTag2
@@ -223,6 +236,7 @@ public class Vision extends SubsystemBase {
         if (poseEstimate.tagCount < 2) {
           return false;
         }
+        LimelightHelpers.SetFiducialIDFiltersOverride(limelight.getName(), excludeTrenchTags);
 
         hasInitialPose = true;
         // Set Standard Deviations for MegaTag1
@@ -280,7 +294,11 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
-    return getAngleToTarget().getDegrees() < 0.5;
+    if (DriverStation.isAutonomous()) {
+        return getAngleToTarget().getDegrees() < 2.0;
+    } else {
+        return getAngleToTarget().getDegrees() < 0.5;
+    }
   }
 
   public boolean isPointingAtGoal(
@@ -356,14 +374,17 @@ public class Vision extends SubsystemBase {
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
 
+    boolean llfSuccess = processLimelight(LLF);
+
     if (!m_localized) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
-      m_localized = lllSuccess && llrSuccess;
+      m_localized = lllSuccess && llrSuccess && llfSuccess;
     }
 
-    // if (m_swerveDriveTrain != null) {
-    //   updateAngleToHub();
-    // }
+    // Do this to avoid issues with the brief 'disabled' period between auto and teleop
+    if (DriverStation.isFMSAttached() && DriverStation.isAutonomous() && !matchStarted) {
+      matchStarted = true;
+    }
   }
 
   @Override

@@ -33,9 +33,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
@@ -76,6 +74,8 @@ public class IntakePivot extends SubsystemBase {
     if (RobotBase.isReal()) {
       encoderConfig.MagnetSensor.MagnetOffset = PIVOT.encoderOffset;
       encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
+      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+          PIVOT.kAbsoluteSensorDiscontinuityPoint;
     }
 
     CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
@@ -89,10 +89,11 @@ public class IntakePivot extends SubsystemBase {
     // config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
+    config.Feedback.SensorToMechanismRatio = PIVOT.SensorToMechanismRatio;
+    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
 
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -114,7 +115,8 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
       m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
-    m_motor.setPosition(getAngle().in(Rotations));
+
+    m_motor.setPosition(getAngle().times(PIVOT.SensorToMechanismRatio).in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -131,7 +133,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Logged(name = "Pivot Angle Radians", importance = Importance.DEBUG)
   public Angle getAngle() {
-    return m_canCoder.getAbsolutePosition().refresh().getValue();
+    return m_canCoder.getPosition().refresh().getValue().div(PIVOT.SensorToMechanismRatio);
   }
 
   @Logged(name = "Pivot Angle Degrees", importance = Importance.INFO)
@@ -151,7 +153,7 @@ public class IntakePivot extends SubsystemBase {
   // placeholder, idea (in the future) is to find
   // way to track previous setpoint and use that for jostling (like if the previous was stowed then
   // not be able to jostle on accident)
-  // public Boolean PrevSetpointIsIntaking() {
+  // public Boolean prevSetpointIsIntaking() {
   //  return m_desiredAngle
   // }
 
@@ -166,17 +168,20 @@ public class IntakePivot extends SubsystemBase {
     return this.startEnd(() -> m_motor.set(speed), () -> m_motor.set(0.0));
   }
 
-  @NotLogged
-  public Command jostle() {
-    return new RepeatCommand(
-        this.startEnd(
-                () -> setAngle(PIVOT_SETPOINT.JOSTLING.getAngle()),
-                () -> {
-                  setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
-                })
-            .withTimeout(0.15)
-            .andThen(new WaitCommand(0.1)));
-  }
+  // Commented out because it was old, am replacing with seperate command file
+  // @NotLogged
+  // public Command jostle() {
+  //   // return new RepeatCommand(
+  //   //     this.startRun(
+  //   //             () -> {
+
+  //   //             },
+  //   //             () -> {
+  //   //               setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
+  //   //             })
+  //   //         .withTimeout(0.15)
+  //   //         .andThen(new WaitCommand(0.1)));
+  // }
 
   @Override
   public void periodic() {
@@ -206,7 +211,7 @@ public class IntakePivot extends SubsystemBase {
             .getDoubleTopic("Intake Angle Setpoint");
     m_angleSubscriber = topic.subscribe(0.0);
     m_anglePublisher = topic.publish();
-    m_anglePublisher.set(0.0);
+    m_anglePublisher.set(PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees));
   }
 
   public void testPeriodic() {

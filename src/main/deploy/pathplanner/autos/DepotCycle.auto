@@ -7,25 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CrossOverBumpFromStart"
+            "pathName": "1678pt1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "IntakeFromCenter"
+            "pathName": "DepotCycle"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ReturnToAllianceZone"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ShootNearStart"
+            "pathName": "1678pt2"
           }
         }
       ]

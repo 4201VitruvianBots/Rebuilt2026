@@ -6,10 +6,10 @@ package frc.robot.commands.autos;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Fire;
+import frc.robot.commands.JostleIntake;
 import frc.robot.commands.Shoot;
-import frc.robot.constants.FIELD;
-import frc.robot.constants.SWERVE.AUTO_ALIGN;
 
 // Begins firing once the shooter is up to speed, and continues firing for a given duration. Used in
 // auto routines to fire shots while running paths.
@@ -21,13 +21,14 @@ public class AutoShoot extends ParallelDeadlineGroup {
                 () ->
                     (deps.flywheel.isAtRPMsetpoint()
                         && deps.hood.atSetpoint()
-                        && (deps.vision.isPointingAtGoal(
-                            FIELD.TARGET.CURRENT_TARGET.getTargetPosition().toTranslation2d(),
-                            AUTO_ALIGN.kRotationTolerance.getDegrees(),
-                            true))))
-            .withTimeout(fireDurationSeconds)
+                        && deps.vision.isOnTarget()))
+            .withTimeout(0.25)
             .andThen(
-                new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds)));
+                new ParallelDeadlineGroup(
+                    new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds),
+                    new WaitCommand(0.6).andThen(new JostleIntake(deps.intakePivot))
+                )
+            ));
     addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
   }
 }
