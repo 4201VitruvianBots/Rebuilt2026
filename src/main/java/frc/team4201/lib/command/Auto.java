@@ -25,7 +25,7 @@ public abstract class Auto extends SequentialCommandGroup {
   }
 
   // chooses between 2 paths depending on autoSide input
-  protected final Command getChoiceCommand(
+  protected final Command getChoicePathCommand(
       CommandSwerveDrivetrain swerveDrive,
       PathPlannerPath choice1,
       PathPlannerPath choice2,
@@ -39,5 +39,20 @@ public abstract class Auto extends SequentialCommandGroup {
           }
         },
         Set.of(swerveDrive));
+  }
+
+   protected final Command getChoiceCommand(
+      Command choice1,
+      Command choice2,
+      BooleanSupplier autoSide) {
+    return Commands.defer(
+        () -> {
+          if (autoSide.getAsBoolean()) {
+            return choice1;
+          } else {
+            return choice2;
+          }
+        },
+        Set.of());
   }
 }

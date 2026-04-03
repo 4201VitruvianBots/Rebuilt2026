@@ -11,6 +11,7 @@ import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 
 public class TwoCycle extends Auto {
@@ -19,7 +20,7 @@ public class TwoCycle extends Auto {
         new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS),
         new AutoShoot(deps, 3.0)
               .andThen(new PrintCommand("[AUTO] Finished shooting")),
-        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT),
+        getChoiceCommand(new InstantCommand(), new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT), flipPath),
         new AutoShoot(deps, 1.8)
               .andThen(new PrintCommand("[AUTO] Finished shooting")),
         new IntakeFromNeutral(deps, flipPath, partnerFriendly ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY : TWO_CYCLE_PATH.SECOND_PASS),
