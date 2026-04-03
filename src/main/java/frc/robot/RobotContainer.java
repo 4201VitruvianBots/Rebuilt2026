@@ -252,39 +252,6 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // aim at target
-    // if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
-    //   m_driverController
-    //       .rightBumper()
-    //       .toggleOnTrue(
-    //           new ParallelCommandGroup(
-    //               new AutoAlignDrive(
-    //                   m_swerveDrive,
-    //                   m_vision,
-    //                   m_driverController::getLeftY,
-    //                   m_driverController::getLeftX),
-    //               new Shoot(m_flywheel, m_vision, m_hood)));
-    // }
-
-    // if (m_swerveDrive != null && m_vision != null) {
-    //   m_driverController
-    //       .leftBumper()
-    //       .toggleOnTrue(
-    //           new AutoAlignDrive(
-    //               m_swerveDrive,
-    //               m_vision,P
-    //               m_driverController::getLeftY,
-    //               m_driverController::getLeftX));
-    // }
-
-    // m_driverController
-    //     .y()
-    //     .whileTrue(
-    //         new AutoAlignDrive(
-    //             m_swerveDrive,
-    //             m_vision,
-    //             m_driverController::getLeftY,
-    //             m_driverController::getLeftX));
     if (m_intake != null)
       m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
     if (m_indexer != null && m_uptake != null)
@@ -318,8 +285,7 @@ public class RobotContainer {
           .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
     if (m_intake != null) {
-      m_driverController
-          .y()
+      m_driverController.y().or(m_operatorController.y())
           .whileTrue(
               new JostleIntake(m_intakePivot));
     }
@@ -339,27 +305,16 @@ public class RobotContainer {
     );
 
     // Decrease hood angle manual shift by 0.2
-    POVUtils.povDownWithTilt(m_operatorController).onTrue(
-        new InstantCommand(() -> m_manualHoodAngleShift -= (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
-    );
-    // Increase hood angle manual shift by 0.2
-    POVUtils.povUpWithTilt(m_operatorController).onTrue(
-        new InstantCommand(() -> m_manualHoodAngleShift += (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
-    );
+    // POVUtils.povDownWithTilt(m_operatorController).onTrue(
+    //     new InstantCommand(() -> m_manualHoodAngleShift -= (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+    // );
+    // // Increase hood angle manual shift by 0.2
+    // POVUtils.povUpWithTilt(m_operatorController).onTrue(
+    //     new InstantCommand(() -> m_manualHoodAngleShift += (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+    // );
 
     m_operatorController.b().onTrue(resetManualShifts());
-
-    // // I foresee a state machine in the future...
-
-    // if (m_intake != null) {
-    //   m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
-    // }
-
-    // if (m_indexer != null){
-    //   m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING,
-    // INDEXER_SPEED_2.INDEXING));
-    // }
-
+    
     // if (m_swerveDrive != null) {
     //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
     // MOTOR_TYPE.STEER));
