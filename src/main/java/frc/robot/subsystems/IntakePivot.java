@@ -141,7 +141,7 @@ public class IntakePivot extends SubsystemBase {
     return getAngle().in(Degrees);
   }
 
-  @Logged(name = "At Setpoint", importance = Logged.Importance.INFO)
+  @Logged(name = "At Setpoint", importance = Logged.Importance.DEBUG)
   public boolean atSetpoint() {
     return m_desiredAngle.minus(getAngle()).abs(Degrees) <= 1; // Works as good as always
   }

@@ -90,12 +90,12 @@ public class Indexer extends SubsystemBase {
     return m_indexerMotor1.isConnected() && m_indexerMotor2.isConnected();
   }
 
-  @Logged(name = "Motor Output 1", importance = Logged.Importance.INFO)
+  @Logged(name = "Motor Output 1", importance = Logged.Importance.DEBUG)
   public double getPercentOutput() {
     return m_indexerMotor1.get();
   }
 
-  @Logged(name = "Motor Output 2", importance = Logged.Importance.INFO)
+  @Logged(name = "Motor Output 2", importance = Logged.Importance.DEBUG)
   public double getPercentOutput2() {
     return m_indexerMotor2.get();
   }

@@ -270,6 +270,11 @@ public class Vision extends SubsystemBase {
     return LLR.isAlive();
   }
 
+  @Logged(name = "LLF Connected", importance = Logged.Importance.INFO)
+  public boolean llfConnected() {
+    return LLF.isAlive();
+  }
+
   /** Stop the nearest target from updating when we want to score to avoid target switching */
   public void setTargetLock(boolean set) {
     lockTarget = set;
