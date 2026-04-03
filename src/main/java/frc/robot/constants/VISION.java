@@ -90,6 +90,7 @@ public final class VISION {
     private final IntegerPublisher numTags;
     private final BooleanPublisher megatag2Pose;
     private final BooleanPublisher validPose;
+    private final DoublePublisher robotTimestamp;
 
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
@@ -101,6 +102,8 @@ public final class VISION {
       hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
       estimatedTimestamp = llPubTable.getDoubleTopic("estTimestamp").publish();
       estimatedTimestamp.setDefault(-1);
+      robotTimestamp = llPubTable.getDoubleTopic("robotTimestamp").publish();
+      robotTimestamp.setDefault(-1);
       estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
       estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
       numTags = llPubTable.getIntegerTopic("numTags").publish();
@@ -123,6 +126,10 @@ public final class VISION {
 
     public void publishTimestamp(double timestamp) {
       estimatedTimestamp.set(timestamp);
+    }
+
+    public void publishRobotTimestamp(double timestamp) {
+      robotTimestamp.set(timestamp);
     }
 
     public void publishPose(Pose2d pose) {

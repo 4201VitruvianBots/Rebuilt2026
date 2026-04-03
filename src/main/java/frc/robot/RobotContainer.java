@@ -309,7 +309,7 @@ public class RobotContainer {
                   m_driverController,
                   m_swerveDrive,
                   m_driverController::getLeftY,
-                  m_driverController::getLeftX));
+                  m_driverController::getLeftX, () -> m_manualHoodAngleShift, () -> m_manualRPMshift));
     }
 
     if (m_intake != null) {
