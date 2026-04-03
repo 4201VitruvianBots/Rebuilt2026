@@ -168,27 +168,6 @@ public class RobotContainer {
     initSmartDashboard();
 
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-
-    // Logging callback for current robot pose
-    PathPlannerLogging.setLogCurrentPoseCallback(
-        (pose) -> {
-          // Do whatever you want with the pose here
-          m_fieldSim.addPoses("PP_RobotPose", pose);
-        });
-
-    // Logging callback for target robot pose
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (pose) -> {
-          // Do whatever you want with the pose here
-          m_fieldSim.addPoses("PP_TargetPose", pose);
-        });
-
-    // Logging callback for the active path, this is sent as a list of poses
-    PathPlannerLogging.setLogActivePathCallback(
-        (poses) -> {
-          // Do whatever you want with the poses here
-          m_fieldSim.addPoses("PP_Trajectory", poses.toArray(new Pose2d[0]));
-        });
   }
 
   public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype) {
@@ -231,6 +210,7 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
       m_fuelSim = new FuelSim();
+      m_fieldSim = new FieldSim();
       m_telemetry.registerFieldSim(m_fieldSim);
       m_vision.registerFieldSim(m_fieldSim);
       m_telemetry.registerFieldSim(m_fieldSim);
