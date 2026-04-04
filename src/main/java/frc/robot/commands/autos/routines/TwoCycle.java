@@ -18,7 +18,7 @@ public class TwoCycle extends Auto {
   public TwoCycle(AutoDependencies deps, BooleanSupplier flipPath, boolean partnerFriendly) {
     addCommands(
         new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS),
-        new AutoShoot(deps, 3.0)
+        new AutoShoot(deps, 2.3)
               .andThen(new PrintCommand("[AUTO] Finished shooting")),
         getChoiceCommand(new InstantCommand(), new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT), flipPath),
         new AutoShoot(deps, 1.8)
