@@ -482,14 +482,14 @@ public class FIELD {
         new Target3d(
             new Translation3d(
                 FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85)),
-                FIELD_WIDTH.times(0.1),
+                FIELD_WIDTH.times(0.2),
                 Meters.zero()));
 
     public static Target3d RED_RIGHT_PASS =
         new Target3d(
             new Translation3d(
                 FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85)),
-                FIELD_WIDTH.times(0.9),
+                FIELD_WIDTH.times(0.8),
                 Meters.zero()));
 
     public static Collection<Translation2d> RED_PASS_POINTS =
