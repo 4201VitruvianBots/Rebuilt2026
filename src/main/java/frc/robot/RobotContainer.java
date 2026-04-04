@@ -38,6 +38,7 @@ import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterPreload;
 import frc.robot.commands.autos.routines.TwoCycle;
+import frc.robot.commands.autos.routines.TwoCycleRush;
 import frc.robot.commands.autos.routines.SimboticsAuto;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.swerve.ResetGyro;
@@ -323,7 +324,8 @@ public class RobotContainer {
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
     m_autoChooser.addOption("Two Cycle", new TwoCycle(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle (Rush) - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
         new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
