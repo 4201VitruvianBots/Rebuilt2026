@@ -70,17 +70,14 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     m_robotContainer.robotPeriodic();
-
-    if (timer.hasElapsed(15)) {
-      System.out.println("Restarting DataLogManager");
-      DataLogManager.start();
-      timer.reset();
-    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+      System.out.println("Restarting DataLogManager");
+      DataLogManager.start();
+  }
 
   @Override
   public void disabledPeriodic() {
