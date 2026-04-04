@@ -21,8 +21,7 @@ public class TwoCycleRush extends Auto {
         new AutoShoot(deps, 2.6)
               .andThen(new PrintCommand("[AUTO] Finished shooting")),
         getChoiceCommand(new InstantCommand(), new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT), flipPath),
-        new AutoShoot(deps, 1.8)
-              .andThen(new PrintCommand("[AUTO] Finished shooting")),
+        getChoiceCommand(new InstantCommand(), new AutoShoot(deps, 1.8), flipPath),
         new IntakeFromNeutral(deps, flipPath, partnerFriendly ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY : TWO_CYCLE_PATH.SECOND_PASS),
         new AutoShoot(deps, 1.8)
               .andThen(new PrintCommand("[AUTO] Finished shooting")));
