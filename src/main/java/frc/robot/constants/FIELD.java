@@ -481,14 +481,14 @@ public class FIELD {
     public static Target3d RED_LEFT_PASS =
         new Target3d(
             new Translation3d(
-                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5)),
+                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85)),
                 FIELD_WIDTH.times(0.1),
                 Meters.zero()));
 
     public static Target3d RED_RIGHT_PASS =
         new Target3d(
             new Translation3d(
-                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5)),
+                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85)),
                 FIELD_WIDTH.times(0.9),
                 Meters.zero()));
 
@@ -500,12 +500,12 @@ public class FIELD {
     public static Target3d BLUE_LEFT_PASS =
         new Target3d(
             new Translation3d(
-                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5), FIELD_WIDTH.times(0.9), Meters.zero()));
+                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85), FIELD_WIDTH.times(0.9), Meters.zero()));
 
     public static Target3d BLUE_RIGHT_PASS =
         new Target3d(
             new Translation3d(
-                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5), FIELD_WIDTH.times(0.1), Meters.zero()));
+                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85), FIELD_WIDTH.times(0.1), Meters.zero()));
 
     public static Collection<Translation2d> BLUE_PASS_POINTS =
         List.of(
