@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.HOOD;
+import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -56,7 +57,7 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees.
-    distanceToShotMap.put(Meters.of(1.10695), new Shot(RPM.of(1260 - 10), Degrees.of(0), 0.9)); //
+    distanceToShotMap.put(Meters.of(1.10695), new Shot(MANUAL_RPM.HUB.getRPM(), Degrees.of(0), 0.9)); //
     distanceToShotMap.put(
         Meters.of(2.0749597158415), new Shot(RPM.of(1540 - 10), Degrees.of(0), 1.1)); // Tuned
     distanceToShotMap.put(

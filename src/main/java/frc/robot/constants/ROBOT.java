@@ -25,6 +25,7 @@ public class ROBOT {
   public enum TWO_CYCLE_PATH {
     FIRST_PASS("1678pt1"),
     FIRST_PASS_RUSH("CenterRush"),
+    FIRST_PASS_CONSERVATIVE_RUSH("LessDeepCenterRush"),
     SECOND_PASS("1678pt2"),
     SECOND_PASS_PARTNER_FRIENDLY("1678pt2ownhalf"), 
     DEPOT("DepotCycle");
