@@ -213,9 +213,9 @@ public class Flywheel extends SubsystemBase {
 
   public boolean isAtRPMsetpoint() {
     if (DriverStation.isAutonomous()) {
-        return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdAuto;
+      return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdAuto;
     } else {
-        return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdTeleop;
+      return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdTeleop;
     }
   }
 

@@ -156,7 +156,7 @@ public class Intake extends SubsystemBase {
         setOutputPercent(INTAKE_SPEED.ZERO.get());
         break;
       case INTAKING:
-        if (DriverStation.isAutonomous()){
+        if (DriverStation.isAutonomous()) {
           setOutputPercent(INTAKE_SPEED.AUTOINTAKING.get());
         } else {
           setOutputPercent(INTAKE_SPEED.INTAKING.get());

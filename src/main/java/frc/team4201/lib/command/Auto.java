@@ -41,10 +41,8 @@ public abstract class Auto extends SequentialCommandGroup {
         Set.of(swerveDrive));
   }
 
-   protected final Command getChoiceCommand(
-      Command choice1,
-      Command choice2,
-      BooleanSupplier autoSide) {
+  protected final Command getChoiceCommand(
+      Command choice1, Command choice2, BooleanSupplier autoSide) {
     return Commands.defer(
         () -> {
           if (autoSide.getAsBoolean()) {

@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -20,12 +19,16 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.VISION;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 import frc.robot.constants.VISION.TARGET;
+import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
   private FieldSim m_fieldSim;
+
+  private Path bumpPath = new Path(new Path.Waypoint(Pose2d.kZero));
+
   private Translation2d m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
   // TODO: Re-add this
   //   private LimelightSim visionSim;
@@ -67,7 +70,6 @@ public class Vision extends SubsystemBase {
 
     m_kPAutoAlignPublisher = topickP.publish();
     m_kDAutoAlignPublisher = topickD.publish();
-
     setName("Vision");
   }
 
@@ -77,6 +79,20 @@ public class Vision extends SubsystemBase {
 
   public void registerFieldSim(FieldSim fieldSim) {
     m_fieldSim = fieldSim;
+  }
+
+  public void updateCrossBumpPath(){   
+    Pose2d bumpPose = new Pose2d();
+    if (isInLeftHalf()){
+      bumpPose = new Pose2d(FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getX(), FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getY(), Rotation2d.kZero);
+    } else {
+      bumpPose = new Pose2d(FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getX(), FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getY(), Rotation2d.k180deg);
+    }
+    bumpPath = new Path(new Path.Waypoint(bumpPose));    
+  }
+
+  public Path getCrossBumpPath(){
+    return bumpPath;
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
@@ -206,8 +222,7 @@ public class Vision extends SubsystemBase {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
       } else {
         m_swerveDriveTrain.addVisionMeasurement(
-            limelightMeasurement.pose,
-            limelightMeasurement.timestampSeconds);
+            limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
       }
     }
 
@@ -300,9 +315,9 @@ public class Vision extends SubsystemBase {
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
     if (DriverStation.isAutonomous()) {
-        return getAngleToTarget().getDegrees() < 2.0;
+      return getAngleToTarget().getDegrees() < 2.0;
     } else {
-        return getAngleToTarget().getDegrees() < 0.5;
+      return getAngleToTarget().getDegrees() < 0.5;
     }
   }
 
@@ -385,6 +400,8 @@ public class Vision extends SubsystemBase {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
       m_localized = lllSuccess && llrSuccess && llfSuccess;
     }
+
+    updateCrossBumpPath();
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
     if (DriverStation.isFMSAttached() && DriverStation.isAutonomous() && !matchStarted) {

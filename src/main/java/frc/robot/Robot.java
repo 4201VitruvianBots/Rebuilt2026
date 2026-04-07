@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
     LiveWindow.disableAllTelemetry();
     DataLogManager.logNetworkTables(true);
     DataLogManager.logConsoleOutput(true);
-    //DataLogManager.start();
+    // DataLogManager.start();
     Epilogue.configure(
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
@@ -74,8 +74,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {
@@ -88,7 +87,7 @@ public class Robot extends TimedRobot {
     try {
       System.out.println("Starting DataLogManager");
       DataLogManager.start();
-    } catch(Exception e) {
+    } catch (Exception e) {
       System.out.println("Failed to start DataLogManager!");
       e.printStackTrace();
     }
