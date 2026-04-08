@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -10,7 +12,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.*;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -42,6 +46,8 @@ public class Vision extends SubsystemBase {
 
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
   private Pose2d targetPose = Pose2d.kZero;
+  private Pose2d intermediatePose = new Pose2d();
+  private Pose2d bumpPose = new Pose2d();
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
@@ -81,18 +87,13 @@ public class Vision extends SubsystemBase {
     m_fieldSim = fieldSim;
   }
 
-  public void updateCrossBumpPath(){   
-    Pose2d bumpPose = new Pose2d();
+  public Path updateCrossBumpPath(){   
     if (isInLeftHalf()){
       bumpPose = new Pose2d(FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getX(), FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getY(), Rotation2d.kZero);
     } else {
-      bumpPose = new Pose2d(FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getX(), FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getY(), Rotation2d.k180deg);
+      bumpPose = new Pose2d(FIELD.TARGET.RED_LEFT_PASS.getTargetPosition().getX(), FIELD.TARGET.RED_LEFT_PASS.getTargetPosition().getY(), Rotation2d.k180deg);
     }
-    bumpPath = new Path(new Path.Waypoint(bumpPose));    
-  }
-
-  public Path getCrossBumpPath(){
-    return bumpPath;
+    return new Path(new Path.Waypoint(bumpPose));    
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
