@@ -26,6 +26,8 @@ public class ROBOT {
     FIRST_PASS("1678pt1"),
     FIRST_PASS_RUSH("CenterRush"),
     FIRST_PASS_CONSERVATIVE_RUSH("LessDeepCenterRush"),
+    FIRST_PASS_INSIDE_OUT_RUSH("InsideOutCenterRush"),
+    FIRST_PASS_INSIDE_OUT_CONSERVATIVE_RUSH("LessDeepInsideOutCenterRush"),
     SECOND_PASS("1678pt2"),
     SECOND_PASS_PARTNER_FRIENDLY("1678pt2ownhalf"), 
     DEPOT("DepotCycle");

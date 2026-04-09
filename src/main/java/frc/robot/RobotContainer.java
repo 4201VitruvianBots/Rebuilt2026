@@ -38,6 +38,8 @@ import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterPreload;
 import frc.robot.commands.autos.routines.TwoCycle;
+import frc.robot.commands.autos.routines.TwoCycleInsideOutConservativeRush;
+import frc.robot.commands.autos.routines.TwoCycleInsideOutRush;
 import frc.robot.commands.autos.routines.TwoCycleRush;
 import frc.robot.commands.autos.routines.SimboticsAuto;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
@@ -326,6 +328,9 @@ public class RobotContainer {
     m_autoChooser.addOption("Two Cycle", new TwoCycle(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption("Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption("Two Cycle (Rush) - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Alliance Partner Friendly", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Two Cycle (Rush) - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
         new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
