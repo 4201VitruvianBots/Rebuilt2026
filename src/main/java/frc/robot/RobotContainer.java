@@ -42,6 +42,7 @@ import frc.robot.commands.autos.routines.TwoCycleInsideOutConservativeRush;
 import frc.robot.commands.autos.routines.TwoCycleInsideOutRush;
 import frc.robot.commands.autos.routines.TwoCycleRush;
 import frc.robot.commands.autos.routines.SimboticsAuto;
+import frc.robot.commands.autos.routines.SingleScoopWithSprinkles;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
@@ -325,12 +326,13 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption("Two Cycle", new TwoCycle(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle (Rush) - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Alliance Partner Friendly", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Two Cycle (Rush) - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Two Cycle - Inside Out Alliance Partner Friendly", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Single Scoop with Sprinkles (Depot)", new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
         new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
