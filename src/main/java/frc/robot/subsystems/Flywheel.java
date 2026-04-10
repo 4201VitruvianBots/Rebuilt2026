@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.hammerheads5000.FuelSim.Hub;
 import frc.robot.commands.Shoot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
@@ -217,9 +216,9 @@ public class Flywheel extends SubsystemBase {
 
   public boolean isAtRPMsetpoint() {
     if (DriverStation.isAutonomous()) {
-        return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdAuto;
+      return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdAuto;
     } else {
-        return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdTeleop;
+      return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdTeleop;
     }
   }
 
@@ -227,7 +226,7 @@ public class Flywheel extends SubsystemBase {
     return getRPMSetpoint() - getMotorSpeedRPM();
   }
 
-  public void registerVision(Vision vision){
+  public void registerVision(Vision vision) {
     m_vision = vision;
   }
 
@@ -238,8 +237,13 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean shouldRev = (HubTracker.isActive() || HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 2) && m_vision != null && !m_vision.isInOpposingAllianceSector();
-    if (shouldRev){
+    boolean shouldRev =
+        (HubTracker.isActive()
+                || HubTracker.timeRemainingInCurrentShift().isPresent()
+                    && HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 2)
+            && m_vision != null
+            && !m_vision.isInOpposingAllianceSector();
+    if (shouldRev) {
       setRPMOutput(Shoot.getShotForDistance(m_vision.getDistanceToHub()).shooterRPM);
     }
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
