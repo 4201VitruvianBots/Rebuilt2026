@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
     LiveWindow.disableAllTelemetry();
     DataLogManager.logNetworkTables(true);
     DataLogManager.logConsoleOutput(true);
-    DataLogManager.start("", "", 0.1);
+    DataLogManager.start("", "", 0.02);
     Epilogue.configure(
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
