@@ -42,12 +42,10 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.Shoot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.team4201.lib.utils.CtreUtils;
-import frc.team4201.lib.utils.HubTracker;
 
 public class Flywheel extends SubsystemBase {
 
@@ -62,7 +60,7 @@ public class Flywheel extends SubsystemBase {
   private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.roboRIO);
 
   private NeutralModeValue m_neutralMode =
-      NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts
+      NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
 
   private final VelocityTorqueCurrentFOC m_request = new VelocityTorqueCurrentFOC(0);
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0);
@@ -80,7 +78,6 @@ public class Flywheel extends SubsystemBase {
               FLYWHEEL.gearbox, FLYWHEEL.kInertia, FLYWHEEL.gearRatio),
           FLYWHEEL.gearbox);
   private final TalonFXSimState m_simState;
-  private Vision m_vision;
 
   private void sysIDLogFlywheelMotors(SysIdRoutineLog log) {
     log.motor("motor1")
@@ -245,30 +242,19 @@ public class Flywheel extends SubsystemBase {
     return getRPMSetpoint() - getMotorSpeedRPM();
   }
 
-  public void registerVision(Vision vision) {
-    m_vision = vision;
-  }
-
   @Logged(name = "RPM error", importance = Importance.DEBUG)
   public double getAbsoluteRPMerror() {
     return Math.abs(getRPMerror());
   }
 
-  public boolean getShouldRev(){
-    boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() && HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
-    boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null && !m_vision.isInOpposingAllianceSector();
-    return shouldRev;
-  }
+  // public boolean getShouldRev(){
+  //   boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() && HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
+  //   boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null && !m_vision.isInOpposingAllianceSector();
+  //   return shouldRev;
+  // }
 
   @Override
   public void periodic() {
-    if (getShouldRev()) {
-      setRPMOutput(Shoot.getShotForDistance(m_vision.getDistanceToHub()).shooterRPM);
-    }
-    // } else if (!getIsShooting()) {
-    //   setRPMOutput(MANUAL_RPM.IDLE.getRPM());
-    // }
-
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
     updateEnergyUsed();
   }

@@ -235,7 +235,6 @@ public class RobotContainer {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
     m_vision.registerSwerveDrive(m_swerveDrive);
-    m_flywheel.registerVision(m_vision);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
