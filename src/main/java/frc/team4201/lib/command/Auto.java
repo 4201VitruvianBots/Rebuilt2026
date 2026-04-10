@@ -51,7 +51,7 @@ public abstract class Auto extends SequentialCommandGroup {
           if (autoSide.getAsBoolean()) {
             return choice1.asProxy();
           } else {
-            return choice2.asProxy();
+            return choice2;
           }
         },
         Set.of(requirements.toArray(new Subsystem[0])));
