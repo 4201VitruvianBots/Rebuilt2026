@@ -138,6 +138,7 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     m_goal = FIELD.TARGET.CURRENT_TARGET.getTargetPosition().toTranslation2d();
+    m_flywheel.setIsShooting(true);
 
     if (RobotBase.isReal()) phaseDelay = 0.03;
   }
@@ -234,6 +235,7 @@ public class Shoot extends Command {
     if (m_driverController != null)
       m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
     m_flywheel.setVoltageOutput(Volts.of(0.0));
+    m_flywheel.setIsShooting(false);
   }
 
   // Returns true when the command should end.

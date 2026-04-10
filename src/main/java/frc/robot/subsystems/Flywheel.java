@@ -69,6 +69,7 @@ public class Flywheel extends SubsystemBase {
   private final VoltageOut m_voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
   private Energy m_totalEnergyUsed = Joules.of(0.0);
+  private boolean m_isShooting = false;
 
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
@@ -125,6 +126,15 @@ public class Flywheel extends SubsystemBase {
 
   public void setRPMOutput(AngularVelocity rpm) {
     m_rpmSetpoint = rpm;
+  }
+
+  @Logged(name = "Is Shooting?", importance = Logged.Importance.INFO)
+  public boolean getIsShooting() {
+    return m_isShooting;
+  }
+
+  public void setIsShooting(boolean isShooting){
+    m_isShooting = isShooting;
   }
 
   public void setVoltageOutput(Voltage voltage) {
@@ -255,7 +265,10 @@ public class Flywheel extends SubsystemBase {
     if (getShouldRev()) {
       setRPMOutput(Shoot.getShotForDistance(m_vision.getDistanceToHub()).shooterRPM);
     }
-    
+    // } else if (!getIsShooting()) {
+    //   setRPMOutput(MANUAL_RPM.IDLE.getRPM());
+    // }
+
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
     updateEnergyUsed();
   }

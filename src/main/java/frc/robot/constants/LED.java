@@ -3,7 +3,7 @@ package frc.robot.constants;
 public class LED {
   public static final int kPWMPort = 8;
 
-  public static final int kLEDCount = 34;
+  public static final int kLEDCount = 31;
 
   public enum LED_STATES {
     DISABLED("disabled"),
