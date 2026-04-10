@@ -254,9 +254,8 @@ public class Flywheel extends SubsystemBase {
   public void periodic() {
     if (getShouldRev()) {
       setRPMOutput(Shoot.getShotForDistance(m_vision.getDistanceToHub()).shooterRPM);
-    } else {
-      setRPMOutput(MANUAL_RPM.IDLE.getRPM());
     }
+    
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
     updateEnergyUsed();
   }
