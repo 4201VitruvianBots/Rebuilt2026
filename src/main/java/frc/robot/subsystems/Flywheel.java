@@ -4,7 +4,15 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Amp;
+import static edu.wpi.first.units.Units.Joules;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Watts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -15,6 +23,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -235,16 +244,18 @@ public class Flywheel extends SubsystemBase {
     return Math.abs(getRPMerror());
   }
 
+  public boolean getShouldRev(){
+    boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() && HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
+    boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null && !m_vision.isInOpposingAllianceSector();
+    return shouldRev;
+  }
+
   @Override
   public void periodic() {
-    boolean shouldRev =
-        (HubTracker.isActive()
-                || HubTracker.timeRemainingInCurrentShift().isPresent()
-                    && HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 2)
-            && m_vision != null
-            && !m_vision.isInOpposingAllianceSector();
-    if (shouldRev) {
+    if (getShouldRev()) {
       setRPMOutput(Shoot.getShotForDistance(m_vision.getDistanceToHub()).shooterRPM);
+    } else {
+      setRPMOutput(MANUAL_RPM.IDLE.getRPM());
     }
     m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
     updateEnergyUsed();
