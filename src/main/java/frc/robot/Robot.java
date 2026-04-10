@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
     LiveWindow.disableAllTelemetry();
     DataLogManager.logNetworkTables(true);
     DataLogManager.logConsoleOutput(true);
-    //DataLogManager.start();
+    DataLogManager.start("", "", 0.1);
     Epilogue.configure(
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
@@ -85,13 +85,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    try {
-      System.out.println("Starting DataLogManager");
-      DataLogManager.start();
-    } catch(Exception e) {
-      System.out.println("Failed to start DataLogManager!");
-      e.printStackTrace();
-    }
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
