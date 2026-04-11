@@ -53,10 +53,10 @@ public class Flywheel extends SubsystemBase {
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.roboRIO);
 
-  @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
+  @Logged(name = "Flywheel Motor 2", importance = Importance.INFO)
   private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.roboRIO);
 
-  @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
+  @Logged(name = "Flywheel Motor 3", importance = Importance.INFO)
   private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.roboRIO);
 
   private NeutralModeValue m_neutralMode =
