@@ -78,7 +78,7 @@ public class INTAKE {
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(119.0);
+    public static final Angle maxAngle = Degrees.of(105.0);
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -89,7 +89,7 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = -0.6130371;
+    public static final double encoderOffset = -0.7470703125;
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.CounterClockwise_Positive;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1;
@@ -98,7 +98,7 @@ public class INTAKE {
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),
-      INTAKING(Degrees.of(119.8)),
+      INTAKING(Degrees.of(101.542969)),
       JOSTLING(Degrees.of(20.0));
 
       private final Angle angle;
