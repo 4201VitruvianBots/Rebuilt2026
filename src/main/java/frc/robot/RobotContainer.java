@@ -51,6 +51,7 @@ import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
@@ -314,6 +315,9 @@ public class RobotContainer {
     // );
 
     m_operatorController.b().onTrue(resetManualShifts());
+
+    POVUtils.povDownWithTilt(m_operatorController)
+        .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
     
     // if (m_swerveDrive != null) {
     //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,

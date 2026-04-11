@@ -87,6 +87,7 @@ public class IntakePivot extends SubsystemBase {
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
+    config.Slot0.kI = PIVOT.kI;
     config.Slot0.kD = PIVOT.kD;
     config.Slot0.kG = PIVOT.kG;
     // config.Slot0.kA = PIVOT.kA;

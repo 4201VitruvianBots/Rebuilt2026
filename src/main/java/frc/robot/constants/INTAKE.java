@@ -63,6 +63,7 @@ public class INTAKE {
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
     public static final double kP = 31.0;
+    public static final double kI = 35;
     public static final double kD =
         0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
@@ -78,7 +79,7 @@ public class INTAKE {
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(102.0);
+    public static final Angle maxAngle = Degrees.of(105.0);
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -94,12 +95,13 @@ public class INTAKE {
         SensorDirectionValue.CounterClockwise_Positive;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1;
 
-    public static final Time pivotCycleTime = Seconds.of(1.00); //original: 1.65
+    public static final Time pivotCycleTime = Seconds.of(0.5); //original: 1.65
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),
-      INTAKING(Degrees.of(101.718750)),
-      JOSTLING(Degrees.of(20.0));
+      INTAKING(Degrees.of(102.421875)),
+      JOSTLING(Degrees.of(20.0)),
+      DEFUEL(Degrees.of(48.053));
 
       private final Angle angle;
 
