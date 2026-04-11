@@ -280,10 +280,10 @@ public class RobotContainer {
           .leftTrigger()
           .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
-    if (m_intake != null && m_intakePivot != null) {
+    if (m_intake != null) {
       m_driverController.y().or(m_operatorController.y())
           .whileTrue(
-              new JostleIntake(m_intakePivot, m_intake));
+              new JostleIntake(m_intakePivot));
     }
 
     if (m_intakePivot != null) {

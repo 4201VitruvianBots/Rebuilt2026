@@ -44,7 +44,7 @@ public class INTAKE {
       ZERO(0),
       INTAKING(0.95),
       AUTOINTAKING(0.99),
-      SHOOTING(0.3),
+      SHOOTING(0.9),
       SHOTREVERSING(0.13),
       REVERSE(-0.6);
 
