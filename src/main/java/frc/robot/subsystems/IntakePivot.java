@@ -11,6 +11,8 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -33,6 +35,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
@@ -55,6 +58,8 @@ public class IntakePivot extends SubsystemBase {
 
   private final TalonFXSimState m_motorSimState = m_motor.getSimState();
   private final CANcoderSimState m_cancoderSimState = m_canCoder.getSimState();
+
+  private boolean m_manualOverride = false;
 
   // Simulation Code
   private final SingleJointedArmSim m_pivotSim =
@@ -162,10 +167,13 @@ public class IntakePivot extends SubsystemBase {
     return this.runOnce(() -> setAngle(setpoint.getAngle()));
   }
 
-  // TODO: don't use this
   @NotLogged
-  public Command percentCommand(double speed) {
-    return this.startEnd(() -> m_motor.set(speed), () -> m_motor.set(0.0));
+  public Command manualOpenLoopOverride(DoubleSupplier speed) {
+    return new InstantCommand(() -> m_manualOverride = true)
+    .andThen(this.runEnd(() -> m_motor.set(speed.getAsDouble()), () -> {
+      m_manualOverride = false; 
+      m_desiredAngle = getAngle();
+    }));
   }
 
   // Commented out because it was old, am replacing with seperate command file
@@ -185,7 +193,9 @@ public class IntakePivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
+    if (!m_manualOverride) {
+      m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
+    }
   }
 
   @Override

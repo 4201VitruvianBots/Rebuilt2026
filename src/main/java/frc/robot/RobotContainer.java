@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
@@ -282,6 +283,11 @@ public class RobotContainer {
       m_driverController.y().or(m_operatorController.y())
           .whileTrue(
               new JostleIntake(m_intakePivot));
+    }
+
+    if (m_intakePivot != null) {
+      Trigger manualOverrideActivate = new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
+      manualOverrideActivate.whileTrue(m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
