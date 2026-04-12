@@ -41,6 +41,7 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterPreload;
+import frc.robot.commands.autos.routines.JustDepot;
 import frc.robot.commands.autos.routines.NextLevelAuto;
 import frc.robot.commands.autos.routines.SimboticsAuto;
 import frc.robot.commands.autos.routines.SingleScoopWithSprinkles;
@@ -353,6 +354,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption("Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption("Single Scoop with Sprinkles (Depot)", new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
     // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
