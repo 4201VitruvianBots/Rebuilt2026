@@ -3,15 +3,31 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9744720496894406,
+        "x": 3.586113575865128,
         "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2119431366371685,
+        "x": 3.823584662812856,
         "y": 5.685297884281147
       },
-      "isLocked": true,
+      "isLocked": false,
+      "linkedName": "SideStartPoint"
+    },
+    {
+      "anchor": {
+        "x": 2.9744720496894406,
+        "y": 5.535936113575865
+      },
+      "prevControl": {
+        "x": 2.6406281428886853,
+        "y": 5.325955556697185
+      },
+      "nextControl": {
+        "x": 3.308315956490196,
+        "y": 5.745916670454545
+      },
+      "isLocked": false,
       "linkedName": "ShootingPoint"
     },
     {
@@ -62,23 +78,23 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 2.0,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 2,
+      "waypointRelativePos": 3.0,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 2.2957559681697584,
+      "waypointRelativePos": 3.2957559681697584,
       "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.760067114093945,
-      "maxWaypointRelativePos": 2.390939597315434,
+      "minWaypointRelativePos": 1.5,
+      "maxWaypointRelativePos": 3.390939597315434,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 1.5,
@@ -96,15 +112,15 @@
         "y": 4.03
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 3.95,
-      "maxWaypointRelativePos": 4.0,
+      "minWaypointRelativePos": 7.95,
+      "maxWaypointRelativePos": 8.0,
       "name": "Point Towards Zone"
     }
   ],
   "eventMarkers": [
     {
       "name": "prepareFlywheelForNearHub",
-      "waypointRelativePos": 2.15,
+      "waypointRelativePos": 3.15,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -130,7 +146,7 @@
   "folder": "TwoCycle",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -42.55691099572577
+    "rotation": -33.5
   },
   "useDefaultConstraints": false
 }
