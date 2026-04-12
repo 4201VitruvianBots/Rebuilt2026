@@ -16,22 +16,6 @@
     },
     {
       "anchor": {
-        "x": 2.9744720496894406,
-        "y": 5.535936113575865
-      },
-      "prevControl": {
-        "x": 2.6406281428886853,
-        "y": 5.325955556697185
-      },
-      "nextControl": {
-        "x": 3.308315956490196,
-        "y": 5.745916670454545
-      },
-      "isLocked": false,
-      "linkedName": "ShootingPoint"
-    },
-    {
-      "anchor": {
         "x": 1.525847382431233,
         "y": 5.970523513753327
       },
@@ -48,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 0.641,
-        "y": 6.29
+        "x": 0.4,
+        "y": 5.833
       },
       "prevControl": {
-        "x": 0.25253467844329425,
-        "y": 6.283833883784814
+        "x": 0.011534678443294255,
+        "y": 5.826833883784814
       },
       "nextControl": {
-        "x": 1.1480186335403728,
-        "y": 6.298047914818102
+        "x": 0.9070186335403728,
+        "y": 5.841047914818102
       },
       "isLocked": false,
       "linkedName": null
@@ -78,23 +62,23 @@
   ],
   "rotationTargets": [
     {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 180.0
+    },
+    {
       "waypointRelativePos": 2.0,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 3.0,
-      "rotationDegrees": 180.0
-    },
-    {
-      "waypointRelativePos": 3.2957559681697584,
+      "waypointRelativePos": 2.2957559681697584,
       "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.5,
-      "maxWaypointRelativePos": 3.390939597315434,
+      "minWaypointRelativePos": 0.75,
+      "maxWaypointRelativePos": 2.390939597315434,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 1.5,
@@ -112,15 +96,15 @@
         "y": 4.03
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 7.95,
-      "maxWaypointRelativePos": 8.0,
+      "minWaypointRelativePos": 6.95,
+      "maxWaypointRelativePos": 7.0,
       "name": "Point Towards Zone"
     }
   ],
   "eventMarkers": [
     {
       "name": "prepareFlywheelForNearHub",
-      "waypointRelativePos": 3.15,
+      "waypointRelativePos": 2.15,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

@@ -17,7 +17,7 @@ public class JustDepot extends Auto {
   public JustDepot(AutoDependencies deps, BooleanSupplier flipPath) {
     addCommands(
         new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT),
-        new AutoShoot(deps, 2.3)
+        new AutoShoot(deps, 10.0)
     );
   }
 }
