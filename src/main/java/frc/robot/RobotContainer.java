@@ -4,11 +4,17 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RPM;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -24,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
@@ -34,13 +41,18 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterPreload;
+import frc.robot.commands.autos.routines.JustDepot;
+import frc.robot.commands.autos.routines.NextLevelAuto;
 import frc.robot.commands.autos.routines.SimboticsAuto;
+import frc.robot.commands.autos.routines.SingleScoopWithSprinkles;
 import frc.robot.commands.autos.routines.TwoCycle;
+import frc.robot.commands.autos.routines.TwoCycleInsideOutRush;
 import frc.robot.commands.autos.routines.TwoCycleRush;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
@@ -52,7 +64,16 @@ import frc.robot.constants.SWERVE.MOTOR_TYPE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
+import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.Uptake;
+import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.POVUtils;
@@ -268,6 +289,11 @@ public class RobotContainer {
           .whileTrue(new JostleIntake(m_intakePivot));
     }
 
+    if (m_intakePivot != null) {
+      Trigger manualOverrideActivate = new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
+      manualOverrideActivate.whileTrue(m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
+    }
+
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
     POVUtils.povDownWithTilt(m_driverController)
@@ -295,6 +321,9 @@ public class RobotContainer {
 
     m_operatorController.b().onTrue(resetManualShifts());
 
+    POVUtils.povDownWithTilt(m_operatorController)
+        .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
+    
     // if (m_swerveDrive != null) {
     //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
     // MOTOR_TYPE.STEER));
@@ -322,7 +351,15 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption("Two Cycle", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Two Cycle - Inside Out Alliance Partner Friendly", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Single Scoop with Sprinkles (Depot)", new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
+    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(

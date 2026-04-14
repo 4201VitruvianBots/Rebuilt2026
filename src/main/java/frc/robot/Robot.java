@@ -23,7 +23,6 @@ import frc.robot.constants.ROBOT;
  */
 @Logged(name = "Robot", importance = Logged.Importance.CRITICAL)
 public class Robot extends TimedRobot {
-  private Timer timer = new Timer();
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -40,7 +39,7 @@ public class Robot extends TimedRobot {
     LiveWindow.disableAllTelemetry();
     DataLogManager.logNetworkTables(true);
     DataLogManager.logConsoleOutput(true);
-    // DataLogManager.start();
+    DataLogManager.start("/u/logs/", "", 0.02);
     Epilogue.configure(
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
@@ -51,7 +50,6 @@ public class Robot extends TimedRobot {
           config.root = "EpilogueTelemetry";
         });
     Epilogue.bind(this);
-    timer.start();
   }
 
   /**
@@ -84,13 +82,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    try {
-      System.out.println("Starting DataLogManager");
-      DataLogManager.start();
-    } catch (Exception e) {
-      System.out.println("Failed to start DataLogManager!");
-      e.printStackTrace();
-    }
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)

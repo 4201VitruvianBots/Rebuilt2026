@@ -51,7 +51,7 @@ public class SWERVE {
   public static final LinearVelocity kMaxSpeedShooting = FeetPerSecond.of(8.0);
   public static final LinearAcceleration kMaxAccelerationShooting = FeetPerSecondPerSecond.of(11.0);
   public static final AngularVelocity kMaxRotation =
-      RotationsPerSecond.of(Math.PI * 0.3); // Temporary to reduce speed (original value 2.0).
+      RotationsPerSecond.of(Math.PI * 0.4); // Temporary to reduce speed (original value 2.0).
 
   // Constants needed for auto align
   // TODO: Figure out where these numbers are coming from and if we need to change them.

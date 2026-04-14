@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9744720496894406,
+        "x": 3.586113575865128,
         "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2119431366371685,
+        "x": 3.823584662812856,
         "y": 5.685297884281147
       },
-      "isLocked": true,
-      "linkedName": "ShootingPoint"
+      "isLocked": false,
+      "linkedName": "SideStartPoint"
     },
     {
       "anchor": {
@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 0.641,
-        "y": 6.29
+        "x": 0.4,
+        "y": 5.833
       },
       "prevControl": {
-        "x": 0.25253467844329425,
-        "y": 6.283833883784814
+        "x": 0.011534678443294255,
+        "y": 5.826833883784814
       },
       "nextControl": {
-        "x": 1.1480186335403728,
-        "y": 6.298047914818102
+        "x": 0.9070186335403728,
+        "y": 5.841047914818102
       },
       "isLocked": false,
       "linkedName": null
@@ -62,11 +62,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 1.0,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 2,
+      "waypointRelativePos": 2.0,
       "rotationDegrees": 180.0
     },
     {
@@ -77,7 +77,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.760067114093945,
+      "minWaypointRelativePos": 0.75,
       "maxWaypointRelativePos": 2.390939597315434,
       "constraints": {
         "maxVelocity": 2.0,
@@ -96,8 +96,8 @@
         "y": 4.03
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 3.95,
-      "maxWaypointRelativePos": 4.0,
+      "minWaypointRelativePos": 6.95,
+      "maxWaypointRelativePos": 7.0,
       "name": "Point Towards Zone"
     }
   ],
@@ -130,7 +130,7 @@
   "folder": "TwoCycle",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -42.55691099572577
+    "rotation": -33.5
   },
   "useDefaultConstraints": false
 }

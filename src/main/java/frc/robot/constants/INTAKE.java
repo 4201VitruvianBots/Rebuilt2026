@@ -44,7 +44,7 @@ public class INTAKE {
       ZERO(0),
       INTAKING(0.95),
       AUTOINTAKING(0.99),
-      SHOOTING(0.3),
+      SHOOTING(0.9),
       SHOTREVERSING(0.13),
       REVERSE(-0.6);
 
@@ -63,6 +63,7 @@ public class INTAKE {
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
     public static final double kP = 31.0;
+    public static final double kI = 35;
     public static final double kD =
         0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
@@ -78,7 +79,7 @@ public class INTAKE {
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(106.0);
+    public static final Angle maxAngle = Degrees.of(105.0);
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -89,17 +90,18 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = -0.963623046875;
+    public static final double encoderOffset = -0.7646484375;
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.CounterClockwise_Positive;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1;
 
-    public static final Time pivotCycleTime = Seconds.of(1.65); // TODO: measure and tune this time.
+    public static final Time pivotCycleTime = Seconds.of(0.5); //original: 1.65
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),
-      INTAKING(Degrees.of(106.0)),
-      JOSTLING(Degrees.of(20.0));
+      INTAKING(Degrees.of(102.421875)),
+      JOSTLING(Degrees.of(20.0)),
+      DEFUEL(Degrees.of(48.053));
 
       private final Angle angle;
 
