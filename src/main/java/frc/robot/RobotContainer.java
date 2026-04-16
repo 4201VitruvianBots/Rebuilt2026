@@ -282,7 +282,7 @@ public class RobotContainer {
     if (m_intake != null) {
       m_driverController
           .leftTrigger()
-          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake, m_indexer));
     }
     if (m_intake != null) {
       m_driverController.y().or(m_operatorController.y())
@@ -377,7 +377,7 @@ public class RobotContainer {
     SmartDashboard.putData("Systems Checker", m_systemsChooser);
     m_systemsChooser.setDefaultOption("Nothing", new InstantCommand());
 
-    m_systemsChooser.addOption("Test Intake and Uptake", new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+    m_systemsChooser.addOption("Test Intake, Indexer, and Uptake", new IntakeCommand(m_intake, m_intakePivot, m_uptake, m_indexer));
     m_systemsChooser.addOption("Test Pivot Jostle", new JostleIntake(m_intakePivot));
     m_systemsChooser.addOption("Test Indexer, and Uptake", new Fire(m_intake, m_indexer, m_uptake));
     m_systemsChooser.addOption("Test Shooter", new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive));

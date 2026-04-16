@@ -32,10 +32,10 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.roboRIO);
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.roboRIO); //Bottom Indexer
 
   @Logged(name = "Indexer Motor 2", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.roboRIO);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.roboRIO); //Top Indexer
 
   // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
   // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
@@ -104,6 +104,13 @@ public class Indexer extends SubsystemBase {
   public Command command(INDEXER_SPEED_1 speed1, INDEXER_SPEED_2 speed2) {
     return this.startEnd(() -> setSpeeds(speed1.get(), speed2.get()), () -> setSpeeds(0.0, 0.0));
   }
+
+  public Command runBottom(INDEXER_SPEED_1 speed1) {
+    return this.startEnd(() -> setSpeeds(speed1.get(), 0.0), ()-> setSpeeds(0.0, 0.0));
+  }
+
+  @NotLogged
+
 
   @Override
   public void periodic() {}

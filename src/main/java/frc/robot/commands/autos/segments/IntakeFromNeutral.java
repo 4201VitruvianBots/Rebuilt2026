@@ -35,13 +35,14 @@ public class IntakeFromNeutral extends Auto {
       var intake = deps.intake;
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
+      var indexer = deps.indexer;
 
       PathPlannerPath path = PathPlannerPath.fromPathFile(selectedPath.getPathName());
 
       addCommands(
           new ParallelDeadlineGroup(
                   getPathCommand(swerveDrive, path, flipToRight),
-                  new IntakeCommand(intake, intakePivot, uptake),
+                  new IntakeCommand(intake, intakePivot, uptake, indexer),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
     } catch (Exception e) {
