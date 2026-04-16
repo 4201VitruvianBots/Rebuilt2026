@@ -443,6 +443,7 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
+    SmartDashboard.putBoolean("In Neutral Zone?", m_vision.isInNeutralSector());
   }
 
   public void initializeFuelSim() {
