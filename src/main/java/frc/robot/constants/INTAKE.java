@@ -95,7 +95,7 @@ public class INTAKE {
         SensorDirectionValue.CounterClockwise_Positive;
     public static final double kAbsoluteSensorDiscontinuityPoint = 1;
 
-    public static final Time pivotCycleTime = Seconds.of(0.5); //original: 1.65
+    public static final Time pivotCycleTime = Seconds.of(0.5); // original: 1.65
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),

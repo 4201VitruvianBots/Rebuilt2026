@@ -14,7 +14,6 @@ import static edu.wpi.first.units.Units.RPM;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -26,8 +25,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -36,7 +37,6 @@ import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JostleIntake;
-import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
@@ -250,8 +250,10 @@ public class RobotContainer {
   private void configureBindings() {
     if (m_intake != null)
       m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-      
-    m_driverController.b().whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath()));
+
+    m_driverController
+        .b()
+        .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath()));
 
     if (m_flywheel != null && m_hood != null) {
       m_driverController
@@ -290,8 +292,10 @@ public class RobotContainer {
     }
 
     if (m_intakePivot != null) {
-      Trigger manualOverrideActivate = new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
-      manualOverrideActivate.whileTrue(m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
+      Trigger manualOverrideActivate =
+          new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
+      manualOverrideActivate.whileTrue(
+          m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
@@ -323,7 +327,7 @@ public class RobotContainer {
 
     POVUtils.povDownWithTilt(m_operatorController)
         .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
-    
+
     // if (m_swerveDrive != null) {
     //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
     // MOTOR_TYPE.STEER));
@@ -351,15 +355,24 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption("Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption(
+        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Two Cycle - Inside Out Alliance Partner Friendly", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Single Scoop with Sprinkles (Depot)", new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Two Cycle - Inside Out Alliance Partner Friendly",
+        new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption(
+        "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Single Scoop with Sprinkles (Depot)",
+        new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
-    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
+    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
+    // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(

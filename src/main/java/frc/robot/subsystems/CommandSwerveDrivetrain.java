@@ -35,14 +35,12 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.constants.CAN;
-import frc.robot.constants.FIELD.TARGET;
 import frc.robot.constants.SWERVE;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
-import frc.robot.constants.VISION;
 import frc.robot.generated.V2Constants.TunerSwerveDrivetrain;
 import frc.robot.lib.BLine.FollowPath;
-import frc.robot.lib.BLine.Path;
 import frc.robot.lib.BLine.FollowPath.Builder;
+import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
@@ -281,15 +279,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
   }
 
-  public FollowPath.Builder builder = new Builder(
-    this, 
-    () -> this.getState().Pose, 
-    () -> this.getState().Speeds, 
-    this::setChassisSpeeds, 
-    new PIDController(getAutoTranslationPIDConstants().kP, getAutoTranslationPIDConstants().kI, getAutoTranslationPIDConstants().kD), 
-    new PIDController(getAutoRotationPIDConstants().kP, getAutoRotationPIDConstants().kI, getAutoRotationPIDConstants().kD), 
-    new PIDController(2.0, 0.0, 0, Robot.kDefaultPeriod)
-  ).withDefaultShouldFlip();
+  public FollowPath.Builder builder =
+      new Builder(
+              this,
+              () -> this.getState().Pose,
+              () -> this.getState().Speeds,
+              this::setChassisSpeeds,
+              new PIDController(
+                  getAutoTranslationPIDConstants().kP,
+                  getAutoTranslationPIDConstants().kI,
+                  getAutoTranslationPIDConstants().kD),
+              new PIDController(
+                  getAutoRotationPIDConstants().kP,
+                  getAutoRotationPIDConstants().kI,
+                  getAutoRotationPIDConstants().kD),
+              new PIDController(2.0, 0.0, 0, Robot.kDefaultPeriod));
 
   public AngularVelocity getGyroYawRate() {
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
@@ -379,7 +383,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   public Command autoCrossBump(Supplier<Path> path) {
-    return builder.build(path.get());
+    return defer(() -> builder.build(path.get()));
   }
 
   /**

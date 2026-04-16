@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -87,13 +86,21 @@ public class Vision extends SubsystemBase {
     m_fieldSim = fieldSim;
   }
 
-  public Path updateCrossBumpPath(){   
-    if (isInLeftHalf()){
-      bumpPose = new Pose2d(FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getX(), FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getY(), Rotation2d.kZero);
+  public Path updateCrossBumpPath() {
+    if (isInRightHalf()) {
+      bumpPose =
+          new Pose2d(
+              FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getX(),
+              FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getY(),
+              Rotation2d.kZero);
     } else {
-      bumpPose = new Pose2d(FIELD.TARGET.RED_LEFT_PASS.getTargetPosition().getX(), FIELD.TARGET.RED_LEFT_PASS.getTargetPosition().getY(), Rotation2d.k180deg);
+      bumpPose =
+          new Pose2d(
+              FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getX(),
+              FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getY(),
+              Rotation2d.k180deg);
     }
-    return new Path(new Path.Waypoint(bumpPose));    
+    return new Path(new Path.Waypoint(bumpPose));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)

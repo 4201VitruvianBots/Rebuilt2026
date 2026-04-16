@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Watts;
 
@@ -23,7 +22,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -130,7 +128,7 @@ public class Flywheel extends SubsystemBase {
     return m_isShooting;
   }
 
-  public void setIsShooting(boolean isShooting){
+  public void setIsShooting(boolean isShooting) {
     m_isShooting = isShooting;
   }
 
@@ -248,8 +246,10 @@ public class Flywheel extends SubsystemBase {
   }
 
   // public boolean getShouldRev(){
-  //   boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() && HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
-  //   boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null && !m_vision.isInOpposingAllianceSector();
+  //   boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() &&
+  // HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
+  //   boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null &&
+  // !m_vision.isInOpposingAllianceSector();
   //   return shouldRev;
   // }
 
