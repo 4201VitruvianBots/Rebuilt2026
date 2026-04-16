@@ -53,6 +53,7 @@ import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
+import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
@@ -165,6 +166,8 @@ public class RobotContainer {
 
   @Logged(name = "AutoSideChooser")
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+
+  private final SendableChooser<Command> m_systemsChooser = new SendableChooser<>();
 
   private Boolean m_flipToRight = false;
 
@@ -370,6 +373,17 @@ public class RobotContainer {
     m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
   }
 
+  private void initSystemsChooser() {
+    SmartDashboard.putData("Systems Checker", m_systemsChooser);
+    m_systemsChooser.setDefaultOption("Nothing", new InstantCommand());
+
+    m_systemsChooser.addOption("Test Intake and Uptake", new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+    m_systemsChooser.addOption("Test Pivot Jostle", new JostleIntake(m_intakePivot));
+    m_systemsChooser.addOption("Test Indexer, and Uptake", new Fire(m_intake, m_indexer, m_uptake));
+    m_systemsChooser.addOption("Test Shooter", new Shoot(m_flywheel, m_hood, m_vision, m_swerveDrive));
+    m_systemsChooser.addOption("Shooter Hood", m_hood.manualAgainstHubCommand());
+  }
+
   public void simulationPeriodic() {
     m_fuelSim.updateSim();
     // SmartDashboard.putNumber("Current Red Score:",
@@ -381,6 +395,7 @@ public class RobotContainer {
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
+    initSystemsChooser();
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
     if (RobotBase.isSimulation()) {
       SmartDashboard.putData(
