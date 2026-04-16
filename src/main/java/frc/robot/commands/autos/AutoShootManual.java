@@ -20,6 +20,7 @@ public class AutoShootManual extends ParallelDeadlineGroup {
         Commands.waitUntil(() -> (deps.flywheel.isAtRPMsetpoint() && deps.hood.atSetpoint()))
             .withTimeout(fireDurationSeconds)
             .andThen(
+                new InstantCommand(() -> System.out.println(deps.vision.isInNeutralSector())),
                 new ConditionalCommand(
                         new InstantCommand(),
                         new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds),
