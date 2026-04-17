@@ -384,6 +384,10 @@ public class RobotContainer {
     m_systemsChooser.addOption("Shooter Hood", m_hood.manualAgainstHubCommand());
   }
 
+  public Command getSystemsCommand() {
+    return m_systemsChooser.getSelected();
+  }
+
   public void simulationPeriodic() {
     m_fuelSim.updateSim();
     // SmartDashboard.putNumber("Current Red Score:",
@@ -396,6 +400,7 @@ public class RobotContainer {
     initAutoChooser();
     initSideChooser();
     initSystemsChooser();
+    SmartDashboard.putData("Run Selected System", getSystemsCommand());
     SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
     if (RobotBase.isSimulation()) {
       SmartDashboard.putData(
@@ -436,6 +441,7 @@ public class RobotContainer {
     if (m_intakePivot != null) m_intakePivot.testPeriodic();
     // if (m_intake != null) m_intake.testPeriodic();
     if (m_hood != null) m_hood.testPeriodic();
+    
   }
 
   public void disabledPeriodic() {
