@@ -262,6 +262,10 @@ public class RobotContainer {
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
     }
 
+    if (m_flywheel != null && m_hood != null) {
+      m_driverController .povUpWithTilt .whileTrue(m.flywheel.manualBumpShootCommand());
+    }
+
     if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
       m_driverController
           .leftBumper()
