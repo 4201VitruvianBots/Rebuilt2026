@@ -87,7 +87,7 @@ public class Vision extends SubsystemBase {
   }
 
   public Path updateCrossBumpPath() {
-    if (isInRightHalf()) {
+    if (isInLeftHalf()) {
       bumpPose =
           new Pose2d(
               FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getX(),
