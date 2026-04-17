@@ -263,7 +263,12 @@ public class RobotContainer {
     }
 
     if (m_flywheel != null && m_hood != null) {
-      m_driverController .povUpWithTilt .whileTrue(m.flywheel.manualBumpShootCommand());
+      POVUtils.povUpWithTilt(m_driverController).whileTrue(
+        new ParallelCommandGroup(
+          m_flywheel.manualBumpShootCommand(),
+          m_hood.manualFromBumpCommand()
+        )
+      );
     }
 
     if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {

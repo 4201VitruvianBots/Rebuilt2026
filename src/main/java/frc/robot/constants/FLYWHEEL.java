@@ -55,6 +55,7 @@ public class FLYWHEEL {
     IDLE(RPM.of(0.0)),
     HUB(RPM.of(1260.0 - 10)), // Old value from v1: 1470
     TOWER(RPM.of(1719.0)),
+    BUMP(RPM.of(500.0)), //TODO: calculate value
     PASSING(RPM.of(2300.0));
 
     private final AngularVelocity rpm;
@@ -95,6 +96,7 @@ public class FLYWHEEL {
       STOWED(Degrees.of(0.0)),
       HUB(Degrees.of(0.0)), // Old value from v1: 1.0
       TOWER(Degrees.of(8.3)),
+      BUMP(Degrees.of(5.0)), //TODO: calculate value
       PASSING(Degrees.of(17.5));
 
       private final Angle angle;
