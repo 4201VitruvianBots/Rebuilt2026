@@ -4,13 +4,13 @@
 
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.*;
-
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+
+import static edu.wpi.first.units.Units.*;
 
 public final class VISION {
   public enum CAMERA_SERVER {

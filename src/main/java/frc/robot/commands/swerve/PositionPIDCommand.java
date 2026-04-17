@@ -4,8 +4,6 @@
 
 package frc.robot.commands.swerve;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +15,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Seconds;
 
 public class PositionPIDCommand extends Command {
   private final CommandSwerveDrivetrain m_swerve;

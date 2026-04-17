@@ -4,14 +4,6 @@
 
 package frc.robot.simulation;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.derive;
-import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -30,17 +22,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE;
 import frc.robot.constants.ROBOT.SIM;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Flywheel;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.IntakePivot;
-import frc.robot.subsystems.Uptake;
-import frc.team4201.lib.simulation.visualization.*;
-import frc.team4201.lib.simulation.visualization.configs.*;
+import frc.robot.subsystems.*;
+import frc.team4201.lib.simulation.visualization.Arm2d;
+import frc.team4201.lib.simulation.visualization.Flywheel2d;
+import frc.team4201.lib.simulation.visualization.VisualizationUtils;
+import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
+import frc.team4201.lib.simulation.visualization.configs.Flywheel2dConfig;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import static edu.wpi.first.units.Units.*;
+import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 
 // Hopefully there isn't too much overhead from making this a subsystem.
 public class Robot2d extends SubsystemBase {
@@ -197,7 +190,6 @@ public class Robot2d extends SubsystemBase {
               .plus(Inches.of(3.35 / 2))
               .in(Meters), // Put the flywheel on the top left corner of the uptake
           uptakeRootY.in(Meters));
-  private final Climber2d m_climber = new Climber2d(m_climberRoot);
 
   // TODO: Add hopper, Vision, LEDs?
 
@@ -231,15 +223,7 @@ public class Robot2d extends SubsystemBase {
       m_intakePivot.generateSubDisplay();
       m_flywheel.generateSubDisplay();
       m_shooterHood.generateSubDisplay();
-      m_climber.generateSubDisplay();
-      //   graphics = good
-      //   glitches = None
-      //   hackers = 0
-      //   exploits = only the fun ones
-      //   wasd = walk
-      //   spacebar = jump
-      //   helloWorld("print");
-      // thank you joaquin
+      // aiden was here
     }
   }
 
@@ -318,17 +302,6 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("Hood")) {
       var hoodSubsystem = (Hood) m_subsystemMap.get("Hood");
       m_shooterHood.update(Degrees.of(hoodSubsystem.getHoodAngleDegrees()).unaryMinus());
-    }
-    if (m_subsystemMap.containsKey("Climber")) {
-      var climberSubsystem = (Climber) m_subsystemMap.get("Climber");
-      m_climber.update(climberSubsystem.getHeight(), climberSubsystem.getVelocity());
-      // // Increase the climber height by 0.1 inches every simulation tick to show the climbing
-      // animation
-      //     testClimberHeight = testClimberHeight.plus(Inches.of(0.08));
-      //     if (testClimberHeight.gt(CLIMBER.upperLimit)) {
-      //       testClimberHeight = CLIMBER.upperLimit;
-      //     }
-      //     m_climber.update(testClimberHeight, InchesPerSecond.of(4.0));
     }
   }
 }

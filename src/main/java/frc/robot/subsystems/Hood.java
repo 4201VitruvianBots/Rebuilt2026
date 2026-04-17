@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -38,6 +36,8 @@ import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
+
+import static edu.wpi.first.units.Units.*;
 
 public class Hood extends SubsystemBase {
 

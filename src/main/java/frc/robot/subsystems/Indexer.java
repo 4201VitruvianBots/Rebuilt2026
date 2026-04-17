@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -28,6 +25,9 @@ import frc.robot.constants.INDEXER;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.team4201.lib.utils.CtreUtils;
+
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
 
 public class Indexer extends SubsystemBase {
 

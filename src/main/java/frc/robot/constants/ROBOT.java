@@ -1,8 +1,5 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.derive;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.DistanceUnit;
@@ -10,6 +7,9 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.RobotController;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.derive;
 
 public class ROBOT {
   public static final boolean useSysID = false;

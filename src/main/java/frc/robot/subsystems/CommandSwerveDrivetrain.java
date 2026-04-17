@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -37,11 +35,14 @@ import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.TrajectoryUtils;
 import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.json.simple.parser.ParseException;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily

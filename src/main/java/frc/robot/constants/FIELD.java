@@ -1,11 +1,11 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Controls;
@@ -14,9 +14,13 @@ import frc.team4201.lib.geometry.LinkedAprilTag;
 import frc.team4201.lib.geometry.Target3d;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.wpilib.AllianceInterface;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 public class FIELD {
   /**
