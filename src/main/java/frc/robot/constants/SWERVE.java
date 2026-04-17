@@ -61,8 +61,8 @@ public class SWERVE {
     public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
     public static final Time kEndTriggerDebounce = Seconds.of(0.04);
     public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
-    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17.0, 0.0, 0.0);
-    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9.0, 0.0, 0.0);
+    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(5.0, 0.0, 0.0);
+    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(3.0, 0.0, 0.0);
 
     public static final PPHolonomicDriveController kDriveController =
         new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);

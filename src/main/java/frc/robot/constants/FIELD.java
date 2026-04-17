@@ -3,15 +3,6 @@ package frc.robot.constants;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,6 +18,14 @@ import frc.team4201.lib.geometry.LinkedAprilTag;
 import frc.team4201.lib.geometry.Target3d;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.wpilib.AllianceInterface;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class FIELD {
   /**
@@ -549,24 +548,24 @@ public class FIELD {
   }
 
   public enum BUMP_ALIGNMENT_TARGETS {
-    // Naming scheme is as follows: 
+    // Naming scheme is as follows:
     // First word is direction
-    // Second word is whether the pose is in the neutral or alliance zone 
-    // Third word is what these poses are in relation to 
+    // Second word is whether the pose is in the neutral or alliance zone
+    // Third word is what these poses are in relation to
     // All units are in meters
     // Everything has been measured from our auto waypoints based on the welded field
-    LEFT_ALLIANCE_BUMP(new Pose2d(3.586, 5.536, Rotation2d.kZero)), 
+    LEFT_ALLIANCE_BUMP(new Pose2d(3.586, 5.536, Rotation2d.kZero)),
     RIGHT_ALLIANCE_BUMP(new Pose2d(3.586, 2.533, Rotation2d.kZero)),
     LEFT_NEUTRAL_BUMP(new Pose2d(5.833, 5.536, Rotation2d.kZero)),
     RIGHT_NEUTRAL_BUMP(new Pose2d(5.833, 2.533, Rotation2d.kZero));
-    
+
     private final Pose2d pose2d;
-    
-    BUMP_ALIGNMENT_TARGETS(final Pose2d pose2d){
+
+    BUMP_ALIGNMENT_TARGETS(final Pose2d pose2d) {
       this.pose2d = pose2d;
     }
 
-    public Pose2d getAlignmentPose(){
+    public Pose2d getAlignmentPose() {
       return pose2d;
     }
   }

@@ -293,7 +293,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
                   getAutoRotationPIDConstants().kP,
                   getAutoRotationPIDConstants().kI,
                   getAutoRotationPIDConstants().kD),
-              new PIDController(2.0, 0.0, 0, Robot.kDefaultPeriod)).withDefaultShouldFlip();
+              new PIDController(2.0, 0.0, 0, Robot.kDefaultPeriod))
+          .withDefaultShouldFlip();
 
   public AngularVelocity getGyroYawRate() {
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
