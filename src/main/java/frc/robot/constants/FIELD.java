@@ -16,6 +16,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
@@ -547,19 +548,21 @@ public class FIELD {
     }
   }
 
-  public enum ALIGNMENT_TARGETS {
+  public enum BUMP_ALIGNMENT_TARGETS {
     // Naming scheme is as follows: 
     // First word is direction
     // Second word is whether the pose is in the neutral or alliance zone 
     // Third word is what these poses are in relation to 
-    LEFT_ALLIANCE_BUMP(new Pose2d()), 
-    RIGHT_ALLIANCE_BUMP(new Pose2d()),
-    LEFT_NEUTRAL_BUMP(new Pose2d()),
-    RIGHT_NEUTRAL_BUMP(new Pose2d());
+    // All units are in meters
+    // Everything has been measured from our auto waypoints based on the welded field
+    LEFT_ALLIANCE_BUMP(new Pose2d(3.586, 5.536, Rotation2d.kZero)), 
+    RIGHT_ALLIANCE_BUMP(new Pose2d(3.586, 2.533, Rotation2d.kZero)),
+    LEFT_NEUTRAL_BUMP(new Pose2d(5.833, 5.536, Rotation2d.kZero)),
+    RIGHT_NEUTRAL_BUMP(new Pose2d(5.833, 2.533, Rotation2d.kZero));
     
     private final Pose2d pose2d;
     
-    ALIGNMENT_TARGETS(final Pose2d pose2d){
+    BUMP_ALIGNMENT_TARGETS(final Pose2d pose2d){
       this.pose2d = pose2d;
     }
 

@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.FIELD;
+import frc.robot.constants.FIELD.BUMP_ALIGNMENT_TARGETS;
 import frc.robot.constants.VISION;
 import frc.robot.constants.VISION.CAMERA_SERVER;
 import frc.robot.constants.VISION.TARGET;
@@ -29,8 +31,6 @@ import frc.team4201.lib.vision.LimelightHelpers;
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
   private FieldSim m_fieldSim;
-
-  private Path bumpPath = new Path(new Path.Waypoint(Pose2d.kZero));
 
   private Translation2d m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
   // TODO: Re-add this
@@ -45,8 +45,8 @@ public class Vision extends SubsystemBase {
 
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
   private Pose2d targetPose = Pose2d.kZero;
-  private Pose2d intermediatePose = new Pose2d();
-  private Pose2d bumpPose = new Pose2d();
+  private Pose2d preBumpPose = new Pose2d();
+  private Pose2d postBumpPose = new Pose2d();
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
@@ -88,19 +88,14 @@ public class Vision extends SubsystemBase {
 
   public Path updateCrossBumpPath() {
     if (isInLeftHalf()) {
-      bumpPose =
-          new Pose2d(
-              FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getX(),
-              FIELD.TARGET.BLUE_LEFT_PASS.getTargetPosition().getY(),
-              Rotation2d.kZero);
+      preBumpPose =
+          BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_BUMP.getAlignmentPose();
+      postBumpPose = BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
     } else {
-      bumpPose =
-          new Pose2d(
-              FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getX(),
-              FIELD.TARGET.BLUE_RIGHT_PASS.getTargetPosition().getY(),
-              Rotation2d.k180deg);
+      preBumpPose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
+      postBumpPose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
     }
-    return new Path(new Path.Waypoint(bumpPose));
+    return new Path(new Path.Waypoint(preBumpPose), new Path.Waypoint(postBumpPose));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
