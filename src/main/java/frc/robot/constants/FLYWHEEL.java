@@ -11,14 +11,14 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
 public class FLYWHEEL {
-  public static final double kP =
-      19.100000381469727; // These worked for WoodBot but will need to be retuned
+  public static final double kP = 19.1; // These worked for WoodBot but will need to be retuned
   public static final double kA = 0.0;
   // The value of kS is the largest voltage applied before the mechanism begins to move)
   public static final double gearRatio = 32.0 / 24.0; // Placeholder value
   public static final double kInertia = 0.01;
   public static final double kStatorCurrentLimit = 70.0;
-  public static final double kVelocityErrorThreshold = 100.0;
+  public static final double kVelocityErrorThresholdTeleop = 100.0;
+  public static final double kVelocityErrorThresholdAuto = 150.0;
   public static final double kFuelDragCoefficient =
       0.48; // Estimation based on it's size and relatively smooth shape. TODO: Tune
   public static final double kRumbleStrength = 0.25;
@@ -35,6 +35,9 @@ public class FLYWHEEL {
   public static final Distance radius = Inches.of(2.0);
 
   public static final int ballsPerSecond = 18;
+  public static final double defaultFireDurationSeconds = 2.7;
+
+  public static final AngularVelocity rpmShiftIncrement = RPM.of(10.0);
 
   public static class Shot {
     public final AngularVelocity shooterRPM;
@@ -50,7 +53,7 @@ public class FLYWHEEL {
 
   public enum MANUAL_RPM {
     IDLE(RPM.of(0.0)),
-    HUB(RPM.of(1260.0)), // Old value from v1: 1470
+    HUB(RPM.of(1260.0 - 10)), // Old value from v1: 1470
     TOWER(RPM.of(1719.0)),
     PASSING(RPM.of(2300.0));
 
@@ -74,7 +77,7 @@ public class FLYWHEEL {
     public static final double kStatorCurrentLimit = 15;
     public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE =
         SensorDirectionValue.Clockwise_Positive;
-    public static final double kMagnetSensorOffset = 0.245361328125;
+    public static final double kMagnetSensorOffset = -0.062255859375;
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.85;
 
     public static final double motionMagicCruiseVelocity = 68.0;
@@ -85,6 +88,8 @@ public class FLYWHEEL {
     public static final Angle maxAngle = Degrees.of(19.0);
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
+
+    public static final Angle angleShiftIncrement = Degrees.of(0.25);
 
     public enum MANUAL_ANGLE {
       STOWED(Degrees.of(0.0)),

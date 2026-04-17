@@ -3,6 +3,7 @@ package frc.robot.constants;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -10,6 +11,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Time;
 
 public class INTAKE {
   public static class ROLLERS {
@@ -40,8 +42,9 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.7),
-      SHOOTING(0.3),
+      INTAKING(0.95),
+      AUTOINTAKING(0.99),
+      SHOOTING(0.9),
       SHOTREVERSING(0.13),
       REVERSE(-0.6);
 
@@ -59,22 +62,24 @@ public class INTAKE {
 
   public static class PIVOT {
     /* TODO: change any more values yay placeholders FUN FUN FUN HAPPY */
-    public static final double kP = 60.0;
+    public static final double kP = 31.0;
+    public static final double kI = 35;
     public static final double kD =
         0.0; /*so basically kS kV and kA are not being used currently so they are commented out */
     // public static final double kS = 0.0; // TODO: Calculate kS and kV as a feedforward.
     // public static final double kV = 0; // Recalc these
     // public static final double kA = 0;
-    public static final double kG = 0.0;
+    public static final double kG = 0.85;
 
-    public static final double gearRatio = 35.0 / 1.0; // encoder is after gear ratio
+    public static final double gearRatio = 175.0 / 9.0; // encoder is after gear ratio
+    public static final double SensorToMechanismRatio = 3.0 / 1.0;
     public static final double motionMagicAcceleration = 15.0;
     public static final double motionMagicCruiseVelocity = 12.0;
     public static final double motionMagicJerk = 0.0;
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(55.0);
+    public static final Angle maxAngle = Degrees.of(105.0);
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -85,14 +90,18 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.3076171875;
+    public static final double encoderOffset = -0.7646484375;
     public static final SensorDirectionValue encoderDirection =
-        SensorDirectionValue.Clockwise_Positive;
+        SensorDirectionValue.CounterClockwise_Positive;
+    public static final double kAbsoluteSensorDiscontinuityPoint = 1;
+
+    public static final Time pivotCycleTime = Seconds.of(0.5); // original: 1.65
 
     public enum PIVOT_SETPOINT {
-      STOWED(Degrees.of(55.0)),
-      INTAKING(Degrees.of(0.0)),
-      JOSTLING(Degrees.of(20.0));
+      STOWED(Degrees.of(0.0)),
+      INTAKING(Degrees.of(102.421875)),
+      JOSTLING(Degrees.of(20.0)),
+      DEFUEL(Degrees.of(48.053));
 
       private final Angle angle;
 
