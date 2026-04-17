@@ -14,7 +14,7 @@ import frc.robot.commands.Shoot;
 public class AutoShoot extends ParallelDeadlineGroup {
   /** Creates a new AutoShoot. */
   public AutoShoot(AutoDependencies deps, double fireDurationSeconds) {
-      super(
+    super(
         Commands.waitUntil(
                 () ->
                     (deps.flywheel.isAtRPMsetpoint()
@@ -24,16 +24,15 @@ public class AutoShoot extends ParallelDeadlineGroup {
             .andThen(
                 new ParallelDeadlineGroup(
                     new ConditionalCommand(
-                            new InstantCommand(),
-                            new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds),
-                            deps.vision::isInNeutralSector
-                    ),
-                    new WaitCommand(0.4).andThen(new JostleIntake(deps.intakePivot))
-                )
-            ));
-      if (deps.vision.isInNeutralSector()) {
-          return;
-      };
-      addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
+                        new InstantCommand(),
+                        new Fire(deps.intake, deps.indexer, deps.uptake)
+                            .withTimeout(fireDurationSeconds),
+                        deps.vision::isInNeutralSector),
+                    new WaitCommand(0.4).andThen(new JostleIntake(deps.intakePivot)))));
+    if (deps.vision.isInNeutralSector()) {
+      return;
+    }
+    ;
+    addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
   }
 }

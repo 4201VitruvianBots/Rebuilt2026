@@ -14,7 +14,6 @@ import static edu.wpi.first.units.Units.RPM;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -243,9 +242,8 @@ public class RobotContainer {
 
   private ParallelCommandGroup resetManualShifts() {
     return new ParallelCommandGroup(
-      new InstantCommand(() -> m_manualRPMshift = 0.0),
-      new InstantCommand(() -> m_manualHoodAngleShift = 0.0)
-    );
+        new InstantCommand(() -> m_manualRPMshift = 0.0),
+        new InstantCommand(() -> m_manualHoodAngleShift = 0.0));
   }
 
   private void configureBindings() {
@@ -273,7 +271,9 @@ public class RobotContainer {
                   m_driverController,
                   m_swerveDrive,
                   m_driverController::getLeftY,
-                  m_driverController::getLeftX, () -> m_manualHoodAngleShift, () -> m_manualRPMshift));
+                  m_driverController::getLeftX,
+                  () -> m_manualHoodAngleShift,
+                  () -> m_manualRPMshift));
     }
 
     if (m_intake != null) {
@@ -282,14 +282,17 @@ public class RobotContainer {
           .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
     if (m_intake != null) {
-      m_driverController.y().or(m_operatorController.y())
-          .whileTrue(
-              new JostleIntake(m_intakePivot));
+      m_driverController
+          .y()
+          .or(m_operatorController.y())
+          .whileTrue(new JostleIntake(m_intakePivot));
     }
 
     if (m_intakePivot != null) {
-      Trigger manualOverrideActivate = new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
-      manualOverrideActivate.whileTrue(m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
+      Trigger manualOverrideActivate =
+          new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
+      manualOverrideActivate.whileTrue(
+          m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
@@ -298,28 +301,30 @@ public class RobotContainer {
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
 
     // Decrease rpm manual shift by 0.2
-    m_operatorController.leftBumper().onTrue(
-        new InstantCommand(() -> m_manualRPMshift -= (FLYWHEEL.rpmShiftIncrement.in(RPM)))
-    );
+    m_operatorController
+        .leftBumper()
+        .onTrue(new InstantCommand(() -> m_manualRPMshift -= (FLYWHEEL.rpmShiftIncrement.in(RPM))));
     // Increase rpm manual shift by 0.2
-    m_operatorController.rightBumper().onTrue(
-        new InstantCommand(() -> m_manualRPMshift += (FLYWHEEL.rpmShiftIncrement.in(RPM)))
-    );
+    m_operatorController
+        .rightBumper()
+        .onTrue(new InstantCommand(() -> m_manualRPMshift += (FLYWHEEL.rpmShiftIncrement.in(RPM))));
 
     // Decrease hood angle manual shift by 0.2
     // POVUtils.povDownWithTilt(m_operatorController).onTrue(
-    //     new InstantCommand(() -> m_manualHoodAngleShift -= (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+    //     new InstantCommand(() -> m_manualHoodAngleShift -=
+    // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     // );
     // // Increase hood angle manual shift by 0.2
     // POVUtils.povUpWithTilt(m_operatorController).onTrue(
-    //     new InstantCommand(() -> m_manualHoodAngleShift += (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+    //     new InstantCommand(() -> m_manualHoodAngleShift +=
+    // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     // );
 
     m_operatorController.b().onTrue(resetManualShifts());
 
     POVUtils.povDownWithTilt(m_operatorController)
         .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
-    
+
     // if (m_swerveDrive != null) {
     //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
     // MOTOR_TYPE.STEER));
@@ -347,15 +352,24 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption("Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption(
+        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Two Cycle - Inside Out Alliance Partner Friendly", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Single Scoop with Sprinkles (Depot)", new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Two Cycle - Inside Out Alliance Partner Friendly",
+        new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption(
+        "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Single Scoop with Sprinkles (Depot)",
+        new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
-    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
+    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
+    // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
         "Test - Intake from Neutral",
         new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
@@ -426,9 +440,15 @@ public class RobotContainer {
   public void disabledPeriodic() {
     if (m_vision != null) m_vision.disabledPeriodic();
   }
-  
+
   public void autonomousPeriodic() {
-    System.out.println("Flywheel RPM ready: " + m_flywheel.isAtRPMsetpoint() + ", Hood at setpoint: " + m_hood.atSetpoint() + ", Vision on target: " + m_vision.isOnTarget());
+    System.out.println(
+        "Flywheel RPM ready: "
+            + m_flywheel.isAtRPMsetpoint()
+            + ", Hood at setpoint: "
+            + m_hood.atSetpoint()
+            + ", Vision on target: "
+            + m_vision.isOnTarget());
   }
 
   /**

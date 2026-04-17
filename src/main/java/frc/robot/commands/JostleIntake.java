@@ -42,8 +42,7 @@ public class JostleIntake extends Command {
     Angle angle =
         Degrees.of(
             PIVOT.maxAngle.in(Degrees)
-                    * Math.cos(
-                        (m_sineWaveTimer.get() * Math.PI / PIVOT.pivotCycleTime.in(Seconds)))
+                    * Math.cos((m_sineWaveTimer.get() * Math.PI / PIVOT.pivotCycleTime.in(Seconds)))
                 + PIVOT.maxAngle.abs(Degrees));
     m_intakePivot.setAngle(angle);
   }

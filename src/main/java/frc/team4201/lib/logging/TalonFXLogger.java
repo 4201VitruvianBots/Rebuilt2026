@@ -27,13 +27,13 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
     if (!m_signalMap.containsKey(motor)) {
       var signals = new StatusSignalCollection();
 
-        signals.addSignals(
-            motor.getSupplyVoltage(),
-            motor.getSupplyCurrent(),
-            motor.getDutyCycle(),
-            motor.getMotorVoltage(),
-            motor.getStatorCurrent(),
-            motor.getPosition());
+      signals.addSignals(
+          motor.getSupplyVoltage(),
+          motor.getSupplyCurrent(),
+          motor.getDutyCycle(),
+          motor.getMotorVoltage(),
+          motor.getStatorCurrent(),
+          motor.getPosition());
 
       if (Epilogue.shouldLog(Logged.Importance.INFO)) {
         signals.addSignals(

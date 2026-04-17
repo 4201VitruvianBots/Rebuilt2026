@@ -11,13 +11,9 @@ import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-
 public class JustDepot extends Auto {
   public JustDepot(AutoDependencies deps, BooleanSupplier flipPath) {
     addCommands(
-        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT),
-        new AutoShoot(deps, 10.0)
-    );
+        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT), new AutoShoot(deps, 10.0));
   }
 }

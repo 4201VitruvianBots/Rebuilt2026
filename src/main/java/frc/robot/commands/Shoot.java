@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
@@ -57,15 +56,17 @@ public class Shoot extends Command {
   static {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees.
-    distanceToShotMap.put(Meters.of(1.10695), new Shot(MANUAL_RPM.HUB.getRPM(), Degrees.of(0), 0.9)); // (Against Hub)
+    distanceToShotMap.put(
+        Meters.of(1.10695), new Shot(MANUAL_RPM.HUB.getRPM(), Degrees.of(0), 0.9)); // (Against Hub)
     distanceToShotMap.put(
         Meters.of(2.0749597158415), new Shot(RPM.of(1540 - 10), Degrees.of(0), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.31209), new Shot(RPM.of(1553-10), Degrees.of(0.4), 1.1)); // Tuned
+        Meters.of(2.31209), new Shot(RPM.of(1553 - 10), Degrees.of(0.4), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.5916617555783), new Shot(RPM.of(1570-10), Degrees.of(2.2), 1.1)); // Tuned
+        Meters.of(2.5916617555783), new Shot(RPM.of(1570 - 10), Degrees.of(2.2), 1.1)); // Tuned
     distanceToShotMap.put(
-        Meters.of(3.152353828396097), new Shot(RPM.of(1618), Degrees.of(3.5), 1.1)); // Tuned (Tower)
+        Meters.of(3.152353828396097),
+        new Shot(RPM.of(1618), Degrees.of(3.5), 1.1)); // Tuned (Tower)
     distanceToShotMap.put(
         Meters.of(3.97453), new Shot(RPM.of(1764.3), Degrees.of(6.234), 1.1)); // Tuned
     distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
