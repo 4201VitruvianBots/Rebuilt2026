@@ -54,15 +54,14 @@ public class SWERVE {
       RotationsPerSecond.of(Math.PI * 0.4); // Temporary to reduce speed (original value 2.0).
 
   // Constants needed for auto align
-  // TODO: Figure out where these numbers are coming from and if we need to change them.
   public class AUTO_ALIGN {
     public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
     public static final Distance kPositionTolerance = Inches.of(0.4);
     public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
     public static final Time kEndTriggerDebounce = Seconds.of(0.04);
     public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
-    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(5.0, 0.0, 0.0);
-    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(3.0, 0.0, 0.0);
+    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(2.1, 0.0, 0.0);
+    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(2.5, 0.0, 0.0);
 
     public static final PPHolonomicDriveController kDriveController =
         new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
