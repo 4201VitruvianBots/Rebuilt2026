@@ -1,13 +1,12 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.*;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
-
 import java.util.Map;
-
-import static edu.wpi.first.units.Units.*;
 
 public class SWERVE {
   public enum MOTOR_TYPE {

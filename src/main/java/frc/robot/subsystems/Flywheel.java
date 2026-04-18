@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -31,8 +33,6 @@ import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.team4201.lib.utils.CtreUtils;
-
-import static edu.wpi.first.units.Units.*;
 
 public class Flywheel extends SubsystemBase {
 
@@ -168,7 +168,8 @@ public class Flywheel extends SubsystemBase {
 
   public Command manualAgainstTowerCommand() {
     return this.startEnd(
-        () -> setRPMOutputFOC(RPM.of(1800)), () -> setTorqueCurrentOutputFOC(Volts.of(0.0))); // Unverified
+        () -> setRPMOutputFOC(RPM.of(1800)),
+        () -> setTorqueCurrentOutputFOC(Volts.of(0.0))); // Unverified
   }
 
   public Command manualPassCommand() {

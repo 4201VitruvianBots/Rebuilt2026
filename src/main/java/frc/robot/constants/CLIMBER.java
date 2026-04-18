@@ -1,13 +1,13 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
-
-import static edu.wpi.first.units.Units.*;
 
 public class CLIMBER {
   public static final Distance upperLimit = Inches.of(35.0); // TODO: Talk to design about height.

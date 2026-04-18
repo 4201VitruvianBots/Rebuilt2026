@@ -1,13 +1,13 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
-
-import static edu.wpi.first.units.Units.*;
 
 public class INTAKE {
   public static class ROLLERS {

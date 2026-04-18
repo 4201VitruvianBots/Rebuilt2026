@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
@@ -16,10 +18,7 @@ import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.*;
-
 import java.util.function.DoubleSupplier;
-
-import static edu.wpi.first.units.Units.*;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")

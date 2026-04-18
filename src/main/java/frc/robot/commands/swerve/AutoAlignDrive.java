@@ -6,7 +6,6 @@ import frc.robot.constants.FIELD;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
-
 import java.util.function.DoubleSupplier;
 
 public class AutoAlignDrive extends Command {

@@ -1,9 +1,9 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.RPM;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
-
-import static edu.wpi.first.units.Units.RPM;
 
 public class UPTAKE {
   public static final double kP = 13.5; // Placeholders

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -30,8 +32,6 @@ import frc.robot.subsystems.*;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.Telemetry;
-
-import static edu.wpi.first.units.Units.MetersPerSecond;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a

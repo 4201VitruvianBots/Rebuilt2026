@@ -4,6 +4,9 @@
 
 package frc.robot.simulation;
 
+import static edu.wpi.first.units.Units.*;
+import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -28,12 +31,8 @@ import frc.team4201.lib.simulation.visualization.Flywheel2d;
 import frc.team4201.lib.simulation.visualization.VisualizationUtils;
 import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
 import frc.team4201.lib.simulation.visualization.configs.Flywheel2dConfig;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static edu.wpi.first.units.Units.*;
-import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 
 // Hopefully there isn't too much overhead from making this a subsystem.
 public class Robot2d extends SubsystemBase {
