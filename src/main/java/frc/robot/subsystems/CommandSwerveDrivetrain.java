@@ -7,9 +7,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,15 +26,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.generated.V1Constants.TunerSwerveDrivetrain;
-import frc.team4201.lib.command.SwerveSubsystem;
-import frc.team4201.lib.utils.TrajectoryUtils;
-import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
-import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
-import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -48,7 +38,7 @@ import static edu.wpi.first.units.Units.*;
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
  * be used in command-based projects.
  */
-public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements SwerveSubsystem {
+public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private final TalonFX[] driveMotors = {
     getModule(0).getDriveMotor(),
     getModule(1).getDriveMotor(),
@@ -73,9 +63,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
-
-  private TrajectoryUtils m_trajectoryUtils;
-
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
       new SwerveRequest.ApplyRobotSpeeds();
@@ -169,13 +156,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     if (Utils.isSimulation()) {
       startSimThread();
     }
-
-    try {
-      m_trajectoryUtils =
-          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
-    } catch (Exception ex) {
-      DriverStation.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
-    }
   }
 
   /**
@@ -244,15 +224,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withTargetDirection(headingTarget));
   }
 
-  public void setChassisSpeedsAuto(
-      ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
-    setControl(
-        m_pathApplyRobotSpeeds
-            .withSpeeds(chassisSpeeds)
-            .withWheelForceFeedforwardsX(driveFeedforwards.robotRelativeForcesXNewtons())
-            .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
-  }
-
   public AngularVelocity getGyroYawRate() {
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
   }
@@ -299,35 +270,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
           : diff.getAngle(); // .rotateBy(Rotation2d.k180deg);
     }
     return new Rotation2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond);
-  }
-
-  public TrajectoryUtils getTrajectoryUtils() {
-    return m_trajectoryUtils;
-  }
-
-  @Override
-  public RobotConfig getAutoRobotConfig() {
-    try {
-      return RobotConfig.fromGUISettings();
-    } catch (IOException e) {
-      DriverStation.reportWarning(
-          "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    } catch (ParseException e) {
-      DriverStation.reportWarning(
-          "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public PIDConstants getAutoTranslationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignTranslationPID;
-  }
-
-  @Override
-  public PIDConstants getAutoRotationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignRotationPID;
   }
 
   /**
@@ -454,17 +396,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   public void addVisionMeasurement(
       Pose2d pose, double timestampSeconds, Matrix<N3, N1> standardDevs) {
     super.addVisionMeasurement(pose, Utils.fpgaToCurrentTime(timestampSeconds), standardDevs);
-  }
-
-  @Override
-  public AngularVelocity getYawRate() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getYawRate'");
-  }
-
-  @Override
-  public void addVisionMeasurement(PoseEstimate poseEstimate) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
   }
 }
