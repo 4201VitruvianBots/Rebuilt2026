@@ -106,7 +106,7 @@ public class Uptake extends SubsystemBase {
     return getRPMsetpoint() - getMotorSpeedRPM();
   }
 
-  @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.INFO)
+  @Logged(name = "Motor Velocity RPM", importance = Logged.Importance.DEBUG)
   public double getMotorSpeedRPM() {
     return m_motor.getVelocity().refresh().getValue().in(RPM);
   }

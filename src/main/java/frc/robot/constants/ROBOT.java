@@ -22,6 +22,27 @@ public class ROBOT {
     CLOSED_LOOP
   }
 
+  public enum TWO_CYCLE_PATH {
+    FIRST_PASS("1678pt1"),
+    FIRST_PASS_RUSH("CenterRush"),
+    FIRST_PASS_CONSERVATIVE_RUSH("LessDeepCenterRush"),
+    FIRST_PASS_INSIDE_OUT_RUSH("InsideOutCenterRush"),
+    FIRST_PASS_INSIDE_OUT_CONSERVATIVE_RUSH("LessDeepInsideOutCenterRush"),
+    SECOND_PASS("1678pt2"),
+    SECOND_PASS_PARTNER_FRIENDLY("1678pt2ownhalf"),
+    DEPOT("DepotCycle");
+
+    private final String pathName;
+
+    TWO_CYCLE_PATH(String pathName) {
+      this.pathName = pathName;
+    }
+
+    public String getPathName() {
+      return pathName;
+    }
+  }
+
   public enum SUPERSTRUCTURE_STATES {}
 
   public enum ROBOT_ID {
@@ -124,6 +145,7 @@ public class ROBOT {
 
   public class USB {
     public static final int driver_xBoxController = 0;
+    public static final int operator_xboxController = 1;
   }
 
   public class SIM {

@@ -4,6 +4,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -25,7 +26,7 @@ public abstract class Auto extends SequentialCommandGroup {
   }
 
   // chooses between 2 paths depending on autoSide input
-  protected final Command getChoiceCommand(
+  protected final Command getChoicePathCommand(
       CommandSwerveDrivetrain swerveDrive,
       PathPlannerPath choice1,
       PathPlannerPath choice2,
@@ -39,5 +40,20 @@ public abstract class Auto extends SequentialCommandGroup {
           }
         },
         Set.of(swerveDrive));
+  }
+
+  protected final Command getChoiceCommand(
+      Command choice1, Command choice2, BooleanSupplier autoSide) {
+    var requirements = choice1.getRequirements();
+    requirements.addAll(choice2.getRequirements());
+    return Commands.defer(
+        () -> {
+          if (autoSide.getAsBoolean()) {
+            return choice1.asProxy();
+          } else {
+            return choice2;
+          }
+        },
+        Set.of(requirements.toArray(new Subsystem[0])));
   }
 }

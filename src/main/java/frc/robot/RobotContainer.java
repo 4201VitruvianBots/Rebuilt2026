@@ -4,18 +4,23 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RPM;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,34 +29,50 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.JostleIntake;
 import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.routines.CenterPreload;
-import frc.robot.commands.autos.routines.SideNeutral;
-import frc.robot.commands.autos.routines.SideNeutralDepot;
-import frc.robot.commands.autos.routines.SideNeutralTwice;
-import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
+import frc.robot.commands.autos.routines.JustDepot;
+import frc.robot.commands.autos.routines.NextLevelAuto;
+import frc.robot.commands.autos.routines.SimboticsAuto;
+import frc.robot.commands.autos.routines.SingleScoopWithSprinkles;
+import frc.robot.commands.autos.routines.TwoCycle;
+import frc.robot.commands.autos.routines.TwoCycleInsideOutRush;
+import frc.robot.commands.autos.routines.TwoCycleRush;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
-import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
+import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
+import frc.robot.constants.SWERVE.MOTOR_TYPE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Controls;
+import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.Uptake;
+import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.POVUtils;
@@ -98,6 +119,8 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(USB.driver_xBoxController);
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(USB.operator_xboxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
@@ -121,6 +144,15 @@ public class RobotContainer {
   private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest =
       new SwerveRequest.SwerveDriveBrake();
 
+  // Units per second, where 100% = 1 unit. Multiply by our robot's max speed to get m/s accel limit
+  // TODO: Change these values
+  // Needs seperate filters because each filter takes in different values
+  // The robot base is also a square so acceleration limits will be different depending on direction
+  private SlewRateLimiter driveXAccelLimiter =
+      new SlewRateLimiter(SWERVE.kXAccelRateLimit, SWERVE.kXDeccelRateLimit, 0);
+  private SlewRateLimiter driveYAccelLimiter =
+      new SlewRateLimiter(SWERVE.kYAccelRateLimit, SWERVE.kYDeccelRateLimit, 0);
+
   private Robot2d m_robotSim = new Robot2d();
   private final Telemetry m_telemetry =
       new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
@@ -135,6 +167,12 @@ public class RobotContainer {
 
   private Boolean m_flipToRight = false;
 
+  @Logged(name = "ManualRPMShift", importance = Logged.Importance.INFO)
+  private double m_manualRPMshift = 0.0;
+
+  @Logged(name = "ManualHoodAngleShift", importance = Logged.Importance.INFO)
+  private double m_manualHoodAngleShift = 0.0;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -146,29 +184,10 @@ public class RobotContainer {
     initSmartDashboard();
 
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    Field2d field = new Field2d();
-    SmartDashboard.putData("Field", field);
+  }
 
-    // Logging callback for current robot pose
-    PathPlannerLogging.setLogCurrentPoseCallback(
-        (pose) -> {
-          // Do whatever you want with the pose here
-          field.setRobotPose(pose);
-        });
-
-    // Logging callback for target robot pose
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (pose) -> {
-          // Do whatever you want with the pose here
-          field.getObject("target pose").setPose(pose);
-        });
-
-    // Logging callback for the active path, this is sent as a list of poses
-    PathPlannerLogging.setLogActivePathCallback(
-        (poses) -> {
-          // Do whatever you want with the poses here
-          field.getObject("path").setPoses(poses);
-        });
+  public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype) {
+    return m_swerveDrive.runOnce(() -> m_swerveDrive.setNeutralMode(motortype, neutralmode));
   }
 
   private void initializeSubSystems() {
@@ -197,8 +216,6 @@ public class RobotContainer {
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
-    m_controls.registerSubsystem(m_vision);
-
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
       m_intakePivot = new IntakePivot();
       m_led = new LEDs();
@@ -208,8 +225,8 @@ public class RobotContainer {
     }
 
     if (Robot.isSimulation()) {
-      m_fieldSim = new FieldSim();
       m_fuelSim = new FuelSim();
+      m_fieldSim = new FieldSim();
       m_telemetry.registerFieldSim(m_fieldSim);
       m_vision.registerFieldSim(m_fieldSim);
       m_telemetry.registerFieldSim(m_fieldSim);
@@ -223,93 +240,96 @@ public class RobotContainer {
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
 
+  private ParallelCommandGroup resetManualShifts() {
+    return new ParallelCommandGroup(
+        new InstantCommand(() -> m_manualRPMshift = 0.0),
+        new InstantCommand(() -> m_manualHoodAngleShift = 0.0));
+  }
+
   private void configureBindings() {
-    // aim at target
-    // if (m_swerveDrive != null && m_vision != null && m_flywheel != null && m_hood != null) {
-    //   m_driverController
-    //       .rightBumper()
-    //       .toggleOnTrue(
-    //           new ParallelCommandGroup(
-    //               new AutoAlignDrive(
-    //                   m_swerveDrive,
-    //                   m_vision,
-    //                   m_driverController::getLeftY,
-    //                   m_driverController::getLeftX),
-    //               new Shoot(m_flywheel, m_vision, m_hood)));
-    // }
+    if (m_intake != null)
+      m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    if (m_indexer != null && m_uptake != null)
+      m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
 
-    // if (m_swerveDrive != null && m_vision != null) {
-    //   m_driverController
-    //       .leftBumper()
-    //       .toggleOnTrue(
-    //           new AutoAlignDrive(
-    //               m_swerveDrive,
-    //               m_vision,P
-    //               m_driverController::getLeftY,
-    //               m_driverController::getLeftX));
-    // }
+    if (m_flywheel != null && m_hood != null) {
+      m_driverController
+          .x()
+          .whileTrue(
+              new ParallelCommandGroup(
+                  m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+    }
 
-    // m_driverController
-    //     .y()
-    //     .whileTrue(
-    //         new AutoAlignDrive(
-    //             m_swerveDrive,
-    //             m_vision,
-    //             m_driverController::getLeftY,
-    //             m_driverController::getLeftX));
+    if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
+      m_driverController
+          .leftBumper()
+          .whileTrue(
+              new Shoot(
+                  m_flywheel,
+                  m_hood,
+                  m_vision,
+                  m_driverController,
+                  m_swerveDrive,
+                  m_driverController::getLeftY,
+                  m_driverController::getLeftX,
+                  () -> m_manualHoodAngleShift,
+                  () -> m_manualRPMshift));
+    }
 
-    m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-    m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
+    if (m_intake != null) {
+      m_driverController
+          .leftTrigger()
+          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+    }
+    if (m_intake != null) {
+      m_driverController
+          .y()
+          .or(m_operatorController.y())
+          .whileTrue(new JostleIntake(m_intakePivot));
+    }
 
-    m_driverController
-        .x()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
-
-    m_driverController
-        .leftBumper()
-        .whileTrue(
-            new Shoot(
-                m_flywheel,
-                m_hood,
-                m_vision,
-                m_driverController,
-                m_swerveDrive,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
-
-    m_driverController
-        .leftTrigger()
-        .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+    if (m_intakePivot != null) {
+      Trigger manualOverrideActivate =
+          new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
+      manualOverrideActivate.whileTrue(
+          m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
+    }
 
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
     POVUtils.povDownWithTilt(m_driverController)
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
-    // // I foresee a state machine in the future...
-    // if (m_uptake != null && m_indexer != null && m_intake != null) {
-    //   m_driverController
-    //       .b()
-    //       .whileTrue(
-    //             m_intakePivot.jostle()
-    //           );
-    // }
 
-    // if (m_intake != null) {
-    //   m_driverController.leftTrigger().whileTrue(m_intake.command(INTAKE_SPEED.INTAKING));
-    // }
+    // Decrease rpm manual shift by 0.2
+    m_operatorController
+        .leftBumper()
+        .onTrue(new InstantCommand(() -> m_manualRPMshift -= (FLYWHEEL.rpmShiftIncrement.in(RPM))));
+    // Increase rpm manual shift by 0.2
+    m_operatorController
+        .rightBumper()
+        .onTrue(new InstantCommand(() -> m_manualRPMshift += (FLYWHEEL.rpmShiftIncrement.in(RPM))));
 
-    // if (m_indexer != null){
-    //   m_driverController.rightTrigger().whileTrue(m_indexer.command(INDEXER_SPEED_1.INDEXING,
-    // INDEXER_SPEED_2.INDEXING));
-    // }
+    // Decrease hood angle manual shift by 0.2
+    // POVUtils.povDownWithTilt(m_operatorController).onTrue(
+    //     new InstantCommand(() -> m_manualHoodAngleShift -=
+    // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+    // );
+    // // Increase hood angle manual shift by 0.2
+    // POVUtils.povUpWithTilt(m_operatorController).onTrue(
+    //     new InstantCommand(() -> m_manualHoodAngleShift +=
+    // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+    // );
+
+    m_operatorController.b().onTrue(resetManualShifts());
+
+    POVUtils.povDownWithTilt(m_operatorController)
+        .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
 
     // if (m_swerveDrive != null) {
-    //   m_driverController.a().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kForward));
-    //   m_driverController.b().whileTrue(m_swerveDrive.sysIdQuasistatic(Direction.kReverse));
-    //   m_driverController.x().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kForward));
-    //   m_driverController.y().whileTrue(m_swerveDrive.sysIdDynamic(Direction.kReverse));
+    //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
+    // MOTOR_TYPE.STEER));
+    //   m_driverController.b().whileTrue(setDrivetrainMode(NeutralModeValue.Brake,
+    // MOTOR_TYPE.STEER));
     // }
   }
 
@@ -329,19 +349,30 @@ public class RobotContainer {
             m_uptake);
 
     IntakeFromNeutral.registerNamedCommands(autoDeps);
-    IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
 
-    m_autoChooser.addOption("CenterPreload", new CenterPreload(autoDeps));
-    m_autoChooser.addOption("SideNeutralDepot", new SideNeutralDepot(autoDeps));
+    m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
+    m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
     m_autoChooser.addOption(
-        "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
+        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption(
-        "SideNeutralTwice - No Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
+        "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption(
-        "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight));
+        "Two Cycle - Inside Out Alliance Partner Friendly",
+        new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
     m_autoChooser.addOption(
-        "Test - Intake from Neutral", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
+        "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption(
+        "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption(
+        "Single Scoop with Sprinkles (Depot)",
+        new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+    m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
+    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
+    // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.addOption(
+        "Test - Intake from Neutral",
+        new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
   }
 
   private void initSideChooser() {
@@ -408,6 +439,16 @@ public class RobotContainer {
 
   public void disabledPeriodic() {
     if (m_vision != null) m_vision.disabledPeriodic();
+  }
+
+  public void autonomousPeriodic() {
+    System.out.println(
+        "Flywheel RPM ready: "
+            + m_flywheel.isAtRPMsetpoint()
+            + ", Hood at setpoint: "
+            + m_hood.atSetpoint()
+            + ", Vision on target: "
+            + m_vision.isOnTarget());
   }
 
   /**
@@ -485,6 +526,6 @@ public class RobotContainer {
   public void resetFuelSim() {
     m_fuelSim.clearFuel();
     m_fuelSim.spawnStartingFuel();
-    m_intake.setStoredFuel(8); // preload
+    if (m_intake != null) m_intake.setStoredFuel(8); // preload
   }
 }

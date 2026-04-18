@@ -74,7 +74,7 @@ public final class CtreUtils {
     for (int i = 0; i < (RobotBase.isReal() ? 5 : 1); i++) {
       canCoderStatus = cancoder.getConfigurator().apply(config);
       if (canCoderStatus.isOK()) break;
-      if (RobotBase.isReal()) Timer.delay(0.02);
+      if (RobotBase.isReal()) Timer.delay(0.05);
     }
     if (!canCoderStatus.isOK()) {
       var alert =
