@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -206,8 +205,7 @@ public class Vision extends SubsystemBase {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
       } else {
         m_swerveDriveTrain.addVisionMeasurement(
-            limelightMeasurement.pose,
-            limelightMeasurement.timestampSeconds);
+            limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
       }
     }
 
@@ -300,9 +298,9 @@ public class Vision extends SubsystemBase {
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
     if (DriverStation.isAutonomous()) {
-        return getAngleToTarget().getDegrees() < 2.0;
+      return getAngleToTarget().getDegrees() < 2.0;
     } else {
-        return getAngleToTarget().getDegrees() < 0.5;
+      return getAngleToTarget().getDegrees() < 0.5;
     }
   }
 
