@@ -5,23 +5,20 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RPM;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.Fire;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
@@ -133,7 +130,7 @@ public class RobotContainer {
     m_vision.registerFieldSim(m_fieldSim);
     m_telemetry.registerFieldSim(m_fieldSim);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-    // m_intakePivot = new IntakePivot();
+    m_intakePivot = new IntakePivot();
     m_intake = new Intake();
     m_uptake = new Uptake();
     m_indexer = new Indexer();
@@ -149,34 +146,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_driverController
-        .x()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
-
-    m_driverController
-        .leftBumper()
-        .whileTrue(
-            new Shoot(
-                m_flywheel,
-                m_hood,
-                m_uptake,
-                m_driverController));
-
-    m_driverController
-        .leftTrigger()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_intake.command(INTAKE_SPEED.INTAKING), m_uptake.percentCommand(-0.3)));
-
-    m_driverController
-        .rightTrigger()
-        .whileTrue(
-            new ParallelCommandGroup(
-                m_intake.command(INTAKE_SPEED.INTAKING),
-                m_indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING),
-                m_uptake.percentCommand(0.7)));
+    m_driverController.a().whileTrue(new Fire(m_uptake, m_indexer));
   }
 
   private void initSmartDashboard() {
@@ -218,5 +188,10 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
+
+    double left = Math.pow(m_driverController.getLeftTriggerAxis(), 0.5) * 100;
+    double right = Math.pow(m_driverController.getRightTriggerAxis(), 0.5) * 100;
+
+    m_flywheel.setRPMOutputFOC(RPM.of((left + right) / 2));
   }
 }
