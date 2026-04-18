@@ -97,12 +97,6 @@ public class RobotContainer {
       new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim = new FieldSim();
 
-  @Logged(name = "AutoChooser")
-  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
-
-  @Logged(name = "AutoSideChooser")
-  private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -219,7 +213,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return m_autoChooser.getSelected();
+    return new InstantCommand();
   }
 
   public void robotPeriodic() {
