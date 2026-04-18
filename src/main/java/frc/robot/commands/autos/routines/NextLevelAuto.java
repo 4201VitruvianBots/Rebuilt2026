@@ -4,6 +4,8 @@
 
 package frc.robot.commands.autos.routines;
 
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
@@ -11,21 +13,21 @@ import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-
 public class NextLevelAuto extends Auto {
   public NextLevelAuto(AutoDependencies deps, BooleanSupplier flipPath, boolean partnerFriendly) {
     addCommands(
-        new WaitCommand(3), 
+        new WaitCommand(3),
         new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS_RUSH),
-        new AutoShoot(deps, 2.6)
-              .andThen(new PrintCommand("[AUTO] Finished shooting")),
-        // getChoiceCommand(new InstantCommand(), new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT), flipPath),
+        new AutoShoot(deps, 2.6).andThen(new PrintCommand("[AUTO] Finished shooting")),
+        // getChoiceCommand(new InstantCommand(), new IntakeFromNeutral(deps, flipPath,
+        // TWO_CYCLE_PATH.DEPOT), flipPath),
         // getChoiceCommand(new InstantCommand(), new AutoShoot(deps, 1.8), flipPath),
-        new IntakeFromNeutral(deps, flipPath, partnerFriendly ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY : TWO_CYCLE_PATH.SECOND_PASS),
-        new AutoShoot(deps, 1.8)
-              .andThen(new PrintCommand("[AUTO] Finished shooting")));
+        new IntakeFromNeutral(
+            deps,
+            flipPath,
+            partnerFriendly
+                ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY
+                : TWO_CYCLE_PATH.SECOND_PASS),
+        new AutoShoot(deps, 1.8).andThen(new PrintCommand("[AUTO] Finished shooting")));
   }
 }

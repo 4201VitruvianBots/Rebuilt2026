@@ -11,8 +11,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -41,6 +39,7 @@ import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
+import java.util.function.DoubleSupplier;
 
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
@@ -171,10 +170,13 @@ public class IntakePivot extends SubsystemBase {
   @NotLogged
   public Command manualOpenLoopOverride(DoubleSupplier speed) {
     return new InstantCommand(() -> m_manualOverride = true)
-    .andThen(this.runEnd(() -> m_motor.set(speed.getAsDouble()), () -> {
-      m_manualOverride = false; 
-      m_desiredAngle = getAngle();
-    }));
+        .andThen(
+            this.runEnd(
+                () -> m_motor.set(speed.getAsDouble()),
+                () -> {
+                  m_manualOverride = false;
+                  m_desiredAngle = getAngle();
+                }));
   }
 
   // Commented out because it was old, am replacing with seperate command file

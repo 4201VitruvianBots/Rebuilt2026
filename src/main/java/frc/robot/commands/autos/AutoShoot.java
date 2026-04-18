@@ -25,10 +25,9 @@ public class AutoShoot extends ParallelDeadlineGroup {
             .withTimeout(0.25)
             .andThen(
                 new ParallelDeadlineGroup(
-                    new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds),
-                    new WaitCommand(0.4).andThen(new JostleIntake(deps.intakePivot))
-                )
-            ));
+                    new Fire(deps.intake, deps.indexer, deps.uptake)
+                        .withTimeout(fireDurationSeconds),
+                    new WaitCommand(0.4).andThen(new JostleIntake(deps.intakePivot)))));
     addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
   }
 }
