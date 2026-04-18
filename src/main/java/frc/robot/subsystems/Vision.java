@@ -323,17 +323,24 @@ public class Vision extends SubsystemBase {
       } else if (limelightMeasurement.tagCount == 0) {
         return Optional.empty();
       }
+      
 
       if (!limelightMeasurement.isMegaTag2) {
         // Filter out bad AprilTag vision estimates for MegaTag1
         // TODO: Check 1 tag from center?
+        
         if (limelightMeasurement.tagCount < 1) {
           return Optional.empty();
         }
 
         hasInitialPose = true;
         // Set Standard Deviations for MegaTag1
-        standardDeviations = VecBuilder.fill(.5, .5, 9999999);
+        var doubleArray = inst.getTable(limelightName).getEntry("stddevs").getDoubleArray(new double[]{0.0});
+        if(doubleArray.length == 1){
+          return Optional.empty();
+        }
+        standardDeviations = VecBuilder.fill(doubleArray[0], doubleArray[1], doubleArray[5]);
+
       } else {
         // Ignore MegaTag2 updates if the robot is spinning too fast
         if (m_swerveDriveTrain.getGyroYawRate().abs(DegreesPerSecond) > 720.0) {
@@ -341,7 +348,11 @@ public class Vision extends SubsystemBase {
         }
 
         // Set Standard Deviations for MegaTag2
-        standardDeviations = VecBuilder.fill(.4, .4, 9999999);
+        var doubleArray = inst.getTable(limelightName).getEntry("stddevs").getDoubleArray(new double[]{0.0});
+        if(doubleArray.length == 1){
+          return Optional.empty();
+        }
+        standardDeviations = VecBuilder.fill(doubleArray[6], doubleArray[7], doubleArray[11]); 
       }
     }
 
