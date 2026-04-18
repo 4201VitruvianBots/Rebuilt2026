@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.swerve.AutoAlignDrive;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
@@ -156,14 +155,6 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_driverController
-        .y()
-        .whileTrue(
-            new AutoAlignDrive(
-                m_swerveDrive,
-                m_vision,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
     m_driverController
         .x()
         .whileTrue(
