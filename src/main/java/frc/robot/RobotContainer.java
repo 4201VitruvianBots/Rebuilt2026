@@ -176,11 +176,8 @@ public class RobotContainer {
             new Shoot(
                 m_flywheel,
                 m_hood,
-                m_vision,
-                m_driverController,
-                m_swerveDrive,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
+                m_uptake,
+                m_driverController));
 
     m_driverController
         .leftTrigger()
