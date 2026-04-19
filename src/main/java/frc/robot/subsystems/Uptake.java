@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -31,6 +28,8 @@ import frc.robot.constants.CAN;
 import frc.robot.constants.UPTAKE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.team4201.lib.utils.CtreUtils;
+
+import static edu.wpi.first.units.Units.*;
 
 public class Uptake extends SubsystemBase {
 
@@ -146,10 +145,11 @@ public class Uptake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (!isAtRPMsetpoint()) {
-    //   m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror()) / 2));
-    // } else {
-    // m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    if (!isAtRPMsetpoint()) {
+       m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror()) / 2));
+     } else {
+      m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
+    }
   }
 
   @Override

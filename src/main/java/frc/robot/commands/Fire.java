@@ -12,7 +12,7 @@ public class Fire extends ParallelCommandGroup {
   public Fire(Uptake uptake, Indexer indexer) {
       addCommands(
         indexer.command(INDEXER.INDEXER_SPEED_1.INDEXING, INDEXER.INDEXER_SPEED_2.INDEXING),
-        uptake.command(UPTAKE.UPTAKE_SPEED.INTAKE_RUN)
+        uptake.command(UPTAKE.UPTAKE_SPEED.UPTAKING)
       );
 
         addRequirements(uptake, indexer);
