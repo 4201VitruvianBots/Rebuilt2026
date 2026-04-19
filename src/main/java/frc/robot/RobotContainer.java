@@ -83,6 +83,9 @@ public class RobotContainer {
   private final AngularVelocity MaxAngularRate =
       SWERVE.kMaxRotation; // 3/4 of a rotation per second max angular velocity
 
+  @NotLogged
+  private final double DrivePercentage = V1Constants.kDrivePercentage;
+
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
@@ -109,19 +112,13 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
-    m_swerveDrive.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        m_swerveDrive.applyRequest(
-            () ->
-                drive
-                    .withVelocityX(
-                        MaxSpeed.times(
-                            -m_driverController
-                                .getLeftY())) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        MaxSpeed.times(
-                            -m_driverController.getLeftX())) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
+      m_swerveDrive.setDefaultCommand(
+          m_swerveDrive.applyRequest(
+              () -> drive
+                  .withVelocityX(MaxSpeed.times(-m_driverController.getLeftY() * DrivePercentage))
+                  .withVelocityY(MaxSpeed.times(-m_driverController.getLeftX() * DrivePercentage))
+                  .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX() * DrivePercentage))
+          ));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -193,5 +190,6 @@ public class RobotContainer {
     double right = Math.pow(m_driverController.getRightTriggerAxis(), 0.5) * 100;
 
     m_flywheel.setRPMOutputFOC(RPM.of((left + right) / 2));
+
   }
 }
