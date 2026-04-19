@@ -549,7 +549,7 @@ public class FIELD {
 
   public enum BUMP_ALIGNMENT_TARGETS {
     // Naming scheme is as follows:
-    // First word is direction
+    // First word is side
     // Second word is whether the pose is in the neutral or alliance zone
     // Third word is what these poses are in relation to
     // All units are in meters
