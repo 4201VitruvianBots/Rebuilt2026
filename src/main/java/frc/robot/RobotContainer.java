@@ -189,7 +189,7 @@ public class RobotContainer {
     double left = Math.pow(m_driverController.getLeftTriggerAxis(), 0.5) * 100;
     double right = Math.pow(m_driverController.getRightTriggerAxis(), 0.5) * 100;
 
-    m_flywheel.setRPMOutputFOC(RPM.of((left + right) / 2));
+    m_flywheel.setRPMOutputFOC(RPM.of(((left + right) / 2) * 25));
 
   }
 }
