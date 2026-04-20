@@ -185,10 +185,9 @@ public class RobotContainer {
   public void robotPeriodic() {
     FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
 
-    double left = Math.pow(m_driverController.getLeftTriggerAxis(), 0.5) * 100;
-    double right = Math.pow(m_driverController.getRightTriggerAxis(), 0.5) * 100;
+    double charge = Math.pow(m_driverController.getRightTriggerAxis(), 0.5) * 100;
 
-    m_flywheel.setRPMOutputFOC(RPM.of(((left + right) / 2) * 25));
-    //m_hood.setAngle(Degrees.of(10));
+    m_flywheel.setRPMOutputFOC(RPM.of(charge * 25));
+    // m_hood.setAngle(Degrees.of(10));
   }
 }
