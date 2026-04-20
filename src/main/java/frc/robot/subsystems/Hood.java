@@ -191,11 +191,11 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {
-    //   m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
-    // } else {
-    //   m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
-    // }
+     if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {
+       m_motor.setControl(m_request.withPosition(HOOD.maxAngle.in(Rotations)));
+     } else {
+       m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
+     }
   }
 
   @Override

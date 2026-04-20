@@ -22,6 +22,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.CAN;
@@ -115,15 +116,15 @@ public class Uptake extends SubsystemBase {
     return Math.abs(getRPMerror());
   }
 
-  @NotLogged
-  public Command command(UPTAKE_SPEED speed) {
-    return this.startEnd(
-        () -> setVelocitySetpoint(speed.get()),
-        () -> {
-          setPercentOutput(0.0);
-          setVelocitySetpoint(UPTAKE_SPEED.IDLE.get());
-        });
-  }
+//  @NotLogged
+//  public Command command(UPTAKE_SPEED speed) {
+//    return this.startEnd(
+//        () -> setVelocitySetpoint(speed.get()),
+//        () -> {
+//          setPercentOutput(0.0);
+//          setVelocitySetpoint(UPTAKE_SPEED.IDLE.get());
+//        });
+//  }
 
   @NotLogged
   public Command percentCommand(double speed) {
@@ -131,7 +132,7 @@ public class Uptake extends SubsystemBase {
         () -> m_motor.set(speed),
         () -> {
           setPercentOutput(0.0);
-          setVelocitySetpoint(UPTAKE_SPEED.IDLE.get());
+          setVelocitySetpoint(RPM.of(0));
         });
   }
 
@@ -145,11 +146,8 @@ public class Uptake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!isAtRPMsetpoint()) {
-       m_motor.setControl(m_dutyCycleOut.withOutput(Math.signum(getRPMerror()) / 2));
-     } else {
-      m_motor.setControl(m_request.withVelocity(m_velocitySetpoint.abs(RotationsPerSecond)));
-    }
+    SmartDashboard.putNumber("RPM setpoint", getRPMsetpoint());
+    SmartDashboard.putNumber("Motor RPM", getMotorSpeedRPM());
   }
 
   @Override
