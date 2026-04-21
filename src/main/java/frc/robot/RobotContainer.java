@@ -17,6 +17,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -44,7 +47,7 @@ import frc.robot.commands.autos.routines.JustDepot;
 import frc.robot.commands.autos.routines.NextLevelAuto;
 import frc.robot.commands.autos.routines.SimboticsAuto;
 import frc.robot.commands.autos.routines.SingleScoopWithSprinkles;
-import frc.robot.commands.autos.routines.TwoCycle;
+import frc.robot.commands.autos.routines.TwoCycleWait;
 import frc.robot.commands.autos.routines.TwoCycleInsideOutRush;
 import frc.robot.commands.autos.routines.TwoCycleRush;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
@@ -116,282 +119,293 @@ public class RobotContainer {
   @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
   private IntakePivot m_intakePivot;
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(USB.driver_xBoxController);
-  private final CommandXboxController m_operatorController =
-      new CommandXboxController(USB.operator_xboxController);
-
-  @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
-  public boolean isHubActive() {
-    return HubTracker.isActive();
-  }
-
-  @NotLogged
-  private final LinearVelocity MaxSpeed =
-      V2Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
-
-  @NotLogged
-  private final AngularVelocity MaxAngularRate =
-      SWERVE.kMaxRotation; // 3/4 of a rotation per second max angular velocity
-
-  /* Setting up bindings for necessary control of the swerve drive platform */
-  private final SwerveRequest.FieldCentric drive =
-      new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed.times(0.1))
-          .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
-
-  private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest =
-      new SwerveRequest.SwerveDriveBrake();
-
-  // Units per second, where 100% = 1 unit. Multiply by our robot's max speed to get m/s accel limit
-  // TODO: Change these values
-  // Needs seperate filters because each filter takes in different values
-  // The robot base is also a square so acceleration limits will be different depending on direction
-  private SlewRateLimiter driveXAccelLimiter =
-      new SlewRateLimiter(SWERVE.kXAccelRateLimit, SWERVE.kXDeccelRateLimit, 0);
-  private SlewRateLimiter driveYAccelLimiter =
-      new SlewRateLimiter(SWERVE.kYAccelRateLimit, SWERVE.kYDeccelRateLimit, 0);
-
-  private Robot2d m_robotSim = new Robot2d();
-  private final Telemetry m_telemetry =
-      new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
-  private FieldSim m_fieldSim;
-  private FuelSim m_fuelSim;
-
-  @Logged(name = "AutoChooser")
-  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
-
-  @Logged(name = "AutoWaitTime")
-  private final SendableChooser<Integer> m_autoWaitTime = new SendableChooser<>();
-
-  @Logged(name = "AutoSideChooser")
-  private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
-
-  private Boolean m_flipToRight = false;
-
-  @Logged(name = "ManualRPMShift", importance = Logged.Importance.INFO)
-  private double m_manualRPMshift = 0.0;
-
-  @Logged(name = "ManualHoodAngleShift", importance = Logged.Importance.INFO)
-  private double m_manualHoodAngleShift = 0.0;
-
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    FIELD.initializeConstants();
-    FIELD.updateConstants();
-    ROBOT.initializeConstants();
-    initializeSubSystems();
-    configureBindings();
-    initSmartDashboard();
-    initAutoWaitTime();
-
-    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-  }
-
-  public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype) {
-    return m_swerveDrive.runOnce(() -> m_swerveDrive.setNeutralMode(motortype, neutralmode));
-  }
-
-  private void initializeSubSystems() {
-    if (ROBOT.robotID.equals(ROBOT_ID.V1)) {
-      m_swerveDrive = V1Constants.createDrivetrain();
-    } else {
-      m_swerveDrive = V2Constants.createDrivetrain();
+  public DoubleSubscriber m_waitTimeSubscriber;
+  public DoublePublisher m_waitTimePublisher;
+  
+    // Replace with CommandPS4Controller or CommandJoystick if needed
+    private final CommandXboxController m_driverController =
+        new CommandXboxController(USB.driver_xBoxController);
+    private final CommandXboxController m_operatorController =
+        new CommandXboxController(USB.operator_xboxController);
+  
+    @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
+    public boolean isHubActive() {
+      return HubTracker.isActive();
     }
-    m_swerveDrive.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        m_swerveDrive.applyRequest(
-            () ->
-                drive
-                    .withVelocityX(
-                        MaxSpeed.times(
-                            -m_driverController
-                                .getLeftY())) // Drive forward with negative Y (forward)
-                    .withVelocityY(
-                        MaxSpeed.times(
-                            -m_driverController.getLeftX())) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
-    m_flywheel = new Flywheel();
-    m_controls = new Controls();
-    m_vision = new Vision(m_controls);
-    m_hood = new Hood();
-    m_intake = new Intake();
-    m_uptake = new Uptake();
-    m_indexer = new Indexer();
-    if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
-      m_intakePivot = new IntakePivot();
-      m_led = new LEDs();
-      m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
-      // m_led.setDefaultCommand(new TestLEDs(m_led));
-      // m_climber = new Climber();
+  
+    @NotLogged
+    private final LinearVelocity MaxSpeed =
+        V2Constants.kSpeedAt12Volts; // kSpeed at 12 volts desired top speed
+  
+    @NotLogged
+    private final AngularVelocity MaxAngularRate =
+        SWERVE.kMaxRotation; // 3/4 of a rotation per second max angular velocity
+  
+    /* Setting up bindings for necessary control of the swerve drive platform */
+    private final SwerveRequest.FieldCentric drive =
+        new SwerveRequest.FieldCentric()
+            .withDeadband(MaxSpeed.times(0.1))
+            .withRotationalDeadband(MaxAngularRate.times(0.1)); // Add a 10% deadband
+  
+    private SwerveRequest.SwerveDriveBrake m_swerveDriveBrakeRequest =
+        new SwerveRequest.SwerveDriveBrake();
+  
+    // Units per second, where 100% = 1 unit. Multiply by our robot's max speed to get m/s accel limit
+    // TODO: Change these values
+    // Needs seperate filters because each filter takes in different values
+    // The robot base is also a square so acceleration limits will be different depending on direction
+    private SlewRateLimiter driveXAccelLimiter =
+        new SlewRateLimiter(SWERVE.kXAccelRateLimit, SWERVE.kXDeccelRateLimit, 0);
+    private SlewRateLimiter driveYAccelLimiter =
+        new SlewRateLimiter(SWERVE.kYAccelRateLimit, SWERVE.kYDeccelRateLimit, 0);
+  
+    private Robot2d m_robotSim = new Robot2d();
+    private final Telemetry m_telemetry =
+        new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
+    private FieldSim m_fieldSim;
+    private FuelSim m_fuelSim;
+  
+    @Logged(name = "AutoChooser")
+    private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+  
+    @Logged(name = "AutoWaitTime")
+    private final SendableChooser<Integer> m_autoWaitTime = new SendableChooser<>();
+  
+    @Logged(name = "AutoSideChooser")
+    private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+  
+    private Boolean m_flipToRight = false;
+  
+    @Logged(name = "ManualRPMShift", importance = Logged.Importance.INFO)
+    private double m_manualRPMshift = 0.0;
+  
+    @Logged(name = "ManualHoodAngleShift", importance = Logged.Importance.INFO)
+    private double m_manualHoodAngleShift = 0.0;
+  
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    public RobotContainer() {
+      // Configure the trigger bindings
+      FIELD.initializeConstants();
+      FIELD.updateConstants();
+      ROBOT.initializeConstants();
+      initializeSubSystems();
+      configureBindings();
+      initSmartDashboard();
+      checkAutoWaitTime();
+  
+      m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
     }
-
-    if (Robot.isSimulation()) {
-      m_fuelSim = new FuelSim();
-      m_fieldSim = new FieldSim();
-      m_telemetry.registerFieldSim(m_fieldSim);
-      m_vision.registerFieldSim(m_fieldSim);
-      m_telemetry.registerFieldSim(m_fieldSim);
-      FIELD.plotAllPositions(m_fieldSim);
-      m_robotSim.registerSubsystems(
-          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
-
-      DriverStation.silenceJoystickConnectionWarning(true);
+  
+    public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype) {
+      return m_swerveDrive.runOnce(() -> m_swerveDrive.setNeutralMode(motortype, neutralmode));
     }
-    m_vision.registerSwerveDrive(m_swerveDrive);
-    m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
-  }
-
-  private ParallelCommandGroup resetManualShifts() {
-    return new ParallelCommandGroup(
-        new InstantCommand(() -> m_manualRPMshift = 0.0),
-        new InstantCommand(() -> m_manualHoodAngleShift = 0.0));
-  }
-
-  private void configureBindings() {
-    if (m_intake != null)
-      m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-    if (m_indexer != null && m_uptake != null)
-      m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
-
-    if (m_flywheel != null && m_hood != null) {
-      m_driverController
-          .x()
-          .whileTrue(
-              new ParallelCommandGroup(
-                  m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+  
+    private void initializeSubSystems() {
+      if (ROBOT.robotID.equals(ROBOT_ID.V1)) {
+        m_swerveDrive = V1Constants.createDrivetrain();
+      } else {
+        m_swerveDrive = V2Constants.createDrivetrain();
+      }
+      m_swerveDrive.setDefaultCommand(
+          // Drivetrain will execute this command periodically
+          m_swerveDrive.applyRequest(
+              () ->
+                  drive
+                      .withVelocityX(
+                          MaxSpeed.times(
+                              -m_driverController
+                                  .getLeftY())) // Drive forward with negative Y (forward)
+                      .withVelocityY(
+                          MaxSpeed.times(
+                              -m_driverController.getLeftX())) // Drive left with negative X (left)
+                      .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
+      m_flywheel = new Flywheel();
+      m_controls = new Controls();
+      m_vision = new Vision(m_controls);
+      m_hood = new Hood();
+      m_intake = new Intake();
+      m_uptake = new Uptake();
+      m_indexer = new Indexer();
+      if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
+        m_intakePivot = new IntakePivot();
+        m_led = new LEDs();
+        m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
+        // m_led.setDefaultCommand(new TestLEDs(m_led));
+        // m_climber = new Climber();
+      }
+  
+      if (Robot.isSimulation()) {
+        m_fuelSim = new FuelSim();
+        m_fieldSim = new FieldSim();
+        m_telemetry.registerFieldSim(m_fieldSim);
+        m_vision.registerFieldSim(m_fieldSim);
+        m_telemetry.registerFieldSim(m_fieldSim);
+        FIELD.plotAllPositions(m_fieldSim);
+        m_robotSim.registerSubsystems(
+            m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
+  
+        DriverStation.silenceJoystickConnectionWarning(true);
+      }
+      m_vision.registerSwerveDrive(m_swerveDrive);
+      m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
     }
-
-    if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
-      m_driverController
+  
+    private ParallelCommandGroup resetManualShifts() {
+      return new ParallelCommandGroup(
+          new InstantCommand(() -> m_manualRPMshift = 0.0),
+          new InstantCommand(() -> m_manualHoodAngleShift = 0.0));
+    }
+  
+    private void configureBindings() {
+      if (m_intake != null)
+        m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+      if (m_indexer != null && m_uptake != null)
+        m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
+  
+      if (m_flywheel != null && m_hood != null) {
+        m_driverController
+            .x()
+            .whileTrue(
+                new ParallelCommandGroup(
+                    m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
+      }
+  
+      if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
+        m_driverController
+            .leftBumper()
+            .whileTrue(
+                new Shoot(
+                    m_flywheel,
+                    m_hood,
+                    m_vision,
+                    m_driverController,
+                    m_swerveDrive,
+                    m_driverController::getLeftY,
+                    m_driverController::getLeftX,
+                    () -> m_manualHoodAngleShift,
+                    () -> m_manualRPMshift));
+      }
+  
+      if (m_intake != null) {
+        m_driverController
+            .leftTrigger()
+            .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+      }
+      if (m_intake != null) {
+        m_driverController
+            .y()
+            .or(m_operatorController.y())
+            .whileTrue(new JostleIntake(m_intakePivot));
+      }
+  
+      if (m_intakePivot != null) {
+        Trigger manualOverrideActivate =
+            new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
+        manualOverrideActivate.whileTrue(
+            m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
+      }
+  
+      m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
+  
+      POVUtils.povDownWithTilt(m_driverController)
+          .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
+  
+      // Decrease rpm manual shift by 0.2
+      m_operatorController
           .leftBumper()
-          .whileTrue(
-              new Shoot(
-                  m_flywheel,
-                  m_hood,
-                  m_vision,
-                  m_driverController,
-                  m_swerveDrive,
-                  m_driverController::getLeftY,
-                  m_driverController::getLeftX,
-                  () -> m_manualHoodAngleShift,
-                  () -> m_manualRPMshift));
+          .onTrue(new InstantCommand(() -> m_manualRPMshift -= (FLYWHEEL.rpmShiftIncrement.in(RPM))));
+      // Increase rpm manual shift by 0.2
+      m_operatorController
+          .rightBumper()
+          .onTrue(new InstantCommand(() -> m_manualRPMshift += (FLYWHEEL.rpmShiftIncrement.in(RPM))));
+  
+      // Decrease hood angle manual shift by 0.2
+      // POVUtils.povDownWithTilt(m_operatorController).onTrue(
+      //     new InstantCommand(() -> m_manualHoodAngleShift -=
+      // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+      // );
+      // // Increase hood angle manual shift by 0.2
+      // POVUtils.povUpWithTilt(m_operatorController).onTrue(
+      //     new InstantCommand(() -> m_manualHoodAngleShift +=
+      // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
+      // );
+  
+      m_operatorController.b().onTrue(resetManualShifts());
+  
+      POVUtils.povDownWithTilt(m_operatorController)
+          .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
+  
+      // if (m_swerveDrive != null) {
+      //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
+      // MOTOR_TYPE.STEER));
+      //   m_driverController.b().whileTrue(setDrivetrainMode(NeutralModeValue.Brake,
+      // MOTOR_TYPE.STEER));
+      // }
     }
-
-    if (m_intake != null) {
-      m_driverController
-          .leftTrigger()
-          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+  
+    private void initAutoChooser() {
+      SmartDashboard.putData("Auto Mode", m_autoChooser);
+      m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+  
+      var autoDeps =
+          new AutoDependencies(
+              m_swerveDrive,
+              m_intake,
+              m_vision,
+              m_flywheel,
+              m_hood,
+              m_intakePivot,
+              m_indexer,
+              m_uptake);
+  
+      IntakeFromNeutral.registerNamedCommands(autoDeps);
+  
+      m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
+      m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
+      // m_autoChooser.addOption("Complimentary Auto", new TwoCycleWait(autoDeps));
+      m_autoChooser.addOption(
+          "Two Cycle Conservative", new TwoCycleWait(autoDeps, () -> m_flipToRight, false, () -> m_waitTimeSubscriber.get()));
+      m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
+      m_autoChooser.addOption(
+          "Two Cycle - Alliance Partner Friendly", new TwoCycleWait(autoDeps, () -> m_flipToRight, true, () -> m_waitTimeSubscriber.get()));
+      m_autoChooser.addOption(
+          "Two Cycle - Inside Out Alliance Partner Friendly",
+          new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
+      m_autoChooser.addOption(
+          "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+      m_autoChooser.addOption(
+          "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
+      m_autoChooser.addOption(
+          "Single Scoop with Sprinkles (Depot)",
+          new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+      m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
+      // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
+      // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
+      m_autoChooser.addOption(
+          "Test - Intake from Neutral",
+          new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
     }
-    if (m_intake != null) {
-      m_driverController
-          .y()
-          .or(m_operatorController.y())
-          .whileTrue(new JostleIntake(m_intakePivot));
+  
+    private void initSideChooser() {
+      SmartDashboard.putData("Auto Side", m_autoSide);
+      m_autoSide.setDefaultOption("No Flip", false);
+  
+      m_autoSide.addOption("Depot", false);
+      m_autoSide.addOption("Outpost", true);
+      m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
     }
-
-    if (m_intakePivot != null) {
-      Trigger manualOverrideActivate =
-          new Trigger(() -> (Math.abs(m_operatorController.getLeftY()) > 0.1));
-      manualOverrideActivate.whileTrue(
-          m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
-    }
-
-    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
-
-    POVUtils.povDownWithTilt(m_driverController)
-        .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
-
-    // Decrease rpm manual shift by 0.2
-    m_operatorController
-        .leftBumper()
-        .onTrue(new InstantCommand(() -> m_manualRPMshift -= (FLYWHEEL.rpmShiftIncrement.in(RPM))));
-    // Increase rpm manual shift by 0.2
-    m_operatorController
-        .rightBumper()
-        .onTrue(new InstantCommand(() -> m_manualRPMshift += (FLYWHEEL.rpmShiftIncrement.in(RPM))));
-
-    // Decrease hood angle manual shift by 0.2
-    // POVUtils.povDownWithTilt(m_operatorController).onTrue(
-    //     new InstantCommand(() -> m_manualHoodAngleShift -=
-    // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
-    // );
-    // // Increase hood angle manual shift by 0.2
-    // POVUtils.povUpWithTilt(m_operatorController).onTrue(
-    //     new InstantCommand(() -> m_manualHoodAngleShift +=
-    // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
-    // );
-
-    m_operatorController.b().onTrue(resetManualShifts());
-
-    POVUtils.povDownWithTilt(m_operatorController)
-        .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
-
-    // if (m_swerveDrive != null) {
-    //   m_driverController.a().whileTrue(setDrivetrainMode(NeutralModeValue.Coast,
-    // MOTOR_TYPE.STEER));
-    //   m_driverController.b().whileTrue(setDrivetrainMode(NeutralModeValue.Brake,
-    // MOTOR_TYPE.STEER));
-    // }
-  }
-
-  private void initAutoChooser() {
-    SmartDashboard.putData("Auto Mode", m_autoChooser);
-    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-
-    var autoDeps =
-        new AutoDependencies(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake);
-
-    IntakeFromNeutral.registerNamedCommands(autoDeps);
-
-    m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
-    m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    // m_autoChooser.addOption("Complimentary Auto", new TwoCycleWait(autoDeps));
-    m_autoChooser.addOption(
-        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
-        "Two Cycle - Inside Out Alliance Partner Friendly",
-        new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
-        "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
-        "Single Scoop with Sprinkles (Depot)",
-        new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
-    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
-    // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "Test - Intake from Neutral",
-        new IntakeFromNeutral(autoDeps, () -> m_flipToRight, TWO_CYCLE_PATH.FIRST_PASS));
-  }
-
-  private void initSideChooser() {
-    SmartDashboard.putData("Auto Side", m_autoSide);
-    m_autoSide.setDefaultOption("No Flip", false);
-
-    m_autoSide.addOption("Depot", false);
-    m_autoSide.addOption("Outpost", true);
-    m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
-  }
-
-  // BooleanSubscriber boolSub = new BooleanSubscriber();
-
-  private void initAutoWaitTime() {
+  
+    // BooleanSubscriber boolSub = new BooleanSubscriber();
+  
+    private void checkAutoWaitTime() {
+      var waitTime = 
+        NetworkTableInstance.getDefault()
+          .getTable("SmartDashboard")
+          .getDoubleTopic("WaitTime");
+    m_waitTimeSubscriber = waitTime.subscribe(0.0);
+    m_waitTimePublisher = waitTime.publish();
+    // SmartDashboard.putData("IncreaseWaiting", new IncreaseWaitTime());
+    // SmartDashboard.putData("DecreaseWaitTime", new DecreaseWaitTime());
     // SmartDashboard.putData(new NetworkButton(new BooleanSubscriber()));
     // SmartDashboard.putData("Auto Wait Time", m_autoWaitTime);
     // m_autoWaitTime.setDefaultOption("No Waiting", 0);
@@ -455,8 +469,13 @@ public class RobotContainer {
     if (m_hood != null) m_hood.testPeriodic();
   }
 
+  public void disabledInit() {
+    m_waitTimePublisher.set(0.0);
+  }
+
   public void disabledPeriodic() {
     if (m_vision != null) m_vision.disabledPeriodic();
+    checkAutoWaitTime();
   }
 
   public void autonomousPeriodic() {
