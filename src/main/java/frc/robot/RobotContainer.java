@@ -187,7 +187,7 @@ public class RobotContainer {
 
     double charge = Math.pow(m_driverController.getRightTriggerAxis(), 0.5) * 100;
 
-    m_flywheel.setRPMOutputFOC(RPM.of(charge * 25));
-    // m_hood.setAngle(Degrees.of(10));
+    m_flywheel.setRPMOutputFOC(RPM.of(charge * 10));
+    m_hood.setAngle(Degrees.of(5));
   }
 }
