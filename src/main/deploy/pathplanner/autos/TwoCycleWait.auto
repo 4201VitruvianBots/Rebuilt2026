@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1678 wait pt1 pt1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": //TODO: fix this
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1678 wait pt1 pt2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1678pt2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

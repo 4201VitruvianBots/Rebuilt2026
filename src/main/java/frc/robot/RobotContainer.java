@@ -162,6 +162,9 @@ public class RobotContainer {
   @Logged(name = "AutoChooser")
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
+  @Logged(name = "AutoWaitTime")
+  private final SendableChooser<Integer> m_autoWaitTime = new SendableChooser<>();
+
   @Logged(name = "AutoSideChooser")
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
 
@@ -182,6 +185,7 @@ public class RobotContainer {
     initializeSubSystems();
     configureBindings();
     initSmartDashboard();
+    initAutoWaitTime();
 
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
@@ -352,6 +356,7 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
+    // m_autoChooser.addOption("Complimentary Auto", new TwoCycleWait(autoDeps));
     m_autoChooser.addOption(
         "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
     m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
@@ -382,6 +387,19 @@ public class RobotContainer {
     m_autoSide.addOption("Depot", false);
     m_autoSide.addOption("Outpost", true);
     m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
+  }
+
+  // BooleanSubscriber boolSub = new BooleanSubscriber();
+
+  private void initAutoWaitTime() {
+    // SmartDashboard.putData(new NetworkButton(new BooleanSubscriber()));
+    // SmartDashboard.putData("Auto Wait Time", m_autoWaitTime);
+    // m_autoWaitTime.setDefaultOption("No Waiting", 0);
+    // for(int i = 1; i < 21; i++){
+    //   m_autoWaitTime.addOption(i + " Seconds", i);
+    // } //NetworkButton?
+    // TODO: change this to have button to increase wait time by .1 sec, decrease by .1 sec, and
+    // textbox to manually type a value
   }
 
   public void simulationPeriodic() {
