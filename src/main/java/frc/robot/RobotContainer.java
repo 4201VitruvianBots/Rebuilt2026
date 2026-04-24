@@ -114,9 +114,9 @@ public class RobotContainer {
       m_swerveDrive.setDefaultCommand(
           m_swerveDrive.applyRequest(
               () -> drive
-                  .withVelocityX(MaxSpeed.times(-m_driverController.getLeftY() * DrivePercentage))
-                  .withVelocityY(MaxSpeed.times(-m_driverController.getLeftX() * DrivePercentage))
-                  .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX() * DrivePercentage))
+                  .withVelocityX(0.0 /*MaxSpeed.times(-m_driverController.getRightY() * DrivePercentage)*/) // disable strafe, rotation only
+                  .withVelocityY(0.0 /*MaxSpeed.times(-m_driverController.getRightX() * DrivePercentage)*/) // disable strafe, rotation only
+                  .withRotationalRate(MaxAngularRate.times(-m_driverController.getLeftX() * DrivePercentage))
           ));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
