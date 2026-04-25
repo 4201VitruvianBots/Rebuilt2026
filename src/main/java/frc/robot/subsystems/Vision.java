@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
@@ -95,7 +96,7 @@ public class Vision extends SubsystemBase {
       preBumpPose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
       postBumpPose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
     }
-    return new Path(new Path.Waypoint(preBumpPose), new Path.Waypoint(postBumpPose));
+    return new Path(new Path.Waypoint(preBumpPose, 0.8), new Path.Waypoint(postBumpPose));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
