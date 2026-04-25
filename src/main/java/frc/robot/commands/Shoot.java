@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
@@ -31,7 +34,6 @@ import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
-import java.util.function.DoubleSupplier;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -74,6 +76,8 @@ public class Shoot extends Command {
     distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
     distanceToShotMap.put(
         Meters.of(5.44820580711993), new Shot(RPM.of(1945), Degrees.of(14), 1.16)); // (Corner)
+    distanceToShotMap.put(
+        Meters.of(8.520738), new Shot(RPM.of(3600), Degrees.of(HOOD.maxAngle.abs(Degrees)), 1.16)); // Full field pass 
   }
 
   private final Vision m_vision;

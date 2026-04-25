@@ -41,7 +41,7 @@ import frc.team4201.lib.utils.CtreUtils;
 
 public class Hood extends SubsystemBase {
 
-  @Logged(name = "Hood Motor", importance = Importance.DEBUG)
+  @Logged(name = "Hood Motor", importance = Importance.INFO)
   private final TalonFX m_motor =
       new TalonFX(
           CAN.kShooterHoodMotor, CAN.roboRIO); // Replace these device ids after motors are set up
