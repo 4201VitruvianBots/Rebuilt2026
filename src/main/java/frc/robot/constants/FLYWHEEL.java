@@ -20,7 +20,7 @@ public class FLYWHEEL {
   public static final double kVelocityErrorThresholdTeleop = 100.0;
   public static final double kVelocityErrorThresholdAuto = 150.0;
   public static final double kFuelDragCoefficient =
-      0.48; // Estimation based on it's size and relatively smooth shape. TODO: Tune
+      0.59; // Estimation based on it's size and relatively smooth shape. TODO: Tune
   public static final double kRumbleStrength = 0.25;
 
   // These worked on wood bot. Change jerk later if further optimization is needed

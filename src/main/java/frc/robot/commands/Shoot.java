@@ -59,25 +59,25 @@ public class Shoot extends Command {
     // TODO: Make at least 20 values for this. Yes. 20. Ideally 30
     // Everything has been offset by plus 5.5 degrees.
     distanceToShotMap.put(
-        Meters.of(1.10695), new Shot(MANUAL_RPM.HUB.getRPM(), Degrees.of(0), 0.9)); // (Against Hub)
+        Meters.of(1.10695), new Shot(MANUAL_RPM.HUB.getRPM(), Degrees.of(0), 1.2)); // (Against Hub)
     distanceToShotMap.put(
-        Meters.of(1.10695), new Shot(MANUAL_RPM.HUB.getRPM(), Degrees.of(0), 0.9)); //
+        Meters.of(1.10695), new Shot(MANUAL_RPM.HUB.getRPM(), Degrees.of(0), 1.2)); //
     distanceToShotMap.put(
-        Meters.of(2.0749597158415), new Shot(RPM.of(1540 - 10), Degrees.of(0), 1.1)); // Tuned
+        Meters.of(2.0749597158415), new Shot(RPM.of(1540 - 10), Degrees.of(0), 1.2)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.31209), new Shot(RPM.of(1553 - 10), Degrees.of(0.4), 1.1)); // Tuned
+        Meters.of(2.31209), new Shot(RPM.of(1553 - 10), Degrees.of(0.4), 1.2)); // Tuned
     distanceToShotMap.put(
-        Meters.of(2.5916617555783), new Shot(RPM.of(1570 - 10), Degrees.of(2.2), 1.1)); // Tuned
+        Meters.of(2.5916617555783), new Shot(RPM.of(1570 - 10), Degrees.of(2.2), 1.2)); // Tuned
     distanceToShotMap.put(
         Meters.of(3.152353828396097),
-        new Shot(RPM.of(1618), Degrees.of(3.5), 1.1)); // Tuned (Tower)
+        new Shot(RPM.of(1618), Degrees.of(3.5), 1.3)); // Tuned (Tower)
     distanceToShotMap.put(
-        Meters.of(3.97453), new Shot(RPM.of(1764.3), Degrees.of(6.234), 1.1)); // Tuned
-    distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
+        Meters.of(3.97453), new Shot(RPM.of(1764.3), Degrees.of(6.234), 1.3)); // Tuned
+    distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.3));
     distanceToShotMap.put(
-        Meters.of(5.44820580711993), new Shot(RPM.of(1945), Degrees.of(14), 1.16)); // (Corner)
+        Meters.of(5.44820580711993), new Shot(RPM.of(1945), Degrees.of(14), 1.4)); // (Corner)
     distanceToShotMap.put(
-        Meters.of(8.520738), new Shot(RPM.of(3600), Degrees.of(HOOD.maxAngle.abs(Degrees)), 1.16)); // Full field pass 
+        Meters.of(8.520738), new Shot(RPM.of(3600), Degrees.of(HOOD.maxAngle.abs(Degrees)), 1.4)); // Full field pass 
   }
 
   private final Vision m_vision;
@@ -88,13 +88,13 @@ public class Shoot extends Command {
   private DoubleSupplier m_strafeInput = () -> 0.0;
   private DoubleSupplier m_hoodAngleShift = () -> 0.0;
   private DoubleSupplier m_RPMShift = () -> 0.0;
-  private static double phaseDelay = 0.0;
+  private static double phaseDelay = 0.06201;
   private Rotation2d lastDriveAngle;
   private double lastHoodAngle;
 
   private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
   private Transform2d robotToLauncher =
-      new Transform2d(Meters.of(0.0), Meters.of(0.0), launcherRotation);
+      new Transform2d(Meters.of(0.0), Meters.of(0.109982), launcherRotation);
 
   private final Hood m_shooterHood;
 
@@ -192,7 +192,7 @@ public class Shoot extends Command {
       double offsetY = launcherVelocityY * effectiveTimeOfFlight;
       lookaheadPose =
           new Pose2d(
-              launcherPosition.getTranslation().plus(new Translation2d(offsetX, offsetY)),
+              launcherPosition.getTranslation().minus(new Translation2d(offsetX, offsetY)),
               launcherPosition.getRotation());
       lookaheadLauncherToTargetDistance = m_goal.getDistance(lookaheadPose.getTranslation());
     }
@@ -230,8 +230,8 @@ public class Shoot extends Command {
 
     if (!isBraking) {
       m_swerveDrivetrain.setChassisSpeedsWithHeading(
-          SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-          SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+          SWERVE.kMaxSpeed.times(-m_throttleInput.getAsDouble()),
+          SWERVE.kMaxSpeed.times(-m_strafeInput.getAsDouble()),
           Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
     }
   }
