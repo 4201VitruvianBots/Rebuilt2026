@@ -220,7 +220,11 @@ public class Flywheel extends SubsystemBase {
     return this.startEnd(
         () -> setRPMOutput(MANUAL_RPM.PASSING.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
-
+//temporary
+  public Command manualBumpShootCommand() {
+    return this.startEnd(
+      () -> setRPMOutput(MANUAL_RPM.BUMP.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
+  }
   public void testInit() {
     m_rpmPublisher.set(0.0);
   }

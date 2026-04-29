@@ -190,6 +190,11 @@ public class Hood extends SubsystemBase {
         () -> setAngle(MANUAL_ANGLE.PASSING.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
+  public Command manualFromBumpCommand() {
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.BUMP.getAngle()), () -> setAngle(Degrees.of(0.0)));
+  }
+
   @Override
   public void periodic() {
     // if (getHoodAngleDegrees() > HOOD.maxAngle.in(Degrees)) {
