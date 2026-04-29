@@ -260,14 +260,14 @@ public class RobotContainer {
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
     }
 
-    if (m_flywheel != null && m_hood != null) {
-      POVUtils.povUpWithTilt(m_driverController).whileTrue(
+    if (m_flywheel != null && m_hood != null) { // Doesn't use utils 
+      m_driverController.povLeft().whileTrue(
         new ParallelCommandGroup(
           m_flywheel.manualBumpShootCommand(),
           m_hood.manualFromBumpCommand()
         )
       );
-    }
+    } 
 
     if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
       m_driverController
@@ -304,6 +304,7 @@ public class RobotContainer {
           m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
+    m_driverController.rightBumper().whileTrue(m_intakePivot.stow());
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
     POVUtils.povDownWithTilt(m_driverController)
