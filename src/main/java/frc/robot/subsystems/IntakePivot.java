@@ -157,13 +157,6 @@ public class IntakePivot extends SubsystemBase {
     return m_motor.isConnected();
   }
 
-  // placeholder, idea (in the future) is to find
-  // way to track previous setpoint and use that for jostling (like if the previous was stowed then
-  // not be able to jostle on accident)
-  // public Boolean prevSetpointIsIntaking() {
-  //  return m_desiredAngle
-  // }
-
   @NotLogged
   public Command command(PIVOT_SETPOINT setpoint) {
     return this.runOnce(() -> setAngle(setpoint.getAngle()));
@@ -171,7 +164,7 @@ public class IntakePivot extends SubsystemBase {
 
   @NotLogged
   public Command stow() {
-    var desiredAngleStowed = getDesiredAngle() == 0;
+    var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees); 
     return this.runOnce(() -> setAngle((!desiredAngleStowed) ? PIVOT_SETPOINT.STOWED.getAngle() : PIVOT_SETPOINT.INTAKING.getAngle()));
   }
 
@@ -186,21 +179,6 @@ public class IntakePivot extends SubsystemBase {
                   m_desiredAngle = getAngle();
                 }));
   }
-
-  // Commented out because it was old, am replacing with seperate command file
-  // @NotLogged
-  // public Command jostle() {
-  //   // return new RepeatCommand(
-  //   //     this.startRun(
-  //   //             () -> {
-
-  //   //             },
-  //   //             () -> {
-  //   //               setAngle(PIVOT_SETPOINT.INTAKING.getAngle());
-  //   //             })
-  //   //         .withTimeout(0.15)
-  //   //         .andThen(new WaitCommand(0.1)));
-  // }
 
   @Override
   public void periodic() {

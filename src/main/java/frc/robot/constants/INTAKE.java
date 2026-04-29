@@ -98,7 +98,7 @@ public class INTAKE {
     public static final Time pivotCycleTime = Seconds.of(0.5); // original: 1.65
 
     public enum PIVOT_SETPOINT {
-      STOWED(Degrees.of(0.0)),
+      STOWED(Degrees.of(10.0)),
       INTAKING(Degrees.of(101.630859)),
       JOSTLING(Degrees.of(20.0)),
       DEFUEL(Degrees.of(48.053));
