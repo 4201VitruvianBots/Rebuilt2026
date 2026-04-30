@@ -71,7 +71,7 @@ public final class CtreUtils {
    */
   public static boolean configureCANCoder(CANcoder cancoder, CANcoderConfiguration config) {
     StatusCode canCoderStatus = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < (RobotBase.isReal() ? 5 : 1); i++) {
+    for (int i = 0; i < (RobotBase.isReal() ? 8 : 1); i++) {
       canCoderStatus = cancoder.getConfigurator().apply(config);
       if (canCoderStatus.isOK()) break;
       if (RobotBase.isReal()) Timer.delay(0.05);
