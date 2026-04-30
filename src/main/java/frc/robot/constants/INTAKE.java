@@ -90,10 +90,10 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = 0.215;
+    public static final double encoderOffset = 0.357;
     public static final SensorDirectionValue encoderDirection =
-        SensorDirectionValue.CounterClockwise_Positive;
-    public static final double kAbsoluteSensorDiscontinuityPoint = 1;
+        SensorDirectionValue.Clockwise_Positive;
+    public static final double kAbsoluteSensorDiscontinuityPoint = 0;
 
     public static final Time pivotCycleTime = Seconds.of(0.5); // original: 1.65
 
