@@ -304,7 +304,7 @@ public class RobotContainer {
           m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
-    m_driverController.rightBumper().whileTrue(m_intakePivot.stow());
+    m_operatorController.rightTrigger().whileTrue(m_intakePivot.stow());
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
     POVUtils.povDownWithTilt(m_driverController)
