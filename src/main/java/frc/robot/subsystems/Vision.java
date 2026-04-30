@@ -47,6 +47,7 @@ public class Vision extends SubsystemBase {
   private Pose2d targetPose = Pose2d.kZero;
   private Pose2d allianceZonePose = new Pose2d();
   private Pose2d neutralZonePose = new Pose2d();
+  private Pose2d unrealisticPose = new Pose2d();
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
@@ -95,6 +96,7 @@ public class Vision extends SubsystemBase {
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_BUMP.getAlignmentPose();
       }
+      unrealisticPose = BUMP_ALIGNMENT_TARGETS.LEFT_UNREALISTIC_POSE.getAlignmentPose();
     } else {
       neutralZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
       if (endsShootingPosition){
@@ -102,12 +104,10 @@ public class Vision extends SubsystemBase {
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
       }
+      unrealisticPose = BUMP_ALIGNMENT_TARGETS.RIGHT_UNREALISTIC_POSE.getAlignmentPose();
     }
-    if (isInNeutralSector()){
-      return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(allianceZonePose));
-    } else {
-      return new Path(new Path.Waypoint(allianceZonePose, 0.8), new Path.Waypoint(neutralZonePose));
-    }
+    
+    return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(unrealisticPose, 4.0), new Path.Waypoint(allianceZonePose));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)

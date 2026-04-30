@@ -20,7 +20,7 @@ public class AutoShoot extends ParallelDeadlineGroup {
                     (deps.flywheel.isAtRPMsetpoint()
                         && deps.hood.atSetpoint()
                         && deps.vision.isOnTarget()))
-            .withTimeout(0.25)
+            .withTimeout(1.0)
             .andThen(
                 new ParallelDeadlineGroup(
                     new ConditionalCommand(

@@ -559,7 +559,9 @@ public class FIELD {
     LEFT_ALLIANCE_SHOOTING(new Pose2d(2.974, 5.536, new Rotation2d(-42.557))),
     RIGHT_ALLIANCE_SHOOTING(new Pose2d(2.974, 2.533, new Rotation2d(42.557))),
     LEFT_NEUTRAL_BUMP(new Pose2d(5.833, 5.536, Rotation2d.kZero)),
-    RIGHT_NEUTRAL_BUMP(new Pose2d(5.833, 2.533, Rotation2d.kZero));
+    RIGHT_NEUTRAL_BUMP(new Pose2d(5.833, 2.533, Rotation2d.kZero)),
+    RIGHT_UNREALISTIC_POSE(new Pose2d(0.0, 2.354, Rotation2d.kZero)),
+    LEFT_UNREALISTIC_POSE(new Pose2d(0.0, 5.536, Rotation2d.kZero));
 
     private final Pose2d pose2d;
 

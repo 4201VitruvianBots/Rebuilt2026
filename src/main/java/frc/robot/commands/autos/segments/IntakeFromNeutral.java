@@ -12,9 +12,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
@@ -45,10 +47,11 @@ public class IntakeFromNeutral extends Auto {
       addCommands(
           new ParallelDeadlineGroup(
                   getPathCommand(swerveDrive, path, flipToRight),
-                  (vision.isInNeutralSector()) ? swerveDrive.autoCrossBump(() -> vision.updateCrossBumpPath(true)) : new InstantCommand(),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
+              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
+              swerveDrive.autoCrossBump(() -> vision.updateCrossBumpPath(false))
+              );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());
