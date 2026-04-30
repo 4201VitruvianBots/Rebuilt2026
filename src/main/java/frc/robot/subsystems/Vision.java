@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -44,8 +45,8 @@ public class Vision extends SubsystemBase {
 
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
   private Pose2d targetPose = Pose2d.kZero;
-  private Pose2d preBumpPose = new Pose2d();
-  private Pose2d postBumpPose = new Pose2d();
+  private Pose2d allianceZonePose = new Pose2d();
+  private Pose2d neutralZonePose = new Pose2d();
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
@@ -85,16 +86,28 @@ public class Vision extends SubsystemBase {
     m_fieldSim = fieldSim;
   }
 
-  public Path updateCrossBumpPath() {
+  public Path updateCrossBumpPath(boolean endsShootingPosition) {
     if (isInLeftHalf()) {
-      preBumpPose =
-          BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_BUMP.getAlignmentPose();
-      postBumpPose = BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
+      neutralZonePose =
+          BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
+      if (endsShootingPosition){
+        allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_SHOOTING.getAlignmentPose();
+      } else {
+        allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_BUMP.getAlignmentPose();
+      }
     } else {
-      preBumpPose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
-      postBumpPose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
+      neutralZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
+      if (endsShootingPosition){
+        allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_SHOOTING.getAlignmentPose();
+      } else {
+        allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
+      }
     }
-    return new Path(new Path.Waypoint(preBumpPose), new Path.Waypoint(postBumpPose));
+    if (isInNeutralSector()){
+      return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(allianceZonePose));
+    } else {
+      return new Path(new Path.Waypoint(allianceZonePose, 0.8), new Path.Waypoint(neutralZonePose));
+    }
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
@@ -402,8 +415,6 @@ public class Vision extends SubsystemBase {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
       m_localized = lllSuccess && llrSuccess && llfSuccess;
     }
-
-    updateCrossBumpPath();
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
     if (DriverStation.isFMSAttached() && DriverStation.isAutonomous() && !matchStarted) {
