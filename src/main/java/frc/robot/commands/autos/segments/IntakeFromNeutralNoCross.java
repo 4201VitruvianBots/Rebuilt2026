@@ -24,7 +24,7 @@ import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 
-public class IntakeFromNeutral extends Auto {
+public class IntakeFromNeutralNoCross extends Auto {
 
   public static void registerNamedCommands(AutoDependencies deps) {
     NamedCommands.registerCommand(
@@ -33,7 +33,7 @@ public class IntakeFromNeutral extends Auto {
             .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
   }
 
-  public IntakeFromNeutral(
+  public IntakeFromNeutralNoCross(
       AutoDependencies deps, BooleanSupplier flipToRight, TWO_CYCLE_PATH selectedPath) {
     try {
       var swerveDrive = deps.swerveDrive;
@@ -49,8 +49,7 @@ public class IntakeFromNeutral extends Auto {
                   getPathCommand(swerveDrive, path, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
-              swerveDrive.autoCrossBump(() -> vision.updateCrossBumpPath(false))
+              .andThen(new PrintCommand("[AUTO] Finished crossing over bump"))
               );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
