@@ -290,6 +290,13 @@ public class RobotContainer {
                   m_driverController::getLeftX,
                   () -> m_manualHoodAngleShift,
                   () -> m_manualRPMshift));
+
+      POVUtils.povRightWithTilt(m_driverController).whileTrue(
+        new ParallelCommandGroup(
+          m_flywheel.manualFullFieldPassCommand(),
+          m_hood.manualFullFieldPassCommand()
+        )
+      );
     }
 
     if (m_intake != null) {

@@ -56,7 +56,8 @@ public class FLYWHEEL {
     HUB(RPM.of(1260.0 - 10)), // Old value from v1: 1470
     BUMP(RPM.of(1678.683948)), //Calculated using sim (Citrus Refrence????)
     TOWER(RPM.of(1719.0)),
-    PASSING(RPM.of(2300.0));
+    PASSING(RPM.of(2300.0)),
+    FULL(RPM.of(3600.0)) ;
 
     private final AngularVelocity rpm;
 
@@ -97,7 +98,9 @@ public class FLYWHEEL {
       HUB(Degrees.of(0.0)), // Old value from v1: 1.0
       BUMP(Degrees.of(4.570313)), //calculated using sim
       TOWER(Degrees.of(8.3)),
-      PASSING(Degrees.of(17.5));
+      PASSING(Degrees.of(17.5)),
+      FULL(Degrees.of(19.0));
+
 
       private final Angle angle;
 

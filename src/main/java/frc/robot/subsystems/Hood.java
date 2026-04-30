@@ -194,6 +194,10 @@ public class Hood extends SubsystemBase {
     return this.startEnd(
         () -> setAngle(MANUAL_ANGLE.BUMP.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
+    public Command manualFullFieldPassCommand() {
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.FULL.getAngle()), () -> setAngle(Degrees.of(0.0)));
+  }
 
   @Override
   public void periodic() {
