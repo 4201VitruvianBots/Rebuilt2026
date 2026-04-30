@@ -174,7 +174,7 @@ public class IntakePivot extends SubsystemBase {
     return new InstantCommand(() -> m_manualOverride = true)
         .andThen(
             this.runEnd(
-                () -> m_motor.set(speed.getAsDouble()),
+                () -> m_motor.set(-speed.getAsDouble()),
                 () -> {
                   m_manualOverride = false;
                   m_desiredAngle = getAngle();
