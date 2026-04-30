@@ -80,48 +80,32 @@
     },
     {
       "anchor": {
-        "x": 7.36168235542848,
-        "y": 5.535936113575865
+        "x": 7.870019781990571,
+        "y": 5.536
       },
       "prevControl": {
-        "x": 7.611608610426111,
-        "y": 5.542007938907592
+        "x": 8.11829397568735,
+        "y": 5.50667552653133
       },
       "nextControl": {
-        "x": 6.08423951773236,
-        "y": 5.504901319805076
+        "x": 7.621745588293793,
+        "y": 5.565324473468669
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.061,
+        "x": 6.42,
         "y": 5.536
       },
       "prevControl": {
-        "x": 3.4864358006792706,
-        "y": 5.471641740796107
-      },
-      "nextControl": {
-        "x": 2.813812377680382,
-        "y": 5.573393573939568
-      },
-      "isLocked": true,
-      "linkedName": "Backupbumppoint"
-    },
-    {
-      "anchor": {
-        "x": 2.9744720496894406,
-        "y": 5.535936113575865
-      },
-      "prevControl": {
-        "x": 2.7357086236260226,
-        "y": 5.610044320776274
+        "x": 6.669926254997631,
+        "y": 5.5420718253317265
       },
       "nextControl": null,
-      "isLocked": true,
-      "linkedName": "ShootingPoint"
+      "isLocked": false,
+      "linkedName": null
     }
   ],
   "rotationTargets": [
@@ -138,15 +122,15 @@
       "rotationDegrees": 28.152471684900444
     },
     {
-      "waypointRelativePos": 4.846957236842099,
+      "waypointRelativePos": 5.2348889802631575,
       "rotationDegrees": 151.52601948831378
     },
     {
-      "waypointRelativePos": 5.4170230263158015,
+      "waypointRelativePos": 6.0,
       "rotationDegrees": -51.79
     },
     {
-      "waypointRelativePos": 6.892105263157897,
+      "waypointRelativePos": 6.5,
       "rotationDegrees": -38.89869157508466
     }
   ],
@@ -154,7 +138,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 2.8,
-      "maxWaypointRelativePos": 4.170784883720929,
+      "maxWaypointRelativePos": 4.35,
       "constraints": {
         "maxVelocity": 4.0,
         "maxAcceleration": 3.4,
@@ -172,15 +156,15 @@
         "y": 4.03
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 5.65,
-      "maxWaypointRelativePos": 7.0,
+      "minWaypointRelativePos": 6.0,
+      "maxWaypointRelativePos": 6.75,
       "name": "Point Towards Zone"
     }
   ],
   "eventMarkers": [
     {
       "name": "prepareFlywheelForNearHub",
-      "waypointRelativePos": 5.442953020134238,
+      "waypointRelativePos": 6.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -191,7 +175,7 @@
     },
     {
       "name": "startShootCommand",
-      "waypointRelativePos": 5.742372881355928,
+      "waypointRelativePos": 6.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

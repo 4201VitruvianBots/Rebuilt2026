@@ -32,7 +32,6 @@ public class AutoShoot extends ParallelDeadlineGroup {
     if (deps.vision.isInNeutralSector()) {
       return;
     }
-    ;
     addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
   }
 }
