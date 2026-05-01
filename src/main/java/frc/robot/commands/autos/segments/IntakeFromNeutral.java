@@ -49,8 +49,8 @@ public class IntakeFromNeutral extends Auto {
                   getPathCommand(swerveDrive, path, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")),
-              swerveDrive.autoCrossBump(() -> vision.updateCrossBumpPath(false))
+              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")).andThen(
+          swerveDrive.autoCrossBump(() -> vision.updateCrossBumpPath(false)).withTimeout(3.2))
               );
     } catch (Exception e) {
       DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());

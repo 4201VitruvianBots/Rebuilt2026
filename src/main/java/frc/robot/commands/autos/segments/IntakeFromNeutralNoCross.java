@@ -37,7 +37,6 @@ public class IntakeFromNeutralNoCross extends Auto {
       AutoDependencies deps, BooleanSupplier flipToRight, TWO_CYCLE_PATH selectedPath) {
     try {
       var swerveDrive = deps.swerveDrive;
-      var vision = deps.vision;
       var intake = deps.intake;
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
