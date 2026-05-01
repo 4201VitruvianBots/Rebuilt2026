@@ -107,7 +107,7 @@ public class Vision extends SubsystemBase {
       unrealisticPose = BUMP_ALIGNMENT_TARGETS.RIGHT_UNREALISTIC_POSE.getAlignmentPose();
     }
     
-    return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(unrealisticPose, 4.0), new Path.Waypoint(allianceZonePose));
+    return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(unrealisticPose, 4.2), new Path.Waypoint(allianceZonePose, 1.0));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
