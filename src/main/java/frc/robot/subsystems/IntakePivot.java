@@ -85,7 +85,7 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.kAbsoluteSensorDiscontinuityPoint;
     }
 
-    CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
+    //CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
