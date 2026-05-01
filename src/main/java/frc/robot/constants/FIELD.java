@@ -554,8 +554,8 @@ public class FIELD {
     // Third word is what these poses are in relation to
     // All units are in meters
     // Everything has been measured from our auto waypoints based on the welded field
-    LEFT_ALLIANCE_BUMP(new Pose2d(3.586, 5.536, Rotation2d.kZero)),
-    RIGHT_ALLIANCE_BUMP(new Pose2d(3.586, 2.533, Rotation2d.kZero)),
+    LEFT_ALLIANCE_BUMP(new Pose2d(2.974, 5.536, Rotation2d.kZero)),
+    RIGHT_ALLIANCE_BUMP(new Pose2d(2.974, 2.533, Rotation2d.kZero)),
     LEFT_ALLIANCE_SHOOTING(new Pose2d(2.974, 5.536, new Rotation2d(-42.557))),
     RIGHT_ALLIANCE_SHOOTING(new Pose2d(2.974, 2.533, new Rotation2d(42.557))),
     LEFT_NEUTRAL_BUMP(new Pose2d(5.833, 5.536, Rotation2d.kZero)),
