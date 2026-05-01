@@ -57,7 +57,7 @@ public class FLYWHEEL {
     BUMP(RPM.of(1678.683948)), //Calculated using sim (Citrus Refrence????)
     TOWER(RPM.of(1719.0)),
     PASSING(RPM.of(2300.0)),
-    FULL(RPM.of(3600.0)) ;
+    FULL(RPM.of(3800.0));
 
     private final AngularVelocity rpm;
 

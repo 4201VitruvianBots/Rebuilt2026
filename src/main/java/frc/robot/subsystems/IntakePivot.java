@@ -106,7 +106,10 @@ public class IntakePivot extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    config.MotorOutput.PeakReverseDutyCycle = -0.25;
+    config.Voltage.PeakReverseVoltage = -3;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.TorqueCurrent.PeakReverseTorqueCurrent = 60.0;
     // config.ClosedLoopGeneral.ContinuousWrap = false;
 
     // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;

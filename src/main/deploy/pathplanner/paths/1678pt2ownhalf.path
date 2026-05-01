@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9744720496894406,
+        "x": 2.974,
         "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2119431366371685,
+        "x": 3.211471086947728,
         "y": 5.685297884281147
       },
       "isLocked": true,
@@ -96,16 +96,16 @@
     },
     {
       "anchor": {
-        "x": 6.42,
-        "y": 5.536
+        "x": 6.377069143375881,
+        "y": 5.535936113575865
       },
       "prevControl": {
-        "x": 6.669926254997631,
-        "y": 5.5420718253317265
+        "x": 6.626995398373512,
+        "y": 5.542007938907592
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "OverBumpPointStart"
     }
   ],
   "rotationTargets": [
