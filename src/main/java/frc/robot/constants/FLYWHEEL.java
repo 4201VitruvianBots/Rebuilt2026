@@ -78,7 +78,7 @@ public class FLYWHEEL {
     public static final double kStatorCurrentLimit = 15;
     public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE =
         SensorDirectionValue.Clockwise_Positive;
-    public static final double kMagnetSensorOffset = -0.0478515625;
+    public static final double kMagnetSensorOffset = -0.114013671875;
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.85;
 
     public static final double motionMagicCruiseVelocity = 68.0;
