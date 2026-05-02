@@ -12,15 +12,12 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
-import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 
