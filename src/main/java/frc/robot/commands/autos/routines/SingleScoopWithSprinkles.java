@@ -5,9 +5,11 @@
 package frc.robot.commands.autos.routines;
 
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
+import frc.robot.commands.autos.segments.IntakeFromNeutralNoCross;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
@@ -16,16 +18,13 @@ public class SingleScoopWithSprinkles extends Auto {
   public SingleScoopWithSprinkles(
       AutoDependencies deps, BooleanSupplier flipPath, boolean partnerFriendly) {
     addCommands(
-        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS_INSIDE_OUT_RUSH),
-        new AutoShoot(deps, 2.6).andThen(new PrintCommand("[AUTO] Finished shooting")),
-        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.DEPOT),
+        new IntakeFromNeutralNoCross(deps, flipPath, TWO_CYCLE_PATH.BUMP_CROSS),
+        new WaitCommand(1),
+        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.SWING_OUTSIDE_DELAY),
         new AutoShoot(deps, 1.8),
-        new IntakeFromNeutral(
+        new IntakeFromNeutralNoCross(
             deps,
-            flipPath,
-            partnerFriendly
-                ? TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY
-                : TWO_CYCLE_PATH.SECOND_PASS),
+            flipPath, TWO_CYCLE_PATH.SIDE_DEPOT),
         new AutoShoot(deps, 1.8).andThen(new PrintCommand("[AUTO] Finished shooting")));
   }
 }

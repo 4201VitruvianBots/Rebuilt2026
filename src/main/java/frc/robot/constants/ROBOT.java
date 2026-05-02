@@ -30,7 +30,10 @@ public class ROBOT {
     FIRST_PASS_INSIDE_OUT_CONSERVATIVE_RUSH("LessDeepInsideOutCenterRush"),
     SECOND_PASS("1678pt2"),
     SECOND_PASS_PARTNER_FRIENDLY("1678pt2ownhalf"),
-    DEPOT("DepotCycle");
+    DEPOT("DepotCycle"),
+    SIDE_DEPOT("SideDepotCycle"),
+    BUMP_CROSS("BumpCross"),
+    SWING_OUTSIDE_DELAY("OutsideDelay");
 
     private final String pathName;
 
