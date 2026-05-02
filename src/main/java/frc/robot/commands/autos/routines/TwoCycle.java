@@ -15,7 +15,7 @@ import java.util.function.BooleanSupplier;
 public class TwoCycle extends Auto {
   public TwoCycle(AutoDependencies deps, BooleanSupplier flipPath, boolean partnerFriendly) {
     addCommands(
-        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS_CONSERVATIVE_RUSH),
+        new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.FIRST_PASS_RUSH),
         new AutoShoot(deps, 2.6).andThen(new PrintCommand("[AUTO] Finished shooting")),
         new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.SECOND_PASS_PARTNER_FRIENDLY),
         new AutoShoot(deps, 1.8).andThen(new PrintCommand("[AUTO] Finished shooting")));
