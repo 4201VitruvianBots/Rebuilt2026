@@ -269,6 +269,8 @@ public class RobotContainer {
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
     }
 
+    m_driverController.button(Button.SOUTH_FACE).whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    m_driverController.button(Button.EAST_FACE).whileTrue(new ReverseUptake(m_indexer, m_uptake));
     if (m_flywheel != null && m_hood != null) { // Doesn't use utils 
       m_driverController.povLeft().whileTrue(
         new ParallelCommandGroup(
@@ -278,20 +280,11 @@ public class RobotContainer {
       );
     } 
 
-    if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
-      m_driverController
-          .button(10)
-          .whileTrue(
-              new Shoot(
-                  m_flywheel,
-                  m_hood,
-                  m_vision,
-                  m_driverController,
-                  m_swerveDrive,
-                  () -> m_driverController.getRawAxis(1),
-                  () -> m_driverController.getRawAxis(0),
-                  () -> m_manualHoodAngleShift,
-                  () -> m_manualRPMshift));
+    m_driverController
+        .button(Button.WEST_FACE)
+        .whileTrue(
+            new ParallelCommandGroup(
+                m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
       POVUtils.povRightWithTilt(m_driverController).whileTrue(
         new ParallelCommandGroup(

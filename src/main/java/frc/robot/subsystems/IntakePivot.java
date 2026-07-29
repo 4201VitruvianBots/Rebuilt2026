@@ -170,6 +170,8 @@ public class IntakePivot extends SubsystemBase {
   public Command stow() {
     var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees); 
     return this.runOnce(() -> setAngle((!desiredAngleStowed) ? PIVOT_SETPOINT.STOWED.getAngle() : PIVOT_SETPOINT.INTAKING.getAngle()));
+  public Command percentCommand(double speed) {
+    return this.startEnd(() -> m_motor.setThrottle(speed), () -> m_motor.setThrottle(0.0));
   }
 
   @NotLogged

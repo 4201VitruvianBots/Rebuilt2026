@@ -86,8 +86,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setOutputPercent(double speed) {
-    m_dutyCycleOut.Output = speed;
-    m_motor.setControl(m_dutyCycleOut);
+    m_motor.setThrottle(speed);
   }
 
   public boolean isConnected() {
