@@ -1,15 +1,15 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.derive;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.derive;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.DistanceUnit;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.RobotController;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.units.DistanceUnit;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.system.RobotController;
 
 public class ROBOT {
   public static final boolean useSysID = false;
@@ -92,7 +92,7 @@ public class ROBOT {
   }
 
   public static void initializeConstants() {
-    var alert = new Alert("Initializing Robot Constants...", AlertType.kInfo);
+    var alert = new Alert("Initializing Robot Constants...", Level.LOW);
 
     try {
       switch (ROBOT_ID.fromSerial(RobotController.getSerialNumber())) {
@@ -117,7 +117,7 @@ public class ROBOT {
           new Alert(
               "WARN: Robot Serial Not Recognized! Current roboRIO Serial: "
                   + RobotController.getSerialNumber(),
-              AlertType.kWarning);
+              Level.MEDIUM);
     }
     alert.set(true);
   }

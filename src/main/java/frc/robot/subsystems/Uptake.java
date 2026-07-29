@@ -4,8 +4,8 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
+import static org.wpilib.units.Units.RPM;
+import static org.wpilib.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -14,19 +14,18 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.system.RobotController;
+import org.wpilib.simulation.FlywheelSim;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.UPTAKE;
 import frc.team4201.lib.utils.CtreUtils;
@@ -76,7 +75,7 @@ public class Uptake extends SubsystemBase {
   }
 
   public void setPercentOutput(double speed) {
-    m_motor.set(speed);
+    m_motor.setThrottle(speed);
   }
 
   // Epilogue doesn't log RPM correctly so it must be a double
@@ -99,7 +98,7 @@ public class Uptake extends SubsystemBase {
   }
 
   public double getPercentOutput() {
-    return m_motor.get();
+    return m_motor.getThrottle();
   }
 
   public double getRPMerror() {
@@ -122,7 +121,7 @@ public class Uptake extends SubsystemBase {
   @NotLogged
   public Command percentCommand(double speed) {
     return this.startEnd(
-        () -> m_motor.set(speed),
+        () -> m_motor.setThrottle(speed),
         () -> {
           setPercentOutput(0.0);
         });
@@ -152,7 +151,7 @@ public class Uptake extends SubsystemBase {
     m_motorSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
-    m_simState.setRotorVelocity(RPM.of(m_motorSim.getAngularVelocityRPM()).times(UPTAKE.gearRatio));
+        Rotations.of(m_motorSim.getAngularVelocity()).times(UPTAKE.gearRatio));
+    m_simState.setRotorVelocity(RPM.of(m_motorSim.getAngularVelocity()).times(UPTAKE.gearRatio));
   }
 }

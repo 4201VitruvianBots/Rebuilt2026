@@ -1,13 +1,13 @@
 package frc.team4201.lib.simulation.visualization.configs;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Inches;
 
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.smartdashboard.Mechanism2d;
+import org.wpilib.smartdashboard.MechanismLigament2d;
+import org.wpilib.util.Color8Bit;
 import frc.team4201.lib.simulation.visualization.Arm2d;
 
 /** Configuration used for an {@link Arm2d} */

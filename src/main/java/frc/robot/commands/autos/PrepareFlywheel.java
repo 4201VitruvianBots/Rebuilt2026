@@ -4,8 +4,8 @@
 
 package frc.robot.commands.autos;
 
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.command2.InstantCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.Flywheel;
 

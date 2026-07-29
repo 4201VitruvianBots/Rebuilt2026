@@ -4,13 +4,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.epilogue.Epilogue;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.wpilib.epilogue.Epilogue;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.system.DataLogManager;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.framework.TimedRobot;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.CommandScheduler;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.ROBOT;
 
@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DataLogManager.start();
-    enableLiveWindowInTest(false);
     Epilogue.configure(
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());

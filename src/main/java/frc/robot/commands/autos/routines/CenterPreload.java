@@ -5,8 +5,7 @@
 package frc.robot.commands.autos.routines;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.wpilib.command2.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShootManual;
 import frc.team4201.lib.command.Auto;
@@ -16,7 +15,7 @@ public class CenterPreload extends Auto {
     try {
       var swerveDrive = deps.swerveDrive;
 
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
+      var stopRequest = new SwerveRequest.ApplyRobotVelocity();
 
       var m_path1 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload1");
       var m_path2 = swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("CenterPreload2");
@@ -26,7 +25,8 @@ public class CenterPreload extends Auto {
           new AutoShootManual(deps, 3.0),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
-      DriverStation.reportError("Failed to load path for CenterPreload", e.getStackTrace());
+      // TODO: Imported to fix
+      //DriverStation.reportError("Failed to load path for CenterPreload", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

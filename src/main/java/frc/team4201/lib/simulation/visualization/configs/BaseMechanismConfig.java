@@ -1,6 +1,6 @@
 package frc.team4201.lib.simulation.visualization.configs;
 
-import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.wpilib.util.Color8Bit;
 
 /** Base configuration template for all mechanisms. */
 public class BaseMechanismConfig {

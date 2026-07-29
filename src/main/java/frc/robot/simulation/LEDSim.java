@@ -4,11 +4,11 @@
 
 package frc.robot.simulation;
 
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.wpilib.hardware.led.AddressableLEDBuffer;
+import org.wpilib.smartdashboard.Mechanism2d;
+import org.wpilib.smartdashboard.MechanismLigament2d;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.util.Color8Bit;
 
 /** A class for simulating LEDs using a Mechanism2d object. */
 public class LEDSim {

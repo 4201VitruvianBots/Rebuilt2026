@@ -4,25 +4,24 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
+import static org.wpilib.units.Units.RPM;
+import static org.wpilib.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.system.RobotController;
+import org.wpilib.simulation.DCMotorSim;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INDEXER;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
@@ -82,8 +81,8 @@ public class Indexer extends SubsystemBase {
   }
 
   public void setSpeeds(double speed1, double speed2) {
-    m_indexerMotor1.set(speed1);
-    m_indexerMotor2.set(speed2);
+    m_indexerMotor1.setThrottle(speed1);
+    m_indexerMotor2.setThrottle(speed2);
   }
 
   public boolean isConnected() {
@@ -92,12 +91,12 @@ public class Indexer extends SubsystemBase {
 
   @Logged(name = "Motor Output 1", importance = Logged.Importance.INFO)
   public double getPercentOutput() {
-    return m_indexerMotor1.get();
+    return m_indexerMotor1.getThrottle();
   }
 
   @Logged(name = "Motor Output 2", importance = Logged.Importance.INFO)
   public double getPercentOutput2() {
-    return m_indexerMotor2.get();
+    return m_indexerMotor2.getThrottle();
   }
 
   @NotLogged
@@ -116,18 +115,18 @@ public class Indexer extends SubsystemBase {
     m_indexerMotor1Sim.update(0.02);
 
     m_simState1.setRawRotorPosition(
-        Rotations.of(m_indexerMotor1Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
+        Rotations.of(m_indexerMotor1Sim.getAngularPosition()).times(INDEXER.gearRatio));
     m_simState1.setRotorVelocity(
-        RPM.of(m_indexerMotor1Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
+        RPM.of(m_indexerMotor1Sim.getAngularVelocity()).times(INDEXER.gearRatio));
     m_simState2.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_indexerMotor2Sim.setInputVoltage(m_simState2.getMotorVoltage());
 
     m_indexerMotor2Sim.update(0.02);
 
     m_simState2.setRawRotorPosition(
-        Rotations.of(m_indexerMotor2Sim.getAngularPositionRotations()).times(INDEXER.gearRatio));
+        Rotations.of(m_indexerMotor2Sim.getAngularPosition()).times(INDEXER.gearRatio));
     m_simState2.setRotorVelocity(
-        RPM.of(m_indexerMotor2Sim.getAngularVelocityRPM()).times(INDEXER.gearRatio));
+        RPM.of(m_indexerMotor2Sim.getAngularVelocity()).times(INDEXER.gearRatio));
   }
 
   public void testInit() {

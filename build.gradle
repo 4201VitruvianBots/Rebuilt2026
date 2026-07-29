@@ -1,56 +1,51 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2026.2.1"
-    id 'com.diffplug.spotless' version '6.25.0'
-    id "com.peterabeles.gversion" version "1.10.3"
+    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-6"
+    id "com.gradleup.shadow" version "9.3.0"
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
-def ROBOT_MAIN_CLASS = "frc.robot.Main"
+def ROBOT_MAIN_CLASS = "first.Main"
 
-// Define my targets (RoboRIO) and artifacts (deployable files)
+// Define my targets (SystemCore) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
 deploy {
     targets {
-        roborio(getTargetTypeClass('RoboRIO')) {
+        systemcore(getTargetTypeClass('SystemCore')) {
             // Team number is loaded either from the .wpilib/wpilib_preferences.json
             // or from command line. If not found an exception will be thrown.
             // You can use getTeamOrDefault(team) instead of getTeamNumber if you
             // want to store a team number in this file.
-            team = project.frc.getTeamNumber()
-            debug = project.frc.getDebugOrDefault(false)
+            team = project.wpilib.getTeamNumber()
+            // Use the default systemcore host name. This must be called after setting team
+            // as happens on the line above
+            useDefaultSystemcoreHostName()
+            debug = project.wpilib.getDebugOrDefault(false)
 
             artifacts {
                 // First part is artifact name, 2nd is artifact type
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
-                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                    // Enable VisualVM connection
-                    jvmArgs.add("-Dcom.sun.management.jmxremote=true")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
-                    jvmArgs.add("-Djava.rmi.server.hostname=10.42.01.2") // Replace XX.XX with team number
+                wpilibJava(getArtifactTypeClass('WPILibJavaArtifact')) {
                 }
 
                 // Static files artifact
-                frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
+                wpilibStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
                     files = project.fileTree('src/main/deploy')
-                    directory = '/home/lvuser/deploy'
-                    deleteOldFiles = false // Change to true to delete files on roboRIO that no
-                    // longer exist in deploy directory of this project
+                    directory = '/home/systemcore/deploy'
+                    deleteOldFiles = false // Change to true to delete files on systemcore that no
+                                           // longer exist in deploy directory of this project
                 }
             }
         }
     }
 }
 
-def deployArtifact = deploy.targets.roborio.artifacts.frcJava
+def deployArtifact = deploy.targets.systemcore.artifacts.wpilibJava
 
 // Set to true to use debug for all targets including JNI, which will drastically impact
 // performance.
@@ -66,11 +61,11 @@ dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
-    roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
-    roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
+    systemcoreDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.systemcore)
+    systemcoreDebug wpi.java.vendor.jniDebug(wpi.platforms.systemcore)
 
-    roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
-    roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
+    systemcoreRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.systemcore)
+    systemcoreRelease wpi.java.vendor.jniRelease(wpi.platforms.systemcore)
 
     nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
     nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
@@ -79,6 +74,10 @@ dependencies {
     nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
+
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -96,167 +95,24 @@ test {
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
 
-// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
-// in order to make them all available at runtime. Also adding the manifest so WPILib
-// knows where to look for our Robot Class.
-jar {
-    from {
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
+// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat/shaded jar')
+// in order to make them all available at runtime and merging service files to make JSON work.
+// Also adding the manifest so WPILib knows where to look for our Robot Class.
+shadowJar {
+    mergeServiceFiles()
     from('src') { into 'backup/src' }
     from('vendordeps') { into 'backup/vendordeps' }
     from('build.gradle') { into 'backup' }
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    manifest org.wpilib.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 // Configure jar and deploy tasks
-deployArtifact.jarTask = jar
-wpi.java.configureExecutableTasks(jar)
+deployArtifact.jarTask = shadowJar
+wpi.java.configureExecutableTasks(shadowJar)
 wpi.java.configureTestTasks(test)
 
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
-}
-
-// Spotless code formatter configuration
-spotless {
-    java {
-        target fileTree('.') {
-            include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        toggleOffOn()
-        googleJavaFormat()
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-    groovyGradle {
-        target fileTree('.') {
-            include '**/*.gradle'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        greclipse()
-        indentWithSpaces(4)
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-    format 'xml', {
-        target fileTree('.') {
-            include '**/*.xml'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        eclipseWtp('xml')
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
-    format 'misc', {
-        target fileTree('.') {
-            include '**/*.md', '**/.gitignore'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
-}
-
-project.compileJava.dependsOn(createVersionFile)
-gversion {
-    srcDir       = "src/main/java/"
-    classPackage = "frc.robot"
-    className    = "BuildConstants"
-    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    def today = java.time.LocalDate.now()
-    def hwStart = java.time.LocalDate.of(2026, 4, 28)
-    def hwEnd = java.time.LocalDate.of(2026, 5, 3)
-    if (!today.isBefore(hwStart) && !today.isAfter(hwEnd)) {
-        timeZone = "America/Chicago" // world champs!!!
-    } else {
-        timeZone = "America/Los_Angeles" // LA/OC/SoCal dcmp
-    }
-    indent       = "  "
-}
-
-apply plugin: 'com.diffplug.spotless'
-
-afterEvaluate {
-    tasks.getByName('spotlessCheck').dependsOn(tasks.getByName('spotlessApply'))
-}
-
-// --------------------------------------------------
-// Task: copyAdvantageScopeAssets
-// Copies resources/Robot_Threepeater_v1 into AdvantageScope userAssets for the
-// current OS.
-// Usage:
-//   ./gradlew copyAdvantageScopeAssets
-// --------------------------------------------------
-
-task copyAdvantageScopeAssets(type: Copy) {
-    // Accept project properties:
-    //  -Pmirror=true|false : control whether to delete existing destination folder before copying (default: true)
-
-    def osName = System.getProperty('os.name').toLowerCase()
-    def sourceDir = file('resources/Robot_Threepeater_v1')
-    if (!sourceDir.exists()) {
-        throw new GradleException("Source folder not found: ${sourceDir}")
-    }
-
-    def destDir
-    if (osName.contains('windows')) {
-        def appdata = System.getenv('APPDATA')
-        if (!appdata) {
-            throw new GradleException('APPDATA environment variable not set; cannot determine destination on Windows.')
-        }
-        destDir = file("${appdata}/AdvantageScope/userAssets")
-    } else {
-        def xdg = System.getenv('XDG_CONFIG_HOME')
-        if (xdg && xdg.trim()) {
-            destDir = file("${xdg}/AdvantageScope/userAssets")
-        } else {
-            destDir = file("${System.getProperty('user.home')}/.config/AdvantageScope/userAssets")
-        }
-    }
-
-    // Copy the source folder itself into the destination parent so the final
-    // path becomes: <userAssets>/Robot_Threepeater_v1
-    def destTarget = new File(destDir, sourceDir.name)
-
-    // Default mirror to true; allow overriding with -Pmirror=false
-    def mirror = true
-    if (project.hasProperty('mirror')) {
-        def p = project.property('mirror')
-        mirror = !(p != null && (p.toString().toLowerCase() in ['0', 'false', 'no', 'n']))
-    }
-
-    from sourceDir
-    into destTarget
-
-    doFirst {
-        println 'Preparing to copy AdvantageScope assets...'
-        println "Source: ${sourceDir}"
-        println "Target parent: ${destDir}"
-        println "Final target: ${destTarget}"
-
-        // Create parent directories
-        destDir.mkdirs()
-
-        if (mirror) {
-            if (destTarget.exists()) {
-                println "Mirror enabled: deleting existing target ${destTarget} before copy."
-                project.delete(destTarget)
-            } else {
-                println "Mirror enabled: target does not exist, nothing to delete."
-            }
-        }
-
-        // Ensure destination exists (after potential deletion)
-        destTarget.mkdirs()
-        println "Copying assets from: ${sourceDir} -> ${destTarget}"
-    }
 }

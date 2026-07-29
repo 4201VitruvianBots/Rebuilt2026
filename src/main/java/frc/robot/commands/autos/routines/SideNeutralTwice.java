@@ -4,7 +4,7 @@
 
 package frc.robot.commands.autos.routines;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.wpilib.command2.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.ShootNearStart;

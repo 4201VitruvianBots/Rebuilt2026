@@ -4,8 +4,8 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
+import static org.wpilib.units.Units.RPM;
+import static org.wpilib.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -14,20 +14,19 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.filter.LinearFilter;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.system.RobotController;
+import org.wpilib.system.Timer;
+import org.wpilib.simulation.DCMotorSim;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.ROLLERS;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
@@ -81,7 +80,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setOutputPercent(double speed) {
-    m_motor.set(speed);
+    m_motor.setThrottle(speed);
   }
 
   public boolean isConnected() {
@@ -90,7 +89,7 @@ public class Intake extends SubsystemBase {
 
   @Logged(name = "Motor Output %", importance = Logged.Importance.INFO)
   public double getPercentOutput() {
-    return m_motor.get();
+    return m_motor.getThrottle();
   }
 
   // For Robot2d simulation
@@ -101,7 +100,7 @@ public class Intake extends SubsystemBase {
 
   @NotLogged
   public boolean isIntaking() {
-    return m_motor.get() != 0;
+    return m_motor.getThrottle() != 0;
   }
 
   @NotLogged
@@ -154,7 +153,7 @@ public class Intake extends SubsystemBase {
         setOutputPercent(INTAKE_SPEED.INTAKING.get());
         break;
       case SHOOTING:
-        boolean shouldReverse = Math.round(Timer.getFPGATimestamp()) % 2 == 0;
+        boolean shouldReverse = Math.round(Timer.getMonotonicTimestamp()) % 2 == 0;
         setOutputPercent(
             shouldReverse ? INTAKE_SPEED.SHOTREVERSING.get() : INTAKE_SPEED.SHOOTING.get());
         break;
@@ -176,9 +175,9 @@ public class Intake extends SubsystemBase {
     m_motor1Sim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_motor1Sim.getAngularPositionRotations()).times(ROLLERS.gearRatio));
+        Rotations.of(m_motor1Sim.getAngularPosition()).times(ROLLERS.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_motor1Sim.getAngularVelocityRPM()).times(ROLLERS.gearRatio));
+        RPM.of(m_motor1Sim.getAngularVelocity()).times(ROLLERS.gearRatio));
   }
 
   public void testInit() {

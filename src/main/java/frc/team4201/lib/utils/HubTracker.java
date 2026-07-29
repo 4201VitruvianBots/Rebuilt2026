@@ -1,10 +1,10 @@
 package frc.team4201.lib.utils;
 
-import static edu.wpi.first.units.Units.Seconds;
+import static org.wpilib.units.Units.Seconds;
 
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import org.wpilib.units.measure.Time;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.Alliance;
 import java.util.Optional;
 
 public class HubTracker {
@@ -126,9 +126,9 @@ public class HubTracker {
     char msgChar = msg.length() > 0 ? msg.charAt(0) : ' ';
     switch (msgChar) {
       case 'B':
-        return Optional.of(Alliance.Blue);
+        return Optional.of(Alliance.BLUE);
       case 'R':
-        return Optional.of(Alliance.Red);
+        return Optional.of(Alliance.RED);
       default:
         return Optional.empty();
     }

@@ -4,27 +4,29 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.Gamepad.Button;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.smartdashboard.Field2d;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelCommandGroup;
+import org.wpilib.command2.WaitCommand;
+import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.command2.button.CommandJoystick;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
@@ -96,8 +98,8 @@ public class RobotContainer {
   private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(USB.driver_xBoxController);
+  private final CommandGamepad m_driverController =
+      new CommandGamepad(USB.driver_xBoxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
@@ -258,11 +260,11 @@ public class RobotContainer {
     //             m_driverController::getLeftY,
     //             m_driverController::getLeftX));
 
-    m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
-    m_driverController.b().whileTrue(new ReverseUptake(m_indexer, m_uptake));
+    m_driverController.button(Button.SOUTH_FACE).whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+    m_driverController.button(Button.EAST_FACE).whileTrue(new ReverseUptake(m_indexer, m_uptake));
 
     m_driverController
-        .x()
+        .button(Button.WEST_FACE)
         .whileTrue(
             new ParallelCommandGroup(
                 m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
@@ -436,7 +438,7 @@ public class RobotContainer {
           () -> m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
           () ->
               m_swerveDrive.getState()
-                  .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+                  .Velocity); // Supplier<ChassisSpeeds> of field-centric chassis speeds
       m_fuelSim
           .start(); // enables the simulation to run (updateSim must still be called periodically)
       m_fuelSim.registerIntake(

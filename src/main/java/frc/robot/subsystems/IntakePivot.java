@@ -4,12 +4,12 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Kilograms;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.Radians;
+import static org.wpilib.units.Units.RadiansPerSecond;
+import static org.wpilib.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -21,21 +21,21 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.system.RobotController;
+import org.wpilib.simulation.SingleJointedArmSim;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.RepeatCommand;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command2.WaitCommand;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
@@ -163,7 +163,7 @@ public class IntakePivot extends SubsystemBase {
   // TODO: don't use this
   @NotLogged
   public Command percentCommand(double speed) {
-    return this.startEnd(() -> m_motor.set(speed), () -> m_motor.set(0.0));
+    return this.startEnd(() -> m_motor.setThrottle(speed), () -> m_motor.setThrottle(0.0));
   }
 
   @NotLogged
@@ -191,12 +191,12 @@ public class IntakePivot extends SubsystemBase {
 
     m_pivotSim.update(0.02);
 
-    m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngleRads()));
-    m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
+    m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngle()));
+    m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
 
     // Update the pivotEncoder simState
-    m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
-    m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
+    m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngle()));
+    m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
   }
 
   public void testInit() {

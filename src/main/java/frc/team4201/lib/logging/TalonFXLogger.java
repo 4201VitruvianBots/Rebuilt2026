@@ -1,9 +1,9 @@
 package frc.team4201.lib.logging;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.epilogue.CustomLoggerFor;
-import edu.wpi.first.epilogue.logging.ClassSpecificLogger;
-import edu.wpi.first.epilogue.logging.EpilogueBackend;
+import org.wpilib.epilogue.CustomLoggerFor;
+import org.wpilib.epilogue.logging.ClassSpecificLogger;
+import org.wpilib.epilogue.logging.EpilogueBackend;
 
 @CustomLoggerFor(TalonFX.class)
 public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
@@ -19,7 +19,7 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
 
     backend.log("Control Mode", motor.getAppliedControl().getName());
 
-    backend.log("Output (%)", motor.get());
+    backend.log("Output (%)", motor.getThrottle());
     backend.log("Output (V)", motor.getMotorVoltage().refresh().getValue());
     backend.log("Stator Current (A)", motor.getStatorCurrent().refresh().getValue());
 

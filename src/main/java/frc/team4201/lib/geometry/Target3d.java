@@ -1,7 +1,7 @@
 package frc.team4201.lib.geometry;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Translation3d;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
+import org.wpilib.math.geometry.Translation3d;
 import java.util.*;
 
 public class Target3d {

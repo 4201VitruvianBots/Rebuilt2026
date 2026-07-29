@@ -1,7 +1,7 @@
 package frc.robot.commands.swerve;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Command;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.command2.Command;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;

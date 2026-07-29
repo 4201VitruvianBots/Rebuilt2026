@@ -4,13 +4,12 @@
 
 package frc.robot.commands.autos.segments;
 
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Meters;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.PrintCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.PrepareFlywheel;
@@ -23,7 +22,7 @@ public class ShootNearStart extends Auto {
       var swerveDrive = deps.swerveDrive;
       var flywheel = deps.flywheel;
 
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
+      var stopRequest = new SwerveRequest.ApplyRobotVelocity();
 
       var path = PathPlannerPath.fromPathFile("ShootNearStart");
 
@@ -35,7 +34,7 @@ public class ShootNearStart extends Auto {
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
               .andThen(new PrintCommand("[AUTO] Finished shooting from near start")));
     } catch (Exception e) {
-      DriverStation.reportError("Failed to load path for ShootNearStart", e.getStackTrace());
+      // DriverStation.reportError("Failed to load path for ShootNearStart", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

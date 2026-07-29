@@ -4,8 +4,8 @@
 
 package frc.robot.commands.autos;
 
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.ParallelDeadlineGroup;
 import frc.robot.commands.Fire;
 import frc.robot.commands.Shoot;
 import frc.robot.constants.FIELD;

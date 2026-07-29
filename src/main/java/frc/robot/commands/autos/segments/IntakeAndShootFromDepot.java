@@ -4,14 +4,13 @@
 
 package frc.robot.commands.autos.segments;
 
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Meters;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelDeadlineGroup;
+import org.wpilib.command2.PrintCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
@@ -31,7 +30,7 @@ public class IntakeAndShootFromDepot extends Auto {
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
+      var stopRequest = new SwerveRequest.ApplyRobotVelocity();
 
       var intakeFromDepot =
           swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("IntakeFromDepot");
@@ -48,8 +47,8 @@ public class IntakeAndShootFromDepot extends Auto {
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
               .andThen(new PrintCommand("[AUTO] Finished shooting from depot")));
     } catch (Exception e) {
-      DriverStation.reportError(
-          "Failed to load path for IntakeAndShootFromDepot", e.getStackTrace());
+      // DriverStation.reportError(
+      //     "Failed to load path for IntakeAndShootFromDepot", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

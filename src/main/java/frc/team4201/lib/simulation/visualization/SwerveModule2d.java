@@ -1,15 +1,15 @@
 package frc.team4201.lib.simulation.visualization;
 
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
+import org.wpilib.smartdashboard.Mechanism2d;
+import org.wpilib.smartdashboard.MechanismLigament2d;
+import org.wpilib.util.Color;
+import org.wpilib.util.Color8Bit;
 
 /** Class to represent a top-down view of a swerve module using {@link Mechanism2d} */
 public class SwerveModule2d implements AutoCloseable {
   private final MechanismLigament2d m_moduleLigament;
-  private final Color8Bit m_ligamentColor = new Color8Bit(Color.kGray);
+  private final Color8Bit m_ligamentColor = new Color8Bit(Color.GRAY);
   private final String m_name;
   private final double m_moduleMaxSpeedMps;
 
@@ -34,13 +34,13 @@ public class SwerveModule2d implements AutoCloseable {
    *
    * @param state The {@link SwerveModuleState} of the swerve module
    */
-  public void update(SwerveModuleState state) {
-    m_moduleLigament.setLength(state.speedMetersPerSecond / (2 * m_moduleMaxSpeedMps) + 0.25);
+  public void update(SwerveModuleVelocity state) {
+    m_moduleLigament.setLength(state.velocity / (2 * m_moduleMaxSpeedMps) + 0.25);
     m_moduleLigament.setAngle(state.angle.getDegrees());
 
     // Update the ligament color based on the module's current speed for easier visualization
     VisualizationUtils.updateMotorColor(
-        m_moduleLigament, state.speedMetersPerSecond, m_ligamentColor);
+        m_moduleLigament, state.velocity, m_ligamentColor);
 
     m_moduleLigament.setColor(m_ligamentColor);
   }
