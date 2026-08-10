@@ -22,11 +22,11 @@ public class LEDSim {
     RIGHT_TO_LEFT
   }
 
-  private AddressableLEDBuffer m_ledBuffer;
+  private final AddressableLEDBuffer m_ledBuffer;
 
-  private Mechanism2d m_mech2d;
+  private final Mechanism2d m_mech2d;
 
-  private MechanismLigament2d[] m_ledLigaments;
+  private final MechanismLigament2d[] m_ledLigaments;
 
   public LEDSim(AddressableLEDBuffer ledBuffer, Layout layout) {
     m_ledBuffer = ledBuffer;

@@ -4,7 +4,6 @@ import static org.wpilib.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -110,7 +109,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
           new SysIdRoutine.Mechanism(
               output -> setControl(m_translationCharacterization.withVolts(output)),
               null,
-              (Subsystem) this));
+                  this));
 
   /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors.
    */
@@ -269,19 +268,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     switch (type) {
       case ALL -> {
         for (int i = 0; i < driveMotors.length; i++) {
-          // TODO: Import fix
-          // driveMotors[i].setControl(new NeutralOut())
-          // steerMotors[i].setControl(neutralModeValue);
+          driveMotors[i].configNeutralMode(neutralModeValue);
+          steerMotors[i].configNeutralMode(neutralModeValue);
         }
       }
       case DRIVE -> {
         for (var motor : driveMotors) {
-          // motor.setNeutralMode(neutralModeValue);
+          motor.configNeutralMode(neutralModeValue);
         }
       }
       case STEER -> {
         for (var motor : steerMotors) {
-          // motor.setNeutralMode(neutralModeValue);
+          motor.configNeutralMode(neutralModeValue);
         }
       }
     }
@@ -366,42 +364,42 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   // Return a map of which motors are connected and their names
   public Map<String, Boolean> isConnected() {
     Map<String, Boolean> motorConnectionStatus = new HashMap<>();
-    for (int i = 0; i < driveMotors.length; i++) {
-      // Identify which motor this is based on its CAN ID
-      if (driveMotors[i].getDeviceID() == CAN.backLeftDriveMotor) {
-        motorConnectionStatus.put(
-            "Back Left Drive Motor (" + CAN.backLeftDriveMotor + ")", driveMotors[i].isConnected());
-      } else if (driveMotors[i].getDeviceID() == CAN.frontLeftDriveMotor) {
-        motorConnectionStatus.put(
-            "Front Left Drive Motor (" + CAN.frontLeftDriveMotor + ")",
-            driveMotors[i].isConnected());
-      } else if (driveMotors[i].getDeviceID() == CAN.frontRightDriveMotor) {
-        motorConnectionStatus.put(
-            "Front Right Drive Motor (" + CAN.frontRightDriveMotor + ")",
-            driveMotors[i].isConnected());
-      } else if (driveMotors[i].getDeviceID() == CAN.backRightDriveMotor) {
-        motorConnectionStatus.put(
-            "Back Right Drive Motor (" + CAN.backRightDriveMotor + ")",
-            driveMotors[i].isConnected());
+      for (TalonFX driveMotor : driveMotors) {
+          // Identify which motor this is based on its CAN ID
+          if (driveMotor.getDeviceID() == CAN.backLeftDriveMotor) {
+              motorConnectionStatus.put(
+                      "Back Left Drive Motor (" + CAN.backLeftDriveMotor + ")", driveMotor.isConnected());
+          } else if (driveMotor.getDeviceID() == CAN.frontLeftDriveMotor) {
+              motorConnectionStatus.put(
+                      "Front Left Drive Motor (" + CAN.frontLeftDriveMotor + ")",
+                      driveMotor.isConnected());
+          } else if (driveMotor.getDeviceID() == CAN.frontRightDriveMotor) {
+              motorConnectionStatus.put(
+                      "Front Right Drive Motor (" + CAN.frontRightDriveMotor + ")",
+                      driveMotor.isConnected());
+          } else if (driveMotor.getDeviceID() == CAN.backRightDriveMotor) {
+              motorConnectionStatus.put(
+                      "Back Right Drive Motor (" + CAN.backRightDriveMotor + ")",
+                      driveMotor.isConnected());
+          }
       }
-    }
-    for (int i = 0; i < steerMotors.length; i++) {
-      // Identify which motor this is based on its CAN ID
-      if (steerMotors[i].getDeviceID() == CAN.backLeftTurnMotor) {
-        motorConnectionStatus.put(
-            "Back Left Turn Motor (" + CAN.backLeftTurnMotor + ")", steerMotors[i].isConnected());
-      } else if (steerMotors[i].getDeviceID() == CAN.frontLeftTurnMotor) {
-        motorConnectionStatus.put(
-            "Front Left Turn Motor (" + CAN.frontLeftTurnMotor + ")", steerMotors[i].isConnected());
-      } else if (steerMotors[i].getDeviceID() == CAN.frontRightTurnMotor) {
-        motorConnectionStatus.put(
-            "Front Right Turn Motor (" + CAN.frontRightTurnMotor + ")",
-            steerMotors[i].isConnected());
-      } else if (steerMotors[i].getDeviceID() == CAN.backRightTurnMotor) {
-        motorConnectionStatus.put(
-            "Back Right Turn Motor (" + CAN.backRightTurnMotor + ")", steerMotors[i].isConnected());
+      for (TalonFX steerMotor : steerMotors) {
+          // Identify which motor this is based on its CAN ID
+          if (steerMotor.getDeviceID() == CAN.backLeftTurnMotor) {
+              motorConnectionStatus.put(
+                      "Back Left Turn Motor (" + CAN.backLeftTurnMotor + ")", steerMotor.isConnected());
+          } else if (steerMotor.getDeviceID() == CAN.frontLeftTurnMotor) {
+              motorConnectionStatus.put(
+                      "Front Left Turn Motor (" + CAN.frontLeftTurnMotor + ")", steerMotor.isConnected());
+          } else if (steerMotor.getDeviceID() == CAN.frontRightTurnMotor) {
+              motorConnectionStatus.put(
+                      "Front Right Turn Motor (" + CAN.frontRightTurnMotor + ")",
+                      steerMotor.isConnected());
+          } else if (steerMotor.getDeviceID() == CAN.backRightTurnMotor) {
+              motorConnectionStatus.put(
+                      "Back Right Turn Motor (" + CAN.backRightTurnMotor + ")", steerMotor.isConnected());
+          }
       }
-    }
     return motorConnectionStatus;
   }
 
@@ -466,13 +464,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   @Override
   public AngularVelocity getYawRate() {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getYawRate'");
   }
 
   @Override
   public void addVisionMeasurement(PoseEstimate poseEstimate) {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
   }
 }

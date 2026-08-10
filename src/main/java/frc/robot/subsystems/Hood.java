@@ -56,7 +56,7 @@ public class Hood extends SubsystemBase {
 
   private DoubleSubscriber m_angleSubscriber;
 
-  private NeutralModeValue m_neutralMode =
+  private final NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
   private final MotionMagicVoltage m_request =
       new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(false);
@@ -217,7 +217,7 @@ public class Hood extends SubsystemBase {
         RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
   }
 
-  private SysIdRoutine m_sysIdRoutine =
+  private final SysIdRoutine m_sysIdRoutine =
       new SysIdRoutine(
           new SysIdRoutine.Config(
               Volts.per(Second).of(0.5), // Voltage change rate for quasistatic routine

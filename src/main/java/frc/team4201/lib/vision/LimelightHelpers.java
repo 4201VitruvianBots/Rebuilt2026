@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -582,8 +583,8 @@ public class LimelightHelpers {
   /** Print JSON Parse time to the console in milliseconds */
   static boolean profileJSON = false;
 
-  static final String sanitizeName(String name) {
-    if (name == "" || name == null) {
+  static String sanitizeName(String name) {
+    if (Objects.equals(name, "")) {
       return "limelight";
     }
     return name;

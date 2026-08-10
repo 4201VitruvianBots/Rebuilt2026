@@ -26,9 +26,11 @@ public class LEDs extends SubsystemBase {
   private LED_STATES currentState = LED_STATES.DISABLED;
 
   // We'll be using a WS2812 LED strip controlled through PWM
-  private AddressableLED m_led = new AddressableLED(LED.kPWMPort);
+  // TODO: SystemCore ports are different
+//  private AddressableLED m_led = new AddressableLED(LED.kPWMPort);
+  private final AddressableLED m_led = new AddressableLED(0);
 
-  private AddressableLEDBuffer m_ledBuffer;
+  private final AddressableLEDBuffer m_ledBuffer;
   // The buffer we apply patterns to before copying to m_ledBuffer.
   // This allows us to create a buffer larger than the number of LEDs
   private AddressableLEDBuffer workingBuffer;

@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
   private DoubleSubscriber m_outputSubscriber;
   private DoublePublisher m_outputPublisher;
 
-  private LinearFilter currentFilter =
+  private final LinearFilter currentFilter =
       LinearFilter.movingAverage(200); // Up to ~4 seconds worth of data
   private boolean runCurrentFilter = false;
 

@@ -153,11 +153,9 @@ public class RobotContainer {
     SmartDashboard.putData("Field", field);
 
     // Logging callback for current robot pose
-    PathPlannerLogging.setLogCurrentPoseCallback(
-        (pose) -> {
-          // Do whatever you want with the pose here
-          field.setRobotPose(pose);
-        });
+      // Do whatever you want with the pose here
+      PathPlannerLogging.setLogCurrentPoseCallback(
+              field::setRobotPose);
 
     // Logging callback for target robot pose
     PathPlannerLogging.setLogTargetPoseCallback(
