@@ -21,6 +21,8 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
+import org.wpilib.driverstation.DriverStationErrors;
+import java.util.function.BooleanSupplier;
 
 public class IntakeFromNeutral extends Auto {
 
@@ -51,7 +53,7 @@ public class IntakeFromNeutral extends Auto {
           swerveDrive.autoCrossBump(() -> vision.updateCrossBumpPath(false)).withTimeout(3.0))
               );
     } catch (Exception e) {
-      DriverStationBackend.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
+      DriverStationErrors.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

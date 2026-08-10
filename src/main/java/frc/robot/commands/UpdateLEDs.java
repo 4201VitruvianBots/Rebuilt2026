@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import static org.wpilib.units.Units.Seconds;
 
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.RobotState;

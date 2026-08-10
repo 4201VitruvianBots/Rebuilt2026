@@ -38,9 +38,9 @@ public class Uptake extends SubsystemBase {
   private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.roboRIO);
 
   private final FlywheelSim m_motorSim =
-      new FlywheelSim(Models.flywheelFromPhysicalConstants(
-              FLYWHEEL.gearbox, FLYWHEEL.kInertia, FLYWHEEL.gearRatio),
-          FLYWHEEL.gearbox);
+      new FlywheelSim(
+          Models.flywheelFromPhysicalConstants(UPTAKE.gearbox, UPTAKE.kInertia, UPTAKE.gearRatio),
+          UPTAKE.gearbox);
 
   private final TalonFXSimState m_simState;
 
@@ -88,7 +88,7 @@ public class Uptake extends SubsystemBase {
 
   public void setVelocitySetpoint(AngularVelocity setpoint) {
     m_velocitySetpoint =
-        RPM.of(Math.clamp(setpoint.in(RPM), UPTAKE.minRPM.in(RPM), UPTAKE.maxRPM.in(RPM)));
+        RPM.of(Math.max(UPTAKE.minRPM.in(RPM), Math.min(UPTAKE.maxRPM.in(RPM), setpoint.in(RPM))));
   }
 
   public boolean isConnected() {

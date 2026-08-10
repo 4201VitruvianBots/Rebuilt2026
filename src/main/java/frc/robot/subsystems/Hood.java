@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import frc.team4201.lib.utils.MathHelpers;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.math.system.Models;
@@ -127,10 +128,8 @@ public class Hood extends SubsystemBase {
 
   public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
-        Degrees.of(
-            Math.clamp(
-                setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
+        Degrees.of(Math.max(HOOD.minAngle.in(Degrees), Math.min(HOOD.maxAngle.in(Degrees), setpoint.in(Degrees))));
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
   }
 
   @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)

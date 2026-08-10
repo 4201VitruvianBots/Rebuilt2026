@@ -202,7 +202,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       m_trajectoryUtils =
           new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
-      DriverStationBackend.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
+      DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
   }
 
@@ -355,11 +355,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     try {
       return RobotConfig.fromGUISettings();
     } catch (IOException e) {
-      DriverStationBackend.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     } catch (ParseException e) {
-      DriverStationBackend.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     }
@@ -462,8 +462,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
      * Otherwise, only check and apply the operator perspective if the DS is disabled.
      * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
      */
-    if (!m_hasAppliedOperatorPerspective || DriverStationBackend.isDisabled()) {
-      DriverStationBackend.getAlliance()
+    if (!m_hasAppliedOperatorPerspective || RobotState.isDisabled()) {
+      MatchState.getAlliance()
           .ifPresent(
               allianceColor -> {
                 setOperatorPerspectiveForward(

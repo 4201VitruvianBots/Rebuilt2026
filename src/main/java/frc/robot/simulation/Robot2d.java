@@ -12,6 +12,7 @@ import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.derive;
 import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 
+import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation3d;
@@ -248,7 +249,7 @@ public class Robot2d extends SubsystemBase {
       if (subsystem != null) {
         m_subsystemMap.put(subsystem.getName(), subsystem);
       } else {
-        DriverStationBackend.reportWarning("[Robot2d] Attempting to register null subsystem!", true);
+        DriverStationErrors.reportWarning("[Robot2d] Attempting to register null subsystem!", true);
       }
     }
   }

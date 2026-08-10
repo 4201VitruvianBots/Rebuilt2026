@@ -11,6 +11,7 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShootManual;
 import frc.robot.constants.FLYWHEEL;
 import frc.team4201.lib.command.Auto;
+import org.wpilib.driverstation.DriverStationErrors;
 
 public class CenterPreload extends Auto {
   public CenterPreload(AutoDependencies deps) {
@@ -27,7 +28,7 @@ public class CenterPreload extends Auto {
           new AutoShootManual(deps, FLYWHEEL.defaultFireDurationSeconds),
           m_path2.andThen(() -> swerveDrive.setControl(stopRequest)));
     } catch (Exception e) {
-      DriverStationBackend.reportError("Failed to load path for CenterPreload", e.getStackTrace());
+      DriverStationErrors.reportError("Failed to load path for CenterPreload", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

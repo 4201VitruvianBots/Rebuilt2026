@@ -4,12 +4,13 @@
 
 package frc.robot.subsystems;
 
+import org.wpilib.driverstation.*;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.MedianFilter;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.driverstation.Alert;
 import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.driverstation.Alliance;
@@ -78,7 +79,7 @@ public class Controls extends SubsystemBase {
     if (subsystem != null) {
       m_subsystemMap.put(subsystem.getName(), subsystem);
     } else {
-      DriverStationBackend.reportWarning("[Controls] Attempting to register null subsystem!", true);
+      DriverStationErrors.reportWarning("[Controls] Attempting to register null subsystem!", true);
     }
   }
 
@@ -191,7 +192,7 @@ public class Controls extends SubsystemBase {
     // This method will be called once per scheduler run
     updateAlerts();
 
-    if (DriverStationBackend.isDisabled()) {
+    if (RobotState.isDisabled()) {
       DriverStationBackend.getAlliance()
           .ifPresent(
               a -> {

@@ -132,9 +132,7 @@ public class IntakePivot extends SubsystemBase {
 
   public void setAngle(Angle angle) {
     m_desiredAngle =
-        Degrees.of(
-            Math.clamp(
-                angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
+        Degrees.of(Math.max(PIVOT.minAngle.in(Degrees), Math.min(PIVOT.maxAngle.in(Degrees), angle.in(Degrees))));
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)

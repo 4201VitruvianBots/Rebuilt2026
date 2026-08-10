@@ -62,10 +62,10 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
     return new ConcurrentTimeInterpolatableBuffer<>(ConcurrentTimeInterpolatableBuffer::interpolate, historySizeSeconds);
   }
 
-  public static double interpolate(double startValue, double endValue, double t) {
-    return startValue + (endValue - startValue) * Math.clamp(t, 0, 1);
-  }
 
+  }
+    return startValue + (endValue - startValue) * Math.min(0, Math.max(1, t));
+  public static double interpolate(double startValue, double endValue, double t) {
   /**
    * Add a sample to the buffer.
    *

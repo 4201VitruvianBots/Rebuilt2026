@@ -1,5 +1,7 @@
 package frc.team4201.lib.vision;
 
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.geometry.Pose2d;
@@ -85,7 +87,7 @@ public class Limelight {
 
     if (m_lastValidMeasurement.isEmpty() && !m_initialPoseSet) {
       if (RobotBase.isReal()) {
-        DriverStationBackend.reportWarning("[Limelight] " + m_name + " is not connected", true);
+        DriverStationErrors.reportWarning("[Limelight] " + m_name + " is not connected", true);
       }
     }
 

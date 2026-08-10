@@ -2,6 +2,8 @@ package frc.team4201.lib.utils;
 
 import static org.wpilib.units.Units.Seconds;
 
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.units.measure.Time;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
@@ -126,7 +128,7 @@ public class HubTracker {
    */
   public static Optional<Alliance> getAutoWinner() {
     String msg = DriverStationBackend.getGameData().get();
-    char msgChar = msg.length() > 0 ? msg.charAt(0) : ' ';
+    char msgChar = !msg.isEmpty() ? msg.charAt(0) : ' ';
     switch (msgChar) {
       case 'B':
         return Optional.of(Alliance.BLUE);
@@ -145,7 +147,7 @@ public class HubTracker {
     if (RobotState.isAutonomous()) {
       if (DriverStationBackend.getMatchTime() < 0) return DriverStationBackend.getMatchTime();
       return 20 - DriverStationBackend.getMatchTime();
-    } else if (DriverStationBackend.isTeleop()) {
+    } else if (RobotState.isTeleop()) {
       if (DriverStationBackend.getMatchTime() < 0) return DriverStationBackend.getMatchTime();
       return 160 - DriverStationBackend.getMatchTime();
     }
