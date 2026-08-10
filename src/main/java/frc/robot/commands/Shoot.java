@@ -143,12 +143,13 @@ public class Shoot extends Command {
     // Calculate estimated pose while accounting for phase delay
     Pose2d estimatedPose = m_swerveDrivetrain.getState().Pose;
     ChassisVelocities robotRelativeVelocity = m_swerveDrivetrain.getState().Velocity;
-    estimatedPose =
-        estimatedPose.exp(
-            new Twist2d(
-                robotRelativeVelocity.vx * phaseDelay,
-                robotRelativeVelocity.vy * phaseDelay,
-                robotRelativeVelocity.omega * phaseDelay));
+    // TODO: Re-implement for SystemCore
+//    estimatedPose =
+//        estimatedPose.exp(
+//            new Twist2d(
+//                robotRelativeVelocity.vx * phaseDelay,
+//                robotRelativeVelocity.vy * phaseDelay,
+//                robotRelativeVelocity.omega * phaseDelay));
 
     // Calculate distance from launcher to m_goal
     Pose2d launcherPosition = estimatedPose.transformBy(robotToLauncher);

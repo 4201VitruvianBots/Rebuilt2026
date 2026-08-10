@@ -14,6 +14,8 @@ import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.PrepareFlywheel;
 import frc.team4201.lib.command.Auto;
+import org.wpilib.driverstation.DriverStationErrors;
+
 import java.util.function.BooleanSupplier;
 
 public class ShootNearStart extends Auto {
@@ -34,7 +36,7 @@ public class ShootNearStart extends Auto {
           new AutoShoot(deps, 3.0) // TODO: Tune this timeout
               .andThen(new PrintCommand("[AUTO] Finished shooting from near start")));
     } catch (Exception e) {
-      // DriverStation.reportError("Failed to load path for ShootNearStart", e.getStackTrace());
+      DriverStationErrors.reportError("Failed to load path for ShootNearStart", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

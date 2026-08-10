@@ -3,6 +3,7 @@ package frc.robot.constants;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 import org.wpilib.vision.apriltag.AprilTagFields;
 import org.wpilib.math.geometry.*;
@@ -41,7 +42,7 @@ public class FIELD {
   }
 
   public static void initializeConstants() {
-    if (DriverStation.isFMSAttached()) {
+    if (DriverStationBackend.isFMSAttached()) {
       fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     } else {
       fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);

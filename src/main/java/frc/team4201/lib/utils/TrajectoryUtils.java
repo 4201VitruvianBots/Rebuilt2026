@@ -8,6 +8,8 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FlippingUtil;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.trajectory.Trajectory;
@@ -60,7 +62,7 @@ public class TrajectoryUtils {
       return generatePPHolonomicCommand(
           PathPlannerPath.fromPathFile(pathName), this::flipPathByAlliance);
     } catch (Exception e) {
-      DriverStation.reportError(
+      DriverStationErrors.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -71,14 +73,14 @@ public class TrajectoryUtils {
    *
    * @param pathName The name of the PathPlanner Trajectory file to reference.
    * @param flipPath Option to flip the trajectory instead of using the robot's current {@link
-   *     DriverStation.Alliance} color
+   *     Alliance} color
    * @return Command
    */
   public Command generatePPHolonomicCommand(String pathName, BooleanSupplier flipPath) {
     try {
       return generatePPHolonomicCommand(PathPlannerPath.fromPathFile(pathName), flipPath);
     } catch (Exception e) {
-      DriverStation.reportError(
+      DriverStationErrors.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -140,7 +142,7 @@ public class TrajectoryUtils {
     try {
       return resetRobotPoseAuto(PathPlannerPath.fromPathFile(pathName), flipPose);
     } catch (Exception e) {
-      DriverStation.reportError(
+      DriverStationErrors.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -256,7 +258,7 @@ public class TrajectoryUtils {
   }
 
   private boolean flipPathByAlliance() {
-    return DriverStation.getAlliance().orElse(Alliance.BLUE)
+    return MatchState.getAlliance().orElse(Alliance.BLUE)
         == Alliance.RED;
   }
 

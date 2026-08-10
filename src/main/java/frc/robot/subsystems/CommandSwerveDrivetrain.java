@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import org.wpilib.driverstation.*;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -22,8 +23,6 @@ import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.Alliance;
 import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
 import org.wpilib.smartdashboard.SmartDashboard;
@@ -175,7 +174,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       m_trajectoryUtils =
           new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
-      DriverStation.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
+      DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
   }
 
@@ -312,11 +311,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     try {
       return RobotConfig.fromGUISettings();
     } catch (IOException e) {
-      DriverStation.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     } catch (ParseException e) {
-      DriverStation.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     }
@@ -415,12 +414,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
      * Otherwise, only check and apply the operator perspective if the DS is disabled.
      * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
      */
-    if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-      DriverStation.getAlliance()
+    if (!m_hasAppliedOperatorPerspective || RobotState.isDisabled()) {
+      MatchState.getAlliance()
           .ifPresent(
               allianceColor -> {
                 setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
+                    allianceColor == Alliance.RED
                         ? kRedAlliancePerspectiveRotation
                         : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;

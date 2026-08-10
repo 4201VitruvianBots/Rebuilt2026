@@ -4,15 +4,14 @@
 
 package frc.robot.subsystems;
 
+import org.wpilib.driverstation.*;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.MedianFilter;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.driverstation.Alert;
 import org.wpilib.driverstation.Alert.Level;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
 import org.wpilib.smartdashboard.SmartDashboard;
@@ -77,8 +76,7 @@ public class Controls extends SubsystemBase {
     if (subsystem != null) {
       m_subsystemMap.put(subsystem.getName(), subsystem);
     } else {
-      // TODO: Find new implementation
-      // DriverStation.reportWarning("[Controls] Attempting to register null subsystem!", true);
+      DriverStationErrors.reportWarning("[Controls] Attempting to register null subsystem!", true);
     }
   }
 
@@ -106,7 +104,7 @@ public class Controls extends SubsystemBase {
     String usbAlertMessage = "The following USB devices are not connected: ";
 
     // TODO: Change this to a loop/array for String.join()
-    if (!DriverStation.isJoystickConnected(USB.driver_xBoxController)) {
+    if (!DriverStationBackend.isJoystickConnected(USB.driver_xBoxController)) {
       usbAlertMessage += String.join(", ", "Driver Xbox Controller");
       alertMap.get("usb").setText(usbAlertMessage);
     }
@@ -191,8 +189,8 @@ public class Controls extends SubsystemBase {
     // This method will be called once per scheduler run
     updateAlerts();
 
-    if (DriverStation.isDisabled()) {
-      DriverStation.getAlliance()
+    if (RobotState.isDisabled()) {
+      DriverStationBackend.getAlliance()
           .ifPresent(
               a -> {
                 m_allianceColor = a;

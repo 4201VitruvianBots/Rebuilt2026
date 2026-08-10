@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.math.system.Models;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
@@ -61,8 +62,7 @@ public class Flywheel extends SubsystemBase {
   public final DoublePublisher m_rpmPublisher;
 
   private final FlywheelSim m_shooterMotorSim =
-      new FlywheelSim(
-          LinearSystemId.createFlywheelSystem(
+      new FlywheelSim(Models.flywheelFromPhysicalConstants(
               FLYWHEEL.gearbox, FLYWHEEL.kInertia, FLYWHEEL.gearRatio),
           FLYWHEEL.gearbox);
   private final TalonFXSimState m_simState;

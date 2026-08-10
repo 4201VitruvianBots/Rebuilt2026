@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import static org.wpilib.units.Units.Seconds;
 
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.Alliance;
@@ -67,7 +68,7 @@ public class UpdateLEDs extends Command {
           () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
     } else if (MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
       m_led.setState(LED_STATES.INTAKING);
-    } else if (DriverStation.isEnabled()) {
+    } else if (RobotState.isEnabled()) {
       m_led.setState(LED_STATES.IDLE);
     } else {
       m_led.setState(LED_STATES.DISABLED);

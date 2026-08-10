@@ -17,8 +17,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import frc.team4201.lib.utils.MathHelpers;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.math.system.Models;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
@@ -64,7 +66,7 @@ public class Hood extends SubsystemBase {
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
+              Models.singleJointedArmFromPhysicalConstants(HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
           HOOD.gearbox);
 
   private final TalonFXSimState m_simState = m_motor.getSimState();
@@ -126,9 +128,8 @@ public class Hood extends SubsystemBase {
 
   public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
-        Degrees.of(
-            MathUtil.clamp(
-                setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
+        Degrees.of(Math.max(HOOD.minAngle.in(Degrees), Math.min(HOOD.maxAngle.in(Degrees), setpoint.in(Degrees))));
+
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
   }
 
@@ -211,7 +212,7 @@ public class Hood extends SubsystemBase {
     m_simState.setRotorVelocity(
         RPM.of(m_shooterHoodSim.getAngularVelocity()).times(HOOD.gearRatio));
     // Update the hoodEncoder simState
-    m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPositionRotations()));
+    m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPosition()));
     m_cancoderSimState.setVelocity(
         RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
   }

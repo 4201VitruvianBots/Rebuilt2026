@@ -15,6 +15,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.system.Models;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
@@ -46,11 +47,11 @@ public class Indexer extends SubsystemBase {
 
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+              Models.singleJointedArmFromPhysicalConstants(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
           INDEXER.gearbox);
   private final DCMotorSim m_indexerMotor2Sim =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+              Models.singleJointedArmFromPhysicalConstants(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
           INDEXER.gearbox);
   private final TalonFXSimState m_simState1;
   private final TalonFXSimState m_simState2;

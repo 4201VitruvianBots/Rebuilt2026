@@ -107,24 +107,24 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {}
 
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+//  @Override
+//  public void testInit() {
+//    // Cancels all running commands at the start of test mode.
+//    CommandScheduler.getInstance().cancelAll();
+//
+//    m_robotContainer.testInit();
+//  }
 
-    m_robotContainer.testInit();
-  }
-
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {
-    m_robotContainer.testPeriodic();
-  }
+//  /** This function is called periodically during test mode. */
+//  @Override
+//  public void testPeriodic() {
+//    m_robotContainer.testPeriodic();
+//  }
 
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
-    addPeriodic(() -> m_robotContainer.updateFuelLaunchSim(), 1.0 / FLYWHEEL.ballsPerSecond);
+    addPeriodic(m_robotContainer::updateFuelLaunchSim, 1.0 / FLYWHEEL.ballsPerSecond);
   }
 
   /** This function is called periodically whilst in simulation. */

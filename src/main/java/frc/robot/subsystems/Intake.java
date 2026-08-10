@@ -17,9 +17,14 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.LinearFilter;
+import org.wpilib.math.numbers.N1;
+import org.wpilib.math.system.LinearSystem;
+import org.wpilib.math.system.LinearSystemUtil;
+import org.wpilib.math.system.Models;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.LinearSystemSim;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.system.RobotController;
@@ -51,9 +56,9 @@ public class Intake extends SubsystemBase {
   private INTAKE_STATE m_state = INTAKE_STATE.IDLE;
 
   private final DCMotorSim m_motor1Sim =
-      new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(ROLLERS.gearbox, ROLLERS.gearRatio, ROLLERS.kInertia),
-          ROLLERS.gearbox);
+          new DCMotorSim(
+          Models.singleJointedArmFromPhysicalConstants(ROLLERS.gearbox, ROLLERS.kInertia, ROLLERS.gearRatio),
+                  ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
 

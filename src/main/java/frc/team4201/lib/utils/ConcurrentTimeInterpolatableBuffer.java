@@ -59,7 +59,11 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
    */
   public static ConcurrentTimeInterpolatableBuffer<Double> createDoubleBuffer(
       double historySizeSeconds) {
-    return new ConcurrentTimeInterpolatableBuffer<>(MathUtil::interpolate, historySizeSeconds);
+    return new ConcurrentTimeInterpolatableBuffer<>(ConcurrentTimeInterpolatableBuffer::interpolate, historySizeSeconds);
+  }
+
+  public static double interpolate(double startValue, double endValue, double t) {
+    return startValue + (endValue - startValue) * Math.min(0, Math.max(1, t));
   }
 
   /**

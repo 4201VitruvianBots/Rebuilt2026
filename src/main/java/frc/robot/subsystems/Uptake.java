@@ -17,6 +17,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.system.Models;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
@@ -37,7 +38,7 @@ public class Uptake extends SubsystemBase {
 
   private final FlywheelSim m_motorSim =
       new FlywheelSim(
-          LinearSystemId.createFlywheelSystem(UPTAKE.gearbox, UPTAKE.kInertia, UPTAKE.gearRatio),
+          Models.flywheelFromPhysicalConstants(UPTAKE.gearbox, UPTAKE.kInertia, UPTAKE.gearRatio),
           UPTAKE.gearbox);
 
   private final TalonFXSimState m_simState;
@@ -86,7 +87,7 @@ public class Uptake extends SubsystemBase {
 
   public void setVelocitySetpoint(AngularVelocity setpoint) {
     m_velocitySetpoint =
-        RPM.of(MathUtil.clamp(setpoint.in(RPM), UPTAKE.minRPM.in(RPM), UPTAKE.maxRPM.in(RPM)));
+        RPM.of(Math.max(UPTAKE.minRPM.in(RPM), Math.min(UPTAKE.maxRPM.in(RPM), setpoint.in(RPM))));
   }
 
   public boolean isConnected() {

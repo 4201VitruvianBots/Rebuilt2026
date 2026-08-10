@@ -15,6 +15,8 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
 import frc.team4201.lib.command.Auto;
+import org.wpilib.driverstation.DriverStationErrors;
+
 import java.util.function.BooleanSupplier;
 
 public class IntakeFromNeutral extends Auto {
@@ -56,7 +58,7 @@ public class IntakeFromNeutral extends Auto {
           getPathCommand(swerveDrive, returnToAllianceZone, flipToRight)
               .andThen(new PrintCommand("[AUTO] Returned to alliance zone")));
     } catch (Exception e) {
-      // DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
+      DriverStationErrors.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

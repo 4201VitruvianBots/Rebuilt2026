@@ -70,7 +70,7 @@ public class Elevator2d implements AutoCloseable {
    * robot
    */
   public void generateSubDisplay() {
-    Distance totalDistance = m_config.m_superStructureOffset.copy();
+    Distance totalDistance = m_config.m_superStructureOffset;
     for (int i = 0; i < m_config.m_numberOfStages; i++) {
       totalDistance = totalDistance.plus(m_config.m_stageMaxLengths[i]);
     }
@@ -208,7 +208,7 @@ public class Elevator2d implements AutoCloseable {
 
     switch (m_config.m_type) {
       case CONTINUOUS:
-        var subHeight = height.copy();
+        var subHeight = height;
         for (int i = 0; i < m_config.m_numberOfStages; i++) {
           if (m_config.m_stageMaxLengths[i].lte(subHeight)) {
             m_elevatorStages[i].setLength(m_config.m_stageMaxLengths[i].in(Meters));

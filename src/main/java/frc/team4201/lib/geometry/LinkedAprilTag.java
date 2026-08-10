@@ -1,5 +1,6 @@
 package frc.team4201.lib.geometry;
 
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.driverstation.Alliance;
@@ -41,8 +42,8 @@ public class LinkedAprilTag {
   }
 
   private boolean isBlue() {
-    if (DriverStation.getAlliance().isPresent()) {
-      return DriverStation.getAlliance().get().equals(Alliance.BLUE);
+    if (DriverStationBackend.getAlliance().isPresent()) {
+      return DriverStationBackend.getAlliance().get().equals(Alliance.BLUE);
     } else {
       return false;
     }

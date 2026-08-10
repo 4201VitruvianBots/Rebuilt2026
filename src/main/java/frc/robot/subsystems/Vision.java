@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import static org.wpilib.units.Units.*;
 
 import com.ctre.phoenix6.Utils;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.math.linalg.Matrix;
@@ -247,7 +249,7 @@ public class Vision extends SubsystemBase {
    */
   public boolean processLimelight(VISION.Limelight limelight) {
     String limelightName = limelight.getName();
-    if (DriverStation.isDisabled()) {
+    if (RobotState.isDisabled()) {
       // TODO: Determine if we change IMUMode to 0 when not disabled for MegaTag2
       LimelightHelpers.SetIMUMode(limelightName, 1);
 
@@ -280,7 +282,7 @@ public class Vision extends SubsystemBase {
         0,
         0);
     LimelightHelpers.PoseEstimate limelightMeasurement;
-    if (DriverStation.isDisabled()) {
+    if (RobotState.isDisabled()) {
       // Use MegaTag1 when the robot is disabled to set the initial robot pose
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     } else {
@@ -320,7 +322,7 @@ public class Vision extends SubsystemBase {
       VISION.Limelight limelight, LimelightHelpers.PoseEstimate poseEstimate) {
     if (poseEstimate == null) {
       if (RobotBase.isReal())
-        DriverStation.reportWarning(limelight.getName() + " is not connected", true);
+        DriverStationErrors.reportWarning(limelight.getName() + " is not connected", true);
       return false;
     } else {
       // Filter out bad AprilTag vision estimates for both MegaTag1 and MegaTag2
@@ -467,7 +469,7 @@ public class Vision extends SubsystemBase {
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
 
-    if (DriverStation.isDisabled()) {
+    if (RobotState.isDisabled()) {
       if (lllSuccess) {
         m_swerveDriveTrain.resetGyro(LLL.getLastGoodEstimate().pose.getRotation().getDegrees());
       } else if (llrSuccess) {

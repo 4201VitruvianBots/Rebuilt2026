@@ -9,6 +9,7 @@ import static org.wpilib.units.Units.*;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.units.measure.AngularVelocity;
@@ -219,7 +220,7 @@ public class RobotContainer {
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
 
-      DriverStation.silenceJoystickConnectionWarning(true);
+      DriverStationBackend.silenceJoystickConnectionWarning(true);
     }
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
