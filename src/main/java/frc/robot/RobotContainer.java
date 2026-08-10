@@ -196,6 +196,24 @@ public class RobotContainer {
 
   public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype) {
     return m_swerveDrive.runOnce(() -> m_swerveDrive.setNeutralMode(motortype, neutralmode));
+    // Logging callback for current robot pose
+      // Do whatever you want with the pose here
+      PathPlannerLogging.setLogCurrentPoseCallback(
+              field::setRobotPose);
+
+    // Logging callback for target robot pose
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (pose) -> {
+          // Do whatever you want with the pose here
+          field.getObject("target pose").setPose(pose);
+        });
+
+    // Logging callback for the active path, this is sent as a list of poses
+    PathPlannerLogging.setLogActivePathCallback(
+        (poses) -> {
+          // Do whatever you want with the poses here
+          field.getObject("path").setPoses(poses);
+        });
   }
 
   private void initializeSubSystems() {

@@ -14,7 +14,7 @@ import frc.team4201.lib.simulation.visualization.configs.Flywheel2dConfig;
 
 /** Class to represent a flywheel using {@link Mechanism2d} */
 public class Flywheel2d implements AutoCloseable {
-  private int NUM_SIDES = 8;
+  private final int NUM_SIDES = 8;
 
   private final Flywheel2dConfig m_config;
   private final MechanismLigament2d[] m_sides = new MechanismLigament2d[NUM_SIDES];

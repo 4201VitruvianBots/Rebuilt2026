@@ -20,13 +20,13 @@ import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
 
 /** This simulation is so complex I decided we had to make it a separate class. */
 public class Climber2d {
-  private Color8Bit bottomClimberColor =
+  private final Color8Bit bottomClimberColor =
       new Color8Bit(255, 0, 102); // Rose pink color for bottom climber
-  private Color8Bit bottomClimberHookColor =
+  private final Color8Bit bottomClimberHookColor =
       new Color8Bit(127, 0, 51); // Darker rose pink color for bottom climber hook
-  private Color8Bit topClimberColor =
+  private final Color8Bit topClimberColor =
       new Color8Bit(255, 0, 255); // Pure magenta color for top climber
-  private Color8Bit topClimberHookColor =
+  private final Color8Bit topClimberHookColor =
       new Color8Bit(127, 0, 127); // Darker magenta color for top climber hook
 
   // Climber bottom carriage? Is that the correct term? Idk im a programmer it
