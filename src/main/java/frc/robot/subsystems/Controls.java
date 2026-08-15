@@ -112,15 +112,15 @@ public class Controls extends SubsystemBase {
     alertMap.get("usb").set(true);
 
     // Update brownout alert state
-    if (RobotController.isBrownedOut()) {
-      alertMap
-          .get("brownout")
-          .setText(
-              "A brownout occurred less than a minute ago. Please ensure that a fresh battery has been plugged in.");
-      alertMap.get("brownout").set(true);
-      m_brownoutTimer.restart();
-      m_brownoutLastUpdatedTime = 0.0;
-    }
+    // if (RobotController.isBrownedOut()) {
+    //   alertMap
+    //       .get("brownout")
+    //       .setText(
+    //           "A brownout occurred less than a minute ago. Please ensure that a fresh battery has been plugged in.");
+    //   alertMap.get("brownout").set(true);
+    //   m_brownoutTimer.restart();
+    //   m_brownoutLastUpdatedTime = 0.0;
+    // }
 
     // Update brownout alert timing once a minute
     if (m_brownoutTimer.get() - m_brownoutLastUpdatedTime > 60.0) {
