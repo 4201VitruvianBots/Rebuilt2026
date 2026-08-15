@@ -154,9 +154,7 @@ public class Shoot extends Command {
     // Calculate estimated pose while accounting for phase delay
     Pose2d estimatedPose = m_swerveDrivetrain.getState().Pose;
     ChassisVelocities robotRelativeVelocity = m_swerveDrivetrain.getState().Velocity;
-    estimatedPose =
-        estimatedPose.plus(
-            new Twist2d(
+    estimatedPose = estimatedPose.plus(new Twist2d(
                 robotRelativeVelocity.vx * phaseDelay,
                 robotRelativeVelocity.vy * phaseDelay,
                 robotRelativeVelocity.omega * phaseDelay).exp());
