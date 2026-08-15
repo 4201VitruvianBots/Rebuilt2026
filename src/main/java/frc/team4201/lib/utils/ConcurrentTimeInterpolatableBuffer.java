@@ -63,7 +63,7 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
   }
 
   public static double interpolate(double startValue, double endValue, double t) {
-    return startValue + (endValue - startValue) * Math.min(0, Math.max(1, t));
+    return startValue + (endValue - startValue) * Math.clamp(t, 0, 1);
   }
 
   /**

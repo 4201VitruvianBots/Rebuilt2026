@@ -87,7 +87,7 @@ public class Uptake extends SubsystemBase {
 
   public void setVelocitySetpoint(AngularVelocity setpoint) {
     m_velocitySetpoint =
-        RPM.of(Math.max(UPTAKE.minRPM.in(RPM), Math.min(UPTAKE.maxRPM.in(RPM), setpoint.in(RPM))));
+        RPM.of(Math.clamp(setpoint.in(RPM), UPTAKE.minRPM.in(RPM), UPTAKE.maxRPM.in(RPM)));
   }
 
   public boolean isConnected() {

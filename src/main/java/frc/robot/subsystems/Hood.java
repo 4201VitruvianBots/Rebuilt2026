@@ -128,7 +128,7 @@ public class Hood extends SubsystemBase {
 
   public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
-        Degrees.of(Math.max(HOOD.minAngle.in(Degrees), Math.min(HOOD.maxAngle.in(Degrees), setpoint.in(Degrees))));
+        Degrees.of(Math.clamp(setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
 
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
   }
