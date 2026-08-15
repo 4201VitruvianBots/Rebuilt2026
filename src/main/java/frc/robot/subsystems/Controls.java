@@ -112,6 +112,7 @@ public class Controls extends SubsystemBase {
     alertMap.get("usb").set(true);
 
     // Update brownout alert state
+    // TODO: WPILib6 alpha causes a HAL error with RobotController.isBrownedOut()
     // if (RobotController.isBrownedOut()) {
     //   alertMap
     //       .get("brownout")
