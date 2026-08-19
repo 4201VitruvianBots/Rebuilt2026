@@ -8,13 +8,14 @@ import static org.wpilib.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.util.PathPlannerLogging;
+import frc.robot.constants.*;
+import frc.robot.lib.BLine.FollowPath;
+import frc.robot.lib.BLine.Path;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.Gamepad.Button;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.smartdashboard.Field2d;
@@ -35,22 +36,11 @@ import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.commands.autos.routines.CenterPreload;
-import frc.robot.commands.autos.routines.SideNeutral;
-import frc.robot.commands.autos.routines.SideNeutralDepot;
-import frc.robot.commands.autos.routines.SideNeutralTwice;
-import frc.robot.commands.autos.segments.IntakeAndShootFromDepot;
-import frc.robot.commands.autos.segments.IntakeFromNeutral;
-import frc.robot.commands.autos.segments.ShootNearStart;
 import frc.robot.commands.swerve.ResetGyro;
-import frc.robot.constants.FIELD;
-import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
-import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
-import frc.robot.constants.SWERVE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
@@ -138,7 +128,9 @@ public class RobotContainer {
 
   private Boolean m_flipToRight = false;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Configure the trigger bindings
     FIELD.initializeConstants();
@@ -151,25 +143,6 @@ public class RobotContainer {
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
     Field2d field = new Field2d();
     SmartDashboard.putData("Field", field);
-
-    // Logging callback for current robot pose
-      // Do whatever you want with the pose here
-      PathPlannerLogging.setLogCurrentPoseCallback(
-              field::setRobotPose);
-
-    // Logging callback for target robot pose
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (pose) -> {
-          // Do whatever you want with the pose here
-          field.getObject("target pose").setPose(pose);
-        });
-
-    // Logging callback for the active path, this is sent as a list of poses
-    PathPlannerLogging.setLogActivePathCallback(
-        (poses) -> {
-          // Do whatever you want with the poses here
-          field.getObject("path").setPoses(poses);
-        });
   }
 
   private void initializeSubSystems() {
@@ -318,31 +291,11 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", m_autoChooser);
     m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
 
-    var autoDeps =
-        new AutoDependencies(
-            m_swerveDrive,
-            m_intake,
-            m_vision,
-            m_flywheel,
-            m_hood,
-            m_intakePivot,
-            m_indexer,
-            m_uptake);
+    FollowPath.registerEventTrigger("enableIntake", () -> m_intake.setOutputPercent(INTAKE.ROLLERS.INTAKE_SPEED.INTAKING.get()));
+    FollowPath.registerEventTrigger("disableIntake", () -> m_intake.setOutputPercent(INTAKE.ROLLERS.INTAKE_SPEED.ZERO.get()));
 
-    IntakeFromNeutral.registerNamedCommands(autoDeps);
-    IntakeAndShootFromDepot.registerNamedCommands(autoDeps);
-
-    m_autoChooser.addOption("CenterPreload", new CenterPreload(autoDeps));
-    m_autoChooser.addOption("SideNeutralDepot", new SideNeutralDepot(autoDeps));
-    m_autoChooser.addOption(
-        "SideNeutralTwice - Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "SideNeutralTwice - No Preload", new SideNeutralTwice(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("SideNeutral", new SideNeutral(autoDeps, () -> m_flipToRight));
-    m_autoChooser.addOption(
-        "Test - Shoot Preload", new ShootNearStart(autoDeps, () -> m_flipToRight));
-    m_autoChooser.addOption(
-        "Test - Intake from Neutral", new IntakeFromNeutral(autoDeps, false, () -> m_flipToRight));
+    Path bLineTestPath = new Path("test_path");
+    m_autoChooser.addOption("B-Line test path", m_swerveDrive.bLineCommand(bLineTestPath, true));
   }
 
   private void initSideChooser() {

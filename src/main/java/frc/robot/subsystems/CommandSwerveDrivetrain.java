@@ -9,10 +9,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.util.DriveFeedforwards;
+import frc.robot.Robot;
+import frc.robot.lib.BLine.FollowPath;
+import frc.robot.lib.BLine.Path;
+import frc.team4201.lib.bline.PIDConstants;
+import org.wpilib.command2.InstantCommand;
 import org.wpilib.driverstation.*;
+import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -26,7 +29,6 @@ import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
 import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.command2.Command;
-import org.wpilib.command2.Subsystem;
 import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
@@ -35,13 +37,11 @@ import frc.robot.constants.VISION;
 import frc.robot.generated.V2Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
 import frc.team4201.lib.utils.TrajectoryUtils;
-import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.json.simple.parser.ParseException;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -170,8 +170,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     }
 
     try {
-      m_trajectoryUtils =
-          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
+//      m_trajectoryUtils =
+//          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
       DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
@@ -243,14 +243,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withTargetDirection(headingTarget));
   }
 
-  public void setChassisSpeedsAuto(
-      ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
-    setControl(
-        m_pathApplyRobotSpeeds
-            .withVelocity(chassisSpeeds)
-            .withWheelForceFeedforwardsX(driveFeedforwards.robotRelativeForcesXNewtons())
-            .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
-  }
+
 
   public AngularVelocity getGyroYawRate() {
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
@@ -305,21 +298,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   @Override
-  public RobotConfig getAutoRobotConfig() {
-    try {
-      return RobotConfig.fromGUISettings();
-    } catch (IOException e) {
-      DriverStationErrors.reportWarning(
-          "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    } catch (ParseException e) {
-      DriverStationErrors.reportWarning(
-          "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
   public PIDConstants getAutoTranslationPIDConstants() {
     return AUTO_ALIGN.kAutoAlignTranslationPID;
   }
@@ -359,6 +337,32 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutineToApply.dynamic(direction);
+  }
+
+  // if TrajectoryUtils is reimplemented this should go there
+  public FollowPath.Builder builder =
+      new FollowPath.Builder(
+          this,
+          () -> this.getState().Pose,
+          () -> this.getState().Velocity,
+          this::setChassisSpeeds,
+          new PIDController(
+              getAutoTranslationPIDConstants().kP(),
+              getAutoTranslationPIDConstants().kI(),
+              getAutoTranslationPIDConstants().kD()),
+          new PIDController(
+              getAutoRotationPIDConstants().kP(),
+              getAutoRotationPIDConstants().kI(),
+              getAutoRotationPIDConstants().kD()),
+          new PIDController(2.0, 0.0, 0, Robot.DEFAULT_PERIOD))
+          .withDefaultShouldFlip();
+
+  public Command bLineCommand(Path path, boolean resetPoseOnStart) {
+    if (resetPoseOnStart) {
+      return new InstantCommand(()->resetPose(path.getStartPose())).andThen(builder.build(path));
+    } else {
+      return builder.build(path);
+    }
   }
 
   // Return a map of which motors are connected and their names
