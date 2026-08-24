@@ -44,10 +44,10 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Intake extends SubsystemBase {
 
   @Logged(name = "Intake Motor", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.roboRIO);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.intake);
 
   @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.roboRIO);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.intake);
 
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0).withEnableFOC(true);
 

@@ -2,9 +2,12 @@ package frc.robot.constants;
 
 import com.ctre.phoenix6.CANBus;
 
-public class CAN {
-  public static final CANBus roboRIO = CANBus.systemcore(0);
-  public static final CANBus driveBase = new CANBus("drivebase");
+public class CAN { //ids were gotten from controls
+  public static final CANBus drivetrain = CANBus.systemcore(0);
+  public static final CANBus intake = CANBus.systemcore(1);
+  public static final CANBus indexer = CANBus.systemcore(2);
+  public static final CANBus hood = CANBus.systemcore(3);
+  public static final CANBus shooter = CANBus.systemcore(4);
 
   public static final int pigeon = 9;
 
@@ -22,24 +25,22 @@ public class CAN {
   public static final int backRightDriveMotor = 26;
   public static final int backRightTurnMotor = 27;
 
-  public static final int kClimberMotor = 30;
-
   public static final int kShooterHoodMotor = 34;
-  public static final int kShooterHoodCANCoder = 35;
 
   public static final int kShooterRollerMotor1 = 40;
   public static final int kShooterRollerMotor2 = 41;
   public static final int kShooterRollerMotor3 = 42;
+  public static final int kShooterRollerMotor4 = 43; //TODO: change to a value that is real
 
   public static final int kIndexerMotor1 = 51;
   public static final int kIndexerMotor2 = 50;
+  public static final int kIndexerMotor3 = 52; //same with these
+  public static final int kIndexerMotor4 = 58;
 
   public static final int kIntakeRollerMotor1 = 53;
   public static final int kIntakeRollerMotor2 = 54;
 
   public static final int kIntakePivotMotor = 55;
-  // public static final int kPivotEncoder = 56;
-  // No more encoder. Encoderless pivot yay.
 
   public static final int kUptakeMotor = 57;
 }
