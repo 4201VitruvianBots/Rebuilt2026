@@ -49,7 +49,7 @@ import frc.team4201.lib.utils.CtreUtils;
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.roboRIO);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.intake);
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
@@ -81,7 +81,7 @@ public class IntakePivot extends SubsystemBase {
       
     }
 
-    // CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
+    
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
@@ -115,7 +115,6 @@ public class IntakePivot extends SubsystemBase {
 
     if (RobotBase.isSimulation()) {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
-      // m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
     // m_motor.setPosition(getAngle().in(Rotations));
   }
@@ -215,7 +214,7 @@ public class IntakePivot extends SubsystemBase {
     m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngle()));
     m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
 
-    // Update the pivotEncoder simState. We are eliminating the encoder though so
+    // Update the pivotEncoder simState
     // m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngle()));
     // m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
   }
