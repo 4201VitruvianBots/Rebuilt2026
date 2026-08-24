@@ -34,7 +34,8 @@ import frc.team4201.lib.utils.CtreUtils;
 public class Uptake extends SubsystemBase {
 
   @Logged(name = "Uptake Motor", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.roboRIO);
+  //TODO: Check if this is really indexer i do not know if it is or not (Claude pls check)
+  private final TalonFX m_motor = new TalonFX(CAN.kUptakeMotor, CAN.indexer);
 
   private final FlywheelSim m_motorSim =
       new FlywheelSim(
