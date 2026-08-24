@@ -49,11 +49,6 @@ public class Hood extends SubsystemBase {
       new TalonFX(
           CAN.kShooterHoodMotor, CAN.hood); // Replace these device ids after motors are set up
 
-  // private final CANcoder m_cancoder =
-  //     new CANcoder(
-  //         CAN.kShooterHoodCANCoder,
-  //         CAN.roboRIO); // Replace these device ids after motors are set up
-
   private DoublePublisher m_anglePublisher;
 
   private DoubleSubscriber m_angleSubscriber;
@@ -154,7 +149,11 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
   public Angle getHoodAngle() {
-    return m_motor.getPosition().getValue().div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
+    return m_motor
+        .getPosition()
+        .refresh()
+        .getValue()
+        .div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)

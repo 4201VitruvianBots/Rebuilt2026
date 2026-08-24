@@ -103,6 +103,7 @@ public class IntakePivot extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
     config.Feedback.SensorToMechanismRatio = PIVOT.SensorToMechanismRatio;
     config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
+    config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
