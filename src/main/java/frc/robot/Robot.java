@@ -6,6 +6,7 @@ package frc.robot;
 
 import org.wpilib.epilogue.Epilogue;
 import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.logging.EpilogueBackend;
 import org.wpilib.system.DataLogManager;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.framework.TimedRobot;

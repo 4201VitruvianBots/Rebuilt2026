@@ -3,7 +3,7 @@ package frc.robot.constants;
 import com.ctre.phoenix6.CANBus;
 
 public class CAN {
-  public static final CANBus roboRIO = new CANBus("rio");
+  public static final CANBus roboRIO = CANBus.systemcore(0);
   public static final CANBus driveBase = new CANBus("drivebase");
 
   public static final int pigeon = 9;
