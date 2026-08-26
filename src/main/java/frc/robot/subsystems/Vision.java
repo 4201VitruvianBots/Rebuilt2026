@@ -417,6 +417,8 @@ public class Vision extends SubsystemBase {
         m_swerveDriveTrain.resetGyro(LLL.getLastGoodEstimate().pose.getRotation().getDegrees());
       } else if (llrSuccess) {
         m_swerveDriveTrain.resetGyro(LLR.getLastGoodEstimate().pose.getRotation().getDegrees());
+      } else if (llfSuccess) {
+        m_swerveDriveTrain.resetGyro(LLF.getLastGoodEstimate().pose.getRotation().getDegrees());
       }
     }
 

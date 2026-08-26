@@ -276,8 +276,8 @@ public class RobotContainer {
     if (m_intake != null)
       m_driverController.button(0).whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
-    POVUtils.povUpWithTilt(m_driverController)
         .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath(false)));
+    POVUtils.povUpWithTilt(m_driverController)
 
     if (m_flywheel != null && m_hood != null) {
       m_driverController

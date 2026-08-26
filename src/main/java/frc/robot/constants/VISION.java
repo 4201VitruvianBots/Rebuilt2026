@@ -25,9 +25,9 @@ import org.wpilib.units.measure.Distance;
 
 public final class VISION {
   public enum CAMERA_SERVER {
-    limelightF("limelight-front", "10.42.1.12"),
+    limelightL("limelight-left", "10.42.1.13"),
     limelightR("limelight-right", "10.42.1.11"),
-    limelightL("limelight-left", "10.42.1.13");
+    limelightF("limelight-front", "10.42.1.12");
 
     private final String name;
     private final String ip;
