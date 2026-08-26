@@ -36,7 +36,6 @@ import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.constants.VISION;
 import frc.robot.generated.V2Constants.TunerSwerveDrivetrain;
 import frc.team4201.lib.command.SwerveSubsystem;
-import frc.team4201.lib.utils.TrajectoryUtils;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
 import java.io.IOException;
 import java.util.HashMap;
@@ -72,8 +71,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
-
-  private TrajectoryUtils m_trajectoryUtils;
 
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotVelocity m_pathApplyRobotSpeeds =
@@ -153,6 +150,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   /* The SysId routine to test */
   private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
+  FollowPath.Builder autoBuilder =
+      new FollowPath.Builder(
+          this,
+          () -> getState().Pose,
+          () -> getState().Velocity,
+          this::setChassisSpeeds,
+          new PIDController(
+              getAutoTranslationPIDConstants().kP(),
+              getAutoTranslationPIDConstants().kI(),
+              getAutoTranslationPIDConstants().kD()),
+          new PIDController(
+              getAutoRotationPIDConstants().kP(),
+              getAutoRotationPIDConstants().kI(),
+              getAutoRotationPIDConstants().kD()),
+          new PIDController(2.0, 0.0, 0, Robot.DEFAULT_PERIOD))
+          .withDefaultShouldFlip()
+          .withPoseReset(this::resetPose);
+
   /**
    * Constructs a CTRE SwerveDrivetrain using the specified constants.
    *
@@ -167,13 +182,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     super(drivetrainConstants, modules);
     if (Utils.isSimulation()) {
       startSimThread();
-    }
-
-    try {
-//      m_trajectoryUtils =
-//          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
-    } catch (Exception ex) {
-      DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
   }
 
@@ -293,10 +301,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     return new Rotation2d(cs.vx, cs.vy);
   }
 
-  public TrajectoryUtils getTrajectoryUtils() {
-    return m_trajectoryUtils;
-  }
-
   @Override
   public PIDConstants getAutoTranslationPIDConstants() {
     return AUTO_ALIGN.kAutoAlignTranslationPID;
@@ -337,32 +341,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutineToApply.dynamic(direction);
-  }
-
-  // if TrajectoryUtils is reimplemented this should go there
-  public FollowPath.Builder builder =
-      new FollowPath.Builder(
-          this,
-          () -> this.getState().Pose,
-          () -> this.getState().Velocity,
-          this::setChassisSpeeds,
-          new PIDController(
-              getAutoTranslationPIDConstants().kP(),
-              getAutoTranslationPIDConstants().kI(),
-              getAutoTranslationPIDConstants().kD()),
-          new PIDController(
-              getAutoRotationPIDConstants().kP(),
-              getAutoRotationPIDConstants().kI(),
-              getAutoRotationPIDConstants().kD()),
-          new PIDController(2.0, 0.0, 0, Robot.DEFAULT_PERIOD))
-          .withDefaultShouldFlip();
-
-  public Command bLineCommand(Path path, boolean resetPoseOnStart) {
-    if (resetPoseOnStart) {
-      return new InstantCommand(()->resetPose(path.getStartPose())).andThen(builder.build(path));
-    } else {
-      return builder.build(path);
-    }
   }
 
   // Return a map of which motors are connected and their names
@@ -474,5 +452,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   @Override
   public void addVisionMeasurement(PoseEstimate poseEstimate) {
     throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
+  }
+
+  public Command generateBLineCommand(String pathName) {
+    return autoBuilder.build(new Path(pathName));
   }
 }

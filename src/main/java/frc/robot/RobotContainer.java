@@ -294,8 +294,7 @@ public class RobotContainer {
     FollowPath.registerEventTrigger("enableIntake", () -> m_intake.setOutputPercent(INTAKE.ROLLERS.INTAKE_SPEED.INTAKING.get()));
     FollowPath.registerEventTrigger("disableIntake", () -> m_intake.setOutputPercent(INTAKE.ROLLERS.INTAKE_SPEED.ZERO.get()));
 
-    Path bLineTestPath = new Path("test_path");
-    m_autoChooser.addOption("B-Line test path", m_swerveDrive.bLineCommand(bLineTestPath, true));
+    m_autoChooser.addOption("B-Line test path", m_swerveDrive.generateBLineCommand("test_path"));
   }
 
   private void initSideChooser() {
