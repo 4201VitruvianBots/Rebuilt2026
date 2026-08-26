@@ -40,6 +40,7 @@ public class Vision extends SubsystemBase {
 
   VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
   VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
+  VISION.Limelight LLF = new VISION.Limelight(CAMERA_SERVER.limelightF);
 
   private boolean m_localized;
 
@@ -469,36 +470,21 @@ public class Vision extends SubsystemBase {
     // limelight-right
     boolean llrSuccess = processLimelight(LLR);
 
+    boolean llfSuccess = processLimelight(LLF);
+
     if (RobotState.isDisabled()) {
       if (lllSuccess) {
         m_swerveDriveTrain.resetGyro(LLL.getLastGoodEstimate().pose.getRotation().getDegrees());
       } else if (llrSuccess) {
         m_swerveDriveTrain.resetGyro(LLR.getLastGoodEstimate().pose.getRotation().getDegrees());
+      } else if (llfSuccess) {
+        m_swerveDriveTrain.resetGyro(LLF.getLastGoodEstimate().pose.getRotation().getDegrees());
       }
     }
 
     if (!m_localized) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
       m_localized = lllSuccess && llrSuccess;
-    }
-
-    // Only good updates reach this point, so use them for updating the robot pose
-    if (lllSuccess && llrSuccess) {
-      fuseEstimates(
-          new VisionFieldPoseEstimate(
-              LLL.getLastGoodEstimate().pose,
-              LLL.getLastGoodEstimate().timestampSeconds,
-              LLL.getStdDev(),
-              LLL.getLastGoodEstimate().tagCount),
-          new VisionFieldPoseEstimate(
-              LLR.getLastGoodEstimate().pose,
-              LLR.getLastGoodEstimate().timestampSeconds,
-              LLR.getStdDev(),
-              LLR.getLastGoodEstimate().tagCount));
-    } else if (lllSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLL);
-    } else if (llrSuccess) {
-      m_swerveDriveTrain.addVisionMeasurement(LLR);
     }
   }
 
