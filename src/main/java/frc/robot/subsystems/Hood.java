@@ -20,6 +20,8 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import frc.team4201.lib.utils.MathHelpers;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.math.filter.Debouncer;
+import org.wpilib.math.filter.Debouncer.DebounceType;
 import org.wpilib.math.system.Models;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.DoublePublisher;
@@ -47,14 +49,16 @@ public class Hood extends SubsystemBase {
       new TalonFX(
           CAN.kShooterHoodMotor, CAN.roboRIO); // Replace these device ids after motors are set up
 
-  private final CANcoder m_cancoder =
-      new CANcoder(
-          CAN.kShooterHoodCANCoder,
-          CAN.roboRIO); // Replace these device ids after motors are set up
+  // private final CANcoder m_cancoder =
+  //     new CANcoder(
+  //         CAN.kShooterHoodCANCoder,
+  //         CAN.roboRIO); // Replace these device ids after motors are set up
 
   private DoublePublisher m_anglePublisher;
 
   private DoubleSubscriber m_angleSubscriber;
+
+  private Debouncer m_currentDebouncer = new Debouncer(1.5, DebounceType.kRising);
 
   private final NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
@@ -71,7 +75,7 @@ public class Hood extends SubsystemBase {
 
   private final TalonFXSimState m_simState = m_motor.getSimState();
 
-  private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
+  // private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
 
   private void sysIDLogMotors(SysIdRoutineLog log) {
     log.motor("motor1")
@@ -82,14 +86,14 @@ public class Hood extends SubsystemBase {
   }
 
   public Hood() {
-    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+    // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     if (RobotBase.isReal()) {
-      encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
-      encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
-      encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-          HOOD.kAbsoluteSensorDiscontinuityPoint;
+      // encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
+      // encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
+      // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
+          // HOOD.kAbsoluteSensorDiscontinuityPoint;
     }
-    CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
+    // CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = HOOD.kP;
@@ -106,10 +110,10 @@ public class Hood extends SubsystemBase {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     }
 
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    config.Feedback.RotorToSensorRatio = HOOD.rotorToSensorRatio;
-    config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
-    config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    // config.Feedback.RotorToSensorRatio = HOOD.rotorToSensorRatio;
+    // config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
+    // config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
@@ -122,7 +126,7 @@ public class Hood extends SubsystemBase {
 
     CtreUtils.configureTalonFx(m_motor, config);
 
-    if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
+    // if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
     m_motor.setPosition(getHoodAngle().times(HOOD.gearRatio).in(Rotations));
   }
 
@@ -150,11 +154,7 @@ public class Hood extends SubsystemBase {
 
   @Logged(name = "Hood Rotations", importance = Importance.DEBUG)
   public Angle getHoodAngle() {
-    return m_cancoder
-        .getPosition()
-        .refresh()
-        .getValue()
-        .div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
+    return m_motor.getPosition().getValue().div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)
@@ -197,12 +197,22 @@ public class Hood extends SubsystemBase {
     // } else {
     //   m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
     // }
-  }
+    boolean tripped = m_currentDebouncer.calculate(m_motor.getStatorCurrent().getValue().gte(Amps.of(40)));
+    if(tripped) {
+      if (m_motor.getThrottle() > 0) {
+        m_motor.setPosition(MANUAL_ANGLE.STOWED.getAngle().times(HOOD.gearRatio));
+      } else {
+        m_motor.setPosition(MANUAL_ANGLE.PASSING.getAngle().times(HOOD.gearRatio));
+      }
+    }
+
+    }
+
 
   @Override
   public void simulationPeriodic() {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    // m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_shooterHoodSim.setInputVoltage(m_simState.getMotorVoltage());
 
     m_shooterHoodSim.update(0.02);
@@ -212,9 +222,9 @@ public class Hood extends SubsystemBase {
     m_simState.setRotorVelocity(
         RPM.of(m_shooterHoodSim.getAngularVelocity()).times(HOOD.gearRatio));
     // Update the hoodEncoder simState
-    m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPosition()));
-    m_cancoderSimState.setVelocity(
-        RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
+    // m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPosition()));
+    // m_cancoderSimState.setVelocity(
+        // RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
   }
 
   private final SysIdRoutine m_sysIdRoutine =
