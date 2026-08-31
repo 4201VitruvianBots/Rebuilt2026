@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems;
 
+import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Kilograms;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.RadiansPerSecond;
 import static org.wpilib.units.Units.Rotations;
+import static org.wpilib.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -24,6 +26,8 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.filter.Debouncer;
+import org.wpilib.math.filter.Debouncer.DebounceType;
 import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
@@ -34,6 +38,7 @@ import org.wpilib.system.RobotController;
 import org.wpilib.simulation.SingleJointedArmSim;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.RepeatCommand;
+import org.wpilib.command2.RunCommand;
 import org.wpilib.command2.SubsystemBase;
 import org.wpilib.command2.WaitCommand;
 import frc.robot.constants.CAN;
@@ -46,17 +51,16 @@ public class IntakePivot extends SubsystemBase {
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
   private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.roboRIO);
 
-  private final CANcoder m_canCoder = new CANcoder(CAN.kPivotEncoder, CAN.roboRIO);
-
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
+
+  private Debouncer m_currentDebouncer = new Debouncer(2, DebounceType.kRising);
 
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(Rotations.of(0.0));
 
   private static Angle m_desiredAngle = PIVOT_SETPOINT.INTAKING.getAngle();
 
   private final TalonFXSimState m_motorSimState = m_motor.getSimState();
-  private final CANcoderSimState m_cancoderSimState = m_canCoder.getSimState();
 
   // Simulation Code
   private final SingleJointedArmSim m_pivotSim =
@@ -71,14 +75,13 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
-    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+    // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
 
     if (RobotBase.isReal()) {
-      encoderConfig.MagnetSensor.MagnetOffset = PIVOT.encoderOffset;
-      encoderConfig.MagnetSensor.SensorDirection = PIVOT.encoderDirection;
+      
     }
 
-    CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
+    // CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
@@ -89,12 +92,12 @@ public class IntakePivot extends SubsystemBase {
     // config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
-    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
-    config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
+    // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    // config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
+    // config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
 
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -112,9 +115,9 @@ public class IntakePivot extends SubsystemBase {
 
     if (RobotBase.isSimulation()) {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
-      m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
+      // m_canCoder.setPosition(PIVOT.startingAngle.in(Rotations));
     }
-    m_motor.setPosition(getAngle().in(Rotations));
+    // m_motor.setPosition(getAngle().in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -129,7 +132,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Logged(name = "Pivot Angle Radians", importance = Importance.DEBUG)
   public Angle getAngle() {
-    return m_canCoder.getAbsolutePosition().refresh().getValue();
+    return m_motor.getPosition().getValue().div(PIVOT.gearRatio);
   }
 
   @Logged(name = "Pivot Angle Degrees", importance = Importance.INFO)
@@ -146,12 +149,12 @@ public class IntakePivot extends SubsystemBase {
     return m_motor.isConnected();
   }
 
-  // placeholder, idea (in the future) is to find
+
+
+  // idea (in the future) is to find
   // way to track previous setpoint and use that for jostling (like if the previous was stowed then
   // not be able to jostle on accident)
-  // public Boolean PrevSetpointIsIntaking() {
-  //  return m_desiredAngle
-  // }
+
 
   @NotLogged
   public Command command(PIVOT_SETPOINT setpoint) {
@@ -176,15 +179,34 @@ public class IntakePivot extends SubsystemBase {
             .andThen(new WaitCommand(0.1)));
   }
 
+  @NotLogged
+  public Command sendPivotDown() {
+    return new RunCommand(() -> {
+      m_motor.setThrottle(-0.5);
+    }, this).withTimeout(Seconds.of(1.0)).andThen(new RunCommand( () -> {
+      m_motor.setPosition(PIVOT_SETPOINT.INTAKING.getAngle());
+    }, this));
+  }
+
+
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.in(Rotations)));
+    m_motor.setControl(m_request.withPosition(m_desiredAngle.times(PIVOT.gearRatio).in(Rotations)));
+    // boolean tripped = m_currentDebouncer.calculate(m_motor.getStatorCurrent().getValue().gte(Amps.of(50)));
+    // if (tripped) {
+    //   if (m_motor.getThrottle() > 0) {
+    //     m_motor.setPosition(PIVOT_SETPOINT.STOWED.getAngle().times(PIVOT.gearRatio));
+    //   }
+    // else {
+    //   m_motor.setPosition(PIVOT_SETPOINT.INTAKING.getAngle().times(PIVOT.gearRatio));
+    // }
+    // }
   }
 
   @Override
   public void simulationPeriodic() {
     m_motorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    // m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_pivotSim.setInputVoltage(m_motorSimState.getMotorVoltage());
 
     m_pivotSim.update(0.02);
@@ -192,9 +214,9 @@ public class IntakePivot extends SubsystemBase {
     m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngle()));
     m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
 
-    // Update the pivotEncoder simState
-    m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngle()));
-    m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
+    // Update the pivotEncoder simState. We are eliminating the encoder though so
+    // m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngle()));
+    // m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
   }
 
   public void testInit() {

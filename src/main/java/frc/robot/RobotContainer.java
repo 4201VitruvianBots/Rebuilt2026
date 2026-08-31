@@ -268,6 +268,9 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
 
+    m_driverController.button(Button.NORTH_FACE).whileTrue(m_intakePivot.sendPivotDown());
+
+
     m_driverController
         .leftBumper()
         .whileTrue(
