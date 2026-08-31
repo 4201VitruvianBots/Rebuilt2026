@@ -56,7 +56,7 @@ public class IntakePivot extends SubsystemBase {
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
 
-  private Debouncer m_currentDebouncer = new Debouncer(2, DebounceType.kRising);
+  // private Debouncer m_currentDebouncer = new Debouncer(2, DebounceType.kRising);
 
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(Rotations.of(0.0));
 
@@ -184,7 +184,8 @@ public class IntakePivot extends SubsystemBase {
                   m_desiredAngle = getAngle();
                 }));
   }
-
+  /** Makes the pivot go down 
+  */
   @NotLogged
   public Command sendPivotDown() {
     return new RunCommand(() -> {
@@ -201,7 +202,7 @@ public class IntakePivot extends SubsystemBase {
     // boolean tripped = m_currentDebouncer.calculate(m_motor.getStatorCurrent().getValue().gte(Amps.of(50)));
     // if (tripped) {
     //   if (m_motor.getThrottle() > 0) {
-    //     m_motor.setPosition(PIVOT_SETPOINT.STOWED.getAngle().times(PIVOT.gearRatio));
+        // m_motor.setPosition(PIVOT_SETPOINT.STOWED.getAngle().times(PIVOT.gearRatio));
     //   }
     // else {
     //   m_motor.setPosition(PIVOT_SETPOINT.INTAKING.getAngle().times(PIVOT.gearRatio));
