@@ -72,8 +72,7 @@ public class INTAKE {
     // public static final double kA = 0;
     public static final double kG = 0.85;
 
-    public static final double gearRatio = 175.0 / 9.0; // encoder is after gear ratio
-    public static final double SensorToMechanismRatio = 3.0 / 1.0;
+    public static final double gearRatio = 35.0 / 1.0;
     public static final double motionMagicAcceleration = 15.0;
     public static final double motionMagicCruiseVelocity = 12.0;
     public static final double motionMagicJerk = 0.0;
@@ -91,7 +90,7 @@ public class INTAKE {
         Inches.of(13.897040); /* Almost completely made up :P */
     public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
 
-    public static final double encoderOffset = -0.532763671875;
+    // public static final double encoderOffset = 0.3076171875;
     public static final SensorDirectionValue encoderDirection =
         SensorDirectionValue.CounterClockwise_Positive;
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.800048828125;

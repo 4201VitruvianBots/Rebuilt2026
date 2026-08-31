@@ -38,7 +38,8 @@ public class CAN {
   public static final int kIntakeRollerMotor2 = 54;
 
   public static final int kIntakePivotMotor = 55;
-  public static final int kPivotEncoder = 56;
+  // public static final int kPivotEncoder = 56;
+  // No more encoder. Encoderless pivot yay.
 
   public static final int kUptakeMotor = 57;
 }

@@ -311,6 +311,20 @@ public class RobotContainer {
         )
       );
     }
+    m_driverController.button(Button.NORTH_FACE).whileTrue(m_intakePivot.sendPivotDown());
+
+
+    m_driverController
+        .leftBumper()
+        .whileTrue(
+            new Shoot(
+                m_flywheel,
+                m_hood,
+                m_vision,
+                m_driverController,
+                m_swerveDrive,
+                m_driverController::getLeftY,
+                m_driverController::getLeftX));
 
     if (m_intake != null) {
       m_driverController
