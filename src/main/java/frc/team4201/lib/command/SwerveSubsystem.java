@@ -4,14 +4,14 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.numbers.N1;
+import org.wpilib.math.numbers.N3;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.command2.Subsystem;
 import frc.team4201.lib.vision.LimelightHelpers;
 
 public interface SwerveSubsystem extends Subsystem {
@@ -69,8 +69,8 @@ public interface SwerveSubsystem extends Subsystem {
   /**
    * Function for PathPlanner to control the robot's motion in auto.
    *
-   * @param chassisSpeeds WPILib's {@link ChassisSpeeds}
+   * @param chassisSpeeds WPILib's {@link ChassisVelocities}
    * @param feedforwards PathPlanner's {@link DriveFeedforwards}
    */
-  void setChassisSpeedsAuto(ChassisSpeeds chassisSpeeds, DriveFeedforwards feedforwards);
+  void setChassisSpeedsAuto(ChassisVelocities chassisSpeeds, DriveFeedforwards feedforwards);
 }

@@ -9,11 +9,11 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.constants.VISION.TARGET;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -58,7 +58,7 @@ public class DriveToTarget {
                 m_swerveDrive.getState().Pose.getTranslation(),
                 // TODO: Verify if this midpoint is needed.
                 m_swerveDrive.getPathVelocityHeading(
-                    m_swerveDrive.getState().Speeds, targetWaypoint)),
+                    m_swerveDrive.getState().Velocity, targetWaypoint)),
             targetWaypoint);
     // TODO:adjust the threshold if needed
     if (waypoints.get(0).anchor().getDistance(waypoints.get(1).anchor()) < 0.01) {
@@ -73,7 +73,7 @@ public class DriveToTarget {
             waypoints,
             AUTO_ALIGN.kAutoAlignPathConstraints,
             new IdealStartingState(
-                m_swerveDrive.getVelocityMagnitude(m_swerveDrive.getState().Speeds),
+                m_swerveDrive.getVelocityMagnitude(m_swerveDrive.getState().Velocity),
                 m_swerveDrive.getState().Pose.getRotation()),
             new GoalEndState(0.0, targetWaypoint.getRotation()));
 
@@ -84,7 +84,7 @@ public class DriveToTarget {
     return new FollowPathCommand(
             path,
             () -> m_swerveDrive.getState().Pose,
-            () -> m_swerveDrive.getState().Speeds,
+            () -> m_swerveDrive.getState().Velocity,
             m_swerveDrive::setChassisSpeedsAuto,
             AUTO_ALIGN.kDriveController,
             m_swerveDrive.getAutoRobotConfig(),

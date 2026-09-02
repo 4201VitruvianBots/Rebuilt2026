@@ -4,37 +4,39 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Volts;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.FeetPerSecond;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.RPM;
+import static org.wpilib.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.filter.SlewRateLimiter;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.units.measure.Voltage;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.ConditionalCommand;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelCommandGroup;
+import org.wpilib.command2.RunCommand;
+import org.wpilib.command2.WaitCommand;
+import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.command2.button.CommandGenericHID;
+import org.wpilib.command2.button.Trigger;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
@@ -123,10 +125,10 @@ public class RobotContainer {
   private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(USB.driver_xBoxController);
-  private final CommandXboxController m_operatorController =
-      new CommandXboxController(USB.operator_xboxController);
+  private final CommandGamepad m_driverController =
+      new CommandGamepad(USB.driver_xBoxController);
+  private final CommandGamepad m_operatorController =
+      new CommandGamepad(USB.operator_xboxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
@@ -210,11 +212,11 @@ public class RobotContainer {
                     .withVelocityX(
                         MaxSpeed.times(
                             -m_driverController
-                                .getLeftY())) // Drive forward with negative Y (forward)
+                                .getRawAxis(1))) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         MaxSpeed.times(
-                            -m_driverController.getLeftX())) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
+                            -m_driverController.getRawAxis(0))) // Drive left with negative X (left)
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRawAxis(3)))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -240,7 +242,7 @@ public class RobotContainer {
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
 
-      DriverStation.silenceJoystickConnectionWarning(true);
+      DriverStationBackend.silenceJoystickConnectionWarning(true);
     }
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
@@ -254,14 +256,14 @@ public class RobotContainer {
 
   private void configureBindings() {
     if (m_intake != null)
-      m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+      m_driverController.button(0).whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
     POVUtils.povUpWithTilt(m_driverController)
         .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath(false)));
 
     if (m_flywheel != null && m_hood != null) {
       m_driverController
-          .x()
+          .button(0)
           .whileTrue(
               new ParallelCommandGroup(
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
@@ -278,7 +280,7 @@ public class RobotContainer {
 
     if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
       m_driverController
-          .leftBumper()
+          .button(10)
           .whileTrue(
               new Shoot(
                   m_flywheel,
@@ -286,8 +288,8 @@ public class RobotContainer {
                   m_vision,
                   m_driverController,
                   m_swerveDrive,
-                  m_driverController::getLeftY,
-                  m_driverController::getLeftX,
+                  () -> m_driverController.getRawAxis(1),
+                  () -> m_driverController.getRawAxis(0),
                   () -> m_manualHoodAngleShift,
                   () -> m_manualRPMshift));
 
@@ -301,13 +303,13 @@ public class RobotContainer {
 
     if (m_intake != null) {
       m_driverController
-          .leftTrigger()
+          .button(1)
           .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
     if (m_intake != null) {
       m_driverController
-          .y()
-          .or(m_operatorController.y())
+          .button(0)
+          .or(m_operatorController.button(0))
           .whileTrue(new JostleIntake(m_intakePivot));
     }
 
@@ -344,7 +346,7 @@ public class RobotContainer {
     // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     // );
 
-    m_operatorController.b().onTrue(resetManualShifts());
+    m_operatorController.button(0).onTrue(resetManualShifts());
 
     POVUtils.povDownWithTilt(m_operatorController)
         .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
@@ -504,7 +506,7 @@ public class RobotContainer {
           () -> m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
           () ->
               m_swerveDrive.getState()
-                  .Speeds); // Supplier<ChassisSpeeds> of field-centric chassis speeds
+                  .Velocity); // Supplier<ChassisVelocities> of field-centric chassis speeds
       m_fuelSim
           .start(); // enables the simulation to run (updateSim must still be called periodically)
       m_fuelSim.registerIntake(

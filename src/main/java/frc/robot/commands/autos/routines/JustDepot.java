@@ -12,7 +12,7 @@ import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.wpilib.command2.WaitCommand;
 
 public class JustDepot extends Auto {
   public JustDepot(AutoDependencies deps, BooleanSupplier flipPath) {

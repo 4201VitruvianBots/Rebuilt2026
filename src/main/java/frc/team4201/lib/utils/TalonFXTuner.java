@@ -3,12 +3,12 @@ package frc.team4201.lib.utils;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.networktables.*;
-import edu.wpi.first.networktables.NetworkTableEvent.Kind;
-import edu.wpi.first.util.function.BooleanConsumer;
-import edu.wpi.first.util.function.FloatConsumer;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.networktables.*;
+import org.wpilib.networktables.NetworkTableEvent.Kind;
+import org.wpilib.util.function.BooleanConsumer;
+import org.wpilib.util.function.FloatConsumer;
+import org.wpilib.system.Notifier;
+import org.wpilib.command2.SubsystemBase;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class TalonFXTuner implements AutoCloseable {
 
   private final NetworkTableListenerPoller poller = new NetworkTableListenerPoller(nt_instance);
   private final Notifier notifier = new Notifier(this::update);
-  private static final EnumSet<Kind> LISTENER_EVENT_KINDS = EnumSet.of(Kind.kValueAll);
+  private static final EnumSet<Kind> LISTENER_EVENT_KINDS = EnumSet.of(Kind.VALUE_ALL);
 
   private final Map<String, Map<Integer, ?>> nt_map = new HashMap<>();
   private final Map<Integer, DoubleConsumer> nt_doubleValues = new HashMap<>();
@@ -179,10 +179,10 @@ public class TalonFXTuner implements AutoCloseable {
         //                } else
         if (callback != null) {
           switch (update.valueData.value.getType()) {
-            case kDouble -> ((DoubleConsumer) callback).accept(update.valueData.value.getDouble());
-            case kFloat -> ((FloatConsumer) callback).accept(update.valueData.value.getFloat());
-            case kInteger -> ((LongConsumer) callback).accept(update.valueData.value.getInteger());
-            case kBoolean -> {
+            case DOUBLE -> ((DoubleConsumer) callback).accept(update.valueData.value.getDouble());
+            case FLOAT -> ((FloatConsumer) callback).accept(update.valueData.value.getFloat());
+            case INTEGER -> ((LongConsumer) callback).accept(update.valueData.value.getInteger());
+            case BOOLEAN -> {
               ((BooleanConsumer) callback).accept(update.valueData.value.getBoolean());
               nt_booleanStringCallbacks.get(topicName).accept(update.valueData.value.getBoolean());
             }

@@ -4,19 +4,21 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.filter.MedianFilter;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.system.RobotController;
+import org.wpilib.system.Timer;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.ROBOT.USB;
 import java.io.File;
@@ -26,10 +28,10 @@ import java.util.Map;
 @Logged
 public class Controls extends SubsystemBase {
   private static boolean m_allianceInit;
-  private static DriverStation.Alliance m_allianceColor = DriverStation.Alliance.Red;
+  private static Alliance m_allianceColor = Alliance.RED;
 
   // private static Alert m_visionAlert = new Alert("Vision alert not properly initialized",
-  // AlertType.kWarning);
+  // Level.MEDIUM);
 
   private static Timer m_brownoutTimer = new Timer();
   private static double m_brownoutLastUpdatedTime = 0.0;
@@ -41,27 +43,27 @@ public class Controls extends SubsystemBase {
   private final Map<String, Alert> alertMap =
       Map.ofEntries(
           Map.entry(
-              "usb", new Alert("USB connection alert not properly initialized", AlertType.kError)),
+              "usb", new Alert("USB connection alert not properly initialized", Level.HIGH)),
           Map.entry(
-              "brownout", new Alert("Brownout alert not properly initialized", AlertType.kWarning)),
+              "brownout", new Alert("Brownout alert not properly initialized", Level.MEDIUM)),
           Map.entry(
               "storage",
-              new Alert("Storage space alert not properly initialized", AlertType.kWarning)),
+              new Alert("Storage space alert not properly initialized", Level.MEDIUM)),
           Map.entry(
               "epilogue",
-              new Alert("Epilogue Runtime average is > 0.04 seconds!", AlertType.kWarning)),
+              new Alert("Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
           // Alerts for setting up the robot properly
           Map.entry(
               "allianceInit",
-              new Alert("Did not get alliance color from FMS/DS!", Alert.AlertType.kWarning)),
+              new Alert("Did not get alliance color from FMS/DS!", Level.MEDIUM)),
           Map.entry(
-              "vision", new Alert("Vision Subsystem is not ready!", Alert.AlertType.kWarning)),
+              "vision", new Alert("Vision Subsystem is not ready!", Level.MEDIUM)),
 
           // Alerts for when the robot is running
-          Map.entry("radioError", new Alert("Robot Radio not detected!", Alert.AlertType.kError)),
+          Map.entry("radioError", new Alert("Robot Radio not detected!", Level.HIGH)),
           Map.entry(
-              "joystickError", new Alert("Missing joystick detected!", Alert.AlertType.kError)),
-          Map.entry("canError", new Alert("CAN bus error detected!", Alert.AlertType.kError)));
+              "joystickError", new Alert("Missing joystick detected!", Level.HIGH)),
+          Map.entry("canError", new Alert("CAN bus error detected!", Level.HIGH)));
 
   private final MedianFilter epilogueBuffer = new MedianFilter(20);
   private final DoubleSubscriber epilogueRuntimeSub =
@@ -76,20 +78,20 @@ public class Controls extends SubsystemBase {
     if (subsystem != null) {
       m_subsystemMap.put(subsystem.getName(), subsystem);
     } else {
-      DriverStation.reportWarning("[Controls] Attempting to register null subsystem!", true);
+      DriverStationBackend.reportWarning("[Controls] Attempting to register null subsystem!", true);
     }
   }
 
-  public static DriverStation.Alliance getAllianceColor() {
+  public static Alliance getAllianceColor() {
     return m_allianceColor;
   }
 
   public static boolean isRedAlliance() {
-    return getAllianceColor() == DriverStation.Alliance.Red;
+    return getAllianceColor() == Alliance.RED;
   }
 
   public static boolean isBlueAlliance() {
-    return getAllianceColor() == DriverStation.Alliance.Blue;
+    return getAllianceColor() == Alliance.BLUE;
   }
 
   private void initSmartDashboard() {
@@ -104,7 +106,7 @@ public class Controls extends SubsystemBase {
     String usbAlertMessage = "The following USB devices are not connected: ";
 
     // TODO: Change this to a loop/array for String.join()
-    if (!DriverStation.isJoystickConnected(USB.driver_xBoxController)) {
+    if (!DriverStationBackend.isJoystickConnected(USB.driver_xBoxController)) {
       usbAlertMessage += String.join(", ", "Driver Xbox Controller");
       alertMap.get("usb").setText(usbAlertMessage);
     }
@@ -189,8 +191,8 @@ public class Controls extends SubsystemBase {
     // This method will be called once per scheduler run
     updateAlerts();
 
-    if (DriverStation.isDisabled()) {
-      DriverStation.getAlliance()
+    if (DriverStationBackend.isDisabled()) {
+      DriverStationBackend.getAlliance()
           .ifPresent(
               a -> {
                 m_allianceColor = a;

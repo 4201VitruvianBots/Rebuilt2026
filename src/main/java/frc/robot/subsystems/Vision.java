@@ -1,24 +1,25 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.DegreesPerSecond;
+import static org.wpilib.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.util.Units;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FIELD.BUMP_ALIGNMENT_TARGETS;
 import frc.robot.constants.VISION;
@@ -168,7 +169,7 @@ public class Vision extends SubsystemBase {
    */
   public boolean processLimelight(VISION.Limelight limelight) {
     String limelightName = limelight.getName();
-    if (DriverStation.isDisabled()) {
+    if (DriverStationBackend.isDisabled()) {
       // TODO: Determine if we change IMUMode to 0 when not disabled for MegaTag2
       LimelightHelpers.SetIMUMode(limelightName, 1);
 
@@ -201,7 +202,7 @@ public class Vision extends SubsystemBase {
         0,
         0);
     LimelightHelpers.PoseEstimate limelightMeasurement;
-    if (DriverStation.isDisabled()) {
+    if (DriverStationBackend.isDisabled()) {
       // Use MegaTag1 when the robot is disabled to set the initial robot pose
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     } else {
@@ -233,7 +234,7 @@ public class Vision extends SubsystemBase {
       assert limelightMeasurement != null;
 
       // Reset the Swerve Pose with MegaTag1 if we are disabled
-      if (DriverStation.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
+      if (DriverStationBackend.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
       } else {
         m_swerveDriveTrain.addVisionMeasurement(
@@ -248,7 +249,7 @@ public class Vision extends SubsystemBase {
       VISION.Limelight limelight, LimelightHelpers.PoseEstimate poseEstimate) {
     if (poseEstimate == null) {
       if (RobotBase.isReal())
-        DriverStation.reportWarning(limelight.getName() + " is not connected", true);
+        DriverStationBackend.reportWarning(limelight.getName() + " is not connected", true);
       return false;
     } else {
       // Filter out bad AprilTag vision estimates for both MegaTag1 and MegaTag2
@@ -329,7 +330,7 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
-    if (DriverStation.isAutonomous()) {
+    if (DriverStationBackend.isAutonomous()) {
       return Math.abs(getAngleToTarget().getDegrees()) < 2.0;
     } else {
       return Math.abs(getAngleToTarget().getDegrees()) < 0.5;
@@ -417,7 +418,7 @@ public class Vision extends SubsystemBase {
     }
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
-    if (DriverStation.isFMSAttached() && DriverStation.isAutonomous() && !matchStarted) {
+    if (DriverStationBackend.isFMSAttached() && DriverStationBackend.isAutonomous() && !matchStarted) {
       matchStarted = true;
     }
   }

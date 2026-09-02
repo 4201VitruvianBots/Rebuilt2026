@@ -1,26 +1,28 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Volts;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.RPM;
+import static org.wpilib.units.Units.Radians;
+import static org.wpilib.units.Units.Volts;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
-import edu.wpi.first.math.interpolation.Interpolator;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Transform2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Twist2d;
+import org.wpilib.math.interpolation.InterpolatingTreeMap;
+import org.wpilib.math.interpolation.Interpolator;
+import org.wpilib.math.interpolation.InverseInterpolator;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.driverstation.GenericHID.RumbleType;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.command2.button.CommandGenericHID;
+
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
@@ -79,7 +81,7 @@ public class Shoot extends Command {
   private final Vision m_vision;
   private final Flywheel m_flywheel;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
-  private CommandXboxController m_driverController;
+  private CommandGamepad m_driverController;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
   private DoubleSupplier m_hoodAngleShift = () -> 0.0;
@@ -105,7 +107,7 @@ public class Shoot extends Command {
       Flywheel flywheel,
       Hood shooterHood,
       Vision vision,
-      CommandXboxController driverController,
+      CommandGamepad driverController,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput,
@@ -151,13 +153,13 @@ public class Shoot extends Command {
   public void execute() {
     // Calculate estimated pose while accounting for phase delay
     Pose2d estimatedPose = m_swerveDrivetrain.getState().Pose;
-    ChassisSpeeds robotRelativeVelocity = m_swerveDrivetrain.getState().Speeds;
+    ChassisVelocities robotRelativeVelocity = m_swerveDrivetrain.getState().Velocity;
     estimatedPose =
-        estimatedPose.exp(
+        estimatedPose.plus(
             new Twist2d(
-                robotRelativeVelocity.vxMetersPerSecond * phaseDelay,
-                robotRelativeVelocity.vyMetersPerSecond * phaseDelay,
-                robotRelativeVelocity.omegaRadiansPerSecond * phaseDelay));
+                robotRelativeVelocity.vx * phaseDelay,
+                robotRelativeVelocity.vy * phaseDelay,
+                robotRelativeVelocity.omega * phaseDelay).exp());
 
     // Calculate distance from launcher to m_goal
     Pose2d launcherPosition = estimatedPose.transformBy(robotToLauncher);
@@ -166,8 +168,8 @@ public class Shoot extends Command {
 
     // Calculate field relative launcher velocity
     // This isn't actually the launcherVelocity given it won't account for angular velocity of robot
-    double launcherVelocityX = robotRelativeVelocity.vxMetersPerSecond;
-    double launcherVelocityY = robotRelativeVelocity.vyMetersPerSecond;
+    double launcherVelocityX = robotRelativeVelocity.vx;
+    double launcherVelocityY = robotRelativeVelocity.vy;
 
     // Account for imparted velocity by robot (launcher) to offset
     double timeOfFlight = shot.timeOfFlight;
@@ -207,14 +209,14 @@ public class Shoot extends Command {
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
         m_driverController.setRumble(
-            RumbleType.kBothRumble, FLYWHEEL.kRumbleStrength); // Null in auto
+            RumbleType.LEFT_RUMBLE, FLYWHEEL.kRumbleStrength); // Null in auto
     } else {
       if (m_driverController != null)
-        m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
+        m_driverController.setRumble(RumbleType.RIGHT_RUMBLE, 0); // Null in auto
     }
 
     Rotation2d moduleAngle = new Rotation2d();
-    moduleAngle = m_swerveDrivetrain.getState().clone().ModuleStates[0].angle;
+    moduleAngle = m_swerveDrivetrain.getState().clone().ModulePositions[0].angle;
     double moduleAngleDelta =
         54
             - Math.abs(
@@ -236,7 +238,7 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     if (m_driverController != null)
-      m_driverController.setRumble(RumbleType.kBothRumble, 0); // Null in auto
+      m_driverController.setRumble(RumbleType.LEFT_RUMBLE, 0); // Null in auto
     m_flywheel.setVoltageOutput(Volts.of(0.0));
     m_flywheel.setIsShooting(false);
   }

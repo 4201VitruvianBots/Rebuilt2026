@@ -1,14 +1,15 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.RPM;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.RPM;
+
+import org.wpilib.math.system.DCMotor;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Distance;
 
 public class FLYWHEEL {
   public static final double kP = 19.1; // These worked for WoodBot but will need to be retuned

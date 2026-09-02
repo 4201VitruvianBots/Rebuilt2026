@@ -1,15 +1,15 @@
 package frc.team4201.lib.simulation;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.DistanceUnit;
-import edu.wpi.first.units.measure.Dimensionless;
-import edu.wpi.first.units.measure.Per;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
+import org.wpilib.units.AngleUnit;
+import org.wpilib.units.DistanceUnit;
+import org.wpilib.units.measure.Dimensionless;
+import org.wpilib.units.measure.Per;
+import org.wpilib.system.RobotController;
+import org.wpilib.simulation.LinearSystemSim;
 
 public class TalonFXSim {
 

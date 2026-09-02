@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
+import static org.wpilib.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.Second;
+import static org.wpilib.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -14,25 +14,26 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.controller.PIDController;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.numbers.N1;
+import org.wpilib.math.numbers.N3;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.system.Notifier;
+import org.wpilib.system.RobotController;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
@@ -103,8 +104,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private TrajectoryUtils m_trajectoryUtils;
 
   /** Swerve request to apply during robot-centric path following */
-  private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
-      new SwerveRequest.ApplyRobotSpeeds();
+  private final SwerveRequest.ApplyRobotVelocity m_pathApplyRobotSpeeds =
+      new SwerveRequest.ApplyRobotVelocity();
 
   // TODO: Check if a constructor with different PID values is needed for different use cases
   // PID Constants taken from Shoot(OnTheMove)
@@ -200,7 +201,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       m_trajectoryUtils =
           new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
-      DriverStation.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
+      DriverStationBackend.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
   }
 
@@ -257,8 +258,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     }
   }
 
-  public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-    setControl(m_pathApplyRobotSpeeds.withSpeeds(chassisSpeeds));
+  public void setChassisSpeeds(ChassisVelocities chassisSpeeds) {
+    setControl(m_pathApplyRobotSpeeds.withVelocity(chassisSpeeds));
   }
 
   public void setChassisSpeedsWithHeading(
@@ -271,10 +272,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   public void setChassisSpeedsAuto(
-      ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
+      ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
     setControl(
         m_pathApplyRobotSpeeds
-            .withSpeeds(chassisSpeeds)
+            .withVelocity(chassisSpeeds)
             .withWheelForceFeedforwardsX(driveFeedforwards.robotRelativeForcesXNewtons())
             .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
   }
@@ -283,7 +284,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       new Builder(
               this,
               () -> this.getState().Pose,
-              () -> this.getState().Speeds,
+              () -> this.getState().Velocity,
               this::setChassisSpeeds,
               new PIDController(
                   getAutoTranslationPIDConstants().kP,
@@ -293,7 +294,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
                   getAutoRotationPIDConstants().kP,
                   getAutoRotationPIDConstants().kI,
                   getAutoRotationPIDConstants().kD),
-              new PIDController(2.0, 0.0, 0, Robot.kDefaultPeriod))
+              new PIDController(2.0, 0.0, 0, Robot.DEFAULT_PERIOD))
           .withDefaultShouldFlip();
 
   public AngularVelocity getGyroYawRate() {
@@ -312,36 +313,36 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     switch (type) {
       case ALL -> {
         for (int i = 0; i < driveMotors.length; i++) {
-          driveMotors[i].setNeutralMode(neutralModeValue);
-          steerMotors[i].setNeutralMode(neutralModeValue);
+          driveMotors[i].configNeutralMode(neutralModeValue);
+          steerMotors[i].configNeutralMode(neutralModeValue);
         }
       }
       case DRIVE -> {
         for (var motor : driveMotors) {
-          motor.setNeutralMode(neutralModeValue);
+          motor.configNeutralMode(neutralModeValue);
         }
       }
       case STEER -> {
         for (var motor : steerMotors) {
-          motor.setNeutralMode(neutralModeValue);
+          motor.configNeutralMode(neutralModeValue);
         }
       }
     }
   }
 
-  public LinearVelocity getVelocityMagnitude(ChassisSpeeds cs) {
+  public LinearVelocity getVelocityMagnitude(ChassisVelocities cs) {
     return MetersPerSecond.of(
-        new Translation2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond).getNorm());
+        new Translation2d(cs.vx, cs.vy).getNorm());
   }
 
-  public Rotation2d getPathVelocityHeading(ChassisSpeeds cs, Pose2d target) {
+  public Rotation2d getPathVelocityHeading(ChassisVelocities cs, Pose2d target) {
     if (getVelocityMagnitude(cs).in(MetersPerSecond) < 0.25) {
       var diff = target.minus(getState().Pose).getTranslation();
       return (diff.getNorm() < 0.01)
           ? target.getRotation()
           : diff.getAngle(); // .rotateBy(Rotation2d.k180deg);
     }
-    return new Rotation2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond);
+    return new Rotation2d(cs.vx, cs.vy);
   }
 
   public TrajectoryUtils getTrajectoryUtils() {
@@ -353,11 +354,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     try {
       return RobotConfig.fromGUISettings();
     } catch (IOException e) {
-      DriverStation.reportWarning(
+      DriverStationBackend.reportWarning(
           "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     } catch (ParseException e) {
-      DriverStation.reportWarning(
+      DriverStationBackend.reportWarning(
           "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     }
@@ -460,12 +461,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
      * Otherwise, only check and apply the operator perspective if the DS is disabled.
      * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
      */
-    if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-      DriverStation.getAlliance()
+    if (!m_hasAppliedOperatorPerspective || DriverStationBackend.isDisabled()) {
+      DriverStationBackend.getAlliance()
           .ifPresent(
               allianceColor -> {
                 setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
+                    allianceColor == Alliance.RED
                         ? kRedAlliancePerspectiveRotation
                         : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
@@ -494,13 +495,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   @Override
   public void addVisionMeasurement(Pose2d pose, double timestampSeconds) {
-    super.addVisionMeasurement(pose, Utils.fpgaToCurrentTime(timestampSeconds));
+    super.addVisionMeasurement(pose, timestampSeconds);
   }
 
   @Override
   public void addVisionMeasurement(
       Pose2d pose, double timestampSeconds, Matrix<N3, N1> standardDevs) {
-    super.addVisionMeasurement(pose, Utils.fpgaToCurrentTime(timestampSeconds), standardDevs);
+    super.addVisionMeasurement(pose, timestampSeconds, standardDevs);
   }
 
   @Override

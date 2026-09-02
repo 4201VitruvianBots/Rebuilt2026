@@ -4,7 +4,7 @@
 
 package frc.robot.commands.autos;
 
-import edu.wpi.first.wpilibj2.command.*;
+import org.wpilib.command2.*;
 import frc.robot.commands.Fire;
 import frc.robot.commands.JostleIntake;
 import frc.robot.commands.Shoot;

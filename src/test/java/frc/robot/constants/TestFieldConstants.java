@@ -2,9 +2,10 @@ package frc.robot.constants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
 import frc.robot.subsystems.Controls;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class TestFieldConstants {
     FIELD.initializeConstants();
 
     // Test Red Alliance
-    TestUtils.setPrivateField(controls, "m_allianceColor", DriverStation.Alliance.Red);
+    TestUtils.setPrivateField(controls, "m_allianceColor", Alliance.RED);
     FIELD.updateConstants();
     Map<Pose2d, FIELD.SECTOR> redSectors = new HashMap<>();
     redSectors.put(new Pose2d(1, 1, Rotation2d.kZero), FIELD.SECTOR.BLUE_LEFT);
@@ -47,7 +48,7 @@ public class TestFieldConstants {
         });
 
     // Test Blue Alliance
-    TestUtils.setPrivateField(controls, "m_allianceColor", DriverStation.Alliance.Blue);
+    TestUtils.setPrivateField(controls, "m_allianceColor", Alliance.BLUE);
     FIELD.updateConstants();
     Map<Pose2d, FIELD.SECTOR> blueSectors = new HashMap<>();
     blueSectors.put(new Pose2d(1, 1, Rotation2d.kZero), FIELD.SECTOR.BLUE_RIGHT);
@@ -81,7 +82,7 @@ public class TestFieldConstants {
     assertEquals(FIELD.TARGET.RED_RIGHT_PASS, FIELD.TARGET.CURRENT_TARGET);
 
     // Test Blue Alliance
-    TestUtils.setPrivateField(controls, "m_allianceColor", DriverStation.Alliance.Blue);
+    TestUtils.setPrivateField(controls, "m_allianceColor", Alliance.BLUE);
     FIELD.updateConstants();
 
     FIELD.updateCurrentSector(new Pose2d(1, 3, Rotation2d.kZero));

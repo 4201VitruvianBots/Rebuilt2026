@@ -4,24 +4,24 @@
 
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.Meters;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.IntegerPublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Rotation3d;
+import org.wpilib.math.geometry.Transform3d;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.net.PortForwarder;
+import org.wpilib.networktables.BooleanPublisher;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.IntegerPublisher;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
 
 public final class VISION {
   public enum CAMERA_SERVER {

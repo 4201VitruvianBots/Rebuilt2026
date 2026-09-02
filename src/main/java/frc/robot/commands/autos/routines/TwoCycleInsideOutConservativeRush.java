@@ -4,8 +4,8 @@
 
 package frc.robot.commands.autos.routines;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.PrintCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;

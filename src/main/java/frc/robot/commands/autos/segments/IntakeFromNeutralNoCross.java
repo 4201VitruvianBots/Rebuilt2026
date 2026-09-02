@@ -4,17 +4,17 @@
 
 package frc.robot.commands.autos.segments;
 
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Meters;
 
 import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelDeadlineGroup;
+import org.wpilib.command2.PrintCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
@@ -48,7 +48,7 @@ public class IntakeFromNeutralNoCross extends Auto {
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump"))
               );
     } catch (Exception e) {
-      DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
+      DriverStationBackend.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

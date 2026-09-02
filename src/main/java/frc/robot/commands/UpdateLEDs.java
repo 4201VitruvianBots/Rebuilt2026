@@ -4,12 +4,12 @@
 
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Seconds;
+import static org.wpilib.units.Units.Seconds;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.Command;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.command2.Command;
 import frc.robot.constants.LED.LED_STATES;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Intake;
@@ -54,10 +54,10 @@ public class UpdateLEDs extends Command {
             .map(currentShift -> currentShift.equals(HubTracker.Shift.ENDGAME))
             .orElse(false);
     if (shiftEnd) {
-      if ((HubTracker.isActive(Alliance.Red) && !HubTracker.isActiveNext(Alliance.Red))
+      if ((HubTracker.isActive(Alliance.RED) && !HubTracker.isActiveNext(Alliance.RED))
           && !isEndgame) {
         m_led.setState(LED_STATES.RED_SHIFT_END);
-      } else if ((HubTracker.isActive(Alliance.Blue) && !HubTracker.isActiveNext(Alliance.Blue))
+      } else if ((HubTracker.isActive(Alliance.BLUE) && !HubTracker.isActiveNext(Alliance.BLUE))
           && !isEndgame) {
         m_led.setState(LED_STATES.BLUE_SHIFT_END);
       }
@@ -67,7 +67,7 @@ public class UpdateLEDs extends Command {
           () -> (m_flywheel.getAbsoluteRPMerror() / m_flywheel.getRPMSetpoint()));
     } else if (MathUtil.applyDeadband(Math.abs(m_intake.getPercentOutput()), 0.05) != 0.0) {
       m_led.setState(LED_STATES.INTAKING);
-    } else if (DriverStation.isEnabled()) {
+    } else if (RobotState.isEnabled()) {
       m_led.setState(LED_STATES.IDLE);
     } else {
       m_led.setState(LED_STATES.DISABLED);

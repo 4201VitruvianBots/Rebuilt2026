@@ -1,8 +1,9 @@
 package frc.team4201.lib.geometry;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 
 public class LinkedAprilTag {
   private final String tagName;
@@ -40,8 +41,8 @@ public class LinkedAprilTag {
   }
 
   private boolean isBlue() {
-    if (DriverStation.getAlliance().isPresent()) {
-      return DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue);
+    if (DriverStationBackend.getAlliance().isPresent()) {
+      return DriverStationBackend.getAlliance().get().equals(Alliance.BLUE);
     } else {
       return false;
     }

@@ -1,14 +1,14 @@
 package frc.team4201.lib.logging;
 
-import static edu.wpi.first.units.Units.Hertz;
+import static org.wpilib.units.Units.Hertz;
 
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.epilogue.CustomLoggerFor;
-import edu.wpi.first.epilogue.Epilogue;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.logging.ClassSpecificLogger;
-import edu.wpi.first.epilogue.logging.EpilogueBackend;
+import org.wpilib.epilogue.CustomLoggerFor;
+import org.wpilib.epilogue.Epilogue;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.logging.ClassSpecificLogger;
+import org.wpilib.epilogue.logging.EpilogueBackend;
 import frc.robot.constants.CAN;
 import java.util.LinkedHashMap;
 import java.util.Objects;

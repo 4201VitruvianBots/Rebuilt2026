@@ -1,6 +1,6 @@
 package frc.team4201.lib.examples;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static org.wpilib.units.Units.DegreesPerSecond;
 
 import frc.team4201.lib.command.LoggedSubsystem;
 import frc.team4201.lib.command.SwerveSubsystem;

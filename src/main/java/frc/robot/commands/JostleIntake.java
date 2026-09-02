@@ -4,12 +4,12 @@
 
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Seconds;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Seconds;
 
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.system.Timer;
+import org.wpilib.command2.Command;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.subsystems.IntakePivot;

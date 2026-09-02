@@ -4,18 +4,18 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Percent;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
+import static org.wpilib.units.Units.Percent;
+import static org.wpilib.units.Units.Second;
+import static org.wpilib.units.Units.Seconds;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.LEDPattern.GradientType;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.hardware.led.AddressableLED;
+import org.wpilib.hardware.led.AddressableLEDBuffer;
+import org.wpilib.hardware.led.LEDPattern;
+import org.wpilib.hardware.led.LEDPattern.GradientType;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.util.Color;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.LED;
 import frc.robot.constants.LED.LED_STATES;
 import frc.robot.simulation.LEDSim;
@@ -33,7 +33,7 @@ public class LEDs extends SubsystemBase {
   // This allows us to create a buffer larger than the number of LEDs
   private AddressableLEDBuffer workingBuffer;
   private LEDPattern m_currentPattern =
-      LEDPattern.rainbow(255, 127).scrollAtRelativeSpeed(Percent.per(Second).of(50));
+      LEDPattern.rainbow(255, 127).scrollAtRelativeVelocity(Percent.per(Second).of(50));
 
   private LEDSim m_ledSim2d;
 
@@ -43,7 +43,7 @@ public class LEDs extends SubsystemBase {
     m_led.setLength(m_ledBuffer.getLength());
 
     m_led.setData(m_ledBuffer);
-    m_led.start();
+    m_led.setStart(0);
 
     if (RobotBase.isSimulation()) {
       m_ledSim2d = new LEDSim(m_ledBuffer, LEDSim.Layout.HORIZONTAL);
@@ -57,26 +57,26 @@ public class LEDs extends SubsystemBase {
       switch (currentState) {
         case DISABLED:
           base = LEDPattern.rainbow(255, 127);
-          m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+          m_currentPattern = base.scrollAtRelativeVelocity(Percent.per(Second).of(50));
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
           break;
         case IDLE:
-          base = LEDPattern.gradient(GradientType.kContinuous, Color.kGreen, Color.kBlack);
-          m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+          base = LEDPattern.gradient(GradientType.CONTINUOUS, Color.GREEN, Color.BLACK);
+          m_currentPattern = base.scrollAtRelativeVelocity(Percent.per(Second).of(50));
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
           break;
         case IDLE_CAN_ERROR:
-          base = LEDPattern.gradient(GradientType.kContinuous, Color.kOrange, Color.kBlack);
-          m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(50));
+          base = LEDPattern.gradient(GradientType.CONTINUOUS, Color.ORANGE, Color.BLACK);
+          m_currentPattern = base.scrollAtRelativeVelocity(Percent.per(Second).of(50));
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount * 2);
           break;
         case RED_SHIFT_END:
-          base = LEDPattern.solid(Color.kRed);
+          base = LEDPattern.solid(Color.RED);
           m_currentPattern = base.breathe(Seconds.of(0.5));
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
           break;
         case BLUE_SHIFT_END:
-          base = LEDPattern.solid(Color.kBlue);
+          base = LEDPattern.solid(Color.BLUE);
           m_currentPattern = base.breathe(Seconds.of(0.5));
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
           break;
@@ -85,18 +85,18 @@ public class LEDs extends SubsystemBase {
               LEDPattern.steps(
                   Map.of(
                       0,
-                      Color.kBlack,
+                      Color.BLACK,
                       0.25,
-                      Color.kYellow,
+                      Color.YELLOW,
                       0.5,
-                      Color.kBlack,
+                      Color.BLACK,
                       0.75,
-                      Color.kYellow)); // Yeah, you know what it is
-          m_currentPattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(100));
+                      Color.YELLOW)); // Yeah, you know what it is
+          m_currentPattern = base.scrollAtRelativeVelocity(Percent.per(Second).of(100));
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);
           break;
         case SHOOTING:
-          base = LEDPattern.steps(Map.of(0, Color.kYellow, 0.33, Color.kRed, 0.67, Color.kBlue));
+          base = LEDPattern.steps(Map.of(0, Color.YELLOW, 0.33, Color.RED, 0.67, Color.BLUE));
           LEDPattern mask = LEDPattern.progressMaskLayer(() -> 1 - shooterProgress.getAsDouble());
           m_currentPattern = base.mask(mask);
           workingBuffer = new AddressableLEDBuffer(LED.kLEDCount);

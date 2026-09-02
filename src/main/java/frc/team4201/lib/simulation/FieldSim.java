@@ -2,17 +2,17 @@ package frc.team4201.lib.simulation;
 
 import static java.util.Arrays.stream;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.ProtobufPublisher;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.trajectory.Trajectory;
+import org.wpilib.networktables.NetworkTable;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.ProtobufPublisher;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.smartdashboard.Field2d;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.SubsystemBase;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

@@ -1,12 +1,12 @@
 package frc.team4201.lib.simulation.visualization;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.*;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.smartdashboard.*;
 import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
 
 /** Class to represent an elevator using {@link Mechanism2d} */
@@ -70,7 +70,7 @@ public class Elevator2d implements AutoCloseable {
    * robot
    */
   public void generateSubDisplay() {
-    Distance totalDistance = m_config.m_superStructureOffset.copy();
+    Distance totalDistance = m_config.m_superStructureOffset;
     for (int i = 0; i < m_config.m_numberOfStages; i++) {
       totalDistance = totalDistance.plus(m_config.m_stageMaxLengths[i]);
     }
@@ -208,7 +208,7 @@ public class Elevator2d implements AutoCloseable {
 
     switch (m_config.m_type) {
       case CONTINUOUS:
-        var subHeight = height.copy();
+        var subHeight = height;
         for (int i = 0; i < m_config.m_numberOfStages; i++) {
           if (m_config.m_stageMaxLengths[i].lte(subHeight)) {
             m_elevatorStages[i].setLength(m_config.m_stageMaxLengths[i].in(Meters));

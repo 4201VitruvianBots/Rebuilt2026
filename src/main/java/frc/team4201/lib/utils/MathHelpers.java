@@ -1,9 +1,9 @@
 package frc.team4201.lib.utils;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Transform2d;
+import org.wpilib.math.geometry.Translation2d;
 
 public class MathHelpers {
   public static final Pose2d kPose2dZero = new Pose2d();

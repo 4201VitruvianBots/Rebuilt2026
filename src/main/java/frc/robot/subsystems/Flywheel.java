@@ -4,14 +4,14 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amp;
-import static edu.wpi.first.units.Units.Joules;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.Watts;
+import static org.wpilib.units.Units.Amp;
+import static org.wpilib.units.Units.Joules;
+import static org.wpilib.units.Units.RPM;
+import static org.wpilib.units.Units.Rotations;
+import static org.wpilib.units.Units.RotationsPerSecond;
+import static org.wpilib.units.Units.Second;
+import static org.wpilib.units.Units.Volts;
+import static org.wpilib.units.Units.Watts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -22,24 +22,25 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Energy;
-import edu.wpi.first.units.measure.Power;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.math.system.Models;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Current;
+import org.wpilib.units.measure.Energy;
+import org.wpilib.units.measure.Power;
+import org.wpilib.units.measure.Voltage;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.system.RobotController;
+import org.wpilib.simulation.FlywheelSim;
+import org.wpilib.sysid.SysIdRoutineLog;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
@@ -71,8 +72,7 @@ public class Flywheel extends SubsystemBase {
   public final DoublePublisher m_rpmPublisher;
 
   private final FlywheelSim m_shooterMotorSim =
-      new FlywheelSim(
-          LinearSystemId.createFlywheelSystem(
+      new FlywheelSim(Models.flywheelFromPhysicalConstants(
               FLYWHEEL.gearbox, FLYWHEEL.kInertia, FLYWHEEL.gearRatio),
           FLYWHEEL.gearbox);
   private final TalonFXSimState m_simState;
@@ -238,7 +238,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public boolean isAtRPMsetpoint() {
-    if (DriverStation.isAutonomous()) {
+    if (RobotState.isAutonomous()) {
       return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdAuto;
     } else {
       return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdTeleop;
@@ -280,8 +280,8 @@ public class Flywheel extends SubsystemBase {
     m_shooterMotorSim.update(0.02);
 
     m_simState.setRawRotorPosition(
-        Rotations.of(m_shooterMotorSim.getAngularVelocityRPM()).times(FLYWHEEL.gearRatio));
+        Rotations.of(m_shooterMotorSim.getAngularVelocity()).times(FLYWHEEL.gearRatio));
     m_simState.setRotorVelocity(
-        RPM.of(m_shooterMotorSim.getAngularVelocityRPM()).times(FLYWHEEL.gearRatio));
+        RPM.of(m_shooterMotorSim.getAngularVelocity()).times(FLYWHEEL.gearRatio));
   }
 }

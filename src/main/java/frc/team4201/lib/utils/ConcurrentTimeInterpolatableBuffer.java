@@ -1,8 +1,7 @@
 package frc.team4201.lib.utils;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.interpolation.Interpolatable;
-import edu.wpi.first.math.interpolation.Interpolator;
+import org.wpilib.math.interpolation.Interpolatable;
+import org.wpilib.math.interpolation.Interpolator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentNavigableMap;
@@ -59,7 +58,11 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
    */
   public static ConcurrentTimeInterpolatableBuffer<Double> createDoubleBuffer(
       double historySizeSeconds) {
-    return new ConcurrentTimeInterpolatableBuffer<>(MathUtil::interpolate, historySizeSeconds);
+    return new ConcurrentTimeInterpolatableBuffer<>(ConcurrentTimeInterpolatableBuffer::interpolate, historySizeSeconds);
+  }
+
+  public static double interpolate(double startValue, double endValue, double t) {
+    return startValue + (endValue - startValue) * Math.clamp(t, 0, 1);
   }
 
   /**

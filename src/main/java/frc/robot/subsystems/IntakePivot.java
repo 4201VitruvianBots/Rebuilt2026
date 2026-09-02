@@ -4,12 +4,12 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Kilograms;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.Radians;
+import static org.wpilib.units.Units.RadiansPerSecond;
+import static org.wpilib.units.Units.Rotations;
 
 import java.util.function.DoubleSupplier;
 
@@ -24,21 +24,21 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.system.RobotController;
+import org.wpilib.simulation.SingleJointedArmSim;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
@@ -133,7 +133,7 @@ public class IntakePivot extends SubsystemBase {
   public void setAngle(Angle angle) {
     m_desiredAngle =
         Degrees.of(
-            MathUtil.clamp(
+            Math.clamp(
                 angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
   }
 
@@ -177,7 +177,7 @@ public class IntakePivot extends SubsystemBase {
     return new InstantCommand(() -> m_manualOverride = true)
         .andThen(
             this.runEnd(
-                () -> m_motor.set(-speed.getAsDouble()),
+                () -> m_motor.setThrottle(-speed.getAsDouble()),
                 () -> {
                   m_manualOverride = false;
                   m_desiredAngle = getAngle();
@@ -199,12 +199,12 @@ public class IntakePivot extends SubsystemBase {
 
     m_pivotSim.update(0.02);
 
-    m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngleRads()));
-    m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
+    m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngle()));
+    m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
 
     // Update the pivotEncoder simState
-    m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngleRads()));
-    m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocityRadPerSec()));
+    m_cancoderSimState.setRawPosition(Radians.of(m_pivotSim.getAngle()));
+    m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
   }
 
   public void testInit() {

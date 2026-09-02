@@ -1,17 +1,20 @@
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.Meters;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
+import org.wpilib.vision.apriltag.AprilTagFields;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+
 import frc.robot.subsystems.Controls;
 import frc.team4201.lib.geometry.FieldRectangle2d;
 import frc.team4201.lib.geometry.LinkedAprilTag;
@@ -41,7 +44,7 @@ public class FIELD {
   private static Distance FIELD_LENGTH;
   private static Distance FIELD_WIDTH;
   private static Translation2d CENTER;
-  private static DriverStation.Alliance ALLIANCE;
+  private static Alliance ALLIANCE;
   private static SECTOR[][] SECTOR_MAP;
 
   private FIELD() {
@@ -49,7 +52,7 @@ public class FIELD {
   }
 
   public static void initializeConstants() {
-    if (DriverStation.isFMSAttached()) {
+    if (DriverStationBackend.isFMSAttached()) {
       fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     } else {
       fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
@@ -93,7 +96,7 @@ public class FIELD {
     HUB.updateFields();
     TOWER.updateFields();
     ALLIANCE = Controls.getAllianceColor();
-    if (ALLIANCE == DriverStation.Alliance.Blue) {
+    if (ALLIANCE == Alliance.BLUE) {
       SECTOR_MAP = SECTOR_MAP_BLUE;
     } else {
       SECTOR_MAP = SECTOR_MAP_RED;

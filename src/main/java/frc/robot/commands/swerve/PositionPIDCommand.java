@@ -4,17 +4,17 @@
 
 package frc.robot.commands.swerve;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.networktables.BooleanPublisher;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.Time;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.button.Trigger;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -53,7 +53,7 @@ public class PositionPIDCommand extends Command {
 
               var speed =
                   m_swerve
-                      .getVelocityMagnitude(m_swerve.getState().Speeds)
+                      .getVelocityMagnitude(m_swerve.getState().Velocity)
                       .lt(AUTO_ALIGN.kSpeedTolerance);
 
               System.out.println(
@@ -71,7 +71,7 @@ public class PositionPIDCommand extends Command {
         .withTimeout(timeout)
         .finallyDo(
             () -> {
-              m_swerve.setChassisSpeeds(new ChassisSpeeds());
+              m_swerve.setChassisSpeeds(new ChassisVelocities());
               // m_swerve.lockModules();
             });
   }

@@ -1,10 +1,13 @@
 package frc.team4201.lib.utils;
 
-import static edu.wpi.first.units.Units.Seconds;
+import static org.wpilib.units.Units.Seconds;
 
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import org.wpilib.units.measure.Time;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+
 import java.util.Optional;
 
 public class HubTracker {
@@ -79,7 +82,7 @@ public class HubTracker {
    * Alliance}. Will return {@code false} if disabled or in between auto and teleop.
    */
   public static boolean isActive(Shift shift) {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Optional<Alliance> alliance = DriverStationBackend.getAlliance();
     return alliance.isPresent() && isActive(alliance.get(), shift);
   }
 
@@ -89,7 +92,7 @@ public class HubTracker {
    */
   public static boolean isActive() {
     Optional<Shift> currentShift = getCurrentShift();
-    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Optional<Alliance> alliance = DriverStationBackend.getAlliance();
     return currentShift.isPresent()
         && alliance.isPresent()
         && isActive(alliance.get(), currentShift.get());
@@ -110,7 +113,7 @@ public class HubTracker {
    */
   public static boolean isActiveNext() {
     Optional<Shift> nextShift = getNextShift();
-    Optional<Alliance> alliance = DriverStation.getAlliance();
+    Optional<Alliance> alliance = DriverStationBackend.getAlliance();
     return nextShift.isPresent()
         && alliance.isPresent()
         && isActive(alliance.get(), nextShift.get());
@@ -122,13 +125,13 @@ public class HubTracker {
    * available.
    */
   public static Optional<Alliance> getAutoWinner() {
-    String msg = DriverStation.getGameSpecificMessage();
+    String msg = DriverStationBackend.getGameData().get();
     char msgChar = msg.length() > 0 ? msg.charAt(0) : ' ';
     switch (msgChar) {
       case 'B':
-        return Optional.of(Alliance.Blue);
+        return Optional.of(Alliance.BLUE);
       case 'R':
-        return Optional.of(Alliance.Red);
+        return Optional.of(Alliance.RED);
       default:
         return Optional.empty();
     }
@@ -139,12 +142,12 @@ public class HubTracker {
    * if in between auto and teleop
    */
   public static double getMatchTime() {
-    if (DriverStation.isAutonomous()) {
-      if (DriverStation.getMatchTime() < 0) return DriverStation.getMatchTime();
-      return 20 - DriverStation.getMatchTime();
-    } else if (DriverStation.isTeleop()) {
-      if (DriverStation.getMatchTime() < 0) return DriverStation.getMatchTime();
-      return 160 - DriverStation.getMatchTime();
+    if (RobotState.isAutonomous()) {
+      if (DriverStationBackend.getMatchTime() < 0) return DriverStationBackend.getMatchTime();
+      return 20 - DriverStationBackend.getMatchTime();
+    } else if (DriverStationBackend.isTeleop()) {
+      if (DriverStationBackend.getMatchTime() < 0) return DriverStationBackend.getMatchTime();
+      return 160 - DriverStationBackend.getMatchTime();
     }
     return -1;
   }

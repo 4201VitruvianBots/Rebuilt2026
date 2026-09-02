@@ -8,13 +8,15 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FlippingUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.*;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.trajectory.Trajectory;
+import org.wpilib.math.trajectory.TrajectoryConfig;
+import org.wpilib.math.trajectory.TrajectoryGenerator;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.command2.*;
 import frc.team4201.lib.command.SwerveSubsystem;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -59,7 +61,7 @@ public class TrajectoryUtils {
       return generatePPHolonomicCommand(
           PathPlannerPath.fromPathFile(pathName), this::flipPathByAlliance);
     } catch (Exception e) {
-      DriverStation.reportError(
+      DriverStationBackend.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -77,7 +79,7 @@ public class TrajectoryUtils {
     try {
       return generatePPHolonomicCommand(PathPlannerPath.fromPathFile(pathName), flipPath);
     } catch (Exception e) {
-      DriverStation.reportError(
+      DriverStationBackend.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -106,7 +108,7 @@ public class TrajectoryUtils {
             new FollowPathCommand(
                     path,
                     () -> m_swerveDrive.getState().Pose,
-                    () -> m_swerveDrive.getState().Speeds,
+                    () -> m_swerveDrive.getState().Velocity,
                     m_swerveDrive::setChassisSpeedsAuto,
                     new PPHolonomicDriveController(
                         m_swerveDrive.getAutoTranslationPIDConstants(),
@@ -139,7 +141,7 @@ public class TrajectoryUtils {
     try {
       return resetRobotPoseAuto(PathPlannerPath.fromPathFile(pathName), flipPose);
     } catch (Exception e) {
-      DriverStation.reportError(
+      DriverStationBackend.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -255,8 +257,8 @@ public class TrajectoryUtils {
   }
 
   private boolean flipPathByAlliance() {
-    return DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
-        == DriverStation.Alliance.Red;
+    return DriverStationBackend.getAlliance().orElse(Alliance.BLUE)
+        == Alliance.RED;
   }
 
   /** Class for setting {@link TrajectoryUtils} settings */
