@@ -90,7 +90,8 @@ public class FLYWHEEL {
       STOWED(Degrees.of(0.0)),
       HUB(Degrees.of(0.0)), // Old value from v1: 1.0
       TOWER(Degrees.of(8.3)),
-      PASSING(Degrees.of(17.5));
+      PASSING(Degrees.of(17.5)),
+      REVERSE(Degrees.of(30.0)); //Absolutely made up value 
 
       private final Angle angle;
 

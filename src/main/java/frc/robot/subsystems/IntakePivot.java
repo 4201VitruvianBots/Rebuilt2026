@@ -92,7 +92,7 @@ public class IntakePivot extends SubsystemBase {
     // config.Slot0.kS = PIVOT.kS;
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
-    // config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     // config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     // config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
