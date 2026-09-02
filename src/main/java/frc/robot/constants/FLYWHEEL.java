@@ -101,6 +101,7 @@ public class FLYWHEEL {
       TOWER(Degrees.of(8.3)),
       PASSING(Degrees.of(17.5)),
       FULL(Degrees.of(19.0));
+      REVERSE(Degrees.of(30.0)); //Absolutely made up value 
 
 
       private final Angle angle;
