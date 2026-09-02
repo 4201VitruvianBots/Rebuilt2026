@@ -26,29 +26,29 @@
     {
       "type": "rotation",
       "rotation_radians": 4.71238898038469,
-      "t_ratio": 0.20803960695938764,
+      "t_ratio": 0.2080396069593877,
       "profiled_rotation": true
     },
     {
       "type": "event_trigger",
-      "t_ratio": 0.6141930342886777,
+      "t_ratio": 0.6141930342886774,
       "lib_key": "enableIntake"
     },
     {
       "type": "translation",
-      "x_meters": 9.019749902109183,
-      "y_meters": 2.9197032476374725,
+      "x_meters": 9.92829666469911,
+      "y_meters": 2.6168543267741624,
       "intermediate_handoff_radius_meters": 0.20000000000000007
     },
     {
       "type": "waypoint",
       "translation_target": {
-        "x_meters": 11.441184928904967,
-        "y_meters": 0.6732155872090342,
+        "x_meters": 5.939429533221511,
+        "y_meters": 0.6479781771370909,
         "intermediate_handoff_radius_meters": 0.35
       },
       "rotation_target": {
-        "rotation_radians": 0.0,
+        "rotation_radians": 3.12699369591672,
         "profiled_rotation": true
       }
     }

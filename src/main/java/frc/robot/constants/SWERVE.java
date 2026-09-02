@@ -45,6 +45,10 @@ public class SWERVE {
   public static final AngularVelocity kMaxRotation =
       RotationsPerSecond.of(Math.PI * 0.3); // Temporary to reduce speed (original value 2.0).
 
+  public static final PIDConstants autoTranslationConstants = new PIDConstants(2, 0, 0);
+  public static final PIDConstants autoRotationConstants = new PIDConstants(1, 0, 0);
+  public static final PIDConstants autoCrossTrackConstants = new PIDConstants(0.2, 0, 0);
+
   // Constants needed for auto align
   // TODO: Figure out where these numbers are coming from and if we need to change them.
   public class AUTO_ALIGN {

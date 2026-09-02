@@ -43,6 +43,8 @@ public interface SwerveSubsystem extends Subsystem {
    */
   PIDConstants getAutoRotationPIDConstants();
 
+  PIDConstants getAutoCrossTrackPIDConstants();
+
   /**
    * Function to get the CTRE SwerveDriveState. Used to get the Robot's {@link Pose2d}.
    *

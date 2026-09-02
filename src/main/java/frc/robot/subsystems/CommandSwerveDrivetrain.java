@@ -13,6 +13,7 @@ import frc.robot.Robot;
 import frc.robot.lib.BLine.FollowPath;
 import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.bline.PIDConstants;
+import org.wpilib.command2.Commands;
 import org.wpilib.command2.InstantCommand;
 import org.wpilib.driverstation.*;
 import org.wpilib.math.controller.PIDController;
@@ -40,6 +41,7 @@ import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -164,7 +166,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               getAutoRotationPIDConstants().kP(),
               getAutoRotationPIDConstants().kI(),
               getAutoRotationPIDConstants().kD()),
-          new PIDController(2.0, 0.0, 0, Robot.DEFAULT_PERIOD))
+          new PIDController(
+              getAutoCrossTrackPIDConstants().kP(),
+              getAutoCrossTrackPIDConstants().kI(),
+              getAutoCrossTrackPIDConstants().kD(),
+              Robot.DEFAULT_PERIOD))
           .withDefaultShouldFlip()
           .withPoseReset(this::resetPose);
 
@@ -303,12 +309,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   @Override
   public PIDConstants getAutoTranslationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignTranslationPID;
+    return SWERVE.autoTranslationConstants;
   }
 
   @Override
   public PIDConstants getAutoRotationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignRotationPID;
+    return SWERVE.autoRotationConstants;
+  }
+
+  @Override
+  public PIDConstants getAutoCrossTrackPIDConstants() {
+    return SWERVE.autoCrossTrackConstants;
   }
 
   /**
@@ -455,6 +466,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   public Command generateBLineCommand(String pathName) {
-    return autoBuilder.build(new Path(pathName));
+    return generateBLineCommand(pathName, () -> false);
+  }
+
+  public Command generateBLineCommand(String pathName, BooleanSupplier allianceFlip) {
+    return Commands.deferredProxy(()->{
+      Path path = new Path(pathName);
+      if(allianceFlip.getAsBoolean())
+        path.mirror();
+      return autoBuilder.build(path);
+    });
   }
 }
