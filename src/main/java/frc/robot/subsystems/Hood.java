@@ -49,11 +49,6 @@ public class Hood extends SubsystemBase {
       new TalonFX(
           CAN.kShooterHoodMotor, CAN.hood); // Replace these device ids after motors are set up
 
-  // private final CANcoder m_cancoder =
-  //     new CANcoder(
-  //         CAN.kShooterHoodCANCoder,
-  //         CAN.roboRIO); // Replace these device ids after motors are set up
-
   private DoublePublisher m_anglePublisher;
 
   private DoubleSubscriber m_angleSubscriber;
