@@ -15,7 +15,7 @@ public class FLYWHEEL {
       19.100000381469727; // These worked for WoodBot but will need to be retuned
   public static final double kA = 0.0;
   // The value of kS is the largest voltage applied before the mechanism begins to move)
-  public static final double gearRatio = 32.0 / 24.0; // Placeholder value
+  public static final double gearRatio = 24.0 / 36.0; // Placeholder value
   public static final double kInertia = 0.01;
   public static final double kStatorCurrentLimit = 70.0;
   public static final double kVelocityErrorThreshold = 100.0;
@@ -68,7 +68,7 @@ public class FLYWHEEL {
   public class HOOD {
     public static final double kP = 230; // TODO: Change this
     public static final double kS = 0.349609375;
-    public static final double gearRatio = 170.0 / 10.0;
+    public static final double gearRatio = 1.0 / 62.4; // old 170:10
     public static final double rotorToSensorRatio = 3.111;
     public static final double kInertia = 0.005;
     public static final double kStatorCurrentLimit = 15;
@@ -82,7 +82,7 @@ public class FLYWHEEL {
     public static final double motionMagicJerk = 1500.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(19.0);
+    public static final Angle maxAngle = Degrees.of(90.0); //something like that
 
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
