@@ -72,14 +72,14 @@ public class INTAKE {
     // public static final double kA = 0;
     public static final double kG = 0.85;
 
-    public static final double gearRatio = 35.0 / 1.0;
+    public static final double gearRatio = 1.0 / 43.2;
     public static final double motionMagicAcceleration = 15.0;
     public static final double motionMagicCruiseVelocity = 12.0;
     public static final double motionMagicJerk = 0.0;
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(105.0);
+    public static final Angle maxAngle = Degrees.of(60.0); //old 55.0 obtainted from salahuddin barket
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -87,8 +87,8 @@ public class INTAKE {
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
     public static final Distance baseLength =
-        Inches.of(13.897040); /* Almost completely made up :P */
-    public static final Mass mass = Pounds.of(2); // TODO: Consult CAD
+        Inches.of(15.254441); /* Completely made up and none of this is true in the slightest. */
+    public static final Mass mass = Pounds.of(2); // so its actually 11
 
     // public static final double encoderOffset = 0.3076171875;
     public static final SensorDirectionValue encoderDirection =
@@ -98,6 +98,7 @@ public class INTAKE {
     public static final Time pivotCycleTime = Seconds.of(0.5); // original: 1.65
 
     public enum PIVOT_SETPOINT {
+      STOWED(Degrees.of(60.0)),
       INTAKING(Degrees.of(0.0)),
       STOWED(Degrees.of(101.630859)),
       JOSTLING(Degrees.of(160.0)),
