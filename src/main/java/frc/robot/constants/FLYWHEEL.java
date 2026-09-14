@@ -100,7 +100,7 @@ public class FLYWHEEL {
       BUMP(Degrees.of(4.570313)), //calculated using sim
       TOWER(Degrees.of(8.3)),
       PASSING(Degrees.of(17.5)),
-      FULL(Degrees.of(19.0));
+      FULL(Degrees.of(19.0)),
       REVERSE(Degrees.of(30.0)); //Absolutely made up value 
 
 

@@ -40,6 +40,8 @@ import org.wpilib.framework.RobotBase;
 import org.wpilib.system.RobotController;
 import org.wpilib.simulation.SingleJointedArmSim;
 import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.RepeatCommand;
 import org.wpilib.command2.RunCommand;
 import org.wpilib.command2.SubsystemBase;
@@ -101,7 +103,7 @@ public class IntakePivot extends SubsystemBase {
     // config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     // config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
-    config.Feedback.SensorToMechanismRatio = PIVOT.SensorToMechanismRatio;
+    config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
     config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
 
@@ -128,7 +130,7 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
     }
 
-    m_motor.setPosition(getAngle().times(PIVOT.SensorToMechanismRatio).in(Rotations));
+    m_motor.setPosition(getAngle().times(PIVOT.gearRatio).in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -169,6 +171,8 @@ public class IntakePivot extends SubsystemBase {
   public Command stow() {
     var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees); 
     return this.runOnce(() -> setAngle((!desiredAngleStowed) ? PIVOT_SETPOINT.STOWED.getAngle() : PIVOT_SETPOINT.INTAKING.getAngle()));
+  }
+  
   public Command percentCommand(double speed) {
     return this.startEnd(() -> m_motor.setThrottle(speed), () -> m_motor.setThrottle(0.0));
   }

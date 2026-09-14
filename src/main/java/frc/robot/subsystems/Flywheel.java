@@ -53,10 +53,10 @@ public class Flywheel extends SubsystemBase {
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.shooter);
 
   @Logged(name = "Flywheel Motor 2", importance = Importance.INFO)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.roboRIO);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.shooter);
 
   @Logged(name = "Flywheel Motor 3", importance = Importance.INFO)
-  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.roboRIO);
+  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.shooter);
 
   @Logged(name = "Flywheel Motor 4", importance = Importance.DEBUG)
   private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4, CAN.shooter);

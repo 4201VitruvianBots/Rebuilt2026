@@ -27,6 +27,8 @@ import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
@@ -201,7 +203,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       m_trajectoryUtils =
           new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
-      DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
+      DriverStationBackend.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
   }
 
@@ -354,11 +356,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     try {
       return RobotConfig.fromGUISettings();
     } catch (IOException e) {
-      DriverStationErrors.reportWarning(
+      DriverStationBackend.reportWarning(
           "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     } catch (ParseException e) {
-      DriverStationErrors.reportWarning(
+      DriverStationBackend.reportWarning(
           "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     }

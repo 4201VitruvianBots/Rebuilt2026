@@ -22,6 +22,7 @@ import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
 import org.wpilib.units.measure.Voltage;
 import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.Gamepad.Button;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.smartdashboard.SendableChooser;
@@ -41,6 +42,7 @@ import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JostleIntake;
+import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
@@ -196,24 +198,6 @@ public class RobotContainer {
 
   public Command setDrivetrainMode(NeutralModeValue neutralmode, MOTOR_TYPE motortype) {
     return m_swerveDrive.runOnce(() -> m_swerveDrive.setNeutralMode(motortype, neutralmode));
-    // Logging callback for current robot pose
-      // Do whatever you want with the pose here
-      PathPlannerLogging.setLogCurrentPoseCallback(
-              field::setRobotPose);
-
-    // Logging callback for target robot pose
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (pose) -> {
-          // Do whatever you want with the pose here
-          field.getObject("target pose").setPose(pose);
-        });
-
-    // Logging callback for the active path, this is sent as a list of poses
-    PathPlannerLogging.setLogActivePathCallback(
-        (poses) -> {
-          // Do whatever you want with the poses here
-          field.getObject("path").setPoses(poses);
-        });
   }
 
   private void initializeSubSystems() {
@@ -276,8 +260,8 @@ public class RobotContainer {
     if (m_intake != null)
       m_driverController.button(0).whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
-        .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath(false)));
     POVUtils.povUpWithTilt(m_driverController)
+      .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath(false)));
 
     if (m_flywheel != null && m_hood != null) {
       m_driverController
@@ -310,21 +294,21 @@ public class RobotContainer {
           m_hood.manualFullFieldPassCommand()
         )
       );
-    }
+    
     m_driverController.button(Button.NORTH_FACE).whileTrue(m_intakePivot.sendPivotDown());
 
 
-    m_driverController
-        .leftBumper()
-        .whileTrue(
-            new Shoot(
-                m_flywheel,
-                m_hood,
-                m_vision,
-                m_driverController,
-                m_swerveDrive,
-                m_driverController::getLeftY,
-                m_driverController::getLeftX));
+    // m_driverController
+    //     .leftBumper()
+    //     .whileTrue(
+    //         new Shoot(
+    //             m_flywheel,
+    //             m_hood,
+    //             m_vision,
+    //             m_driverController,
+    //             m_swerveDrive,
+    //             m_driverController::getLeftY,
+    //             m_driverController::getLeftX));
 
     if (m_intake != null) {
       m_driverController

@@ -100,7 +100,6 @@ public class INTAKE {
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(60.0)),
       INTAKING(Degrees.of(0.0)),
-      STOWED(Degrees.of(101.630859)),
       JOSTLING(Degrees.of(160.0)),
       DEFUEL(Degrees.of(132));
 
