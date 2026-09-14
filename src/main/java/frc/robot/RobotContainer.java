@@ -218,7 +218,7 @@ public class RobotContainer {
                     .withVelocityY(
                         MaxSpeed.times(
                             -m_driverController.getRawAxis(0))) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRawAxis(3)))));
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRawAxis(4)))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -298,17 +298,20 @@ public class RobotContainer {
     m_driverController.button(Button.NORTH_FACE).whileTrue(m_intakePivot.sendPivotDown());
 
 
-    // m_driverController
-    //     .leftBumper()
-    //     .whileTrue(
-    //         new Shoot(
-    //             m_flywheel,
-    //             m_hood,
-    //             m_vision,
-    //             m_driverController,
-    //             m_swerveDrive,
-    //             m_driverController::getLeftY,
-    //             m_driverController::getLeftX));
+    m_driverController
+        .button(4)
+        .whileTrue(
+            new Shoot(
+                m_flywheel,
+                m_hood,
+                m_vision,
+                m_driverController,
+                m_swerveDrive,
+                m_driverController::getLeftY,
+                m_driverController::getLeftX,
+                () -> m_manualHoodAngleShift,
+                () -> m_manualRPMshift
+              ));
 
     if (m_intake != null) {
       m_driverController
