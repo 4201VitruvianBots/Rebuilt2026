@@ -4,9 +4,8 @@ import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.RPM;
 
-import org.wpilib.math.system.DCMotor;
-
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import org.wpilib.math.system.DCMotor;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
@@ -55,7 +54,7 @@ public class FLYWHEEL {
   public enum MANUAL_RPM {
     IDLE(RPM.of(0.0)),
     HUB(RPM.of(1260.0 - 10)), // Old value from v1: 1470
-    BUMP(RPM.of(1678.683948)), //Calculated using sim (Citrus Refrence????)
+    BUMP(RPM.of(1678.683948)), // Calculated using sim (Citrus Refrence????)
     TOWER(RPM.of(1719.0)),
     PASSING(RPM.of(2300.0)),
     FULL(RPM.of(3800.0));
@@ -97,11 +96,10 @@ public class FLYWHEEL {
     public enum MANUAL_ANGLE {
       STOWED(Degrees.of(0.0)),
       HUB(Degrees.of(0.0)), // Old value from v1: 1.0
-      BUMP(Degrees.of(4.570313)), //calculated using sim
+      BUMP(Degrees.of(4.570313)), // calculated using sim
       TOWER(Degrees.of(8.3)),
       PASSING(Degrees.of(17.5)),
       FULL(Degrees.of(19.0));
-
 
       private final Angle angle;
 

@@ -4,30 +4,14 @@
 
 package frc.robot.simulation;
 
+import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.derive;
-import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 
-import org.wpilib.epilogue.Logged;
-import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.math.geometry.Rotation3d;
-import org.wpilib.units.DistanceUnit;
-import org.wpilib.units.Units;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.smartdashboard.Mechanism2d;
-import org.wpilib.smartdashboard.MechanismLigament2d;
-import org.wpilib.smartdashboard.MechanismRoot2d;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.util.Color8Bit;
-import org.wpilib.command2.Subsystem;
-import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE;
 import frc.robot.constants.ROBOT.SIM;
@@ -41,6 +25,21 @@ import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;
 import java.util.HashMap;
 import java.util.Map;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation3d;
+import org.wpilib.smartdashboard.Mechanism2d;
+import org.wpilib.smartdashboard.MechanismLigament2d;
+import org.wpilib.smartdashboard.MechanismRoot2d;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.units.DistanceUnit;
+import org.wpilib.units.Units;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.util.Color8Bit;
 
 // Hopefully there isn't too much overhead from making this a subsystem.
 public class Robot2d extends SubsystemBase {
@@ -248,7 +247,8 @@ public class Robot2d extends SubsystemBase {
       if (subsystem != null) {
         m_subsystemMap.put(subsystem.getName(), subsystem);
       } else {
-        DriverStationBackend.reportWarning("[Robot2d] Attempting to register null subsystem!", true);
+        DriverStationBackend.reportWarning(
+            "[Robot2d] Attempting to register null subsystem!", true);
       }
     }
   }

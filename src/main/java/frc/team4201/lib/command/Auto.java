@@ -1,13 +1,13 @@
 package frc.team4201.lib.command;
 
 import com.pathplanner.lib.path.PathPlannerPath;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.SequentialCommandGroup;
 import org.wpilib.command2.Subsystem;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import java.util.Set;
-import java.util.function.BooleanSupplier;
 
 // The default side for a path should be the depot side, thus it is only flipped if the autoSide
 // input is on the outpost.

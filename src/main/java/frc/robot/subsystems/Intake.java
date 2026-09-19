@@ -15,27 +15,26 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.NotLogged;
-import org.wpilib.math.filter.LinearFilter;
-import org.wpilib.math.system.Models;
-import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.networktables.DoubleSubscriber;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.system.RobotController;
-import org.wpilib.system.Timer;
-import org.wpilib.simulation.DCMotorSim;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.ROLLERS;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.team4201.lib.utils.CtreUtils;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.filter.LinearFilter;
+import org.wpilib.math.system.Models;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.DCMotorSim;
+import org.wpilib.system.RobotController;
+import org.wpilib.system.Timer;
+import org.wpilib.units.measure.AngularVelocity;
 
 public class Intake extends SubsystemBase {
 
@@ -57,9 +56,10 @@ public class Intake extends SubsystemBase {
   private INTAKE_STATE m_state = INTAKE_STATE.IDLE;
 
   private final DCMotorSim m_motor1Sim =
-          new DCMotorSim(
-          Models.singleJointedArmFromPhysicalConstants(ROLLERS.gearbox, ROLLERS.kInertia, ROLLERS.gearRatio),
-                  ROLLERS.gearbox);
+      new DCMotorSim(
+          Models.singleJointedArmFromPhysicalConstants(
+              ROLLERS.gearbox, ROLLERS.kInertia, ROLLERS.gearRatio),
+          ROLLERS.gearbox);
 
   private final TalonFXSimState m_simState;
 
@@ -187,8 +187,7 @@ public class Intake extends SubsystemBase {
 
     m_simState.setRawRotorPosition(
         Rotations.of(m_motor1Sim.getAngularPosition()).times(ROLLERS.gearRatio));
-    m_simState.setRotorVelocity(
-        RPM.of(m_motor1Sim.getAngularVelocity()).times(ROLLERS.gearRatio));
+    m_simState.setRotorVelocity(RPM.of(m_motor1Sim.getAngularVelocity()).times(ROLLERS.gearRatio));
   }
 
   public void testInit() {

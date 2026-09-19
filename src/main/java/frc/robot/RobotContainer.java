@@ -10,33 +10,10 @@ import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.MetersPerSecond;
 import static org.wpilib.units.Units.RPM;
-import static org.wpilib.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.NotLogged;
-import org.wpilib.math.filter.SlewRateLimiter;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.ConditionalCommand;
-import org.wpilib.command2.InstantCommand;
-import org.wpilib.command2.ParallelCommandGroup;
-import org.wpilib.command2.RunCommand;
-import org.wpilib.command2.WaitCommand;
-import org.wpilib.command2.button.CommandGamepad;
-import org.wpilib.command2.button.CommandGenericHID;
-import org.wpilib.command2.button.Trigger;
-import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
@@ -61,13 +38,9 @@ import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
-import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.robot.constants.ROBOT.USB;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.constants.SWERVE.MOTOR_TYPE;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
 import frc.robot.simulation.Robot2d;
@@ -85,6 +58,23 @@ import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.POVUtils;
 import frc.team4201.lib.utils.Telemetry;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelCommandGroup;
+import org.wpilib.command2.WaitCommand;
+import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.command2.button.Trigger;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.filter.SlewRateLimiter;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearVelocity;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -125,8 +115,7 @@ public class RobotContainer {
   private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandGamepad m_driverController =
-      new CommandGamepad(USB.driver_xBoxController);
+  private final CommandGamepad m_driverController = new CommandGamepad(USB.driver_xBoxController);
   private final CommandGamepad m_operatorController =
       new CommandGamepad(USB.operator_xboxController);
 
@@ -211,8 +200,8 @@ public class RobotContainer {
                 drive
                     .withVelocityX(
                         MaxSpeed.times(
-                            -m_driverController
-                                .getRawAxis(1))) // Drive forward with negative Y (forward)
+                            -m_driverController.getRawAxis(
+                                1))) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         MaxSpeed.times(
                             -m_driverController.getRawAxis(0))) // Drive left with negative X (left)
@@ -269,14 +258,13 @@ public class RobotContainer {
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
     }
 
-    if (m_flywheel != null && m_hood != null) { // Doesn't use utils 
-      m_driverController.povLeft().whileTrue(
-        new ParallelCommandGroup(
-          m_flywheel.manualBumpShootCommand(),
-          m_hood.manualFromBumpCommand()
-        )
-      );
-    } 
+    if (m_flywheel != null && m_hood != null) { // Doesn't use utils
+      m_driverController
+          .povLeft()
+          .whileTrue(
+              new ParallelCommandGroup(
+                  m_flywheel.manualBumpShootCommand(), m_hood.manualFromBumpCommand()));
+    }
 
     if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
       m_driverController
@@ -293,18 +281,14 @@ public class RobotContainer {
                   () -> m_manualHoodAngleShift,
                   () -> m_manualRPMshift));
 
-      POVUtils.povRightWithTilt(m_driverController).whileTrue(
-        new ParallelCommandGroup(
-          m_flywheel.manualFullFieldPassCommand(),
-          m_hood.manualFullFieldPassCommand()
-        )
-      );
+      POVUtils.povRightWithTilt(m_driverController)
+          .whileTrue(
+              new ParallelCommandGroup(
+                  m_flywheel.manualFullFieldPassCommand(), m_hood.manualFullFieldPassCommand()));
     }
 
     if (m_intake != null) {
-      m_driverController
-          .button(1)
-          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+      m_driverController.button(1).whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
     if (m_intake != null) {
       m_driverController

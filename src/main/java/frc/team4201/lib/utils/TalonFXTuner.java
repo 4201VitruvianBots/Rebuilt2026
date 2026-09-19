@@ -3,18 +3,18 @@ package frc.team4201.lib.utils;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import org.wpilib.networktables.*;
-import org.wpilib.networktables.NetworkTableEvent.Kind;
-import org.wpilib.util.function.BooleanConsumer;
-import org.wpilib.util.function.FloatConsumer;
-import org.wpilib.system.Notifier;
-import org.wpilib.command2.SubsystemBase;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.DoubleConsumer;
 import java.util.function.LongConsumer;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.networktables.*;
+import org.wpilib.networktables.NetworkTableEvent.Kind;
+import org.wpilib.system.Notifier;
+import org.wpilib.util.function.BooleanConsumer;
+import org.wpilib.util.function.FloatConsumer;
 
 public class TalonFXTuner implements AutoCloseable {
   private final TalonFX m_talon;
@@ -186,8 +186,8 @@ public class TalonFXTuner implements AutoCloseable {
               ((BooleanConsumer) callback).accept(update.valueData.value.getBoolean());
               nt_booleanStringCallbacks.get(topicName).accept(update.valueData.value.getBoolean());
             }
-              // case kString -> ((Consumer<String>)
-              // callback).accept(update.valueData.value.getString());
+            // case kString -> ((Consumer<String>)
+            // callback).accept(update.valueData.value.getString());
             default -> {}
           }
           configSet = true;

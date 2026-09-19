@@ -6,23 +6,6 @@ import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.Volts;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Transform2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.geometry.Twist2d;
-import org.wpilib.math.interpolation.InterpolatingTreeMap;
-import org.wpilib.math.interpolation.Interpolator;
-import org.wpilib.math.interpolation.InverseInterpolator;
-import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.driverstation.GenericHID.RumbleType;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.button.CommandGamepad;
-import org.wpilib.command2.button.CommandGenericHID;
-
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
@@ -34,6 +17,21 @@ import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.driverstation.GenericHID.RumbleType;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Transform2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Twist2d;
+import org.wpilib.math.interpolation.InterpolatingTreeMap;
+import org.wpilib.math.interpolation.Interpolator;
+import org.wpilib.math.interpolation.InverseInterpolator;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.units.measure.Distance;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -157,9 +155,10 @@ public class Shoot extends Command {
     estimatedPose =
         estimatedPose.plus(
             new Twist2d(
-                robotRelativeVelocity.vx * phaseDelay,
-                robotRelativeVelocity.vy * phaseDelay,
-                robotRelativeVelocity.omega * phaseDelay).exp());
+                    robotRelativeVelocity.vx * phaseDelay,
+                    robotRelativeVelocity.vy * phaseDelay,
+                    robotRelativeVelocity.omega * phaseDelay)
+                .exp());
 
     // Calculate distance from launcher to m_goal
     Pose2d launcherPosition = estimatedPose.transformBy(robotToLauncher);

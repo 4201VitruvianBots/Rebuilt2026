@@ -1,8 +1,8 @@
 package frc.team4201.lib.geometry;
 
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.math.geometry.Translation3d;
 import java.util.*;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 
 public class Target3d {
   private static AprilTagFieldLayout m_field;

@@ -4,22 +4,6 @@ import static org.wpilib.units.Units.DegreesPerSecond;
 import static org.wpilib.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
-
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.Logged.Importance;
-import org.wpilib.math.linalg.VecBuilder;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.util.Units;
-import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.networktables.DoubleSubscriber;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FIELD.BUMP_ALIGNMENT_TARGETS;
 import frc.robot.constants.VISION;
@@ -28,6 +12,20 @@ import frc.robot.constants.VISION.TARGET;
 import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.math.util.Units;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.units.measure.Distance;
 
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
@@ -90,9 +88,8 @@ public class Vision extends SubsystemBase {
 
   public Path updateCrossBumpPath(boolean endsShootingPosition) {
     if (isInLeftHalf()) {
-      neutralZonePose =
-          BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
-      if (endsShootingPosition){
+      neutralZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
+      if (endsShootingPosition) {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_SHOOTING.getAlignmentPose();
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_BUMP.getAlignmentPose();
@@ -100,15 +97,18 @@ public class Vision extends SubsystemBase {
       unrealisticPose = BUMP_ALIGNMENT_TARGETS.LEFT_UNREALISTIC_POSE.getAlignmentPose();
     } else {
       neutralZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
-      if (endsShootingPosition){
+      if (endsShootingPosition) {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_SHOOTING.getAlignmentPose();
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
       }
       unrealisticPose = BUMP_ALIGNMENT_TARGETS.RIGHT_UNREALISTIC_POSE.getAlignmentPose();
     }
-    
-    return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(unrealisticPose, 4.2), new Path.Waypoint(allianceZonePose, 1.0));
+
+    return new Path(
+        new Path.Waypoint(neutralZonePose, 0.8),
+        new Path.Waypoint(unrealisticPose, 4.2),
+        new Path.Waypoint(allianceZonePose, 1.0));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
@@ -418,7 +418,9 @@ public class Vision extends SubsystemBase {
     }
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
-    if (DriverStationBackend.isFMSAttached() && DriverStationBackend.isAutonomous() && !matchStarted) {
+    if (DriverStationBackend.isFMSAttached()
+        && DriverStationBackend.isAutonomous()
+        && !matchStarted) {
       matchStarted = true;
     }
   }

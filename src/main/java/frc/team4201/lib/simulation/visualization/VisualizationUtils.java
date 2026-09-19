@@ -1,11 +1,11 @@
 package frc.team4201.lib.simulation.visualization;
 
+import java.util.ArrayList;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
 import org.wpilib.smartdashboard.MechanismRoot2d;
 import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.util.Color8Bit;
-import java.util.ArrayList;
 
 /** Utility class to work with WPILib's {@link Mechanism2d} */
 public class VisualizationUtils {

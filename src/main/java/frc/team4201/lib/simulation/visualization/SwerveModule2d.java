@@ -39,8 +39,7 @@ public class SwerveModule2d implements AutoCloseable {
     m_moduleLigament.setAngle(state.angle.getDegrees());
 
     // Update the ligament color based on the module's current speed for easier visualization
-    VisualizationUtils.updateMotorColor(
-        m_moduleLigament, state.velocity, m_ligamentColor);
+    VisualizationUtils.updateMotorColor(m_moduleLigament, state.velocity, m_ligamentColor);
 
     m_moduleLigament.setColor(m_ligamentColor);
   }

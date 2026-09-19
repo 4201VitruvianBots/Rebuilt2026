@@ -1,10 +1,10 @@
 package frc.team4201.lib.geometry;
 
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.vision.apriltag.AprilTagFields;
+import java.util.*;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
-import java.util.*;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
+import org.wpilib.vision.apriltag.AprilTagFields;
 
 public class Targeting2d {
   private static AprilTagFieldLayout aprilTagLayout;

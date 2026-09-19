@@ -7,12 +7,12 @@ package frc.robot.commands;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.units.measure.Angle;
-import org.wpilib.system.Timer;
-import org.wpilib.command2.Command;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.subsystems.IntakePivot;
+import org.wpilib.command2.Command;
+import org.wpilib.system.Timer;
+import org.wpilib.units.measure.Angle;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class JostleIntake extends Command {

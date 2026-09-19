@@ -2,12 +2,12 @@ package frc.team4201.lib.simulation.visualization;
 
 import static org.wpilib.units.Units.*;
 
+import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.smartdashboard.*;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.smartdashboard.*;
-import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
 
 /** Class to represent an elevator using {@link Mechanism2d} */
 public class Elevator2d implements AutoCloseable {

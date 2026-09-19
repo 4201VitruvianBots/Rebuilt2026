@@ -4,19 +4,19 @@
 
 package frc.robot.simulation;
 
+import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
-import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 
-import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.smartdashboard.MechanismRoot2d;
-import org.wpilib.util.Color8Bit;
 import frc.robot.constants.CLIMBER;
 import frc.team4201.lib.simulation.visualization.Arm2d;
 import frc.team4201.lib.simulation.visualization.Elevator2d;
 import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
 import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
+import org.wpilib.smartdashboard.MechanismRoot2d;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.util.Color8Bit;
 
 /** This simulation is so complex I decided we had to make it a separate class. */
 public class Climber2d {

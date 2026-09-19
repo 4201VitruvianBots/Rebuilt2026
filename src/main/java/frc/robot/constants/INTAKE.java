@@ -5,10 +5,9 @@ import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Pounds;
 import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.math.system.DCMotor;
-
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import org.wpilib.math.system.DCMotor;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Mass;

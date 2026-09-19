@@ -5,12 +5,12 @@
 package frc.robot.commands.autos.routines;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.command2.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShootManual;
 import frc.robot.constants.FLYWHEEL;
 import frc.team4201.lib.command.Auto;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 
 public class CenterPreload extends Auto {
   public CenterPreload(AutoDependencies deps) {

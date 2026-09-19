@@ -1,8 +1,8 @@
 package frc.robot.commands.swerve;
 
-import org.wpilib.command2.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Controls;
+import org.wpilib.command2.Command;
 
 public class ResetGyro extends Command {
   /** Creates a new ResetGyro. */

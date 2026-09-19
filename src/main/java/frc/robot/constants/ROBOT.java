@@ -7,9 +7,9 @@ import org.wpilib.driverstation.Alert;
 import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.system.RobotController;
 import org.wpilib.units.DistanceUnit;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.system.RobotController;
 
 public class ROBOT {
   public static final boolean useSysID = false;

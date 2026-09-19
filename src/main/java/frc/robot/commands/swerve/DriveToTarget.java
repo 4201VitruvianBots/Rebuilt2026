@@ -9,17 +9,17 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.networktables.StructPublisher;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
 import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.constants.VISION.TARGET;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import java.util.List;
 import java.util.Set;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
 
 public class DriveToTarget {
   private final CommandSwerveDrivetrain m_swerveDrive;

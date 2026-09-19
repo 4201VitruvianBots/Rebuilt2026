@@ -2,13 +2,11 @@ package frc.team4201.lib.utils;
 
 import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.units.measure.Time;
+import java.util.Optional;
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.internal.DriverStationBackend;
-
-import java.util.Optional;
+import org.wpilib.units.measure.Time;
 
 public class HubTracker {
   /**

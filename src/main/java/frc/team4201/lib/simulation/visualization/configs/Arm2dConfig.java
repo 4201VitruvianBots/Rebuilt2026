@@ -3,12 +3,12 @@ package frc.team4201.lib.simulation.visualization.configs;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
 
-import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.Distance;
+import frc.team4201.lib.simulation.visualization.Arm2d;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
 import org.wpilib.util.Color8Bit;
-import frc.team4201.lib.simulation.visualization.Arm2d;
 
 /** Configuration used for an {@link Arm2d} */
 public class Arm2dConfig extends BaseMechanismConfig {

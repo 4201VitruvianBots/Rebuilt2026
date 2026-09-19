@@ -2,6 +2,10 @@ package frc.team4201.lib.utils;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import frc.team4201.lib.simulation.FieldSim;
+import frc.team4201.lib.simulation.visualization.SwerveModule2d;
+import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
+import java.util.Map;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Transform2d;
 import org.wpilib.math.geometry.Translation2d;
@@ -9,10 +13,6 @@ import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.kinematics.SwerveModulePosition;
 import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.networktables.*;
-import frc.team4201.lib.simulation.FieldSim;
-import frc.team4201.lib.simulation.visualization.SwerveModule2d;
-import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
-import java.util.Map;
 
 public class Telemetry {
   private Map<MODULE_POSITION, Translation2d> m_moduleTranslations;

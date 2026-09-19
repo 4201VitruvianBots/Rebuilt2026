@@ -2,14 +2,13 @@ package frc.robot.constants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
 import frc.robot.subsystems.Controls;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
 import utils.TestUtils;
 
 public class TestFieldConstants {

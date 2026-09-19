@@ -7,10 +7,10 @@ package frc.team4201.lib.simulation.visualization;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.RotationsPerSecond;
 
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.smartdashboard.*;
 import frc.team4201.lib.simulation.visualization.configs.Flywheel2dConfig;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.smartdashboard.*;
+import org.wpilib.units.measure.AngularVelocity;
 
 /** Class to represent a flywheel using {@link Mechanism2d} */
 public class Flywheel2d implements AutoCloseable {

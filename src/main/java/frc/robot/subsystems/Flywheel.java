@@ -22,29 +22,28 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import frc.robot.constants.CAN;
+import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
+import frc.team4201.lib.utils.CtreUtils;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.math.system.Models;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.FlywheelSim;
+import org.wpilib.sysid.SysIdRoutineLog;
+import org.wpilib.system.RobotController;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Energy;
 import org.wpilib.units.measure.Power;
 import org.wpilib.units.measure.Voltage;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.system.RobotController;
-import org.wpilib.simulation.FlywheelSim;
-import org.wpilib.sysid.SysIdRoutineLog;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.SubsystemBase;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import frc.robot.constants.CAN;
-import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
-import frc.team4201.lib.utils.CtreUtils;
 
 public class Flywheel extends SubsystemBase {
 
@@ -72,7 +71,8 @@ public class Flywheel extends SubsystemBase {
   public final DoublePublisher m_rpmPublisher;
 
   private final FlywheelSim m_shooterMotorSim =
-      new FlywheelSim(Models.flywheelFromPhysicalConstants(
+      new FlywheelSim(
+          Models.flywheelFromPhysicalConstants(
               FLYWHEEL.gearbox, FLYWHEEL.kInertia, FLYWHEEL.gearRatio),
           FLYWHEEL.gearbox);
   private final TalonFXSimState m_simState;
@@ -219,16 +219,18 @@ public class Flywheel extends SubsystemBase {
     return this.startEnd(
         () -> setRPMOutput(MANUAL_RPM.PASSING.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
-//temporary
+
+  // temporary
   public Command manualBumpShootCommand() {
     return this.startEnd(
-      () -> setRPMOutput(MANUAL_RPM.BUMP.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
+        () -> setRPMOutput(MANUAL_RPM.BUMP.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
-  public Command manualFullFieldPassCommand(){
-      return this.startEnd(
-      () -> setRPMOutput(MANUAL_RPM.FULL.getRPM()), 
-      () -> setVoltageOutput(Volts.of(0.0)));
+
+  public Command manualFullFieldPassCommand() {
+    return this.startEnd(
+        () -> setRPMOutput(MANUAL_RPM.FULL.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
+
   public void testInit() {
     m_rpmPublisher.set(0.0);
   }
@@ -264,7 +266,7 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getRPMSetpoint() == 0.0){
+    if (getRPMSetpoint() == 0.0) {
       m_motor1.setControl(m_dutyCycleOut.withOutput(0.0));
     } else {
       m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));

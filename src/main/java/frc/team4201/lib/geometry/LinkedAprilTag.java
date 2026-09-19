@@ -1,9 +1,9 @@
 package frc.team4201.lib.geometry;
 
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 
 public class LinkedAprilTag {
   private final String tagName;

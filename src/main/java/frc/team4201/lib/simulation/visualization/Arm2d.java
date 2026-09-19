@@ -2,12 +2,12 @@ package frc.team4201.lib.simulation.visualization;
 
 import static org.wpilib.units.Units.*;
 
+import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.smartdashboard.*;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.smartdashboard.*;
-import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
 
 /** Class to represent an arm using {@link Mechanism2d} */
 public class Arm2d implements AutoCloseable {

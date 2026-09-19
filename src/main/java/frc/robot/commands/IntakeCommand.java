@@ -4,14 +4,14 @@
 
 package frc.robot.commands;
 
-import org.wpilib.command2.InstantCommand;
-import org.wpilib.command2.ParallelCommandGroup;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.Uptake;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelCommandGroup;
 
 public class IntakeCommand extends ParallelCommandGroup {
   /** Creates a new IntakeCommand. */

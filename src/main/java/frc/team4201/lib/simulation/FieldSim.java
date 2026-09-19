@@ -2,6 +2,12 @@ package frc.team4201.lib.simulation;
 
 import static java.util.Arrays.stream;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.framework.RobotBase;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
@@ -9,14 +15,8 @@ import org.wpilib.math.trajectory.Trajectory;
 import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.ProtobufPublisher;
-import org.wpilib.framework.RobotBase;
 import org.wpilib.smartdashboard.Field2d;
 import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.SubsystemBase;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /** Class to handle all updates to the Field2D widget */
 public class FieldSim extends SubsystemBase implements AutoCloseable {

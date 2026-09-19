@@ -7,16 +7,16 @@ package frc.robot.commands.swerve;
 import static org.wpilib.units.Units.*;
 
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-import org.wpilib.math.util.MathUtil;
+import frc.robot.constants.SWERVE.AUTO_ALIGN;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.button.Trigger;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.BooleanPublisher;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.units.measure.Time;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.button.Trigger;
-import frc.robot.constants.SWERVE.AUTO_ALIGN;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class PositionPIDCommand extends Command {
   private final CommandSwerveDrivetrain m_swerve;

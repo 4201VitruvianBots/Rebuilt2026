@@ -17,27 +17,26 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.Logged.Importance;
-import org.wpilib.math.system.Models;
-import org.wpilib.math.util.MathUtil;
-import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.networktables.DoubleSubscriber;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.system.RobotController;
-import org.wpilib.simulation.DCMotorSim;
-import org.wpilib.sysid.SysIdRoutineLog;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.SubsystemBase;
-import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.system.Models;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.DCMotorSim;
+import org.wpilib.sysid.SysIdRoutineLog;
+import org.wpilib.system.RobotController;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Voltage;
 
 public class Hood extends SubsystemBase {
 
@@ -65,7 +64,7 @@ public class Hood extends SubsystemBase {
 
   private final DCMotorSim m_shooterHoodSim =
       new DCMotorSim(
-              Models.singleJointedArmFromPhysicalConstants(HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
+          Models.singleJointedArmFromPhysicalConstants(HOOD.gearbox, HOOD.kInertia, HOOD.gearRatio),
           HOOD.gearbox);
 
   private final TalonFXSimState m_simState = m_motor.getSimState();
@@ -128,8 +127,7 @@ public class Hood extends SubsystemBase {
   public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
         Degrees.of(
-            Math.clamp(
-                setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
+            Math.clamp(setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
@@ -194,7 +192,8 @@ public class Hood extends SubsystemBase {
     return this.startEnd(
         () -> setAngle(MANUAL_ANGLE.BUMP.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
-    public Command manualFullFieldPassCommand() {
+
+  public Command manualFullFieldPassCommand() {
     return this.startEnd(
         () -> setAngle(MANUAL_ANGLE.FULL.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
@@ -222,8 +221,7 @@ public class Hood extends SubsystemBase {
         RPM.of(m_shooterHoodSim.getAngularVelocity()).times(HOOD.gearRatio));
     // Update the hoodEncoder simState
     m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPosition()));
-    m_cancoderSimState.setVelocity(
-        RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
+    m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
   }
 
   private SysIdRoutine m_sysIdRoutine =

@@ -8,9 +8,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.wpilib.math.geometry.*;
-import org.wpilib.math.util.Units;
-import org.wpilib.networktables.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -18,6 +15,9 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import org.wpilib.math.geometry.*;
+import org.wpilib.math.util.Units;
+import org.wpilib.networktables.*;
 
 /**
  * LimelightHelpers provides static methods and classes for interfacing with Limelight vision

@@ -4,26 +4,25 @@
 
 package frc.robot.subsystems;
 
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.NotLogged;
-import org.wpilib.math.filter.MedianFilter;
-import org.wpilib.networktables.DoubleSubscriber;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.driverstation.Alert;
-import org.wpilib.driverstation.Alert.Level;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.system.RobotController;
-import org.wpilib.system.Timer;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.Subsystem;
-import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.ROBOT.USB;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.Alert;
+import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.filter.MedianFilter;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.system.RobotController;
+import org.wpilib.system.Timer;
 
 @Logged
 public class Controls extends SubsystemBase {
@@ -42,27 +41,20 @@ public class Controls extends SubsystemBase {
   @NotLogged
   private final Map<String, Alert> alertMap =
       Map.ofEntries(
+          Map.entry("usb", new Alert("USB connection alert not properly initialized", Level.HIGH)),
+          Map.entry("brownout", new Alert("Brownout alert not properly initialized", Level.MEDIUM)),
           Map.entry(
-              "usb", new Alert("USB connection alert not properly initialized", Level.HIGH)),
+              "storage", new Alert("Storage space alert not properly initialized", Level.MEDIUM)),
           Map.entry(
-              "brownout", new Alert("Brownout alert not properly initialized", Level.MEDIUM)),
-          Map.entry(
-              "storage",
-              new Alert("Storage space alert not properly initialized", Level.MEDIUM)),
-          Map.entry(
-              "epilogue",
-              new Alert("Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
+              "epilogue", new Alert("Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
           // Alerts for setting up the robot properly
           Map.entry(
-              "allianceInit",
-              new Alert("Did not get alliance color from FMS/DS!", Level.MEDIUM)),
-          Map.entry(
-              "vision", new Alert("Vision Subsystem is not ready!", Level.MEDIUM)),
+              "allianceInit", new Alert("Did not get alliance color from FMS/DS!", Level.MEDIUM)),
+          Map.entry("vision", new Alert("Vision Subsystem is not ready!", Level.MEDIUM)),
 
           // Alerts for when the robot is running
           Map.entry("radioError", new Alert("Robot Radio not detected!", Level.HIGH)),
-          Map.entry(
-              "joystickError", new Alert("Missing joystick detected!", Level.HIGH)),
+          Map.entry("joystickError", new Alert("Missing joystick detected!", Level.HIGH)),
           Map.entry("canError", new Alert("CAN bus error detected!", Level.HIGH)));
 
   private final MedianFilter epilogueBuffer = new MedianFilter(20);

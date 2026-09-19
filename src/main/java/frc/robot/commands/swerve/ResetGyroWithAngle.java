@@ -1,8 +1,8 @@
 package frc.robot.commands.swerve;
 
-import org.wpilib.command2.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.function.DoubleSupplier;
+import org.wpilib.command2.Command;
 
 public class ResetGyroWithAngle extends Command {
   /** Creates a new ResetGyro. */

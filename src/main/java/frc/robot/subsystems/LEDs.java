@@ -8,19 +8,19 @@ import static org.wpilib.units.Units.Percent;
 import static org.wpilib.units.Units.Second;
 import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.epilogue.Logged;
-import org.wpilib.hardware.led.AddressableLED;
-import org.wpilib.hardware.led.AddressableLEDBuffer;
-import org.wpilib.hardware.led.LEDPattern;
-import org.wpilib.hardware.led.LEDPattern.GradientType;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.util.Color;
-import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.LED;
 import frc.robot.constants.LED.LED_STATES;
 import frc.robot.simulation.LEDSim;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.hardware.led.AddressableLED;
+import org.wpilib.hardware.led.AddressableLEDBuffer;
+import org.wpilib.hardware.led.LEDPattern;
+import org.wpilib.hardware.led.LEDPattern.GradientType;
+import org.wpilib.util.Color;
 
 public class LEDs extends SubsystemBase {
   private LED_STATES currentState = LED_STATES.DISABLED;

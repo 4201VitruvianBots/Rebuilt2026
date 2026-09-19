@@ -4,12 +4,12 @@ import static org.wpilib.units.Units.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import org.wpilib.simulation.LinearSystemSim;
+import org.wpilib.system.RobotController;
 import org.wpilib.units.AngleUnit;
 import org.wpilib.units.DistanceUnit;
 import org.wpilib.units.measure.Dimensionless;
 import org.wpilib.units.measure.Per;
-import org.wpilib.system.RobotController;
-import org.wpilib.simulation.LinearSystemSim;
 
 public class TalonFXSim {
 

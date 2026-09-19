@@ -4,13 +4,13 @@
 
 package frc.robot.commands;
 
-import org.wpilib.command2.InstantCommand;
-import org.wpilib.command2.ParallelCommandGroup;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Uptake;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelCommandGroup;
 
 public class ReverseUptake extends ParallelCommandGroup {
   /** Creates a new ReverseUptake. */

@@ -1,12 +1,12 @@
 package frc.robot.commands.swerve;
 
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.command2.Command;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
+import org.wpilib.command2.Command;
+import org.wpilib.math.geometry.Rotation2d;
 
 public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;

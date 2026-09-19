@@ -4,11 +4,11 @@
 
 package frc.robot.commands.autos.routines;
 
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.command2.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.team4201.lib.command.Auto;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.driverstation.internal.DriverStationBackend;
 
 public class SimboticsAuto extends Auto {
   public SimboticsAuto(AutoDependencies deps) {

@@ -3,18 +3,6 @@ package frc.robot.constants;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.vision.apriltag.AprilTagFields;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.geometry.Translation3d;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-
 import frc.robot.subsystems.Controls;
 import frc.team4201.lib.geometry.FieldRectangle2d;
 import frc.team4201.lib.geometry.LinkedAprilTag;
@@ -29,6 +17,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.vision.apriltag.AprilTagFieldLayout;
+import org.wpilib.vision.apriltag.AprilTagFields;
 
 public class FIELD {
   /**

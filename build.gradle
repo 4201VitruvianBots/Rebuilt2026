@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "org.wpilib.GradleRIO" version "2027.0.0-alpha-6"
     id "com.gradleup.shadow" version "9.3.0"
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 java {
@@ -38,7 +39,7 @@ deploy {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/systemcore/deploy'
                     deleteOldFiles = false // Change to true to delete files on systemcore that no
-                                           // longer exist in deploy directory of this project
+                    // longer exist in deploy directory of this project
                 }
             }
         }
@@ -81,7 +82,7 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    
+
     testImplementation 'org.mockito:mockito-core:5.+'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.+'
 }
@@ -105,6 +106,53 @@ shadowJar {
     from('build.gradle') { into 'backup' }
     manifest org.wpilib.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+
+// Spotless code formatter configuration
+spotless {
+    enforceCheck false
+
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        toggleOffOn()
+        googleJavaFormat('1.28.0')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'xml', {
+        target fileTree('.') {
+            include '**/*.xml'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        eclipseWtp('xml')
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/*.md', '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
 }
 
 // Configure jar and deploy tasks

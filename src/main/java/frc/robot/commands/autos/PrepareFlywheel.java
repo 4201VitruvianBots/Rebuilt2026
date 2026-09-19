@@ -4,10 +4,10 @@
 
 package frc.robot.commands.autos;
 
-import org.wpilib.units.measure.Distance;
-import org.wpilib.command2.InstantCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.Flywheel;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.units.measure.Distance;
 
 // Prepare to shoot flywheel from a given distance from the target.
 // This is used in auto to prepare the flywheel for shooting in advance of running the command.
