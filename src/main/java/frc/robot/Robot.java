@@ -82,10 +82,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
-
-    if (RobotBase.isSimulation()) {
-      m_robotContainer.resetFuelSim();
-    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -125,7 +121,6 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
-    addPeriodic(m_robotContainer::updateFuelLaunchSim, 1.0 / FLYWHEEL.ballsPerSecond);
   }
 
   /** This function is called periodically whilst in simulation. */
