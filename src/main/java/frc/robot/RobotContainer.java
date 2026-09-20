@@ -14,6 +14,29 @@ import static org.wpilib.units.Units.RPM;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.filter.SlewRateLimiter;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.units.measure.Voltage;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.Gamepad.Button;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.smartdashboard.SendableChooser;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.ConditionalCommand;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelCommandGroup;
+import org.wpilib.command2.RunCommand;
+import org.wpilib.command2.WaitCommand;
+import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.command2.button.CommandGenericHID;
+import org.wpilib.command2.button.Trigger;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
@@ -205,7 +228,7 @@ public class RobotContainer {
                     .withVelocityY(
                         MaxSpeed.times(
                             -m_driverController.getRawAxis(0))) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRawAxis(3)))));
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRawAxis(4)))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -215,8 +238,10 @@ public class RobotContainer {
     m_indexer = new Indexer();
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
       m_intakePivot = new IntakePivot();
-      m_led = new LEDs();
-      m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
+      // m_led = new LEDs();
+      if (m_led != null) {
+        m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
+      }
       // m_led.setDefaultCommand(new TestLEDs(m_led));
       // m_climber = new Climber();
     }
@@ -252,7 +277,7 @@ public class RobotContainer {
 
     if (m_flywheel != null && m_hood != null) {
       m_driverController
-          .button(0)
+          .button(2)
           .whileTrue(
               new ParallelCommandGroup(
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
@@ -268,7 +293,7 @@ public class RobotContainer {
 
     if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
       m_driverController
-          .button(10)
+          .button(4)
           .whileTrue(
               new Shoot(
                   m_flywheel,
@@ -288,12 +313,14 @@ public class RobotContainer {
     }
 
     if (m_intake != null) {
-      m_driverController.button(1).whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+      m_driverController
+          .leftTrigger() //idk how to do left trigger since they changed it
+          .whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
     if (m_intake != null) {
       m_driverController
-          .button(0)
-          .or(m_operatorController.button(0))
+          .button(3)
+          .or(m_operatorController.button(3))
           .whileTrue(new JostleIntake(m_intakePivot));
     }
 
