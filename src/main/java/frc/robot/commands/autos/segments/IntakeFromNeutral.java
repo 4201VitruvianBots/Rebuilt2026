@@ -1,58 +1,58 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-package frc.robot.commands.autos.segments;
-
-import static org.wpilib.units.Units.Meters;
-
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.commands.autos.PrepareFlywheel;
-import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
-import frc.team4201.lib.command.Auto;
-import java.util.function.BooleanSupplier;
-import org.wpilib.command2.InstantCommand;
-import org.wpilib.command2.ParallelDeadlineGroup;
-import org.wpilib.command2.PrintCommand;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-
-public class IntakeFromNeutral extends Auto {
-
-  public static void registerNamedCommands(AutoDependencies deps) {
-    NamedCommands.registerCommand(
-        "prepareFlywheelForNearHub",
-        new PrepareFlywheel(deps.flywheel, Meters.of(1.45650895207174))
-            .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
-  }
-
-  public IntakeFromNeutral(
-      AutoDependencies deps, BooleanSupplier flipToRight, TWO_CYCLE_PATH selectedPath) {
-    try {
-      var swerveDrive = deps.swerveDrive;
-      var vision = deps.vision;
-      var intake = deps.intake;
-      var intakePivot = deps.intakePivot;
-      var uptake = deps.uptake;
-
-      PathPlannerPath path = PathPlannerPath.fromPathFile(selectedPath.getPathName());
-
-      addCommands(
-          new ParallelDeadlineGroup(
-                  getPathCommand(swerveDrive, path, flipToRight),
-                  new IntakeCommand(intake, intakePivot, uptake),
-                  new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(new PrintCommand("[AUTO] Finished crossing over bump"))
-              .andThen(
-                  swerveDrive
-                      .autoCrossBump(() -> vision.updateCrossBumpPath(false))
-                      .withTimeout(3.0)));
-    } catch (Exception e) {
-      DriverStationBackend.reportError(
-          "Failed to load path for IntakeFromNeutral", e.getStackTrace());
-      addCommands(new InstantCommand());
-    }
-  }
-}
+//// Copyright (c) FIRST and other WPILib contributors.
+//// Open Source Software; you can modify and/or share it under the terms of
+//// the WPILib BSD license file in the root directory of this project.
+//
+//package frc.robot.commands.autos.segments;
+//
+//import static org.wpilib.units.Units.Meters;
+//
+//import com.pathplanner.lib.auto.NamedCommands;
+//import com.pathplanner.lib.path.PathPlannerPath;
+//import frc.robot.commands.IntakeCommand;
+//import frc.robot.commands.autos.AutoDependencies;
+//import frc.robot.commands.autos.PrepareFlywheel;
+//import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
+//import frc.team4201.lib.command.Auto;
+//import java.util.function.BooleanSupplier;
+//import org.wpilib.command2.InstantCommand;
+//import org.wpilib.command2.ParallelDeadlineGroup;
+//import org.wpilib.command2.PrintCommand;
+//import org.wpilib.driverstation.internal.DriverStationBackend;
+//
+//public class IntakeFromNeutral extends Auto {
+//
+//  public static void registerNamedCommands(AutoDependencies deps) {
+//    NamedCommands.registerCommand(
+//        "prepareFlywheelForNearHub",
+//        new PrepareFlywheel(deps.flywheel, Meters.of(1.45650895207174))
+//            .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
+//  }
+//
+//  public IntakeFromNeutral(
+//      AutoDependencies deps, BooleanSupplier flipToRight, TWO_CYCLE_PATH selectedPath) {
+//    try {
+//      var swerveDrive = deps.swerveDrive;
+//      var vision = deps.vision;
+//      var intake = deps.intake;
+//      var intakePivot = deps.intakePivot;
+//      var uptake = deps.uptake;
+//
+//      PathPlannerPath path = PathPlannerPath.fromPathFile(selectedPath.getPathName());
+//
+//      addCommands(
+//          new ParallelDeadlineGroup(
+//                  getPathCommand(swerveDrive, path, flipToRight),
+//                  new IntakeCommand(intake, intakePivot, uptake),
+//                  new PrintCommand("[AUTO] Crossing over bump and intaking..."))
+//              .andThen(new PrintCommand("[AUTO] Finished crossing over bump"))
+//              .andThen(
+//                  swerveDrive
+//                      .autoCrossBump(() -> vision.updateCrossBumpPath(false))
+//                      .withTimeout(3.0)));
+//    } catch (Exception e) {
+//      DriverStationBackend.reportError(
+//          "Failed to load path for IntakeFromNeutral", e.getStackTrace());
+//      addCommands(new InstantCommand());
+//    }
+//  }
+//}

@@ -2,14 +2,13 @@ package frc.robot.constants;
 
 import static org.wpilib.units.Units.*;
 
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
-import java.util.Map;
+import frc.team4201.lib.bline.PIDConstants;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.units.measure.*;
+import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
+import java.util.Map;
+
 
 public class SWERVE {
   public enum MOTOR_TYPE {
@@ -53,6 +52,10 @@ public class SWERVE {
   public static final AngularVelocity kMaxRotation =
       RotationsPerSecond.of(Math.PI * 0.4); // Temporary to reduce speed (original value 2.0).
 
+    public static final PIDConstants autoTranslationConstants = new PIDConstants(2, 0, 0);
+    public static final PIDConstants autoRotationConstants = new PIDConstants(1, 0, 0);
+    public static final PIDConstants autoCrossTrackConstants = new PIDConstants(0.2, 0, 0);
+
   // Constants needed for auto align
   public class AUTO_ALIGN {
     public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
@@ -60,13 +63,5 @@ public class SWERVE {
     public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
     public static final Time kEndTriggerDebounce = Seconds.of(0.04);
     public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
-    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(2.1, 0.0, 0.0);
-    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(2.5, 0.0, 0.0);
-
-    public static final PPHolonomicDriveController kDriveController =
-        new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
-
-    public static final PathConstraints kAutoAlignPathConstraints =
-        new PathConstraints(1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI);
   }
 }

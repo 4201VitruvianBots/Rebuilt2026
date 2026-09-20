@@ -11,9 +11,28 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.util.DriveFeedforwards;
+import frc.team4201.lib.bline.PIDConstants;
+import org.wpilib.command2.Commands;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.controller.PIDController;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.numbers.N1;
+import org.wpilib.math.numbers.N3;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.system.Notifier;
+import org.wpilib.system.RobotController;
+import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
@@ -23,33 +42,12 @@ import frc.robot.lib.BLine.FollowPath;
 import frc.robot.lib.BLine.FollowPath.Builder;
 import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.command.SwerveSubsystem;
-import frc.team4201.lib.utils.TrajectoryUtils;
-import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-import org.json.simple.parser.ParseException;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Subsystem;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.math.controller.PIDController;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.math.linalg.Matrix;
-import org.wpilib.math.numbers.N1;
-import org.wpilib.math.numbers.N3;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.system.Notifier;
-import org.wpilib.system.RobotController;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.LinearVelocity;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -99,8 +97,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
-
-  private TrajectoryUtils m_trajectoryUtils;
 
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotVelocity m_pathApplyRobotSpeeds =
@@ -195,13 +191,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     if (Utils.isSimulation()) {
       startSimThread();
     }
-
-    try {
-      m_trajectoryUtils =
-          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
-    } catch (Exception ex) {
-      DriverStationBackend.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
-    }
   }
 
   /**
@@ -270,31 +259,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withTargetDirection(headingTarget));
   }
 
-  public void setChassisSpeedsAuto(
-      ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
-    setControl(
-        m_pathApplyRobotSpeeds
-            .withVelocity(chassisSpeeds)
-            .withWheelForceFeedforwardsX(driveFeedforwards.robotRelativeForcesXNewtons())
-            .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
-  }
-
-  public FollowPath.Builder builder =
-      new Builder(
-              this,
-              () -> this.getState().Pose,
-              () -> this.getState().Velocity,
-              this::setChassisSpeeds,
-              new PIDController(
-                  getAutoTranslationPIDConstants().kP,
-                  getAutoTranslationPIDConstants().kI,
-                  getAutoTranslationPIDConstants().kD),
-              new PIDController(
-                  getAutoRotationPIDConstants().kP,
-                  getAutoRotationPIDConstants().kI,
-                  getAutoRotationPIDConstants().kD),
-              new PIDController(2.0, 0.0, 0, Robot.DEFAULT_PERIOD))
-          .withDefaultShouldFlip();
+    FollowPath.Builder autoBuilder =
+        new FollowPath.Builder(
+            this,
+            () -> getState().Pose,
+            () -> getState().Velocity,
+            this::setChassisSpeeds,
+            new PIDController(
+                getAutoTranslationPIDConstants().kP(),
+                getAutoTranslationPIDConstants().kI(),
+                getAutoTranslationPIDConstants().kD()),
+            new PIDController(
+                getAutoRotationPIDConstants().kP(),
+                getAutoRotationPIDConstants().kI(),
+                getAutoRotationPIDConstants().kD()),
+            new PIDController(
+                getAutoCrossTrackPIDConstants().kP(),
+                getAutoCrossTrackPIDConstants().kI(),
+                getAutoCrossTrackPIDConstants().kD(),
+                Robot.DEFAULT_PERIOD))
+            .withDefaultShouldFlip()
+            .withPoseReset(this::resetPose);
 
   public AngularVelocity getGyroYawRate() {
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
@@ -343,36 +328,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     return new Rotation2d(cs.vx, cs.vy);
   }
 
-  public TrajectoryUtils getTrajectoryUtils() {
-    return m_trajectoryUtils;
-  }
-
-  @Override
-  public RobotConfig getAutoRobotConfig() {
-    try {
-      return RobotConfig.fromGUISettings();
-    } catch (IOException e) {
-      DriverStationBackend.reportWarning(
-          "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    } catch (ParseException e) {
-      DriverStationBackend.reportWarning(
-          "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    }
-  }
-
   @Override
   public PIDConstants getAutoTranslationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignTranslationPID;
+    return SWERVE.autoTranslationConstants;
   }
 
   @Override
   public PIDConstants getAutoRotationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignRotationPID;
+    return SWERVE.autoRotationConstants;
   }
 
-  /**
+  @Override
+  public PIDConstants getAutoCrossTrackPIDConstants() {
+    return SWERVE.autoCrossTrackConstants ;
+  }
+
+    /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
    *
    * @param requestSupplier Function returning the request to apply
@@ -383,7 +354,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   public Command autoCrossBump(Supplier<Path> path) {
-    return defer(() -> builder.build(path.get()));
+    return defer(() -> autoBuilder.build(path.get()));
   }
 
   /**
@@ -512,5 +483,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   public void addVisionMeasurement(PoseEstimate poseEstimate) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
+  }
+
+  public Command generateBLineCommand(String pathName, Supplier<Boolean> allianceFlip) {
+    return autoBuilder.withShouldMirror(allianceFlip).build(new Path(pathName));
+  }
+  public Command generateBLineCommand(String pathName) {
+    return autoBuilder.withShouldMirror(()->false).build(new Path(pathName));
   }
 }

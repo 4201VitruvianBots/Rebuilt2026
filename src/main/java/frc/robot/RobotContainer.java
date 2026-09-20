@@ -21,15 +21,6 @@ import frc.robot.commands.JostleIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.commands.autos.routines.CenterPreload;
-import frc.robot.commands.autos.routines.JustDepot;
-import frc.robot.commands.autos.routines.NextLevelAuto;
-import frc.robot.commands.autos.routines.SimboticsAuto;
-import frc.robot.commands.autos.routines.SingleScoopWithSprinkles;
-import frc.robot.commands.autos.routines.TwoCycle;
-import frc.robot.commands.autos.routines.TwoCycleInsideOutRush;
-import frc.robot.commands.autos.routines.TwoCycleRush;
-import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
@@ -56,6 +47,7 @@ import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
+import frc.team4201.lib.utils.MutableSupplier;
 import frc.team4201.lib.utils.POVUtils;
 import frc.team4201.lib.utils.Telemetry;
 import org.wpilib.command2.Command;
@@ -75,6 +67,8 @@ import org.wpilib.smartdashboard.SendableChooser;
 import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
+
+import java.util.function.Supplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -162,7 +156,7 @@ public class RobotContainer {
   @Logged(name = "AutoSideChooser")
   private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
 
-  private Boolean m_flipToRight = false;
+  private MutableSupplier<Boolean> m_flipToRight = new MutableSupplier<>(false);
 
   @Logged(name = "ManualRPMShift", importance = Logged.Importance.INFO)
   private double m_manualRPMshift = 0.0;
@@ -358,33 +352,32 @@ public class RobotContainer {
             m_indexer,
             m_uptake);
 
-    IntakeFromNeutral.registerNamedCommands(autoDeps);
+    m_autoChooser.addOption("Center Preload", m_swerveDrive.generateBLineCommand("center_preload", m_flipToRight));
+    m_autoChooser.addOption("Simbotics Auto (Part 1)", m_swerveDrive.generateBLineCommand("simbotics", m_flipToRight));
+    m_autoChooser.addOption("Depot Only", m_swerveDrive.generateBLineCommand("depot_only"));
 
-    m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
-    m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption(
-        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
-        "Two Cycle - Inside Out Alliance Partner Friendly",
-        new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
-        "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
-        "Single Scoop with Sprinkles (Depot)",
-        new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
-    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
-    // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
-        "Two Cycle (Rush) - Alliance Partner Friendly",
-        new TwoCycle(autoDeps, () -> m_flipToRight, true));
+//    m_autoChooser.addOption(
+//        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
+//    m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
+//    m_autoChooser.addOption(
+//        "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
+//    m_autoChooser.addOption(
+//        "Two Cycle - Inside Out Alliance Partner Friendly",
+//        new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
+//    m_autoChooser.addOption(
+//        "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
+//    m_autoChooser.addOption(
+//        "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
+//    m_autoChooser.addOption(
+//        "Single Scoop with Sprinkles (Depot)",
+//        new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
+//    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
+//    // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
+//    m_autoChooser.addOption(
+//        "Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
+//    m_autoChooser.addOption(
+//        "Two Cycle (Rush) - Alliance Partner Friendly",
+//        new TwoCycle(autoDeps, () -> m_flipToRight, true));
   }
 
   private void initSideChooser() {
@@ -393,7 +386,7 @@ public class RobotContainer {
 
     m_autoSide.addOption("Depot", false);
     m_autoSide.addOption("Outpost", true);
-    m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
+    m_autoSide.onChange(m_flipToRight::set);
   }
 
   public void simulationPeriodic() {
@@ -516,19 +509,19 @@ public class RobotContainer {
       // of the fuel
       // vel in ft/s = 0.0111882 * RPM - 0.
       try {
-        m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
-        m_fuelSim.launchFuel(
-            FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-            m_hood.getHoodAngle(),
-            Degrees.of(0),
-            FLYWHEEL.fuelLaunchHeight);
-        System.out.println(
-            "Launching fuel at velocity: "
-                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
-                + " ft/s and angle: "
-                + m_hood.getHoodAngleDegrees()
-                + " degrees");
-        System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
+        //m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
+//        m_fuelSim.launchFuel(
+//            FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
+//            m_hood.getHoodAngle(),
+//            Degrees.of(0),
+//            FLYWHEEL.fuelLaunchHeight);
+//        System.out.println(
+//            "Launching fuel at velocity: "
+//                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
+//                + " ft/s and angle: "
+//                + m_hood.getHoodAngleDegrees()
+//                + " degrees");
+        //System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
       } catch (IllegalStateException e) {
         return;
       }
