@@ -46,6 +46,6 @@ public class SwerveModule2d implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    m_moduleLigament.close();
+    //m_moduleLigament.close();
   }
 }

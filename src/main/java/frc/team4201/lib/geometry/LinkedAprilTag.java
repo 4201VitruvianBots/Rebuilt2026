@@ -2,8 +2,8 @@ package frc.team4201.lib.geometry;
 
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.fields.Field;
 import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 
 public class LinkedAprilTag {
   private final String tagName;
@@ -12,7 +12,7 @@ public class LinkedAprilTag {
   private Pose3d bluePose;
   private Pose3d redPose;
 
-  public LinkedAprilTag(String name, int redId, int blueId, AprilTagFieldLayout field) {
+  public LinkedAprilTag(String name, int redId, int blueId, Field field) {
     tagName = name;
     this.redId = redId;
     this.blueId = blueId;

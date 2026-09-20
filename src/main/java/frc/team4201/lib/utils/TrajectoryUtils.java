@@ -14,13 +14,15 @@ import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import org.wpilib.command2.*;
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.MatchType;
+import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.trajectory.Trajectory;
 import org.wpilib.math.trajectory.TrajectoryConfig;
-import org.wpilib.math.trajectory.TrajectoryGenerator;
 
 /**
  * Utility class for working with autonomous trajectory following. Is currently designed around <a
@@ -72,7 +74,7 @@ public class TrajectoryUtils {
    *
    * @param pathName The name of the PathPlanner Trajectory file to reference.
    * @param flipPath Option to flip the trajectory instead of using the robot's current {@link
-   *     DriverStation.Alliance} color
+   *     Alliance} color
    * @return Command
    */
   public Command generatePPHolonomicCommand(String pathName, BooleanSupplier flipPath) {
@@ -109,7 +111,7 @@ public class TrajectoryUtils {
                     path,
                     () -> m_swerveDrive.getState().Pose,
                     () -> m_swerveDrive.getState().Velocity,
-                    m_swerveDrive::setChassisSpeedsAuto,
+                    m_swerveDrive::setChassisVelocitiesAuto,
                     new PPHolonomicDriveController(
                         m_swerveDrive.getAutoTranslationPIDConstants(),
                         m_swerveDrive.getAutoRotationPIDConstants()),

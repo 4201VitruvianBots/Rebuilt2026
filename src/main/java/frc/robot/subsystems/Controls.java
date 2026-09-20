@@ -7,12 +7,13 @@ package frc.robot.subsystems;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.ROBOT.USB;
 import java.io.File;
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.command2.SubsystemBase;
-import org.wpilib.driverstation.Alert;
-import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.util.Alert;
+import org.wpilib.util.Alert.Level;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.epilogue.Logged;
@@ -20,16 +21,16 @@ import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.MedianFilter;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
+import org.wpilib.telemetry.Telemetry;
 
 @Logged
 public class Controls extends SubsystemBase {
   private static boolean m_allianceInit;
   private static Alliance m_allianceColor = Alliance.RED;
 
-  // private static Alert m_visionAlert = new Alert("Vision alert not properly initialized",
+  // private static Alert m_visionAlert = new Alert("Controls", "Vision alert not properly initialized",
   // Level.MEDIUM);
 
   private static Timer m_brownoutTimer = new Timer();
@@ -41,21 +42,21 @@ public class Controls extends SubsystemBase {
   @NotLogged
   private final Map<String, Alert> alertMap =
       Map.ofEntries(
-          Map.entry("usb", new Alert("USB connection alert not properly initialized", Level.HIGH)),
-          Map.entry("brownout", new Alert("Brownout alert not properly initialized", Level.MEDIUM)),
+          Map.entry("usb", new Alert("Controls", "USB connection alert not properly initialized", Level.HIGH)),
+          Map.entry("brownout", new Alert("Controls", "Brownout alert not properly initialized", Level.MEDIUM)),
           Map.entry(
-              "storage", new Alert("Storage space alert not properly initialized", Level.MEDIUM)),
+              "storage", new Alert("Controls", "Storage space alert not properly initialized", Level.MEDIUM)),
           Map.entry(
-              "epilogue", new Alert("Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
+              "epilogue", new Alert("Controls", "Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
           // Alerts for setting up the robot properly
           Map.entry(
-              "allianceInit", new Alert("Did not get alliance color from FMS/DS!", Level.MEDIUM)),
-          Map.entry("vision", new Alert("Vision Subsystem is not ready!", Level.MEDIUM)),
+              "allianceInit", new Alert("Controls", "Did not get alliance color from FMS/DS!", Level.MEDIUM)),
+          Map.entry("vision", new Alert("Controls", "Vision Subsystem is not ready!", Level.MEDIUM)),
 
           // Alerts for when the robot is running
-          Map.entry("radioError", new Alert("Robot Radio not detected!", Level.HIGH)),
-          Map.entry("joystickError", new Alert("Missing joystick detected!", Level.HIGH)),
-          Map.entry("canError", new Alert("CAN bus error detected!", Level.HIGH)));
+          Map.entry("radioError", new Alert("Controls", "Robot Radio not detected!", Level.HIGH)),
+          Map.entry("joystickError", new Alert("Controls", "Missing joystick detected!", Level.HIGH)),
+          Map.entry("canError", new Alert("Controls", "CAN bus error detected!", Level.HIGH)));
 
   private final MedianFilter epilogueBuffer = new MedianFilter(20);
   private final DoubleSubscriber epilogueRuntimeSub =
@@ -87,7 +88,7 @@ public class Controls extends SubsystemBase {
   }
 
   private void initSmartDashboard() {
-    SmartDashboard.putString("Controls/Serial Number", RobotController.getSerialNumber());
+    Telemetry.getTable("Controls").log("Serial Number", RobotController.getSerialNumber());
   }
 
   public void updateAlerts() {

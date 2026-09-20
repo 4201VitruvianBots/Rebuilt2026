@@ -257,7 +257,7 @@ public class Hood extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
-  public void testInit() {
+  public void utilityInit() {
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
@@ -267,7 +267,7 @@ public class Hood extends SubsystemBase {
     m_anglePublisher.set(0.0);
   }
 
-  public void testPeriodic() {
+  public void utilityPeriodic() {
     setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }

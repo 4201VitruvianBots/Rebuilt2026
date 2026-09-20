@@ -109,17 +109,17 @@ public class Robot extends TimedRobot {
 
   // TODO: SystemCore does not have have a test mode
   //  @Override
-  //  public void testInit() {
+  //  public void utilityInit() {
   //    // Cancels all running commands at the start of test mode.
   //    CommandScheduler.getInstance().cancelAll();
   //
-  //    m_robotContainer.testInit();
+  //    m_robotContainer.utilityInit();
   //  }
 
   //  /** This function is called periodically during test mode. */
   //  @Override
-  //  public void testPeriodic() {
-  //    m_robotContainer.testPeriodic();
+  //  public void utilityPeriodic() {
+  //    m_robotContainer.utilityPeriodic();
   //  }
 
   /** This function is called once when the robot is first started up. */

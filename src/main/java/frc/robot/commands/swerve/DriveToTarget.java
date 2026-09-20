@@ -85,7 +85,7 @@ public class DriveToTarget {
             path,
             () -> m_swerveDrive.getState().Pose,
             () -> m_swerveDrive.getState().Velocity,
-            m_swerveDrive::setChassisSpeedsAuto,
+            m_swerveDrive::setChassisVelocitiesAuto,
             AUTO_ALIGN.kDriveController,
             m_swerveDrive.getAutoRobotConfig(),
             () -> false,

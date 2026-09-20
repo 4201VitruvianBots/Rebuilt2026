@@ -35,7 +35,7 @@ import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
 import org.wpilib.smartdashboard.MechanismRoot2d;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.DistanceUnit;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Distance;
@@ -226,7 +226,7 @@ public class Robot2d extends SubsystemBase {
     m_uptake.setColor(m_colorUptake);
 
     if (RobotBase.isSimulation()) {
-      SmartDashboard.putData("Robot2d", m_robot);
+      Telemetry.log("Robot2d", m_robot);
       m_intakePivot.generateSubDisplay();
       m_flywheel.generateSubDisplay();
       m_shooterHood.generateSubDisplay();

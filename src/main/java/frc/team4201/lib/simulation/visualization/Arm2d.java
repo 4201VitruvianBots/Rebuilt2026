@@ -5,6 +5,7 @@ import static org.wpilib.units.Units.*;
 import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.smartdashboard.*;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
@@ -92,7 +93,7 @@ public class Arm2d implements AutoCloseable {
         .append(m_subArm2d.getLigament());
     ;
 
-    SmartDashboard.putData(armSubConfig.m_name, subArmDisplay);
+    Telemetry.log(armSubConfig.m_name, subArmDisplay);
   }
 
   /**
@@ -197,10 +198,10 @@ public class Arm2d implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    m_arm2d.close();
+    // m_arm2d.close();
 
-    if (m_subArm2d != null) {
-      m_subArm2d.close();
-    }
+    // if (m_subArm2d != null) {
+    //   m_subArm2d.close();
+    // }
   }
 }

@@ -1,22 +1,23 @@
 package frc.team4201.lib.geometry;
 
 import java.util.*;
+
+import org.wpilib.fields.Field;
+import org.wpilib.fields.Fields;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.vision.apriltag.AprilTagFields;
 
 public class Targeting2d {
-  private static AprilTagFieldLayout aprilTagLayout;
+  private static Field aprilTagLayout;
   private static Translation2d fieldCenter;
   private static final Map<String, Target2d> m_targetList = new HashMap<>();
   private static final Map<Integer, AprilTagData> m_aprilTagList = new HashMap<>();
 
   public static void init() {
-    init(AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark));
+    init(Fields.FRC_2026_REBUILT_ANDY_MARK.loadField());
   }
 
-  public static void init(AprilTagFieldLayout layout) {
+  public static void init(Field layout) {
     aprilTagLayout = layout;
 
     fieldCenter =
@@ -25,12 +26,12 @@ public class Targeting2d {
 
     var tags = layout.getTags();
     for (var t : tags) {
-      var tagData = new AprilTagData(t.ID, t.pose.toPose2d());
-      m_aprilTagList.put(t.ID, tagData);
+      var tagData = new AprilTagData(t.getID(), t.getPose().toPose2d());
+      m_aprilTagList.put(t.getID(), tagData);
     }
   }
 
-  public static AprilTagFieldLayout getLayout() {
+  public static Field getLayout() {
     return aprilTagLayout;
   }
 

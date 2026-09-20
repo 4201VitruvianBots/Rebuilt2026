@@ -555,7 +555,7 @@ public class FuelSim {
             .plus(
                 new Transform3d(
                     new Translation3d(Meters.zero(), Meters.zero(), launchHeight),
-                    Rotation3d.kZero));
+                    Rotation3d.ZERO));
     ChassisVelocities fieldSpeeds = this.robotFieldSpeedsSupplier.get();
 
     double horizontalVel = Math.cos(hoodAngle.in(Radians)) * launchVelocity.in(MetersPerSecond);
@@ -575,7 +575,7 @@ public class FuelSim {
 
   protected void handleRobotCollision(Fuel fuel, Pose2d robot, Translation2d robotVel) {
     Translation2d relativePos =
-        new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero).relativeTo(robot).getTranslation();
+        new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.ZERO).relativeTo(robot).getTranslation();
 
     if (fuel.pos.getZ() > bumperHeight) return; // above bumpers
     double distanceToBottom = -FUEL_RADIUS - robotLength / 2 - relativePos.getX();
@@ -929,7 +929,7 @@ public class FuelSim {
       if (!ableToIntake.getAsBoolean() || fuel.pos.getZ() > bumperHeight) return false;
 
       Translation2d fuelRelativePos =
-          new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero)
+          new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.ZERO)
               .relativeTo(robotPose)
               .getTranslation();
 

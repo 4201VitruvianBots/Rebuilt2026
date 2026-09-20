@@ -72,5 +72,5 @@ public interface SwerveSubsystem extends Subsystem {
    * @param chassisSpeeds WPILib's {@link ChassisVelocities}
    * @param feedforwards PathPlanner's {@link DriveFeedforwards}
    */
-  void setChassisSpeedsAuto(ChassisVelocities chassisSpeeds, DriveFeedforwards feedforwards);
+  void setChassisVelocitiesAuto(ChassisVelocities chassisSpeeds, DriveFeedforwards feedforwards);
 }

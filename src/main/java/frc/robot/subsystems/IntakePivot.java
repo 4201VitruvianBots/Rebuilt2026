@@ -208,7 +208,7 @@ public class IntakePivot extends SubsystemBase {
     m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
   }
 
-  public void testInit() {
+  public void utilityInit() {
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
@@ -218,7 +218,7 @@ public class IntakePivot extends SubsystemBase {
     m_anglePublisher.set(PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees));
   }
 
-  public void testPeriodic() {
+  public void utilityPeriodic() {
     setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }

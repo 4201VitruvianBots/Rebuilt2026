@@ -10,6 +10,7 @@ import static org.wpilib.units.Units.RotationsPerSecond;
 import frc.team4201.lib.simulation.visualization.configs.Flywheel2dConfig;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.smartdashboard.*;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.AngularVelocity;
 
 /** Class to represent a flywheel using {@link Mechanism2d} */
@@ -120,7 +121,7 @@ public class Flywheel2d implements AutoCloseable {
         .append(m_subFlywheel2d.getLigament());
     ;
 
-    SmartDashboard.putData(flywheelSubConfig.m_name, subFlywheelDisplay);
+    Telemetry.log(flywheelSubConfig.m_name, subFlywheelDisplay);
   }
 
   /**
@@ -176,13 +177,13 @@ public class Flywheel2d implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    m_flywheel.close();
-    for (var side : m_sides) {
-      side.close();
-    }
+    // m_flywheel.close();
+    // for (var side : m_sides) {
+    //   side.close();
+    // }
 
-    if (m_subFlywheel2d != null) {
-      m_subFlywheel2d.close();
-    }
+    // if (m_subFlywheel2d != null) {
+    //   m_subFlywheel2d.close();
+    // }
   }
 }

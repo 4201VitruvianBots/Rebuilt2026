@@ -129,11 +129,11 @@ public class Uptake extends SubsystemBase {
         });
   }
 
-  public void testInit() {
+  public void utilityInit() {
     m_rpmPublisher.set(0.0);
   }
 
-  public void testPeriodic() {
+  public void utilityPeriodic() {
     setPercentOutput(m_rpmSubscriber.get());
   }
 

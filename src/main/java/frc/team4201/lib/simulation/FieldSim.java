@@ -16,7 +16,7 @@ import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.ProtobufPublisher;
 import org.wpilib.smartdashboard.Field2d;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 
 /** Class to handle all updates to the Field2D widget */
 public class FieldSim extends SubsystemBase implements AutoCloseable {
@@ -49,7 +49,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
 
   /** Create a FieldSim object */
   public FieldSim() {
-    SmartDashboard.putData("Field2D", m_field2D);
+    Telemetry.log("Field2D", m_field2D);
   }
 
   public Field2d getField2d() {
@@ -61,7 +61,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
         .getObject(key)
         .setPoses(
             Arrays.stream(translations)
-                .map(t -> new Pose2d(t, Rotation2d.kZero))
+                .map(t -> new Pose2d(t, Rotation2d.ZERO))
                 .toArray(Pose2d[]::new));
   }
 
@@ -89,7 +89,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
     addPoses(
         key,
         Arrays.stream(translations)
-            .map(t -> new Pose2d(t, Rotation2d.kZero))
+            .map(t -> new Pose2d(t, Rotation2d.ZERO))
             .toArray(Pose2d[]::new));
   }
 
@@ -112,12 +112,12 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
    */
   public void clearPose(String key) {
     m_objectPoses.remove(key);
-    m_field2D.getObject(key).close();
+    // m_field2D.getObject(key).close();
   }
 
   /** Remove all poses from being displayed on FieldSim */
   public void clearAllPoses() {
-    for (var entry : m_objectPoses.entrySet()) m_field2D.getObject(entry.getKey()).close();
+    // for (var entry : m_objectPoses.entrySet()) m_field2D.getObject(entry.getKey()).close();
     m_objectPoses.clear();
   }
 

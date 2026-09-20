@@ -6,8 +6,8 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import org.wpilib.driverstation.Alert;
-import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.util.Alert;
+import org.wpilib.util.Alert.Level;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.system.Timer;
 
@@ -20,7 +20,7 @@ public final class CtreUtils {
    */
   public static void initPhoenixServer() {
     var alert =
-        new Alert("Starting Phoenix Server at: " + Timer.getMonotonicTimestamp(), Level.LOW);
+        new Alert("CTREUtils", "Starting Phoenix Server at: " + Timer.getMonotonicTimestamp(), Level.LOW);
     alert.set(true);
     if (RobotBase.isReal()) {
       TalonFX dummy = new TalonFX(0, new CANBus("rio"));
@@ -49,7 +49,7 @@ public final class CtreUtils {
     }
     if (!motorStatus.isOK()) {
       var alert =
-          new Alert(
+          new Alert("CTREUtils",
               String.format(
                   "Could not apply configs to TalonFx ID: %d. Error code: %s",
                   motor.getDeviceID(), motorStatus),
@@ -78,7 +78,7 @@ public final class CtreUtils {
     }
     if (!canCoderStatus.isOK()) {
       var alert =
-          new Alert(
+          new Alert("CTREUtils",
               String.format(
                   "Could not apply configs to CANCoder ID: %d. Error code: %s",
                   cancoder.getDeviceID(), canCoderStatus),

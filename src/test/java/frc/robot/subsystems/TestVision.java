@@ -28,11 +28,11 @@ public class TestVision {
   @Test
   public void test_isOnTarget() {
     // Set a fake target. For ease, this is (3,4) for a right-triangle
-    Pose2d targetPose = new Pose2d(3, 4, Rotation2d.kZero);
+    Pose2d targetPose = new Pose2d(3, 4, Rotation2d.ZERO);
     TestUtils.setPrivateField(vision, "targetPose", targetPose);
 
     // Set the robot's position for this test
-    SwerveDriveState swerveDriveState = new SwerveDriveState();
+    SwerveDriveState swerveDriveState = new SwerveDriveState(4);
     swerveDriveState.Pose = new Pose2d(0, 0, Rotation2d.fromDegrees(53));
     // Use mockito to have the swerveDrive use our fake position
     doReturn(swerveDriveState).when(swerveDrive).getState();

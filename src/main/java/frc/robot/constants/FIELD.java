@@ -19,14 +19,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.fields.Field;
+import org.wpilib.fields.Fields;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.vision.apriltag.AprilTagFields;
 
 public class FIELD {
   /**
@@ -35,7 +35,7 @@ public class FIELD {
    * <p>The default value of the field constants should already be set based on the alliance you are
    * on, which should be set/updated when the robot is disabled.
    */
-  private static AprilTagFieldLayout fieldLayout;
+  private static Field fieldLayout;
 
   private static Map<String, LinkedAprilTag> aprilTagMap = new HashMap<>();
 
@@ -51,9 +51,9 @@ public class FIELD {
 
   public static void initializeConstants() {
     if (DriverStationBackend.isFMSAttached()) {
-      fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+      fieldLayout = Fields.FRC_2026_REBUILT_WELDED.loadField();
     } else {
-      fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+      fieldLayout = Fields.FRC_2026_REBUILT_ANDY_MARK.loadField();
     }
 
     FIELD_LENGTH = Meters.of(fieldLayout.getFieldLength());
@@ -272,7 +272,7 @@ public class FIELD {
       public static void init() {
         ZONE =
             new FieldRectangle2d(
-                Translation2d.kZero, new Translation2d(BLUE_ZONE_LINE, FIELD_WIDTH));
+                Translation2d.ZERO, new Translation2d(BLUE_ZONE_LINE, FIELD_WIDTH));
 
         DEPOT =
             new FieldRectangle2d(
@@ -555,14 +555,14 @@ public class FIELD {
     // Third word is what these poses are in relation to
     // All units are in meters
     // Everything has been measured from our auto waypoints based on the welded field
-    LEFT_ALLIANCE_BUMP(new Pose2d(2.974, 5.536, Rotation2d.kZero)),
-    RIGHT_ALLIANCE_BUMP(new Pose2d(2.974, 2.533, Rotation2d.kZero)),
+    LEFT_ALLIANCE_BUMP(new Pose2d(2.974, 5.536, Rotation2d.ZERO)),
+    RIGHT_ALLIANCE_BUMP(new Pose2d(2.974, 2.533, Rotation2d.ZERO)),
     LEFT_ALLIANCE_SHOOTING(new Pose2d(2.974, 5.536, new Rotation2d(-42.557))),
     RIGHT_ALLIANCE_SHOOTING(new Pose2d(2.974, 2.533, new Rotation2d(42.557))),
-    LEFT_NEUTRAL_BUMP(new Pose2d(5.833, 5.536, Rotation2d.kZero)),
-    RIGHT_NEUTRAL_BUMP(new Pose2d(5.833, 2.533, Rotation2d.kZero)),
-    RIGHT_UNREALISTIC_POSE(new Pose2d(0.0, 2.354, Rotation2d.kZero)),
-    LEFT_UNREALISTIC_POSE(new Pose2d(0.0, 5.536, Rotation2d.kZero));
+    LEFT_NEUTRAL_BUMP(new Pose2d(5.833, 5.536, Rotation2d.ZERO)),
+    RIGHT_NEUTRAL_BUMP(new Pose2d(5.833, 2.533, Rotation2d.ZERO)),
+    RIGHT_UNREALISTIC_POSE(new Pose2d(0.0, 2.354, Rotation2d.ZERO)),
+    LEFT_UNREALISTIC_POSE(new Pose2d(0.0, 5.536, Rotation2d.ZERO));
 
     private final Pose2d pose2d;
 

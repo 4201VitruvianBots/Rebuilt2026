@@ -132,7 +132,7 @@ public class Indexer extends SubsystemBase {
         RPM.of(m_indexerMotor2Sim.getAngularVelocity()).times(INDEXER.gearRatio));
   }
 
-  public void testInit() {
+  public void utilityInit() {
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
@@ -149,7 +149,7 @@ public class Indexer extends SubsystemBase {
     m_speedPublisher2.set(0.0);
   }
 
-  public void testPeriodic() {
+  public void utilityPeriodic() {
     setSpeeds(m_speedSubscriber1.get(), m_speedSubscriber2.get());
   }
 }

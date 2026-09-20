@@ -190,7 +190,7 @@ public class Intake extends SubsystemBase {
     m_simState.setRotorVelocity(RPM.of(m_motor1Sim.getAngularVelocity()).times(ROLLERS.gearRatio));
   }
 
-  public void testInit() {
+  public void utilityInit() {
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
@@ -201,5 +201,5 @@ public class Intake extends SubsystemBase {
     setIntakeState(INTAKE_STATE.MANUAL);
   }
 
-  public void testPeriodic() {}
+  public void utilityPeriodic() {}
 }

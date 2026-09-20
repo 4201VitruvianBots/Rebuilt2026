@@ -16,6 +16,8 @@ import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
+import frc.team4201.lib.utils.CtreTelemetry;
+
 import java.util.function.DoubleSupplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.button.CommandGamepad;
@@ -30,7 +32,7 @@ import org.wpilib.math.interpolation.InterpolatingTreeMap;
 import org.wpilib.math.interpolation.Interpolator;
 import org.wpilib.math.interpolation.InverseInterpolator;
 import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.Distance;
 
 public class Shoot extends Command {
@@ -122,7 +124,7 @@ public class Shoot extends Command {
     m_RPMShift = RPMShift;
 
     addRequirements(flywheel, shooterHood);
-    SmartDashboard.putData(this);
+    Telemetry.log(this.getName(), this);
   }
 
   /** Standard shooting without shoot on the move capabilities. Used only in auto. */
@@ -134,7 +136,7 @@ public class Shoot extends Command {
     m_swerveDrivetrain = swerveDrive;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
-    SmartDashboard.putData(this);
+    Telemetry.log(this.getName(), this);
   }
 
   // Called when the command is initially scheduled.
@@ -195,7 +197,7 @@ public class Shoot extends Command {
     }
 
     // Calculate parameters accounted for imparted velocity
-    Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
+    Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle().get();
 
     double hoodAngle = shot.hoodAngle.in(Radians);
 
@@ -207,11 +209,11 @@ public class Shoot extends Command {
     m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Degrees.of(m_hoodAngleShift.getAsDouble())));
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
-        m_driverController.setRumble(
+        m_driverController.getGamepad().setRumble(
             RumbleType.LEFT_RUMBLE, FLYWHEEL.kRumbleStrength); // Null in auto
     } else {
       if (m_driverController != null)
-        m_driverController.setRumble(RumbleType.RIGHT_RUMBLE, 0); // Null in auto
+        m_driverController.getGamepad().setRumble(RumbleType.RIGHT_RUMBLE, 0); // Null in auto
     }
 
     Rotation2d moduleAngle = new Rotation2d();
@@ -226,7 +228,7 @@ public class Shoot extends Command {
     boolean isBraking = moduleAngleDeltaInt == 0;
 
     if (!isBraking) {
-      m_swerveDrivetrain.setChassisSpeedsWithHeading(
+      m_swerveDrivetrain.setChassisVelocitiesWithHeading(
           SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
           SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
           Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
@@ -237,7 +239,7 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     if (m_driverController != null)
-      m_driverController.setRumble(RumbleType.LEFT_RUMBLE, 0); // Null in auto
+      m_driverController.getGamepad().setRumble(RumbleType.LEFT_RUMBLE, 0); // Null in auto
     m_flywheel.setVoltageOutput(Volts.of(0.0));
     m_flywheel.setIsShooting(false);
   }

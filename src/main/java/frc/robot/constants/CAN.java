@@ -1,9 +1,11 @@
 package frc.robot.constants;
 
+import org.wpilib.hardware.bus.CANPort;
+
 import com.ctre.phoenix6.CANBus;
 
 public class CAN {
-  public static final CANBus roboRIO = CANBus.systemcore(0);
+  public static final CANBus roboRIO = new CANBus(CANPort.CAN_S0);
   public static final CANBus driveBase = new CANBus("drivebase");
 
   public static final int pigeon = 9;

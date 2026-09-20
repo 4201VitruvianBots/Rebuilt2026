@@ -231,11 +231,11 @@ public class Flywheel extends SubsystemBase {
         () -> setRPMOutput(MANUAL_RPM.FULL.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
 
-  public void testInit() {
+  public void utilityInit() {
     m_rpmPublisher.set(0.0);
   }
 
-  public void testPeriodic() {
+  public void utilityPeriodic() {
     m_rpmSetpoint = RPM.of(m_rpmSubscriber.get());
   }
 

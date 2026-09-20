@@ -116,7 +116,7 @@ public final class VISION {
       robotTimestamp = llPubTable.getDoubleTopic("robotTimestamp").publish();
       robotTimestamp.setDefault(-1);
       estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
-      estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
+      estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.ZERO));
       numTags = llPubTable.getIntegerTopic("numTags").publish();
       numTags.setDefault(-1);
       megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();

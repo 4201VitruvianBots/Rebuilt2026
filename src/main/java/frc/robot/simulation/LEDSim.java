@@ -7,7 +7,7 @@ package frc.robot.simulation;
 import org.wpilib.hardware.led.AddressableLEDBuffer;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.util.Color8Bit;
 
 /** A class for simulating LEDs using a Mechanism2d object. */
@@ -52,7 +52,7 @@ public class LEDSim {
                 .append(new MechanismLigament2d("LED " + i, 10, 0));
       }
     }
-    SmartDashboard.putData("LEDSim", m_mech2d);
+    Telemetry.log("LEDSim", m_mech2d);
   }
 
   public void update() {

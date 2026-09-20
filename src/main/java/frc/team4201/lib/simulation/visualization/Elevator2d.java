@@ -5,6 +5,7 @@ import static org.wpilib.units.Units.*;
 import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.smartdashboard.*;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.LinearVelocity;
@@ -112,7 +113,7 @@ public class Elevator2d implements AutoCloseable {
         .getRoot(m_subElevator2d + "Root", rootPosition.getX(), rootPosition.getY())
         .append(m_subElevator2d.getLigament());
 
-    SmartDashboard.putData(elevatorSubConfig.m_name, subElevatorDisplay);
+    Telemetry.log(elevatorSubConfig.m_name, subElevatorDisplay);
   }
 
   /**
@@ -238,12 +239,12 @@ public class Elevator2d implements AutoCloseable {
 
   @Override
   public void close() throws Exception {
-    for (var elevatorSegment : m_elevatorStages) {
-      elevatorSegment.close();
-    }
+    // for (var elevatorSegment : m_elevatorStages) {
+    //   elevatorSegment.close();
+    // }
 
-    if (m_subElevator2d != null) {
-      m_subElevator2d.close();
-    }
+    // if (m_subElevator2d != null) {
+    //   m_subElevator2d.close();
+    // }
   }
 }

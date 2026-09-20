@@ -71,7 +71,7 @@ public class PositionPIDCommand extends Command {
         .withTimeout(timeout)
         .finallyDo(
             () -> {
-              m_swerve.setChassisSpeeds(new ChassisVelocities());
+              m_swerve.setChassisVelocities(new ChassisVelocities());
               // m_swerve.lockModules();
             });
   }
@@ -88,7 +88,7 @@ public class PositionPIDCommand extends Command {
 
     endTriggerLogger.accept(endTrigger.getAsBoolean());
 
-    m_swerve.setChassisSpeeds(
+    m_swerve.setChassisVelocities(
         AUTO_ALIGN.kDriveController.calculateRobotRelativeSpeeds(
             m_swerve.getState().Pose, goalState));
   }

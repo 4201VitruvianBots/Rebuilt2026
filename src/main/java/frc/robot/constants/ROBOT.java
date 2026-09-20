@@ -3,8 +3,8 @@ package frc.robot.constants;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.derive;
 
-import org.wpilib.driverstation.Alert;
-import org.wpilib.driverstation.Alert.Level;
+import org.wpilib.util.Alert;
+import org.wpilib.util.Alert.Level;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.system.RobotController;
@@ -116,7 +116,7 @@ public class ROBOT {
   }
 
   public static void initializeConstants() {
-    var alert = new Alert("Initializing Robot Constants...", Level.LOW);
+    var alert = new Alert("ROBOT", "Initializing Robot Constants...", Level.LOW);
 
     try {
       switch (ROBOT_ID.fromSerial(RobotController.getSerialNumber())) {
@@ -138,7 +138,7 @@ public class ROBOT {
       alert.setText("Setting Robot Constants for " + robotID.getName());
     } catch (IllegalArgumentException e) {
       alert =
-          new Alert(
+          new Alert("ROBOT",
               "WARN: Robot Serial Not Recognized! Current roboRIO Serial: "
                   + RobotController.getSerialNumber(),
               Level.MEDIUM);

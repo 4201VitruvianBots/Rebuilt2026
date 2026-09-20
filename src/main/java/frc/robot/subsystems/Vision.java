@@ -43,7 +43,7 @@ public class Vision extends SubsystemBase {
   private boolean m_localized;
 
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
-  private Pose2d targetPose = Pose2d.kZero;
+  private Pose2d targetPose = Pose2d.ZERO;
   private Pose2d allianceZonePose = new Pose2d();
   private Pose2d neutralZonePose = new Pose2d();
   private Pose2d unrealisticPose = new Pose2d();
@@ -133,7 +133,7 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-                  Rotation2d.kZero);
+                  Rotation2d.ZERO);
         } else {
           targetPose =
               new Pose2d(
@@ -148,7 +148,7 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-                  Rotation2d.kZero);
+                  Rotation2d.ZERO);
         } else {
           targetPose =
               new Pose2d(
@@ -224,7 +224,7 @@ public class Vision extends SubsystemBase {
     } else {
       limelight.publishTimestamp(-1);
       limelight.publishRobotTimestamp(-1);
-      limelight.publishPose(new Pose2d(-1, -1, Rotation2d.kZero));
+      limelight.publishPose(new Pose2d(-1, -1, Rotation2d.ZERO));
       limelight.publishTagCount(-1);
       limelight.publishMegatag2Pose(false);
     }
@@ -255,7 +255,7 @@ public class Vision extends SubsystemBase {
       // Filter out bad AprilTag vision estimates for both MegaTag1 and MegaTag2
       if (poseEstimate.timestampSeconds == 0) {
         return false;
-      } else if (poseEstimate.pose.getTranslation().equals(Translation2d.kZero)) {
+      } else if (poseEstimate.pose.getTranslation().equals(Translation2d.ZERO)) {
         return false;
       } else if (poseEstimate.tagCount == 0) {
         return false;
@@ -341,7 +341,7 @@ public class Vision extends SubsystemBase {
       Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
     // bearing from robot to goal
     var bearing =
-        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().get().getRadians();
     // robot heading
     var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
     // smallest signed angle difference in [-pi, pi]
@@ -387,7 +387,7 @@ public class Vision extends SubsystemBase {
     return FIELD.getCurrentSector().name().endsWith("LEFT");
   }
 
-  public void testInit() {
+  public void utilityInit() {
     m_kPAutoAlignPublisher.set(12.0);
     m_kDAutoAlignPublisher.set(0.0);
   }

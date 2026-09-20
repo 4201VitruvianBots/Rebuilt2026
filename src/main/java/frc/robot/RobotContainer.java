@@ -57,7 +57,7 @@ import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.POVUtils;
-import frc.team4201.lib.utils.Telemetry;
+import frc.team4201.lib.utils.CtreTelemetry;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.InstantCommand;
@@ -66,13 +66,14 @@ import org.wpilib.command2.WaitCommand;
 import org.wpilib.command2.button.CommandGamepad;
 import org.wpilib.command2.button.Trigger;
 import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.driverstation.Gamepad.Axis;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.math.filter.SlewRateLimiter;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.tunable.Selectable;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
 
@@ -151,16 +152,16 @@ public class RobotContainer {
       new SlewRateLimiter(SWERVE.kYAccelRateLimit, SWERVE.kYDeccelRateLimit, 0);
 
   private Robot2d m_robotSim = new Robot2d();
-  private final Telemetry m_telemetry =
-      new Telemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
+  private final CtreTelemetry m_telemetry =
+      new CtreTelemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim;
   private FuelSim m_fuelSim;
 
   @Logged(name = "AutoChooser")
-  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+  private final Selectable<Command> m_autoChooser = new Selectable<>();
 
   @Logged(name = "AutoSideChooser")
-  private final SendableChooser<Boolean> m_autoSide = new SendableChooser<>();
+  private final Selectable<Boolean> m_autoSide = new Selectable<>();
 
   private Boolean m_flipToRight = false;
 
@@ -200,12 +201,11 @@ public class RobotContainer {
                 drive
                     .withVelocityX(
                         MaxSpeed.times(
-                            -m_driverController.getRawAxis(
-                                1))) // Drive forward with negative Y (forward)
+                            -m_driverController.getAxis(Axis.LEFT_Y))) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         MaxSpeed.times(
-                            -m_driverController.getRawAxis(0))) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRawAxis(3)))));
+                            -m_driverController.getAxis(Axis.LEFT_X))) // Drive left with negative X (left)
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getAxis(Axis.RIGHT_X)))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -247,7 +247,7 @@ public class RobotContainer {
     if (m_intake != null)
       m_driverController.button(0).whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
-    POVUtils.povUpWithTilt(m_driverController)
+    POVUtils.povUpWithTilt(m_driverController.getHID())
         .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath(false)));
 
     if (m_flywheel != null && m_hood != null) {
@@ -260,7 +260,7 @@ public class RobotContainer {
 
     if (m_flywheel != null && m_hood != null) { // Doesn't use utils
       m_driverController
-          .povLeft()
+          .dpadLeft()
           .whileTrue(
               new ParallelCommandGroup(
                   m_flywheel.manualBumpShootCommand(), m_hood.manualFromBumpCommand()));
@@ -276,12 +276,12 @@ public class RobotContainer {
                   m_vision,
                   m_driverController,
                   m_swerveDrive,
-                  () -> m_driverController.getRawAxis(1),
-                  () -> m_driverController.getRawAxis(0),
+                  () -> m_driverController.getAxis(Axis.LEFT_Y),
+                  () -> m_driverController.getAxis(Axis.LEFT_X),
                   () -> m_manualHoodAngleShift,
                   () -> m_manualRPMshift));
 
-      POVUtils.povRightWithTilt(m_driverController)
+      POVUtils.povRightWithTilt(m_driverController.getHID())
           .whileTrue(
               new ParallelCommandGroup(
                   m_flywheel.manualFullFieldPassCommand(), m_hood.manualFullFieldPassCommand()));
@@ -307,7 +307,7 @@ public class RobotContainer {
     m_operatorController.rightTrigger().whileTrue(m_intakePivot.stow());
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
 
-    POVUtils.povDownWithTilt(m_driverController)
+    POVUtils.povDownWithTilt(m_driverController.getHID())
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
 
     // Decrease rpm manual shift by 0.2
@@ -332,7 +332,7 @@ public class RobotContainer {
 
     m_operatorController.button(0).onTrue(resetManualShifts());
 
-    POVUtils.povDownWithTilt(m_operatorController)
+    POVUtils.povDownWithTilt(m_operatorController.getHID())
         .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
 
     // if (m_swerveDrive != null) {
@@ -344,8 +344,8 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
-    SmartDashboard.putData("Auto Mode", m_autoChooser);
-    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    Telemetry.log("Auto Mode", m_autoChooser);
+    m_autoChooser.addDefault("Do Nothing", new WaitCommand(0));
 
     var autoDeps =
         new AutoDependencies(
@@ -360,39 +360,39 @@ public class RobotContainer {
 
     IntakeFromNeutral.registerNamedCommands(autoDeps);
 
-    m_autoChooser.addOption("Center Preload", new CenterPreload(autoDeps));
-    m_autoChooser.addOption("Simbotics Auto", new SimboticsAuto(autoDeps));
-    m_autoChooser.addOption(
+    m_autoChooser.add("Center Preload", new CenterPreload(autoDeps));
+    m_autoChooser.add("Simbotics Auto", new SimboticsAuto(autoDeps));
+    m_autoChooser.add(
         "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
+    m_autoChooser.add("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
+    m_autoChooser.add(
         "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
+    m_autoChooser.add(
         "Two Cycle - Inside Out Alliance Partner Friendly",
         new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
+    m_autoChooser.add(
         "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
+    m_autoChooser.add(
         "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption(
+    m_autoChooser.add(
         "Single Scoop with Sprinkles (Depot)",
         new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
-    m_autoChooser.addOption("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
-    // m_autoChooser.addOption("Two Cycle (Rush) - Inside Out Conservative", new
+    m_autoChooser.add("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
+    // m_autoChooser.add("Two Cycle (Rush) - Inside Out Conservative", new
     // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
+    m_autoChooser.add(
         "Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-    m_autoChooser.addOption(
+    m_autoChooser.add(
         "Two Cycle (Rush) - Alliance Partner Friendly",
         new TwoCycle(autoDeps, () -> m_flipToRight, true));
   }
 
   private void initSideChooser() {
-    SmartDashboard.putData("Auto Side", m_autoSide);
-    m_autoSide.setDefaultOption("No Flip", false);
+    Telemetry.log("Auto Side", m_autoSide);
+    m_autoSide.addDefault("No Flip", false);
 
-    m_autoSide.addOption("Depot", false);
-    m_autoSide.addOption("Outpost", true);
+    m_autoSide.add("Depot", false);
+    m_autoSide.add("Outpost", true);
     m_autoSide.onChange((Boolean selected) -> m_flipToRight = selected);
   }
 
@@ -407,46 +407,46 @@ public class RobotContainer {
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
-    SmartDashboard.putData("ResetGyro", new ResetGyro(m_swerveDrive));
+    Telemetry.log("ResetGyro", new ResetGyro(m_swerveDrive));
     if (RobotBase.isSimulation()) {
-      SmartDashboard.putData(
+      Telemetry.log(
           "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
-      SmartDashboard.putData(
+      Telemetry.log(
           "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
     }
 
-    SmartDashboard.putData("Start Signal Logger", Commands.runOnce(SignalLogger::start));
-    SmartDashboard.putData("Stop Signal Logger", Commands.runOnce(SignalLogger::stop));
+    Telemetry.log("Start Signal Logger", Commands.runOnce(SignalLogger::start));
+    Telemetry.log("Stop Signal Logger", Commands.runOnce(SignalLogger::stop));
 
-    SmartDashboard.putData(
+    Telemetry.log(
         "SysID Quasistatic Forward",
-        m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData(
+        m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.FORWARD));
+    Telemetry.log(
         "SysID Quasistatic Reverse",
-        m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    SmartDashboard.putData(
-        "SysID Dynamic Forward", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData(
-        "SysID Dynamic Reverse", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.REVERSE));
+    Telemetry.log(
+        "SysID Dynamic Forward", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.FORWARD));
+    Telemetry.log(
+        "SysID Dynamic Reverse", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.REVERSE));
   }
 
-  public void testInit() {
-    if (m_flywheel != null) m_flywheel.testInit();
-    if (m_vision != null) m_vision.testInit();
-    // if (m_uptake != null) m_uptake.testInit();
-    // if (m_indexer != null) m_indexer.testInit();
-    if (m_intakePivot != null) m_intakePivot.testInit();
-    // if (m_intake != null) m_intake.testInit();
-    if (m_hood != null) m_hood.testInit();
+  public void utilityInit() {
+    if (m_flywheel != null) m_flywheel.utilityInit();
+    if (m_vision != null) m_vision.utilityInit();
+    // if (m_uptake != null) m_uptake.utilityInit();
+    // if (m_indexer != null) m_indexer.utilityInit();
+    if (m_intakePivot != null) m_intakePivot.utilityInit();
+    // if (m_intake != null) m_intake.utilityInit();
+    if (m_hood != null) m_hood.utilityInit();
   }
 
-  public void testPeriodic() {
-    if (m_flywheel != null) m_flywheel.testPeriodic();
-    // if (m_uptake != null) m_uptake.testPeriodic();
-    // if (m_indexer != null) m_indexer.testPeriodic();
-    if (m_intakePivot != null) m_intakePivot.testPeriodic();
-    // if (m_intake != null) m_intake.testPeriodic();
-    if (m_hood != null) m_hood.testPeriodic();
+  public void utilityPeriodic() {
+    if (m_flywheel != null) m_flywheel.utilityPeriodic();
+    // if (m_uptake != null) m_uptake.utilityPeriodic();
+    // if (m_indexer != null) m_indexer.utilityPeriodic();
+    if (m_intakePivot != null) m_intakePivot.utilityPeriodic();
+    // if (m_intake != null) m_intake.utilityPeriodic();
+    if (m_hood != null) m_hood.utilityPeriodic();
   }
 
   public void disabledPeriodic() {
@@ -475,7 +475,7 @@ public class RobotContainer {
 
   public void robotPeriodic() {
     FIELD.updateCurrentSector(m_swerveDrive.getState().Pose);
-    SmartDashboard.putBoolean("In Neutral Zone?", m_vision.isInNeutralSector());
+    Telemetry.log("In Neutral Zone?", m_vision.isInNeutralSector());
   }
 
   public void initializeFuelSim() {

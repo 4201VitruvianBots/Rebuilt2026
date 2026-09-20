@@ -22,7 +22,7 @@ public class Limelight {
   private final NetworkTable nt_limelight_instance;
   private final StructPublisher<Pose2d> m_posePublisher;
 
-  private Pose2d m_lastValidPose = Pose2d.kZero;
+  private Pose2d m_lastValidPose = Pose2d.ZERO;
   private Optional<LimelightHelpers.PoseEstimate> m_lastValidMeasurement = Optional.empty();
   private boolean m_initialPoseSet = false;
 
@@ -69,7 +69,7 @@ public class Limelight {
     m_lastValidMeasurement.ifPresent(
         (measurement) -> {
           if (measurement.timestampSeconds == 0
-              || measurement.pose.getTranslation().equals(Translation2d.kZero)
+              || measurement.pose.getTranslation().equals(Translation2d.ZERO)
               || measurement.tagCount == 0) {
             return;
           }

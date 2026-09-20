@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
 import org.wpilib.smartdashboard.MechanismRoot2d;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.util.Color8Bit;
 
 /** Utility class to work with WPILib's {@link Mechanism2d} */
@@ -35,13 +35,13 @@ public class VisualizationUtils {
     }
 
     public void addSmartDashboardDisplay() {
-      SmartDashboard.putData(m_name, m_display);
+      Telemetry.log(m_name, m_display);
     }
 
     @Override
     public void close() throws Exception {
-      for (var root : m_roots) root.close();
-      m_display.close();
+      //for (var root : m_roots) root.close();
+      //m_display.close();
     }
   }
 

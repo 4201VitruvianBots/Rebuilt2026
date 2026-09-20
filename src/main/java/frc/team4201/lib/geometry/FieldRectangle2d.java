@@ -2,8 +2,8 @@ package frc.team4201.lib.geometry;
 
 import java.util.ArrayList;
 import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rectangle2d;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.shape.Rectangle2d;
 import org.wpilib.units.measure.Distance;
 
 public class FieldRectangle2d {

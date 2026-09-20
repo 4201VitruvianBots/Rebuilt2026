@@ -1,16 +1,17 @@
 package frc.team4201.lib.geometry;
 
 import java.util.*;
+
+import org.wpilib.fields.Field;
 import org.wpilib.math.geometry.Translation3d;
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
 
 public class Target3d {
-  private static AprilTagFieldLayout m_field;
+  private static Field m_field;
 
   private final Translation3d m_targetPosition;
   private final Map<Integer, Translation3d> m_tagToTarget = new HashMap<>();
 
-  public static void loadField(AprilTagFieldLayout field) {
+  public static void loadField(Field field) {
     m_field = field;
   }
 
@@ -27,7 +28,7 @@ public class Target3d {
   }
 
   public Target3d withTag(int id) {
-    return withTagPlusOffset(id, Translation3d.kZero);
+    return withTagPlusOffset(id, Translation3d.ZERO);
   }
 
   public Target3d withTagPlusOffset(int id, Translation3d offset) {
@@ -43,7 +44,7 @@ public class Target3d {
   }
 
   public Translation3d getTargetPosition() {
-    return getTargetPosition(-1, Translation3d.kZero);
+    return getTargetPosition(-1, Translation3d.ZERO);
   }
 
   public Translation3d getTargetPosition(int id, Translation3d tagPosition) {

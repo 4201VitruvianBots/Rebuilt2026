@@ -48,6 +48,7 @@ import org.wpilib.math.numbers.N3;
 import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
 
@@ -94,7 +95,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private double m_lastSimTime;
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-  private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
+  private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.ZERO;
   /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
@@ -257,11 +258,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     }
   }
 
-  public void setChassisSpeeds(ChassisVelocities chassisSpeeds) {
+  public void setChassisVelocities(ChassisVelocities chassisSpeeds) {
     setControl(m_pathApplyRobotSpeeds.withVelocity(chassisSpeeds));
   }
 
-  public void setChassisSpeedsWithHeading(
+  public void setChassisVelocitiesWithHeading(
       LinearVelocity velocityX, LinearVelocity velocityY, Rotation2d headingTarget) {
     setControl(
         m_driveWithHeadingRequest
@@ -270,7 +271,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withTargetDirection(headingTarget));
   }
 
-  public void setChassisSpeedsAuto(
+  public void setChassisVelocitiesAuto(
       ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
     setControl(
         m_pathApplyRobotSpeeds
@@ -284,7 +285,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               this,
               () -> this.getState().Pose,
               () -> this.getState().Velocity,
-              this::setChassisSpeeds,
+              this::setChassisVelocities,
               new PIDController(
                   getAutoTranslationPIDConstants().kP,
                   getAutoTranslationPIDConstants().kI,
@@ -338,7 +339,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       var diff = target.minus(getState().Pose).getTranslation();
       return (diff.getNorm() < 0.01)
           ? target.getRotation()
-          : diff.getAngle(); // .rotateBy(Rotation2d.k180deg);
+          : diff.getAngle().get(); // .rotateBy(Rotation2d.k180deg);
     }
     return new Rotation2d(cs.vx, cs.vy);
   }
@@ -471,7 +472,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               });
     }
     // poseEstimator.update(getPigeon2().getRotation2d(), getModulePositions());
-    SmartDashboard.putNumber("Gyro Angle", getPigeon2().getYaw().getValueAsDouble());
+    Telemetry.log("Gyro Angle", getPigeon2().getYaw().getValueAsDouble());
   }
 
   private void startSimThread() {
