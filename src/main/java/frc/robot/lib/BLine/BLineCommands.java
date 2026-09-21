@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  *
  * <pre>{@code
  * import static frc.robot.lib.BLine.BLineCommands.sequence;
- * import edu.wpi.first.wpilibj2.command.Command;
+ * import org.wpilib.command2.Command;
  *
  * Command auto = sequence(
  *     shooter.shoot().withTimeout(2.0),

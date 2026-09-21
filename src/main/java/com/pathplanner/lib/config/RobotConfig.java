@@ -51,25 +51,25 @@ public class RobotConfig {
 
   // Validation alerts
   private static final Alert BAD_GUI_CONFIG =
-      new Alert("PathPlanner1", "GUI Config Couldn't be loaded", Alert.Level.HIGH);
+      new Alert("PathPlanner", "GUI_CONFIG", "GUI Config Couldn't be loaded", Alert.Level.HIGH);
   private static final Alert MOI_ALERT =
-      new Alert("PathPlanner2", "MOI Config Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "MOI", "MOI Config Mismatch", Alert.Level.HIGH);
   private static final Alert MASS_ALERT =
-      new Alert("PathPlanner3", "Mass Config Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "MASS", "Mass Config Mismatch", Alert.Level.HIGH);
   private static final Alert TORQUE_ALERT =
-      new Alert("PathPlanner4", "Torque Friction Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "TORQUE", "Torque Friction Mismatch", Alert.Level.HIGH);
   private static final Alert CURRENT_ALERT =
-      new Alert("PathPlanner5", "Drive Current Limit Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "CURRENT", "Drive Current Limit Mismatch", Alert.Level.HIGH);
   private static final Alert MOTOR_ALERT =
-      new Alert("PathPlanner6", "Drive Motor Config Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "MOTOR", "Drive Motor Config Mismatch", Alert.Level.HIGH);
   private static final Alert VELOCITY_ALERT =
-      new Alert("PathPlanner7", "Max Drive Velocity Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "VELOCITY", "Max Drive Velocity Mismatch", Alert.Level.HIGH);
   private static final Alert COF_ALERT =
-      new Alert("PathPlanner8", "Wheel COF Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "COF", "Wheel COF Mismatch", Alert.Level.HIGH);
   private static final Alert RADIUS_ALERT =
-      new Alert("PathPlanner9", "Wheel Radius Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "RADIUS", "Wheel Radius Mismatch", Alert.Level.HIGH);
   private static final Alert LOCATION_ALERT =
-      new Alert("PathPlanner10", "Module Location Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner", "LOCATION", "Module Location Mismatch", Alert.Level.HIGH);
 
   /**
    * Create a robot config object for a HOLONOMIC DRIVE robot
@@ -107,7 +107,7 @@ public class RobotConfig {
     for (int i = 0; i < this.numModules; i++) {
       Translation2d modPosReciprocal =
           new Translation2d(
-              1.0 / this.moduleLocations[i].getNorm(), this.moduleLocations[i].getAngle().get());
+              1.0 / this.moduleLocations[i].getNorm(), this.moduleLocations[i].getAngle().orElse(Rotation2d.ZERO));
       this.forceKinematics.setRow(i * 2, 0, /* Start Data */ 1, 0, -modPosReciprocal.getY());
       this.forceKinematics.setRow(i * 2 + 1, 0, /* Start Data */ 0, 1, modPosReciprocal.getX());
     }
@@ -163,7 +163,7 @@ public class RobotConfig {
     for (int i = 0; i < this.numModules; i++) {
       Translation2d modPosReciprocal =
           new Translation2d(
-              1.0 / this.moduleLocations[i].getNorm(), this.moduleLocations[i].getAngle().get());
+              1.0 / this.moduleLocations[i].getNorm(), this.moduleLocations[i].getAngle().orElse(Rotation2d.ZERO));
       this.forceKinematics.setRow(i * 2, 0, /* Start Data */ 1, 0, -modPosReciprocal.getY());
       this.forceKinematics.setRow(i * 2 + 1, 0, /* Start Data */ 0, 1, modPosReciprocal.getX());
     }

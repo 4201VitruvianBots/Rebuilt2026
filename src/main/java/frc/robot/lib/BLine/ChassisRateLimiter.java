@@ -1,7 +1,6 @@
 package frc.robot.lib.BLine;
 
 import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.math.util.MathUtil;
 
 /**
  * A utility class that limits the rate of change of chassis speeds for smooth motion control.
@@ -18,7 +17,7 @@ import org.wpilib.math.util.MathUtil;
  *
  * <p>Example usage:
  * <pre>{@code
- * ChassisSpeeds limited = ChassisRateLimiter.limit(
+ * ChassisVelocities limited = ChassisRateLimiter.limit(
  *     desiredSpeeds,
  *     lastSpeeds,
  *     0.02,  // 20ms loop time
@@ -29,7 +28,7 @@ import org.wpilib.math.util.MathUtil;
  * );
  * }</pre>
  *
- * @see ChassisVelocities
+ * @see org.wpilib.math.kinematics.ChassisVelocities
  */
 public class ChassisRateLimiter {
 

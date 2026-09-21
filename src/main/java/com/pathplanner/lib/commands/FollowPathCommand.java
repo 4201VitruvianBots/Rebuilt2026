@@ -9,6 +9,8 @@ import com.pathplanner.lib.events.EventScheduler;
 import com.pathplanner.lib.path.*;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.PPLibTelemetry;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.Subsystem;
@@ -136,8 +138,8 @@ public class FollowPathCommand extends Command {
     PathPlannerAuto.setCurrentTrajectory(trajectory);
     PathPlannerAuto.currentPathName = originalPath.name;
 
-//    PathPlannerLogging.logActivePath(path);
-//    PPLibTelemetry.setCurrentPath(path);
+    PathPlannerLogging.logActivePath(path);
+    PPLibTelemetry.setCurrentPath(path);
 
     eventScheduler.initialize(trajectory);
 
@@ -161,17 +163,17 @@ public class FollowPathCommand extends Command {
     double currentVel =
         Math.hypot(currentSpeeds.vx, currentSpeeds.vy);
 
-//    PPLibTelemetry.setCurrentPose(currentPose);
-//    PathPlannerLogging.logCurrentPose(currentPose);
+    PPLibTelemetry.setCurrentPose(currentPose);
+    PathPlannerLogging.logCurrentPose(currentPose);
 
-//    PPLibTelemetry.setTargetPose(targetState.pose);
-//    PathPlannerLogging.logTargetPose(targetState.pose);
+    PPLibTelemetry.setTargetPose(targetState.pose);
+    PathPlannerLogging.logTargetPose(targetState.pose);
 
-//    PPLibTelemetry.setVelocities(
-//        currentVel,
-//        targetState.linearVelocity,
-//        currentSpeeds.omega,
-//        targetSpeeds.omega);
+    PPLibTelemetry.setVelocities(
+        currentVel,
+        targetState.linearVelocity,
+        currentSpeeds.omega,
+        targetSpeeds.omega);
 
     output.accept(targetSpeeds, targetState.feedforwards);
 
@@ -196,7 +198,7 @@ public class FollowPathCommand extends Command {
       output.accept(new ChassisVelocities(), DriveFeedforwards.zeros(robotConfig.numModules));
     }
 
-//    PathPlannerLogging.logActivePath(null);
+    PathPlannerLogging.logActivePath(null);
 
     eventScheduler.end();
   }

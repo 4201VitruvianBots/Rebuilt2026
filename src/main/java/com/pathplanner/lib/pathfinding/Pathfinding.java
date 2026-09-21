@@ -29,7 +29,7 @@ public class Pathfinding {
     if (pathfinder == null) {
       // Hasn't been initialized yet, use the default implementation
 
-//      pathfinder = new LocalADStar();
+      pathfinder = new LocalADStar();
     }
   }
 

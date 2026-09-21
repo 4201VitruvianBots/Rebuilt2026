@@ -99,7 +99,7 @@ public class PathPlannerPath {
     precalcValues();
 
     instances++;
-//    HAL.reportUsage(tResourceType.kResourceType_PathPlannerPath, instances);
+    HAL.reportUsage("PathPlanner/PathPlannerPath", instances, "");
   }
 
   /**
@@ -164,7 +164,7 @@ public class PathPlannerPath {
     this.allPoints = new ArrayList<>();
 
     instances++;
-//    HAL.reportUsage(tResourceType.kResourceType_PathPlannerPath, instances);
+    HAL.reportUsage("PathPlanner/PathPlannerPath", instances, "");
   }
 
   /**
@@ -324,7 +324,7 @@ public class PathPlannerPath {
 
       PathPlannerPath path = PathPlannerPath.fromJson(json);
       path.name = pathName;
-//      PPLibTelemetry.registerHotReloadPath(pathName, path);
+      PPLibTelemetry.registerHotReloadPath(pathName, path);
       pathCache.put(pathName, path);
       return path;
     }
@@ -673,7 +673,7 @@ public class PathPlannerPath {
    * @return Initial heading
    */
   public Rotation2d getInitialHeading() {
-    return getPoint(1).position.minus(getPoint(0).position).getAngle().get();
+    return getPoint(1).position.minus(getPoint(0).position).getAngle().orElse(Rotation2d.ZERO);
   }
 
   /**
@@ -894,7 +894,7 @@ public class PathPlannerPath {
       var pointZone = pointZoneForWaypointPos(points.get(i).waypointRelativePos);
       if (pointZone != null) {
         Rotation2d angleToTarget =
-            pointZone.targetPosition().minus(points.get(i).position).getAngle().get();
+            pointZone.targetPosition().minus(points.get(i).position).getAngle().orElse(Rotation2d.ZERO);
         Rotation2d rotation = angleToTarget.plus(pointZone.rotationOffset());
         points.get(i).rotationTarget =
             new RotationTarget(points.get(i).waypointRelativePos, rotation);

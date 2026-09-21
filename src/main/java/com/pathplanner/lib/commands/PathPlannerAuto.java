@@ -8,6 +8,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.FileVersionException;
 import com.pathplanner.lib.util.FlippingUtil;
+import com.pathplanner.lib.util.PPLibTelemetry;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ import org.json.simple.parser.ParseException;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.button.Trigger;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.hardware.hal.HAL;
 import org.wpilib.event.EventLoop;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
@@ -103,31 +105,31 @@ public class PathPlannerAuto extends Command {
 
       initFromJson(json, mirror);
     } catch (FileNotFoundException e) {
-      DriverStationBackend.reportError(e.getMessage(), e.getStackTrace());
+      DriverStationErrors.reportError(e.getMessage(), e.getStackTrace());
       autoCommand = Commands.none();
     } catch (IOException e) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           "Failed to read file required by auto: " + autoName, e.getStackTrace());
       autoCommand = Commands.none();
     } catch (ParseException e) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           "Failed to parse JSON in file required by auto: " + autoName, e.getStackTrace());
       autoCommand = Commands.none();
     } catch (FileVersionException e) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           "Failed to load auto: " + autoName + ". " + e.getMessage(), e.getStackTrace());
       autoCommand = Commands.none();
     }
 
     addRequirements(autoCommand.getRequirements());
     setName(autoName);
-//    PPLibTelemetry.registerHotReloadAuto(autoName, this);
+    PPLibTelemetry.registerHotReloadAuto(autoName, this);
 
     this.autoLoop = new EventLoop();
     this.autoTimer = new Timer();
 
     instances++;
-//    HAL.report(tResourceType.kResourceType_PathPlannerAuto, instances);
+    HAL.reportUsage("PathPlanner/PathPlannerAuto", instances, "");
   }
 
   /**
@@ -146,7 +148,7 @@ public class PathPlannerAuto extends Command {
     this.autoTimer = new Timer();
 
     instances++;
-//    HAL.report(tResourceType.kResourceType_PathPlannerAuto, instances);
+    HAL.reportUsage("PathPlanner/PathPlannerAuto", instances, "");
   }
 
   /**
@@ -638,7 +640,7 @@ public class PathPlannerAuto extends Command {
     try {
       initFromJson(autoJson, false);
     } catch (Exception e) {
-      DriverStationBackend.reportError("Failed to load path during hot reload", e.getStackTrace());
+      DriverStationErrors.reportError("Failed to load path during hot reload", e.getStackTrace());
     }
   }
 

@@ -12,6 +12,7 @@ import com.pathplanner.lib.util.*;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.Subsystem;
+import org.wpilib.hardware.hal.HAL;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
@@ -80,7 +81,7 @@ public class PathfindingCommand extends Command {
       Subsystem... requirements) {
     addRequirements(requirements);
 
-//    Pathfinding.ensureInitialized();
+    Pathfinding.ensureInitialized();
 
     Rotation2d targetRotation = Rotation2d.ZERO;
     double goalEndVel = targetPath.getGlobalConstraints().maxVelocityMPS();
@@ -112,7 +113,7 @@ public class PathfindingCommand extends Command {
     this.shouldFlipPath = shouldFlipPath;
 
     instances++;
-//    HAL.report(tResourceType.kResourceType_PathFindingCommand, instances);
+    HAL.reportUsage("PathPlanner/PathFindingCommand", instances, "");
   }
 
   /**
@@ -145,7 +146,7 @@ public class PathfindingCommand extends Command {
       Subsystem... requirements) {
     addRequirements(requirements);
 
-//    Pathfinding.ensureInitialized();
+    Pathfinding.ensureInitialized();
 
     this.targetPath = null;
     this.targetPose = targetPose;
@@ -161,7 +162,7 @@ public class PathfindingCommand extends Command {
     this.shouldFlipPath = () -> false;
 
     instances++;
-//    HAL.report(tResourceType.kResourceType_PathFindingCommand, instances);
+    HAL.reportUsage("PathPlanner/PathFindingCommand", instances, "");
   }
 
   /**
@@ -279,8 +280,8 @@ public class PathfindingCommand extends Command {
     Pose2d currentPose = poseSupplier.get();
     ChassisVelocities currentSpeeds = speedsSupplier.get();
 
-//    PathPlannerLogging.logCurrentPose(currentPose);
-//    PPLibTelemetry.setCurrentPose(currentPose);
+    PathPlannerLogging.logCurrentPose(currentPose);
+    PPLibTelemetry.setCurrentPose(currentPose);
 
     // Skip new paths if we are close to the end
     boolean skipUpdates =
@@ -348,8 +349,8 @@ public class PathfindingCommand extends Command {
           timeOffset = 0.02;
         }
 
-//        PathPlannerLogging.logActivePath(currentPath);
-//        PPLibTelemetry.setCurrentPath(currentPath);
+        PathPlannerLogging.logActivePath(currentPath);
+        PPLibTelemetry.setCurrentPath(currentPath);
       }
 
       timer.reset();
@@ -365,17 +366,17 @@ public class PathfindingCommand extends Command {
       double currentVel =
           Math.hypot(currentSpeeds.vx, currentSpeeds.vy);
 
-//      PPLibTelemetry.setCurrentPose(currentPose);
-//      PathPlannerLogging.logCurrentPose(currentPose);
+      PPLibTelemetry.setCurrentPose(currentPose);
+      PathPlannerLogging.logCurrentPose(currentPose);
 
-//      PPLibTelemetry.setTargetPose(targetState.pose);
-//      PathPlannerLogging.logTargetPose(targetState.pose);
+      PPLibTelemetry.setTargetPose(targetState.pose);
+      PathPlannerLogging.logTargetPose(targetState.pose);
 
-//      PPLibTelemetry.setVelocities(
-//          currentVel,
-//          targetState.linearVelocity,
-//          currentSpeeds.omega,
-//          targetSpeeds.omega);
+      PPLibTelemetry.setVelocities(
+          currentVel,
+          targetState.linearVelocity,
+          currentSpeeds.omega,
+          targetSpeeds.omega);
 
       output.accept(targetSpeeds, targetState.feedforwards);
     }
@@ -416,7 +417,7 @@ public class PathfindingCommand extends Command {
       output.accept(new ChassisVelocities(), DriveFeedforwards.zeros(robotConfig.numModules));
     }
 
-//    PathPlannerLogging.logActivePath(null);
+    PathPlannerLogging.logActivePath(null);
   }
 
   /**

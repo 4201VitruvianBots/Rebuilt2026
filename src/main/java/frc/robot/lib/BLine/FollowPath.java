@@ -11,8 +11,7 @@ import org.wpilib.command2.Command;
 import org.wpilib.command2.CommandScheduler;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -472,7 +471,7 @@ public class FollowPath extends Command {
      * Configures the builder to use the default alliance-based path flipping.
      *
      * <p>When enabled, paths will automatically be flipped when the robot is on the
-     * red alliance, based on .
+     * red alliance, based on {@link org.wpilib.driverstation.MatchState#getAlliance()}.
      *
      * <p>This setting persists for future {@link #build(Path)} calls until changed.
      *
@@ -570,7 +569,7 @@ public class FollowPath extends Command {
    * @return true if on the red alliance and the path should be flipped, false otherwise
    */
   private static boolean shouldFlipPath() {
-    var alliance = DriverStationBackend.getAlliance();
+    var alliance = MatchState.getAlliance();
     if (alliance.isPresent()) {
       return alliance.get() == Alliance.RED;
     }

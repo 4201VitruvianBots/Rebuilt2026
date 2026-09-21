@@ -10,7 +10,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.Subsystem;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.system.Filesystem;
@@ -58,7 +58,7 @@ public class AutoBuilder {
       BooleanSupplier shouldFlipPath,
       Subsystem... driveRequirements) {
     if (globals.configured) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           "Auto builder has already been configured. This is likely in error.", true);
     }
 
@@ -182,7 +182,7 @@ public class AutoBuilder {
       BooleanSupplier shouldFlipPose,
       boolean isHolonomic) {
     if (globals.configured) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           "Auto builder has already been configured. This is likely in error.", true);
     }
 

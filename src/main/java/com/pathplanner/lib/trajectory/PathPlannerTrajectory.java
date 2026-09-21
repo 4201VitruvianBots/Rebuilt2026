@@ -72,7 +72,7 @@ public class PathPlannerTrajectory {
 
       // Set the initial module velocities
       ChassisVelocities fieldStartingSpeeds =
-          new ChassisVelocities(startingSpeeds.vx, startingSpeeds.vy, states.get(0).pose.getRotation().getRadians());
+          startingSpeeds.toFieldRelative(states.get(0).pose.getRotation());
       var initialStates = config.toSwerveModuleVelocities(fieldStartingSpeeds);
       for (int m = 0; m < config.numModules; m++) {
         states.get(0).moduleStates[m].velocity = initialStates[m].velocity;
@@ -350,7 +350,7 @@ public class PathPlannerTrajectory {
 
         // Calculate the torque this module will apply to the robot
         Rotation2d angleToModule =
-            state.moduleStates[m].fieldPos.minus(state.pose.getTranslation()).getAngle().get();
+            state.moduleStates[m].fieldPos.minus(state.pose.getTranslation()).getAngle().orElse(Rotation2d.ZERO);
         Rotation2d theta;
         if (forceVec.getNorm() <= 1e-6) {
           theta = Rotation2d.ZERO.minus(angleToModule);
@@ -454,7 +454,7 @@ public class PathPlannerTrajectory {
           maxChassisAngVel);
 
       state.fieldSpeeds =
-              config.toChassisVelocities(state.moduleStates).toRobotRelative(state.pose.getRotation());
+              config.toChassisVelocities(state.moduleStates).toFieldRelative(state.pose.getRotation());
       state.linearVelocity =
           Math.hypot(state.fieldSpeeds.vx, state.fieldSpeeds.vy);
     }
@@ -492,7 +492,7 @@ public class PathPlannerTrajectory {
 
         // Calculate the torque this module will apply to the robot
         Rotation2d angleToModule =
-            state.moduleStates[m].fieldPos.minus(state.pose.getTranslation()).getAngle().get();
+            state.moduleStates[m].fieldPos.minus(state.pose.getTranslation()).getAngle().orElse(Rotation2d.ZERO);
         Rotation2d theta;
         if (forceVec.getNorm() <= 1e-6) {
           theta = Rotation2d.ZERO.minus(angleToModule);

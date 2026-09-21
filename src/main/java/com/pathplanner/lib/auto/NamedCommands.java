@@ -2,7 +2,7 @@ package com.pathplanner.lib.auto;
 
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.util.Pair;
 
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class NamedCommands {
     if (hasCommand(name)) {
       return CommandUtil.wrappedEventCommand(namedCommands.get(name));
     } else {
-      DriverStationBackend.reportWarning(
+      DriverStationErrors.reportWarning(
           "PathPlanner attempted to create a command '"
               + name
               + "' that has not been registered with NamedCommands.registerCommand",
