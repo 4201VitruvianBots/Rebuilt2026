@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.CommandUtil;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.events.Event;
 import com.pathplanner.lib.events.OneShotTriggerEvent;
+import com.pathplanner.lib.events.ScheduleCommandEvent;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.pathplanner.lib.util.*;
@@ -672,7 +673,7 @@ public class PathPlannerPath {
    * @return Initial heading
    */
   public Rotation2d getInitialHeading() {
-    return getPoint(1).position.minus(getPoint(0).position).getAngle();
+    return getPoint(1).position.minus(getPoint(0).position).getAngle().get();
   }
 
   /**
@@ -893,7 +894,7 @@ public class PathPlannerPath {
       var pointZone = pointZoneForWaypointPos(points.get(i).waypointRelativePos);
       if (pointZone != null) {
         Rotation2d angleToTarget =
-            pointZone.targetPosition().minus(points.get(i).position).getAngle();
+            pointZone.targetPosition().minus(points.get(i).position).getAngle().get();
         Rotation2d rotation = angleToTarget.plus(pointZone.rotationOffset());
         points.get(i).rotationTarget =
             new RotationTarget(points.get(i).waypointRelativePos, rotation);
@@ -1224,10 +1225,10 @@ public class PathPlannerPath {
                                     mirrorTranslation(s.pose.getTranslation()),
                                     s.pose.getRotation().unaryMinus());
                             state.fieldSpeeds =
-                                new ChassisSpeeds(
-                                    s.fieldSpeeds.vxMetersPerSecond,
-                                    -s.fieldSpeeds.vyMetersPerSecond,
-                                    -s.fieldSpeeds.omegaRadiansPerSecond);
+                                new ChassisVelocities(
+                                    s.fieldSpeeds.vx,
+                                    -s.fieldSpeeds.vy,
+                                    -s.fieldSpeeds.omega);
                             DriveFeedforwards ff = s.feedforwards;
                             if (ff.accelerationsMPSSq().length == 4) {
                               state.feedforwards =
@@ -1371,7 +1372,7 @@ public class PathPlannerPath {
    */
   public List<Pose2d> getPathPoses() {
     return allPoints.stream()
-        .map(p -> new Pose2d(p.position, Rotation2d.kZero))
+        .map(p -> new Pose2d(p.position, Rotation2d.ZERO))
         .collect(Collectors.toList());
   }
 

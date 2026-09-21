@@ -1,5 +1,6 @@
 package com.pathplanner.lib.path;
 
+import com.pathplanner.lib.auto.CommandUtil;
 import org.json.simple.JSONObject;
 import org.wpilib.command2.Command;
 

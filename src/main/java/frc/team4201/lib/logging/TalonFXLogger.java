@@ -8,6 +8,7 @@ import frc.robot.constants.CAN;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import org.wpilib.epilogue.CustomLoggerFor;
+import org.wpilib.epilogue.Epilogue;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.logging.ClassSpecificLogger;
 import org.wpilib.telemetry.TelemetryTable;

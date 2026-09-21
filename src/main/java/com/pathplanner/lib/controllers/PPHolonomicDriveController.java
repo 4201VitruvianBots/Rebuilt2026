@@ -102,7 +102,7 @@ public class PPHolonomicDriveController implements PathFollowingController {
     this.translationError = currentPose.getTranslation().minus(targetState.pose.getTranslation());
 
     if (!this.isEnabled) {
-      return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, 0, currentPose.getRotation());
+      return new ChassisVelocities(xFF, yFF, 0).toRobotRelative(currentPose.getRotation());
     }
 
     double xFeedback = this.xController.calculate(currentPose.getX(), targetState.pose.getX());

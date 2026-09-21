@@ -44,8 +44,8 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
 
   private final NetworkTableInstance nt = NetworkTableInstance.getDefault();
   private final NetworkTable field2dTable = nt.getTable("SmartDashboard").getSubTable("Field2D");
-  private final ProtobufPublisher<Trajectory> trajectoryProtoPublisher =
-      field2dTable.getProtobufTopic("trajectoryProto", Trajectory.proto).publish();
+//  private final ProtobufPublisher<Trajectory> trajectoryProtoPublisher =
+//      field2dTable.getProtobufTopic("trajectoryProto", Trajectory).publish();
 
   /** Create a FieldSim object */
   public FieldSim() {
@@ -128,7 +128,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
    */
   public void addTrajectory(Trajectory trajectory) {
     m_field2D.getObject("trajectory").setTrajectory(trajectory);
-    trajectoryProtoPublisher.accept(trajectory);
+//    trajectoryProtoPublisher.accept(trajectory);
   }
 
   private void updateField2d() {

@@ -317,7 +317,7 @@ public class Vision extends SubsystemBase {
         .Pose
         .getTranslation()
         .minus(targetPose.getTranslation())
-        .getAngle()
+        .getAngle().get()
         .plus(m_swerveDriveTrain.getState().Pose.getRotation());
 
     // var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());

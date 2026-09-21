@@ -42,21 +42,22 @@ public class Controls extends SubsystemBase {
   @NotLogged
   private final Map<String, Alert> alertMap =
       Map.ofEntries(
-          Map.entry("usb", new Alert("Controls", "USB connection alert not properly initialized", Level.HIGH)),
-          Map.entry("brownout", new Alert("Controls", "Brownout alert not properly initialized", Level.MEDIUM)),
-          Map.entry(
-              "storage", new Alert("Controls", "Storage space alert not properly initialized", Level.MEDIUM)),
-          Map.entry(
-              "epilogue", new Alert("Controls", "Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
-          // Alerts for setting up the robot properly
-          Map.entry(
-              "allianceInit", new Alert("Controls", "Did not get alliance color from FMS/DS!", Level.MEDIUM)),
-          Map.entry("vision", new Alert("Controls", "Vision Subsystem is not ready!", Level.MEDIUM)),
-
-          // Alerts for when the robot is running
-          Map.entry("radioError", new Alert("Controls", "Robot Radio not detected!", Level.HIGH)),
-          Map.entry("joystickError", new Alert("Controls", "Missing joystick detected!", Level.HIGH)),
-          Map.entry("canError", new Alert("Controls", "CAN bus error detected!", Level.HIGH)));
+//          Map.entry("usb", new Alert("Controls", "USB connection alert not properly initialized", Level.HIGH))
+//          Map.entry("brownout", new Alert("Controls", "Brownout alert not properly initialized", Level.MEDIUM)),
+//          Map.entry(
+//              "storage", new Alert("Controls", "Storage space alert not properly initialized", Level.MEDIUM)),
+//          Map.entry(
+//              "epilogue", new Alert("Controls", "Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
+//          // Alerts for setting up the robot properly
+//          Map.entry(
+//              "allianceInit", new Alert("Controls", "Did not get alliance color from FMS/DS!", Level.MEDIUM)),
+//          Map.entry("vision", new Alert("Controls", "Vision Subsystem is not ready!", Level.MEDIUM)),
+//
+//          // Alerts for when the robot is running
+//          Map.entry("radioError", new Alert("Controls", "Robot Radio not detected!", Level.HIGH)),
+//          Map.entry("joystickError", new Alert("Controls", "Missing joystick detected!", Level.HIGH)),
+//          Map.entry("canError", new Alert("Controls", "CAN bus error detected!", Level.HIGH))
+          );
 
   private final MedianFilter epilogueBuffer = new MedianFilter(20);
   private final DoubleSubscriber epilogueRuntimeSub =

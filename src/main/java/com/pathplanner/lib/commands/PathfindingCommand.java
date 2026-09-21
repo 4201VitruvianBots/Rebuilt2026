@@ -6,13 +6,17 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.path.*;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.*;
 import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.system.DCMotor;
+import org.wpilib.math.util.MathUtil;
 import org.wpilib.system.Timer;
 import org.wpilib.units.measure.LinearVelocity;
 
@@ -331,21 +335,21 @@ public class PathfindingCommand extends Command {
             closestState1.pose.getTranslation().getDistance(closestState2.pose.getTranslation());
         double t =
             (currentPose.getTranslation().getDistance(closestState1.pose.getTranslation())) / d;
-        t = MathUtil.clamp(t, 0.0, 1.0);
+        t = Math.clamp(t, 0.0, 1.0);
 
-        timeOffset = MathUtil.interpolate(closestState1.timeSeconds, closestState2.timeSeconds, t);
+        timeOffset = MathUtil.lerp(closestState1.timeSeconds, closestState2.timeSeconds, t);
 
         // If the robot is stationary and at the start of the path, set the time offset to the next
         // loop
         // This can prevent an issue where the robot will remain stationary if new paths come in
         // every loop
         if (timeOffset <= 0.02
-            && Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond) < 0.1) {
+            && Math.hypot(currentSpeeds.vx, currentSpeeds.vy) < 0.1) {
           timeOffset = 0.02;
         }
 
-        PathPlannerLogging.logActivePath(currentPath);
-        PPLibTelemetry.setCurrentPath(currentPath);
+//        PathPlannerLogging.logActivePath(currentPath);
+//        PPLibTelemetry.setCurrentPath(currentPath);
       }
 
       timer.reset();
@@ -355,23 +359,23 @@ public class PathfindingCommand extends Command {
     if (currentTrajectory != null) {
       var targetState = currentTrajectory.sample(timer.get() + timeOffset);
 
-      ChassisSpeeds targetSpeeds =
+      ChassisVelocities targetSpeeds =
           controller.calculateRobotRelativeSpeeds(currentPose, targetState);
 
       double currentVel =
-          Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+          Math.hypot(currentSpeeds.vx, currentSpeeds.vy);
 
-      PPLibTelemetry.setCurrentPose(currentPose);
-      PathPlannerLogging.logCurrentPose(currentPose);
+//      PPLibTelemetry.setCurrentPose(currentPose);
+//      PathPlannerLogging.logCurrentPose(currentPose);
 
-      PPLibTelemetry.setTargetPose(targetState.pose);
-      PathPlannerLogging.logTargetPose(targetState.pose);
+//      PPLibTelemetry.setTargetPose(targetState.pose);
+//      PathPlannerLogging.logTargetPose(targetState.pose);
 
-      PPLibTelemetry.setVelocities(
-          currentVel,
-          targetState.linearVelocity,
-          currentSpeeds.omegaRadiansPerSecond,
-          targetSpeeds.omegaRadiansPerSecond);
+//      PPLibTelemetry.setVelocities(
+//          currentVel,
+//          targetState.linearVelocity,
+//          currentSpeeds.omega,
+//          targetSpeeds.omega);
 
       output.accept(targetSpeeds, targetState.feedforwards);
     }
@@ -385,10 +389,10 @@ public class PathfindingCommand extends Command {
 
     if (targetPath != null && !targetPath.isChoreoPath()) {
       Pose2d currentPose = poseSupplier.get();
-      ChassisSpeeds currentSpeeds = speedsSupplier.get();
+      ChassisVelocities currentSpeeds = speedsSupplier.get();
 
       double currentVel =
-          Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+          Math.hypot(currentSpeeds.vx, currentSpeeds.vy);
       double stoppingDistance = Math.pow(currentVel, 2) / (2 * constraints.maxAccelerationMPSSq());
 
       return currentPose.getTranslation().getDistance(targetPose.getTranslation())
@@ -409,10 +413,10 @@ public class PathfindingCommand extends Command {
     // Only output 0 speeds when ending a path that is supposed to stop, this allows interrupting
     // the command to smoothly transition into some auto-alignment routine
     if (!interrupted && goalEndState.velocityMPS() < 0.1) {
-      output.accept(new ChassisSpeeds(), DriveFeedforwards.zeros(robotConfig.numModules));
+      output.accept(new ChassisVelocities(), DriveFeedforwards.zeros(robotConfig.numModules));
     }
 
-    PathPlannerLogging.logActivePath(null);
+//    PathPlannerLogging.logActivePath(null);
   }
 
   /**
@@ -424,8 +428,8 @@ public class PathfindingCommand extends Command {
     return new PathfindingCommand(
         new Pose2d(15.0, 4.0, Rotation2d.k180deg),
         new PathConstraints(4, 3, 4, 4),
-        () -> new Pose2d(1.5, 4, Rotation2d.kZero),
-        ChassisSpeeds::new,
+        () -> new Pose2d(1.5, 4, Rotation2d.ZERO),
+        ChassisVelocities::new,
         (speeds, feedforwards) -> {},
         new PPHolonomicDriveController(
             new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),

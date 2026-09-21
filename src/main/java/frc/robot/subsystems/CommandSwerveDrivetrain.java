@@ -463,7 +463,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       DriverStationBackend.getAlliance()
           .ifPresent(
               allianceColor -> {
-                setOperatorPerspectiveForward(
+                setOperatorForwardDirection(
                     allianceColor == Alliance.RED
                         ? kRedAlliancePerspectiveRotation
                         : kBlueAlliancePerspectiveRotation);

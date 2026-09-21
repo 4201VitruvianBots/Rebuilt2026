@@ -21,6 +21,8 @@ import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.trajectory.DifferentialTrajectory;
+import org.wpilib.math.trajectory.DrivetrainSplineTrajectoryGenerator;
 import org.wpilib.math.trajectory.Trajectory;
 import org.wpilib.math.trajectory.TrajectoryConfig;
 
@@ -255,7 +257,7 @@ public class TrajectoryUtils {
       }
     }
 
-    return TrajectoryGenerator.generateTrajectory(pathPoses, config);
+    return DrivetrainSplineTrajectoryGenerator.generate(pathPoses, config);
   }
 
   private boolean flipPathByAlliance() {

@@ -1,5 +1,6 @@
 package com.pathplanner.lib.events;
 
+import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import org.wpilib.command2.Command;

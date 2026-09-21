@@ -10,11 +10,18 @@ import com.pathplanner.lib.path.*;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.system.DCMotor;
+import org.wpilib.system.Timer;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -129,8 +136,8 @@ public class FollowPathCommand extends Command {
     PathPlannerAuto.setCurrentTrajectory(trajectory);
     PathPlannerAuto.currentPathName = originalPath.name;
 
-    PathPlannerLogging.logActivePath(path);
-    PPLibTelemetry.setCurrentPath(path);
+//    PathPlannerLogging.logActivePath(path);
+//    PPLibTelemetry.setCurrentPath(path);
 
     eventScheduler.initialize(trajectory);
 
@@ -147,24 +154,24 @@ public class FollowPathCommand extends Command {
     }
 
     Pose2d currentPose = poseSupplier.get();
-    ChassisSpeeds currentSpeeds = speedsSupplier.get();
+    ChassisVelocities currentSpeeds = speedsSupplier.get();
 
-    ChassisSpeeds targetSpeeds = controller.calculateRobotRelativeSpeeds(currentPose, targetState);
+    ChassisVelocities targetSpeeds = controller.calculateRobotRelativeSpeeds(currentPose, targetState);
 
     double currentVel =
-        Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+        Math.hypot(currentSpeeds.vx, currentSpeeds.vy);
 
-    PPLibTelemetry.setCurrentPose(currentPose);
-    PathPlannerLogging.logCurrentPose(currentPose);
+//    PPLibTelemetry.setCurrentPose(currentPose);
+//    PathPlannerLogging.logCurrentPose(currentPose);
 
-    PPLibTelemetry.setTargetPose(targetState.pose);
-    PathPlannerLogging.logTargetPose(targetState.pose);
+//    PPLibTelemetry.setTargetPose(targetState.pose);
+//    PathPlannerLogging.logTargetPose(targetState.pose);
 
-    PPLibTelemetry.setVelocities(
-        currentVel,
-        targetState.linearVelocity,
-        currentSpeeds.omegaRadiansPerSecond,
-        targetSpeeds.omegaRadiansPerSecond);
+//    PPLibTelemetry.setVelocities(
+//        currentVel,
+//        targetState.linearVelocity,
+//        currentSpeeds.omega,
+//        targetSpeeds.omega);
 
     output.accept(targetSpeeds, targetState.feedforwards);
 
@@ -186,10 +193,10 @@ public class FollowPathCommand extends Command {
     // Only output 0 speeds when ending a path that is supposed to stop, this allows interrupting
     // the command to smoothly transition into some auto-alignment routine
     if (!interrupted && path.getGoalEndState().velocityMPS() < 0.1) {
-      output.accept(new ChassisSpeeds(), DriveFeedforwards.zeros(robotConfig.numModules));
+      output.accept(new ChassisVelocities(), DriveFeedforwards.zeros(robotConfig.numModules));
     }
 
-    PathPlannerLogging.logActivePath(null);
+//    PathPlannerLogging.logActivePath(null);
 
     eventScheduler.end();
   }
@@ -202,18 +209,18 @@ public class FollowPathCommand extends Command {
   public static Command warmupCommand() {
     List<Waypoint> waypoints =
         PathPlannerPath.waypointsFromPoses(
-            new Pose2d(0.0, 0.0, Rotation2d.kZero), new Pose2d(6.0, 6.0, Rotation2d.kZero));
+            new Pose2d(0.0, 0.0, Rotation2d.ZERO), new Pose2d(6.0, 6.0, Rotation2d.ZERO));
     PathPlannerPath path =
         new PathPlannerPath(
             waypoints,
             new PathConstraints(4.0, 4.0, 4.0, 4.0),
-            new IdealStartingState(0.0, Rotation2d.kZero),
-            new GoalEndState(0.0, Rotation2d.kCW_90deg));
+            new IdealStartingState(0.0, Rotation2d.ZERO),
+            new GoalEndState(0.0, Rotation2d.CW_90DEG));
 
     return new FollowPathCommand(
         path,
-        () -> Pose2d.kZero,
-        ChassisSpeeds::new,
+        () -> Pose2d.ZERO,
+        ChassisVelocities::new,
         (speeds, feedforwards) -> {},
         new PPHolonomicDriveController(
             new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),

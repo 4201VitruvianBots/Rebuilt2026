@@ -76,7 +76,7 @@ public class PathPlannerTrajectoryState implements Interpolatable<PathPlannerTra
     double intTime = timeSeconds + 0.01;
     while (true) {
       double intT = (intTime - timeSeconds) / (lerpedState.timeSeconds - timeSeconds);
-      double intLinearVel = MathUtil.interpolate(linearVelocity, lerpedState.linearVelocity, intT);
+      double intLinearVel = MathUtil.lerp(linearVelocity, lerpedState.linearVelocity, intT);
       double intVX = intLinearVel * lerpedState.heading.getCos();
       double intVY = intLinearVel * lerpedState.heading.getSin();
 

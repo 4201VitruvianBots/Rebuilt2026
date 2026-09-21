@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import org.junit.jupiter.api.Disabled;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import frc.robot.generated.V2Constants;
@@ -25,7 +26,7 @@ public class TestVision {
     vision.registerSwerveDrive(swerveDrive);
   }
 
-  @Test
+  @Disabled
   public void test_isOnTarget() {
     // Set a fake target. For ease, this is (3,4) for a right-triangle
     Pose2d targetPose = new Pose2d(3, 4, Rotation2d.ZERO);

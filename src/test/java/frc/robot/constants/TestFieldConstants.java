@@ -12,6 +12,7 @@ import org.wpilib.math.geometry.Rotation2d;
 import utils.TestUtils;
 
 public class TestFieldConstants {
+
   @Test
   public void testFieldConstants() {
     // Just check that the values are different. Mostly redundant now, but this was meant to debug
