@@ -6,6 +6,8 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import java.util.HashMap;
+import java.util.Map;
 import org.wpilib.util.Alert;
 import org.wpilib.util.Alert.Level;
 import org.wpilib.framework.RobotBase;
@@ -13,6 +15,15 @@ import org.wpilib.system.Timer;
 
 /** Utility class to interact with CTRE libraries. */
 public final class CtreUtils {
+  /** Alert IDs must be unique, so cache alerts by ID instead of creating duplicates. */
+  private static final Map<String, Alert> s_alerts = new HashMap<>();
+
+  private static Alert getAlert(String id, String text, Level level) {
+    var alert = s_alerts.computeIfAbsent(id, k -> new Alert("CTREUtils", k, text, level));
+    alert.setText(text);
+    return alert;
+  }
+
   /**
    * Initialize Phoenix Server by creating a dummy device. We do this so that the CANCoders don't
    * get configured before Phoenix Server is up, which causes issues with encoder offsets not being
@@ -20,7 +31,10 @@ public final class CtreUtils {
    */
   public static void initPhoenixServer() {
     var alert =
-        new Alert("CTREUtils", "Starting Phoenix Server at: " + Timer.getMonotonicTimestamp(), Level.LOW);
+        getAlert(
+            "phoenixServer",
+            "Starting Phoenix Server at: " + Timer.getMonotonicTimestamp(),
+            Level.LOW);
     alert.set(true);
     if (RobotBase.isReal()) {
       TalonFX dummy = new TalonFX(0, new CANBus("rio"));
@@ -49,7 +63,8 @@ public final class CtreUtils {
     }
     if (!motorStatus.isOK()) {
       var alert =
-          new Alert("CTREUtils",
+          getAlert(
+              "talonFxConfig" + motor.getDeviceID(),
               String.format(
                   "Could not apply configs to TalonFx ID: %d. Error code: %s",
                   motor.getDeviceID(), motorStatus),
@@ -78,7 +93,8 @@ public final class CtreUtils {
     }
     if (!canCoderStatus.isOK()) {
       var alert =
-          new Alert("CTREUtils",
+          getAlert(
+              "canCoderConfig" + cancoder.getDeviceID(),
               String.format(
                   "Could not apply configs to CANCoder ID: %d. Error code: %s",
                   cancoder.getDeviceID(), canCoderStatus),

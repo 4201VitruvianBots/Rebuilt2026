@@ -13,7 +13,8 @@ import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
 import org.wpilib.command2.SubsystemBase;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.framework.RobotBase;
@@ -169,7 +170,7 @@ public class Vision extends SubsystemBase {
    */
   public boolean processLimelight(VISION.Limelight limelight) {
     String limelightName = limelight.getName();
-    if (DriverStationBackend.isDisabled()) {
+    if (RobotState.isDisabled()) {
       // TODO: Determine if we change IMUMode to 0 when not disabled for MegaTag2
       LimelightHelpers.SetIMUMode(limelightName, 1);
 
@@ -202,7 +203,7 @@ public class Vision extends SubsystemBase {
         0,
         0);
     LimelightHelpers.PoseEstimate limelightMeasurement;
-    if (DriverStationBackend.isDisabled()) {
+    if (RobotState.isDisabled()) {
       // Use MegaTag1 when the robot is disabled to set the initial robot pose
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     } else {
@@ -234,7 +235,7 @@ public class Vision extends SubsystemBase {
       assert limelightMeasurement != null;
 
       // Reset the Swerve Pose with MegaTag1 if we are disabled
-      if (DriverStationBackend.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
+      if (RobotState.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
       } else {
         m_swerveDriveTrain.addVisionMeasurement(
@@ -249,7 +250,7 @@ public class Vision extends SubsystemBase {
       VISION.Limelight limelight, LimelightHelpers.PoseEstimate poseEstimate) {
     if (poseEstimate == null) {
       if (RobotBase.isReal())
-        DriverStationBackend.reportWarning(limelight.getName() + " is not connected", true);
+        DriverStationErrors.reportWarning(limelight.getName() + " is not connected", true);
       return false;
     } else {
       // Filter out bad AprilTag vision estimates for both MegaTag1 and MegaTag2
@@ -317,7 +318,8 @@ public class Vision extends SubsystemBase {
         .Pose
         .getTranslation()
         .minus(targetPose.getTranslation())
-        .getAngle().get()
+        .getAngle()
+        .orElse(Rotation2d.ZERO)
         .plus(m_swerveDriveTrain.getState().Pose.getRotation());
 
     // var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
@@ -330,7 +332,7 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
-    if (DriverStationBackend.isAutonomous()) {
+    if (RobotState.isAutonomous()) {
       return Math.abs(getAngleToTarget().getDegrees()) < 2.0;
     } else {
       return Math.abs(getAngleToTarget().getDegrees()) < 0.5;
@@ -341,7 +343,10 @@ public class Vision extends SubsystemBase {
       Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
     // bearing from robot to goal
     var bearing =
-        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().get().getRadians();
+        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation())
+            .getAngle()
+            .orElse(Rotation2d.ZERO)
+            .getRadians();
     // robot heading
     var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
     // smallest signed angle difference in [-pi, pi]
@@ -418,8 +423,8 @@ public class Vision extends SubsystemBase {
     }
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
-    if (DriverStationBackend.isFMSAttached()
-        && DriverStationBackend.isAutonomous()
+    if (RobotState.isFMSAttached()
+        && RobotState.isAutonomous()
         && !matchStarted) {
       matchStarted = true;
     }

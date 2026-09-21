@@ -16,6 +16,8 @@ public class Arm2d implements AutoCloseable {
   private final MechanismLigament2d m_arm2d;
   private MechanismObject2d m_parentObject;
   private Arm2d m_subArm2d;
+  private Mechanism2d m_subDisplay;
+  private String m_subDisplayName;
 
   /**
    * Create a new {@link Arm2d} instance
@@ -93,7 +95,9 @@ public class Arm2d implements AutoCloseable {
         .append(m_subArm2d.getLigament());
     ;
 
-    Telemetry.log(armSubConfig.m_name, subArmDisplay);
+    m_subDisplay = subArmDisplay;
+    m_subDisplayName = armSubConfig.m_name;
+    Telemetry.log(m_subDisplayName, m_subDisplay);
   }
 
   /**
@@ -193,6 +197,8 @@ public class Arm2d implements AutoCloseable {
 
     if (m_subArm2d != null) {
       m_subArm2d.update(angle, velocity, length);
+      // Telemetry.log() takes a snapshot, so the display must be logged every update
+      Telemetry.log(m_subDisplayName, m_subDisplay);
     }
   }
 

@@ -15,13 +15,9 @@ import java.util.function.BooleanSupplier;
 import org.wpilib.command2.*;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.MatchState;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.trajectory.DifferentialTrajectory;
 import org.wpilib.math.trajectory.DrivetrainSplineTrajectoryGenerator;
 import org.wpilib.math.trajectory.Trajectory;
 import org.wpilib.math.trajectory.TrajectoryConfig;
@@ -65,7 +61,7 @@ public class TrajectoryUtils {
       return generatePPHolonomicCommand(
           PathPlannerPath.fromPathFile(pathName), this::flipPathByAlliance);
     } catch (Exception e) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -83,7 +79,7 @@ public class TrajectoryUtils {
     try {
       return generatePPHolonomicCommand(PathPlannerPath.fromPathFile(pathName), flipPath);
     } catch (Exception e) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -145,7 +141,7 @@ public class TrajectoryUtils {
     try {
       return resetRobotPoseAuto(PathPlannerPath.fromPathFile(pathName), flipPose);
     } catch (Exception e) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           String.format("Could not load PathPlanner Path '%s'", pathName), e.getStackTrace());
       return new WaitCommand(0);
     }
@@ -261,7 +257,7 @@ public class TrajectoryUtils {
   }
 
   private boolean flipPathByAlliance() {
-    return DriverStationBackend.getAlliance().orElse(Alliance.BLUE) == Alliance.RED;
+    return MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED;
   }
 
   /** Class for setting {@link TrajectoryUtils} settings */

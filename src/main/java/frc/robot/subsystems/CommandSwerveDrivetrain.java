@@ -35,7 +35,9 @@ import org.wpilib.command2.Command;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.command2.sysid.SysIdRoutine;
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.geometry.Pose2d;
@@ -200,7 +202,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       m_trajectoryUtils =
           new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
-      DriverStationBackend.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
+      DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
   }
 
@@ -352,11 +354,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     try {
       return RobotConfig.fromGUISettings();
     } catch (IOException e) {
-      DriverStationBackend.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     } catch (ParseException e) {
-      DriverStationBackend.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     }
@@ -459,8 +461,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
      * Otherwise, only check and apply the operator perspective if the DS is disabled.
      * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
      */
-    if (!m_hasAppliedOperatorPerspective || DriverStationBackend.isDisabled()) {
-      DriverStationBackend.getAlliance()
+    if (!m_hasAppliedOperatorPerspective || RobotState.isDisabled()) {
+      MatchState.getAlliance()
           .ifPresent(
               allianceColor -> {
                 setOperatorForwardDirection(

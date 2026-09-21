@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.fields.Field;
 import org.wpilib.fields.Fields;
 import org.wpilib.math.geometry.Pose2d;
@@ -50,7 +50,7 @@ public class FIELD {
   }
 
   public static void initializeConstants() {
-    if (DriverStationBackend.isFMSAttached()) {
+    if (RobotState.isFMSAttached()) {
       fieldLayout = Fields.FRC_2026_REBUILT_WELDED.loadField();
     } else {
       fieldLayout = Fields.FRC_2026_REBUILT_ANDY_MARK.loadField();

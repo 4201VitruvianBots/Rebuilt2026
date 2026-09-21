@@ -1,7 +1,7 @@
 package frc.team4201.lib.geometry;
 
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.fields.Field;
 import org.wpilib.math.geometry.Pose3d;
 
@@ -41,8 +41,8 @@ public class LinkedAprilTag {
   }
 
   private boolean isBlue() {
-    if (DriverStationBackend.getAlliance().isPresent()) {
-      return DriverStationBackend.getAlliance().get().equals(Alliance.BLUE);
+    if (MatchState.getAlliance().isPresent()) {
+      return MatchState.getAlliance().get().equals(Alliance.BLUE);
     } else {
       return false;
     }

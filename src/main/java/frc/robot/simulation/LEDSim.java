@@ -59,5 +59,7 @@ public class LEDSim {
     for (int i = 0; i < m_ledBuffer.getLength(); i++) {
       m_ledLigaments[i].setColor(new Color8Bit(m_ledBuffer.getLED(i)));
     }
+    // Telemetry.log() takes a snapshot, so the mechanism must be logged every cycle
+    Telemetry.log("LEDSim", m_mech2d);
   }
 }

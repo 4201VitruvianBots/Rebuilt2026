@@ -266,19 +266,20 @@ public class RobotContainer {
     }
 
     if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
-      m_driverController
-          .button(10)
-          .whileTrue(
-              new Shoot(
-                  m_flywheel,
-                  m_hood,
-                  m_vision,
-                  m_driverController,
-                  m_swerveDrive,
-                  () -> m_driverController.getAxis(Axis.LEFT_Y),
-                  () -> m_driverController.getAxis(Axis.LEFT_X),
-                  () -> m_manualHoodAngleShift,
-                  () -> m_manualRPMshift));
+      var shoot =
+          new Shoot(
+              m_flywheel,
+              m_hood,
+              m_vision,
+              m_driverController,
+              m_swerveDrive,
+              () -> m_driverController.getAxis(Axis.LEFT_Y),
+              () -> m_driverController.getAxis(Axis.LEFT_X),
+              () -> m_manualHoodAngleShift,
+              () -> m_manualRPMshift);
+      // Only publish the teleop Shoot command. Autos create their own instances of Shoot.
+      Tunables.publish(shoot.getName(), shoot);
+      m_driverController.button(10).whileTrue(shoot);
 
       POVUtils.povRightWithTilt(m_driverController.getHID())
           .whileTrue(

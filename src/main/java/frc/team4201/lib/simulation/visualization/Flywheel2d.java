@@ -22,6 +22,8 @@ public class Flywheel2d implements AutoCloseable {
   private final MechanismLigament2d m_flywheel;
   private MechanismObject2d m_parentObject;
   private Flywheel2d m_subFlywheel2d;
+  private Mechanism2d m_subDisplay;
+  private String m_subDisplayName;
 
   /**
    * Create a new {@link Flywheel2d} instance
@@ -121,7 +123,9 @@ public class Flywheel2d implements AutoCloseable {
         .append(m_subFlywheel2d.getLigament());
     ;
 
-    Telemetry.log(flywheelSubConfig.m_name, subFlywheelDisplay);
+    m_subDisplay = subFlywheelDisplay;
+    m_subDisplayName = flywheelSubConfig.m_name;
+    Telemetry.log(m_subDisplayName, m_subDisplay);
   }
 
   /**
@@ -172,6 +176,8 @@ public class Flywheel2d implements AutoCloseable {
 
     if (m_subFlywheel2d != null) {
       m_subFlywheel2d.update(rps);
+      // Telemetry.log() takes a snapshot, so the display must be logged every update
+      Telemetry.log(m_subDisplayName, m_subDisplay);
     }
   }
 

@@ -195,7 +195,7 @@ public class Shoot extends Command {
     }
 
     // Calculate parameters accounted for imparted velocity
-    Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle().get();
+    Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle().orElse(Rotation2d.ZERO);
 
     double hoodAngle = shot.hoodAngle.in(Radians);
 

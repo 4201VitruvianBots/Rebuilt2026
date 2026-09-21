@@ -116,7 +116,7 @@ public class ROBOT {
   }
 
   public static void initializeConstants() {
-//    var alert = new Alert("ROBOT1", "Initializing Robot Constants...", Level.LOW);
+//    var alert = new Alert("ROBOT", "init", "Initializing Robot Constants...", Level.LOW);
 
     try {
       switch (ROBOT_ID.fromSerial(RobotController.getSerialNumber())) {
@@ -138,7 +138,9 @@ public class ROBOT {
 //      alert.setText("Setting Robot Constants for " + robotID.getName());
     } catch (IllegalArgumentException e) {
 //      alert =
-//          new Alert("ROBOT2",
+//          new Alert(
+//              "ROBOT",
+//              "unrecognizedSerial",
 //              "WARN: Robot Serial Not Recognized! Current roboRIO Serial: "
 //                  + RobotController.getSerialNumber(),
 //              Level.MEDIUM);

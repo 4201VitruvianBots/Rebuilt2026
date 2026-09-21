@@ -17,7 +17,7 @@ import java.util.function.BooleanSupplier;
 import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.ParallelDeadlineGroup;
 import org.wpilib.command2.PrintCommand;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.DriverStationErrors;
 
 public class IntakeFromNeutralNoCross extends Auto {
 
@@ -45,7 +45,7 @@ public class IntakeFromNeutralNoCross extends Auto {
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
     } catch (Exception e) {
-      DriverStationBackend.reportError(
+      DriverStationErrors.reportError(
           "Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());
     }

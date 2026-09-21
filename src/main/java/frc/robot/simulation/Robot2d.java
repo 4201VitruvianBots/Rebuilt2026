@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.command2.SubsystemBase;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.math.geometry.Pose3d;
@@ -247,7 +247,7 @@ public class Robot2d extends SubsystemBase {
       if (subsystem != null) {
         m_subsystemMap.put(subsystem.getName(), subsystem);
       } else {
-        DriverStationBackend.reportWarning(
+        DriverStationErrors.reportWarning(
             "[Robot2d] Attempting to register null subsystem!", true);
       }
     }
@@ -319,5 +319,8 @@ public class Robot2d extends SubsystemBase {
       var hoodSubsystem = (Hood) m_subsystemMap.get("Hood");
       m_shooterHood.update(Degrees.of(hoodSubsystem.getHoodAngleDegrees()).unaryMinus());
     }
+
+    // Telemetry.log() takes a snapshot, so the mechanism must be logged every cycle
+    Telemetry.log("Robot2d", m_robot);
   }
 }
