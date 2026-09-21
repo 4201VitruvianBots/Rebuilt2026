@@ -13,6 +13,8 @@ import static org.wpilib.units.Units.Second;
 import static org.wpilib.units.Units.Volts;
 import static org.wpilib.units.Units.Watts;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;

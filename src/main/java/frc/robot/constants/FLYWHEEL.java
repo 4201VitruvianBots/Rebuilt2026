@@ -93,6 +93,8 @@ public class FLYWHEEL {
     public static final DCMotor gearbox = DCMotor.getKrakenX44Foc(1);
 
     public static final Angle angleShiftIncrement = Degrees.of(0.25);
+    //I feel like this would be a way to implement it? Value is 100% made up
+    public static final Angle hoodReverseOffset = Degrees.of(90);
 
     public enum MANUAL_ANGLE {
       STOWED(Degrees.of(0.0)),
@@ -100,8 +102,7 @@ public class FLYWHEEL {
       BUMP(Degrees.of(4.570313)), //calculated using sim
       TOWER(Degrees.of(8.3)),
       PASSING(Degrees.of(17.5)),
-      FULL(Degrees.of(19.0)),
-      REVERSE(Degrees.of(30.0)); //Absolutely made up value 
+      FULL(Degrees.of(19.0));
 
 
       private final Angle angle;

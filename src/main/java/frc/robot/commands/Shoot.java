@@ -25,6 +25,7 @@ import org.wpilib.command2.button.CommandGenericHID;
 
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
+import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.SWERVE;
@@ -87,8 +88,12 @@ public class Shoot extends Command {
   private DoubleSupplier m_hoodAngleShift = () -> 0.0;
   private DoubleSupplier m_RPMShift = () -> 0.0;
   private static double phaseDelay = 0.0;
+  private double m_flipHoodMin = 150.0;
+  Rotation2d driveAngle;
   private Rotation2d lastDriveAngle;
   private double lastHoodAngle;
+  public double hoodAngle;
+  public double moduleAngleDelta;
 
   private Rotation2d launcherRotation = new Rotation2d(Degrees.of(0.0));
   private Transform2d robotToLauncher =
@@ -100,6 +105,9 @@ public class Shoot extends Command {
 
   public static Shot getShotForDistance(Distance distance) {
     return distanceToShotMap.get(distance);
+  }
+  public boolean shouldFlipHood(double funAngle) {
+    return (funAngle > m_flipHoodMin);
   }
 
   /** Shoot on the move command with rumble */
@@ -194,9 +202,13 @@ public class Shoot extends Command {
     }
 
     // Calculate parameters accounted for imparted velocity
-    Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
+    driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
 
-    double hoodAngle = shot.hoodAngle.in(Radians);
+    if (shouldFlipHood(moduleAngleDelta)){
+        hoodAngle = HOOD.hoodReverseOffset.in(Radians)-(shot.hoodAngle.in(Radians));
+    } else {
+        hoodAngle = shot.hoodAngle.in(Radians);
+    }
 
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
@@ -215,12 +227,13 @@ public class Shoot extends Command {
 
     Rotation2d moduleAngle = new Rotation2d();
     moduleAngle = m_swerveDrivetrain.getState().clone().ModulePositions[0].angle;
-    double moduleAngleDelta =
+    moduleAngleDelta =
         54
             - Math.abs(
                 moduleAngle
                     .getDegrees()); // Since our drivetrain is square, swerve drive brake is 53.75
     // degrees instead of 45
+    
     int moduleAngleDeltaInt = (int) Math.round(moduleAngleDelta);
     boolean isBraking = moduleAngleDeltaInt == 0;
 
