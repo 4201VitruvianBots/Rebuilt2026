@@ -16,8 +16,6 @@ import frc.robot.subsystems.Controls;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
-import frc.team4201.lib.utils.CtreTelemetry;
-
 import java.util.function.DoubleSupplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.button.CommandGamepad;
@@ -32,7 +30,7 @@ import org.wpilib.math.interpolation.InterpolatingTreeMap;
 import org.wpilib.math.interpolation.Interpolator;
 import org.wpilib.math.interpolation.InverseInterpolator;
 import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.telemetry.Telemetry;
+import org.wpilib.tunable.Tunables;
 import org.wpilib.units.measure.Distance;
 
 public class Shoot extends Command {
@@ -124,7 +122,7 @@ public class Shoot extends Command {
     m_RPMShift = RPMShift;
 
     addRequirements(flywheel, shooterHood);
-    Telemetry.log(this.getName(), this);
+    Tunables.publish(this.getName(), this);
   }
 
   /** Standard shooting without shoot on the move capabilities. Used only in auto. */
@@ -136,7 +134,7 @@ public class Shoot extends Command {
     m_swerveDrivetrain = swerveDrive;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
-    Telemetry.log(this.getName(), this);
+    Tunables.publish(this.getName(), this);
   }
 
   // Called when the command is initially scheduled.
