@@ -51,25 +51,25 @@ public class RobotConfig {
 
   // Validation alerts
   private static final Alert BAD_GUI_CONFIG =
-      new Alert("PathPlanner", "GUI Config Couldn't be loaded", Alert.Level.HIGH);
+      new Alert("PathPlanner1", "GUI Config Couldn't be loaded", Alert.Level.HIGH);
   private static final Alert MOI_ALERT =
-      new Alert("PathPlanner", "MOI Config Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner2", "MOI Config Mismatch", Alert.Level.HIGH);
   private static final Alert MASS_ALERT =
-      new Alert("PathPlanner", "Mass Config Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner3", "Mass Config Mismatch", Alert.Level.HIGH);
   private static final Alert TORQUE_ALERT =
-      new Alert("PathPlanner", "Torque Friction Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner4", "Torque Friction Mismatch", Alert.Level.HIGH);
   private static final Alert CURRENT_ALERT =
-      new Alert("PathPlanner", "Drive Current Limit Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner5", "Drive Current Limit Mismatch", Alert.Level.HIGH);
   private static final Alert MOTOR_ALERT =
-      new Alert("PathPlanner", "Drive Motor Config Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner6", "Drive Motor Config Mismatch", Alert.Level.HIGH);
   private static final Alert VELOCITY_ALERT =
-      new Alert("PathPlanner", "Max Drive Velocity Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner7", "Max Drive Velocity Mismatch", Alert.Level.HIGH);
   private static final Alert COF_ALERT =
-      new Alert("PathPlanner", "Wheel COF Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner8", "Wheel COF Mismatch", Alert.Level.HIGH);
   private static final Alert RADIUS_ALERT =
-      new Alert("PathPlanner", "Wheel Radius Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner9", "Wheel Radius Mismatch", Alert.Level.HIGH);
   private static final Alert LOCATION_ALERT =
-      new Alert("PathPlanner", "Module Location Mismatch", Alert.Level.HIGH);
+      new Alert("PathPlanner10", "Module Location Mismatch", Alert.Level.HIGH);
 
   /**
    * Create a robot config object for a HOLONOMIC DRIVE robot
