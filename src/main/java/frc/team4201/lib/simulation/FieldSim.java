@@ -17,6 +17,7 @@ import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.ProtobufPublisher;
 import org.wpilib.smartdashboard.Field2d;
 import org.wpilib.telemetry.Telemetry;
+import org.wpilib.tunable.Tunables;
 
 /** Class to handle all updates to the Field2D widget */
 public class FieldSim extends SubsystemBase implements AutoCloseable {
@@ -49,7 +50,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
 
   /** Create a FieldSim object */
   public FieldSim() {
-    Telemetry.log("Field2D", m_field2D);
+    Tunables.publish("Field2D", m_field2D);
   }
 
   public Field2d getField2d() {

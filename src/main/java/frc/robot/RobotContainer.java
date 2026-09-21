@@ -74,6 +74,7 @@ import org.wpilib.framework.RobotBase;
 import org.wpilib.math.filter.SlewRateLimiter;
 import org.wpilib.telemetry.Telemetry;
 import org.wpilib.tunable.Selectable;
+import org.wpilib.tunable.Tunables;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
 
@@ -342,7 +343,7 @@ public class RobotContainer {
   }
 
   private void initAutoChooser() {
-    Telemetry.log("Auto Mode", m_autoChooser);
+    Tunables.publish("Auto Mode", m_autoChooser);
     m_autoChooser.addDefault("Do Nothing", new WaitCommand(0));
 
     var autoDeps =
@@ -386,7 +387,7 @@ public class RobotContainer {
   }
 
   private void initSideChooser() {
-    Telemetry.log("Auto Side", m_autoSide);
+    Tunables.publish("Auto Side", m_autoSide);
     m_autoSide.addDefault("No Flip", false);
 
     m_autoSide.add("Depot", false);
@@ -405,26 +406,26 @@ public class RobotContainer {
   private void initSmartDashboard() {
     initAutoChooser();
     initSideChooser();
-    Telemetry.log("ResetGyro", new ResetGyro(m_swerveDrive));
+    Tunables.publish("ResetGyro", new ResetGyro(m_swerveDrive));
     if (RobotBase.isSimulation()) {
-      Telemetry.log(
+      Tunables.publish(
           "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
-      Telemetry.log(
+      Tunables.publish(
           "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
     }
 
-    Telemetry.log("Start Signal Logger", Commands.runOnce(SignalLogger::start));
-    Telemetry.log("Stop Signal Logger", Commands.runOnce(SignalLogger::stop));
+    Tunables.publish("Start Signal Logger", Commands.runOnce(SignalLogger::start));
+    Tunables.publish("Stop Signal Logger", Commands.runOnce(SignalLogger::stop));
 
-    Telemetry.log(
+    Tunables.publish(
         "SysID Quasistatic Forward",
         m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.FORWARD));
-    Telemetry.log(
+    Tunables.publish(
         "SysID Quasistatic Reverse",
         m_swerveDrive.sysIdQuasistatic(SysIdRoutine.Direction.REVERSE));
-    Telemetry.log(
+    Tunables.publish(
         "SysID Dynamic Forward", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.FORWARD));
-    Telemetry.log(
+    Tunables.publish(
         "SysID Dynamic Reverse", m_swerveDrive.sysIdDynamic(SysIdRoutine.Direction.REVERSE));
   }
 
