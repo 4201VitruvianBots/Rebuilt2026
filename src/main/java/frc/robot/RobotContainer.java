@@ -157,10 +157,8 @@ public class RobotContainer {
   private FieldSim m_fieldSim;
   private FuelSim m_fuelSim;
 
-  @Logged(name = "AutoChooser")
   private final Selectable<Command> m_autoChooser = new Selectable<>();
 
-  @Logged(name = "AutoSideChooser")
   private final Selectable<Boolean> m_autoSide = new Selectable<>();
 
   private Boolean m_flipToRight = false;
@@ -231,7 +229,7 @@ public class RobotContainer {
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
 
-      DriverStationBackend.silenceJoystickConnectionWarning(true);
+      DriverStationBackend.silenceJoystickConnectionAlert(true);
     }
     m_vision.registerSwerveDrive(m_swerveDrive);
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);

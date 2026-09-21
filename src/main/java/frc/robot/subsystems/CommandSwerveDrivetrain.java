@@ -45,7 +45,6 @@ import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
 import org.wpilib.telemetry.Telemetry;
@@ -280,7 +279,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
   }
 
-  public FollowPath.Builder builder =
+  public Builder builder =
       new Builder(
               this,
               () -> this.getState().Pose,
