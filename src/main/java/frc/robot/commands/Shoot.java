@@ -106,8 +106,8 @@ public class Shoot extends Command {
   public static Shot getShotForDistance(Distance distance) {
     return distanceToShotMap.get(distance);
   }
-  public boolean shouldFlipHood(double funAngle) {
-    return (funAngle > m_flipHoodMin);
+  public boolean shouldFlipHood(double desiredAngle) {
+    return (desiredAngle > m_flipHoodMin);
   }
 
   /** Shoot on the move command with rumble */
@@ -204,9 +204,10 @@ public class Shoot extends Command {
     // Calculate parameters accounted for imparted velocity
     driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
 
-    if (shouldFlipHood(moduleAngleDelta)){
+    if (shouldFlipHood(driveAngle.getDegrees())){
         hoodAngle = HOOD.hoodReverseOffset.in(Radians)-(shot.hoodAngle.in(Radians));
-    } else {
+    } 
+    else {
         hoodAngle = shot.hoodAngle.in(Radians);
     }
 
@@ -215,7 +216,7 @@ public class Shoot extends Command {
     lastHoodAngle = hoodAngle;
     // all of the logic for angle is above this Comment
     m_flywheel.setRPMOutput(shot.shooterRPM.plus(RPM.of(m_RPMShift.getAsDouble())));
-    m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Degrees.of(m_hoodAngleShift.getAsDouble())));
+    m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Degrees.of(m_hoodAngleShift.getAsDouble())));    
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
         m_driverController.setRumble(
@@ -238,10 +239,18 @@ public class Shoot extends Command {
     boolean isBraking = moduleAngleDeltaInt == 0;
 
     if (!isBraking) {
-      m_swerveDrivetrain.setChassisSpeedsWithHeading(
-          SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-          SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-          Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
+        if (shouldFlipHood(driveAngle.getDegrees())) {
+            m_swerveDrivetrain.setChassisSpeedsWithHeading(
+                SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+                SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+                Controls.isRedAlliance() ? driveAngle : driveAngle.rotateBy(Rotation2d.k180deg));
+        }
+        else {
+                m_swerveDrivetrain.setChassisSpeedsWithHeading(
+                    SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
+                    SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
+                    Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);
+        }
     }
   }
 
