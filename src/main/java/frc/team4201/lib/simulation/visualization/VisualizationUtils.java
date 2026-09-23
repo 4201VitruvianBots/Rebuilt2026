@@ -38,7 +38,7 @@ public class VisualizationUtils {
      * Log this display. Telemetry.log() takes a snapshot, so this must be called every cycle for the
      * display to update.
      */
-    public void addSmartDashboardDisplay() {
+    public void addTunablesDisplay() {
       Telemetry.log(m_name, m_display);
     }
 

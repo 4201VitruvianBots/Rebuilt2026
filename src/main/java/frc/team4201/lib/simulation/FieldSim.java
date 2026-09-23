@@ -44,7 +44,6 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
   private final Map<String, Pose2d[]> m_objectPoses = new HashMap<>();
 
   private final NetworkTableInstance nt = NetworkTableInstance.getDefault();
-  private final NetworkTable field2dTable = nt.getTable("SmartDashboard").getSubTable("Field2D");
   // TODO: Alpha 7 has no generic Trajectory protobuf, so the trajectoryProto topic is not published
 
   /** Create a FieldSim object */

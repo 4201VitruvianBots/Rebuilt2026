@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.ROBOT.USB;
 import java.io.File;
-import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import org.wpilib.command2.Subsystem;
@@ -83,7 +82,7 @@ public class Controls extends SubsystemBase {
 
   /** Creates a new Controls subsystem */
   public Controls() {
-    initSmartDashboard();
+    initTunables();
   }
 
   public void registerSubsystem(Subsystem subsystem) {
@@ -106,7 +105,7 @@ public class Controls extends SubsystemBase {
     return getAllianceColor() == Alliance.BLUE;
   }
 
-  private void initSmartDashboard() {
+  private void initTunables() {
     Telemetry.getTable("Controls").log("Serial Number", RobotController.getSerialNumber());
   }
 

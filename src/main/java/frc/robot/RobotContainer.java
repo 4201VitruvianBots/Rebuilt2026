@@ -178,7 +178,7 @@ public class RobotContainer {
     ROBOT.initializeConstants();
     initializeSubSystems();
     configureBindings();
-    initSmartDashboard();
+    initTunables();
 
     m_swerveDrive.registerTelemetry(m_telemetry::telemeterize);
   }
@@ -225,7 +225,7 @@ public class RobotContainer {
       m_fieldSim = new FieldSim();
       m_telemetry.registerFieldSim(m_fieldSim);
       m_vision.registerFieldSim(m_fieldSim);
-      m_telemetry.registerFieldSim(m_fieldSim);
+      // m_telemetry.registerFieldSim(m_fieldSim);
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
@@ -404,7 +404,7 @@ public class RobotContainer {
     // m_fuelSim.Hub.BLUE_HUB.getScore());
   }
 
-  private void initSmartDashboard() {
+  private void initTunables() {
     initAutoChooser();
     initSideChooser();
     Tunables.publish("ResetGyro", new ResetGyro(m_swerveDrive));
