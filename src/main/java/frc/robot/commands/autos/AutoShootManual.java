@@ -4,11 +4,11 @@
 
 package frc.robot.commands.autos;
 
+import frc.robot.commands.Fire;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.ConditionalCommand;
 import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.ParallelDeadlineGroup;
-import frc.robot.commands.Fire;
 
 // Begins firing once the shooter is up to speed, and continues firing for a given duration. Used in
 // auto routines to fire shots while running paths.

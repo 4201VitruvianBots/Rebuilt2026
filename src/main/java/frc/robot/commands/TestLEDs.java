@@ -4,10 +4,10 @@
 
 package frc.robot.commands;
 
-import org.wpilib.system.Timer;
-import org.wpilib.command2.Command;
 import frc.robot.constants.LED.LED_STATES;
 import frc.robot.subsystems.LEDs;
+import org.wpilib.command2.Command;
+import org.wpilib.system.Timer;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TestLEDs extends Command {

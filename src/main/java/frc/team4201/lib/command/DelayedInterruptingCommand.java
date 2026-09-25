@@ -1,8 +1,8 @@
 package frc.team4201.lib.command;
 
-import org.wpilib.system.Timer;
-import org.wpilib.command2.Command;
 import java.util.function.BooleanSupplier;
+import org.wpilib.command2.Command;
+import org.wpilib.system.Timer;
 
 /**
  * Runs a command until a condition is met, then interrupts it to run another command. If the first

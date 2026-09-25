@@ -4,13 +4,13 @@
 
 package frc.robot.simulation;
 
+import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.derive;
-import static frc.robot.constants.ROBOT.SIM.LineWidthInches;
 
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.epilogue.Logged;
@@ -42,6 +42,21 @@ import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;
 import java.util.HashMap;
 import java.util.Map;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation3d;
+import org.wpilib.smartdashboard.Mechanism2d;
+import org.wpilib.smartdashboard.MechanismLigament2d;
+import org.wpilib.smartdashboard.MechanismRoot2d;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.units.DistanceUnit;
+import org.wpilib.units.Units;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.util.Color8Bit;
 
 // Hopefully there isn't too much overhead from making this a subsystem.
 public class Robot2d extends SubsystemBase {
@@ -228,7 +243,7 @@ public class Robot2d extends SubsystemBase {
     m_uptake.setColor(m_colorUptake);
 
     if (RobotBase.isSimulation()) {
-      SmartDashboard.putData("Robot2d", m_robot);
+      Telemetry.log("Robot2d", m_robot);
       m_intakePivot.generateSubDisplay();
       m_flywheel.generateSubDisplay();
       m_shooterHood.generateSubDisplay();
@@ -249,7 +264,8 @@ public class Robot2d extends SubsystemBase {
       if (subsystem != null) {
         m_subsystemMap.put(subsystem.getName(), subsystem);
       } else {
-        DriverStationErrors.reportWarning("[Robot2d] Attempting to register null subsystem!", true);
+        DriverStationErrors.reportWarning(
+            "[Robot2d] Attempting to register null subsystem!", true);
       }
     }
   }
@@ -320,5 +336,8 @@ public class Robot2d extends SubsystemBase {
       var hoodSubsystem = (Hood) m_subsystemMap.get("Hood");
       m_shooterHood.update(Degrees.of(hoodSubsystem.getHoodAngleDegrees()).unaryMinus());
     }
+
+    // Telemetry.log() takes a snapshot, so the mechanism must be logged every cycle
+    Telemetry.log("Robot2d", m_robot);
   }
 }

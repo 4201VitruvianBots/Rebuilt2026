@@ -1,12 +1,12 @@
 package frc.robot.commands.swerve;
 
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.command2.Command;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.SWERVE;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
+import org.wpilib.command2.Command;
+import org.wpilib.math.geometry.Rotation2d;
 
 public class AutoAlignDrive extends Command {
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
@@ -41,10 +41,10 @@ public class AutoAlignDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_swerveDrivetrain.setChassisSpeedsWithHeading(
+    m_swerveDrivetrain.setChassisVelocitiesWithHeading(
         SWERVE.kMaxSpeedBump.times(m_throttleInput.getAsDouble()),
         SWERVE.kMaxSpeedBump.times(m_strafeInput.getAsDouble()),
-        ifZeroFacesBump ? Rotation2d.k180deg : Rotation2d.kZero);
+        ifZeroFacesBump ? Rotation2d.k180deg : Rotation2d.ZERO);
   }
 
   // Called once the command ends or is interrupted.

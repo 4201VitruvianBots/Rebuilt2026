@@ -2,15 +2,11 @@ package frc.team4201.lib.utils;
 
 import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.units.measure.Time;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-
 import java.util.Optional;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.units.measure.Time;
 
 public class HubTracker {
   /**
@@ -84,7 +80,7 @@ public class HubTracker {
    * Alliance}. Will return {@code false} if disabled or in between auto and teleop.
    */
   public static boolean isActive(Shift shift) {
-    Optional<Alliance> alliance = DriverStationBackend.getAlliance();
+    Optional<Alliance> alliance = MatchState.getAlliance();
     return alliance.isPresent() && isActive(alliance.get(), shift);
   }
 
@@ -94,7 +90,7 @@ public class HubTracker {
    */
   public static boolean isActive() {
     Optional<Shift> currentShift = getCurrentShift();
-    Optional<Alliance> alliance = DriverStationBackend.getAlliance();
+    Optional<Alliance> alliance = MatchState.getAlliance();
     return currentShift.isPresent()
         && alliance.isPresent()
         && isActive(alliance.get(), currentShift.get());
@@ -115,7 +111,7 @@ public class HubTracker {
    */
   public static boolean isActiveNext() {
     Optional<Shift> nextShift = getNextShift();
-    Optional<Alliance> alliance = DriverStationBackend.getAlliance();
+    Optional<Alliance> alliance = MatchState.getAlliance();
     return nextShift.isPresent()
         && alliance.isPresent()
         && isActive(alliance.get(), nextShift.get());
@@ -127,8 +123,8 @@ public class HubTracker {
    * available.
    */
   public static Optional<Alliance> getAutoWinner() {
-    String msg = DriverStationBackend.getGameData().get();
-    char msgChar = !msg.isEmpty() ? msg.charAt(0) : ' ';
+    String msg = MatchState.getGameData().orElse("");
+    char msgChar = msg.length() > 0 ? msg.charAt(0) : ' ';
     switch (msgChar) {
       case 'B':
         return Optional.of(Alliance.BLUE);
@@ -145,11 +141,11 @@ public class HubTracker {
    */
   public static double getMatchTime() {
     if (RobotState.isAutonomous()) {
-      if (DriverStationBackend.getMatchTime() < 0) return DriverStationBackend.getMatchTime();
-      return 20 - DriverStationBackend.getMatchTime();
+      if (MatchState.getMatchTime() < 0) return MatchState.getMatchTime();
+      return 20 - MatchState.getMatchTime();
     } else if (RobotState.isTeleop()) {
-      if (DriverStationBackend.getMatchTime() < 0) return DriverStationBackend.getMatchTime();
-      return 160 - DriverStationBackend.getMatchTime();
+      if (MatchState.getMatchTime() < 0) return MatchState.getMatchTime();
+      return 160 - MatchState.getMatchTime();
     }
     return -1;
   }

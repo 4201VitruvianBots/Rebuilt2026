@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import org.wpilib.hardware.bus.CANPort;
+
 import com.ctre.phoenix6.CANBus;
 
 public class CAN { //ids were gotten from controls

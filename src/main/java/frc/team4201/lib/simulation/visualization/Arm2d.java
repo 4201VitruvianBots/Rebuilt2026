@@ -2,12 +2,13 @@ package frc.team4201.lib.simulation.visualization;
 
 import static org.wpilib.units.Units.*;
 
+import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.smartdashboard.*;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.smartdashboard.*;
-import frc.team4201.lib.simulation.visualization.configs.Arm2dConfig;
 
 /** Class to represent an arm using {@link Mechanism2d} */
 public class Arm2d implements AutoCloseable {
@@ -15,6 +16,8 @@ public class Arm2d implements AutoCloseable {
   private final MechanismLigament2d m_arm2d;
   private MechanismObject2d m_parentObject;
   private Arm2d m_subArm2d;
+  private Mechanism2d m_subDisplay;
+  private String m_subDisplayName;
 
   /**
    * Create a new {@link Arm2d} instance
@@ -92,7 +95,9 @@ public class Arm2d implements AutoCloseable {
         .append(m_subArm2d.getLigament());
     ;
 
-    SmartDashboard.putData(armSubConfig.m_name, subArmDisplay);
+    m_subDisplay = subArmDisplay;
+    m_subDisplayName = armSubConfig.m_name;
+    Telemetry.log(m_subDisplayName, m_subDisplay);
   }
 
   /**
@@ -192,15 +197,17 @@ public class Arm2d implements AutoCloseable {
 
     if (m_subArm2d != null) {
       m_subArm2d.update(angle, velocity, length);
+      // Telemetry.log() takes a snapshot, so the display must be logged every update
+      Telemetry.log(m_subDisplayName, m_subDisplay);
     }
   }
 
   @Override
   public void close() throws Exception {
-    m_arm2d.close();
+    // m_arm2d.close();
 
-    if (m_subArm2d != null) {
-      m_subArm2d.close();
-    }
+    // if (m_subArm2d != null) {
+    //   m_subArm2d.close();
+    // }
   }
 }

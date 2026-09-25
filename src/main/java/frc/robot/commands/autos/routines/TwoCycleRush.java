@@ -4,13 +4,13 @@
 
 package frc.robot.commands.autos.routines;
 
-import org.wpilib.command2.PrintCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
+import org.wpilib.command2.PrintCommand;
 
 public class TwoCycleRush extends Auto {
   public TwoCycleRush(AutoDependencies deps, BooleanSupplier flipPath, boolean partnerFriendly) {

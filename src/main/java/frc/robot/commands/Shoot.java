@@ -6,23 +6,6 @@ import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.Volts;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Transform2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.geometry.Twist2d;
-import org.wpilib.math.interpolation.InterpolatingTreeMap;
-import org.wpilib.math.interpolation.Interpolator;
-import org.wpilib.math.interpolation.InverseInterpolator;
-import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.driverstation.GenericHID.RumbleType;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.button.CommandGamepad;
-import org.wpilib.command2.button.CommandGenericHID;
-
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.HOOD;
@@ -35,6 +18,21 @@ import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.driverstation.GenericHID.RumbleType;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Transform2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Twist2d;
+import org.wpilib.math.interpolation.InterpolatingTreeMap;
+import org.wpilib.math.interpolation.Interpolator;
+import org.wpilib.math.interpolation.InverseInterpolator;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.tunable.Tunables;
+import org.wpilib.units.measure.Distance;
 
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
@@ -132,7 +130,7 @@ public class Shoot extends Command {
     m_RPMShift = RPMShift;
 
     addRequirements(flywheel, shooterHood);
-    SmartDashboard.putData(this);
+    Tunables.publish(this.getName(), this);
   }
 
   /** Standard shooting without shoot on the move capabilities. Used only in auto. */
@@ -144,7 +142,7 @@ public class Shoot extends Command {
     m_swerveDrivetrain = swerveDrive;
 
     addRequirements(flywheel, shooterHood, swerveDrive);
-    SmartDashboard.putData(this);
+    Tunables.publish(this.getName(), this);
   }
 
   // Called when the command is initially scheduled.
@@ -219,11 +217,11 @@ public class Shoot extends Command {
     m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Degrees.of(m_hoodAngleShift.getAsDouble())));    
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
-        m_driverController.setRumble(
+        m_driverController.getGamepad().setRumble(
             RumbleType.LEFT_RUMBLE, FLYWHEEL.kRumbleStrength); // Null in auto
     } else {
       if (m_driverController != null)
-        m_driverController.setRumble(RumbleType.RIGHT_RUMBLE, 0); // Null in auto
+        m_driverController.getGamepad().setRumble(RumbleType.RIGHT_RUMBLE, 0); // Null in auto
     }
 
     Rotation2d moduleAngle = new Rotation2d();
@@ -258,7 +256,7 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     if (m_driverController != null)
-      m_driverController.setRumble(RumbleType.LEFT_RUMBLE, 0); // Null in auto
+      m_driverController.getGamepad().setRumble(RumbleType.LEFT_RUMBLE, 0); // Null in auto
     m_flywheel.setVoltageOutput(Volts.of(0.0));
     m_flywheel.setIsShooting(false);
   }

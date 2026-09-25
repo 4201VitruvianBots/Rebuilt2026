@@ -4,14 +4,14 @@ import static org.wpilib.units.Units.Hertz;
 
 import com.ctre.phoenix6.StatusSignalCollection;
 import com.ctre.phoenix6.hardware.TalonFX;
+import frc.robot.constants.CAN;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 import org.wpilib.epilogue.CustomLoggerFor;
 import org.wpilib.epilogue.Epilogue;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.logging.ClassSpecificLogger;
-import org.wpilib.epilogue.logging.EpilogueBackend;
-import frc.robot.constants.CAN;
-import java.util.LinkedHashMap;
-import java.util.Objects;
+import org.wpilib.telemetry.TelemetryTable;
 
 @CustomLoggerFor(TalonFX.class)
 public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
@@ -23,7 +23,7 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
   }
 
   @Override
-  public void update(EpilogueBackend backend, TalonFX motor) {
+  protected void update(TelemetryTable table, TalonFX motor) {
     if (!m_signalMap.containsKey(motor)) {
       var signals = new StatusSignalCollection();
 
@@ -58,23 +58,23 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
       m_signalMap.put(motor, signals);
     }
 
-    backend.log("Supply Voltage (V)", motor.getSupplyVoltage().getValue());
-    backend.log("Supply Current (A)", motor.getSupplyCurrent().getValue());
+    table.log("Supply Voltage (V)", motor.getSupplyVoltage().getValue());
+    table.log("Supply Current (A)", motor.getSupplyCurrent().getValue());
 
-    backend.log("Control Mode", motor.getAppliedControl().getName());
+    table.log("Control Mode", motor.getAppliedControl().getName());
 
-    backend.log("Output (%)", motor.getThrottle());
-    backend.log("Output (V)", motor.getMotorVoltage().refresh().getValue());
-    backend.log("Stator Current (A)", motor.getStatorCurrent().refresh().getValue());
+    table.log("Output (%)", motor.getDutyCycle().getValue());
+    table.log("Output (V)", motor.getMotorVoltage().getValue());
+    table.log("Stator Current (A)", motor.getStatorCurrent().getValue());
 
-    backend.log("Position", motor.getPosition().getValue());
+    table.log("Position", motor.getPosition().getValue());
 
     if (Epilogue.shouldLog(Logged.Importance.INFO)) {
-      backend.log("Velocity", motor.getVelocity().getValue());
-      backend.log("Acceleration", motor.getAcceleration().getValue());
+      table.log("Velocity", motor.getVelocity().getValue());
+      table.log("Acceleration", motor.getAcceleration().getValue());
 
-      backend.log("Setpoint", motor.getClosedLoopReference().getValue());
-      backend.log("Error", motor.getClosedLoopError().getValue());
+      table.log("Setpoint", motor.getClosedLoopReference().getValue());
+      table.log("Error", motor.getClosedLoopError().getValue());
     }
 
     //    System.out.printf("[DEBUG] TalonFX %02d logged data\n", motor.getDeviceID());

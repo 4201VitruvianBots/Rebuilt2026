@@ -2,17 +2,17 @@ package frc.robot.constants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
 import frc.robot.subsystems.Controls;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
 import utils.TestUtils;
 
 public class TestFieldConstants {
+
   @Test
   public void testFieldConstants() {
     // Just check that the values are different. Mostly redundant now, but this was meant to debug
@@ -32,14 +32,14 @@ public class TestFieldConstants {
     TestUtils.setPrivateField(controls, "m_allianceColor", Alliance.RED);
     FIELD.updateConstants();
     Map<Pose2d, FIELD.SECTOR> redSectors = new HashMap<>();
-    redSectors.put(new Pose2d(1, 1, Rotation2d.kZero), FIELD.SECTOR.BLUE_LEFT);
-    redSectors.put(new Pose2d(1, 8, Rotation2d.kZero), FIELD.SECTOR.BLUE_RIGHT);
-    redSectors.put(new Pose2d(5, 1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_LEFT);
-    redSectors.put(new Pose2d(5, 8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
-    redSectors.put(new Pose2d(9, 1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_LEFT);
-    redSectors.put(new Pose2d(9, 8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_RIGHT);
-    redSectors.put(new Pose2d(13, 1, Rotation2d.kZero), FIELD.SECTOR.RED_LEFT);
-    redSectors.put(new Pose2d(13, 8, Rotation2d.kZero), FIELD.SECTOR.RED_RIGHT);
+    redSectors.put(new Pose2d(1, 1, Rotation2d.ZERO), FIELD.SECTOR.BLUE_LEFT);
+    redSectors.put(new Pose2d(1, 8, Rotation2d.ZERO), FIELD.SECTOR.BLUE_RIGHT);
+    redSectors.put(new Pose2d(5, 1, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_FAR_LEFT);
+    redSectors.put(new Pose2d(5, 8, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
+    redSectors.put(new Pose2d(9, 1, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_NEAR_LEFT);
+    redSectors.put(new Pose2d(9, 8, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_NEAR_RIGHT);
+    redSectors.put(new Pose2d(13, 1, Rotation2d.ZERO), FIELD.SECTOR.RED_LEFT);
+    redSectors.put(new Pose2d(13, 8, Rotation2d.ZERO), FIELD.SECTOR.RED_RIGHT);
 
     redSectors.forEach(
         (k, v) -> {
@@ -51,14 +51,14 @@ public class TestFieldConstants {
     TestUtils.setPrivateField(controls, "m_allianceColor", Alliance.BLUE);
     FIELD.updateConstants();
     Map<Pose2d, FIELD.SECTOR> blueSectors = new HashMap<>();
-    blueSectors.put(new Pose2d(1, 1, Rotation2d.kZero), FIELD.SECTOR.BLUE_RIGHT);
-    blueSectors.put(new Pose2d(1, 8, Rotation2d.kZero), FIELD.SECTOR.BLUE_LEFT);
-    blueSectors.put(new Pose2d(5, 1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_RIGHT);
-    blueSectors.put(new Pose2d(5, 8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_NEAR_LEFT);
-    blueSectors.put(new Pose2d(9, 1, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
-    blueSectors.put(new Pose2d(9, 8, Rotation2d.kZero), FIELD.SECTOR.NEUTRAL_FAR_LEFT);
-    blueSectors.put(new Pose2d(13, 1, Rotation2d.kZero), FIELD.SECTOR.RED_RIGHT);
-    blueSectors.put(new Pose2d(13, 8, Rotation2d.kZero), FIELD.SECTOR.RED_LEFT);
+    blueSectors.put(new Pose2d(1, 1, Rotation2d.ZERO), FIELD.SECTOR.BLUE_RIGHT);
+    blueSectors.put(new Pose2d(1, 8, Rotation2d.ZERO), FIELD.SECTOR.BLUE_LEFT);
+    blueSectors.put(new Pose2d(5, 1, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_NEAR_RIGHT);
+    blueSectors.put(new Pose2d(5, 8, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_NEAR_LEFT);
+    blueSectors.put(new Pose2d(9, 1, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_FAR_RIGHT);
+    blueSectors.put(new Pose2d(9, 8, Rotation2d.ZERO), FIELD.SECTOR.NEUTRAL_FAR_LEFT);
+    blueSectors.put(new Pose2d(13, 1, Rotation2d.ZERO), FIELD.SECTOR.RED_RIGHT);
+    blueSectors.put(new Pose2d(13, 8, Rotation2d.ZERO), FIELD.SECTOR.RED_LEFT);
 
     blueSectors.forEach(
         (k, v) -> {
@@ -72,26 +72,26 @@ public class TestFieldConstants {
     Controls controls = new Controls();
     FIELD.initializeConstants();
 
-    FIELD.updateCurrentSector(new Pose2d(13, 3, Rotation2d.kZero));
+    FIELD.updateCurrentSector(new Pose2d(13, 3, Rotation2d.ZERO));
     assertEquals(FIELD.HUB.RED, FIELD.TARGET.CURRENT_TARGET);
 
-    FIELD.updateCurrentSector(new Pose2d(7, 1, Rotation2d.kZero));
+    FIELD.updateCurrentSector(new Pose2d(7, 1, Rotation2d.ZERO));
     assertEquals(FIELD.TARGET.RED_LEFT_PASS, FIELD.TARGET.CURRENT_TARGET);
 
-    FIELD.updateCurrentSector(new Pose2d(7, 7, Rotation2d.kZero));
+    FIELD.updateCurrentSector(new Pose2d(7, 7, Rotation2d.ZERO));
     assertEquals(FIELD.TARGET.RED_RIGHT_PASS, FIELD.TARGET.CURRENT_TARGET);
 
     // Test Blue Alliance
     TestUtils.setPrivateField(controls, "m_allianceColor", Alliance.BLUE);
     FIELD.updateConstants();
 
-    FIELD.updateCurrentSector(new Pose2d(1, 3, Rotation2d.kZero));
+    FIELD.updateCurrentSector(new Pose2d(1, 3, Rotation2d.ZERO));
     assertEquals(FIELD.HUB.BLUE, FIELD.TARGET.CURRENT_TARGET);
 
-    FIELD.updateCurrentSector(new Pose2d(7, 7, Rotation2d.kZero));
+    FIELD.updateCurrentSector(new Pose2d(7, 7, Rotation2d.ZERO));
     assertEquals(FIELD.TARGET.BLUE_LEFT_PASS, FIELD.TARGET.CURRENT_TARGET);
 
-    FIELD.updateCurrentSector(new Pose2d(7, 1, Rotation2d.kZero));
+    FIELD.updateCurrentSector(new Pose2d(7, 1, Rotation2d.ZERO));
     assertEquals(FIELD.TARGET.BLUE_RIGHT_PASS, FIELD.TARGET.CURRENT_TARGET);
   }
 }

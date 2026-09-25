@@ -6,9 +6,8 @@ import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.Pound;
 import static org.wpilib.units.Units.RotationsPerSecond;
 
-import org.wpilib.math.system.DCMotor;
-
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import org.wpilib.math.system.DCMotor;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Distance;

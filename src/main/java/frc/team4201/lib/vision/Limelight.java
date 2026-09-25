@@ -1,20 +1,18 @@
 package frc.team4201.lib.vision;
 
+import java.util.Optional;
 import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.math.linalg.Matrix;
-import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.framework.RobotBase;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
 import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.StructPublisher;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.framework.RobotBase;
-import java.util.Optional;
 
 public class Limelight {
   private final String m_name;
@@ -25,7 +23,7 @@ public class Limelight {
   private final NetworkTable nt_limelight_instance;
   private final StructPublisher<Pose2d> m_posePublisher;
 
-  private Pose2d m_lastValidPose = Pose2d.kZero;
+  private Pose2d m_lastValidPose = Pose2d.ZERO;
   private Optional<LimelightHelpers.PoseEstimate> m_lastValidMeasurement = Optional.empty();
   private boolean m_initialPoseSet = false;
 
@@ -55,7 +53,7 @@ public class Limelight {
 
   public boolean process() {
     m_lastValidMeasurement = Optional.empty();
-    if (DriverStationBackend.isDisabled()) {
+    if (RobotState.isDisabled()) {
       LimelightHelpers.SetIMUMode(m_name, IMU_MODE.FUSED.ordinal());
       LimelightHelpers.SetFiducialIDFiltersOverride(m_name, new int[] {});
 
@@ -72,7 +70,7 @@ public class Limelight {
     m_lastValidMeasurement.ifPresent(
         (measurement) -> {
           if (measurement.timestampSeconds == 0
-              || measurement.pose.getTranslation().equals(Translation2d.kZero)
+              || measurement.pose.getTranslation().equals(Translation2d.ZERO)
               || measurement.tagCount == 0) {
             return;
           }

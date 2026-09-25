@@ -2,6 +2,12 @@ package frc.team4201.lib.simulation;
 
 import static java.util.Arrays.stream;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.framework.RobotBase;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
@@ -9,14 +15,9 @@ import org.wpilib.math.trajectory.Trajectory;
 import org.wpilib.networktables.NetworkTable;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.ProtobufPublisher;
-import org.wpilib.framework.RobotBase;
 import org.wpilib.smartdashboard.Field2d;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.SubsystemBase;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.tunable.Tunables;
 
 /** Class to handle all updates to the Field2D widget */
 public class FieldSim extends SubsystemBase implements AutoCloseable {
@@ -43,13 +44,11 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
   private final Map<String, Pose2d[]> m_objectPoses = new HashMap<>();
 
   private final NetworkTableInstance nt = NetworkTableInstance.getDefault();
-  private final NetworkTable field2dTable = nt.getTable("SmartDashboard").getSubTable("Field2D");
-  private final ProtobufPublisher<Trajectory> trajectoryProtoPublisher =
-      field2dTable.getProtobufTopic("trajectoryProto", Trajectory.proto).publish();
+  // TODO: Alpha 7 has no generic Trajectory protobuf, so the trajectoryProto topic is not published
 
   /** Create a FieldSim object */
   public FieldSim() {
-    SmartDashboard.putData("Field2D", m_field2D);
+    Tunables.publish("Field2D", m_field2D);
   }
 
   public Field2d getField2d() {
@@ -61,7 +60,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
         .getObject(key)
         .setPoses(
             Arrays.stream(translations)
-                .map(t -> new Pose2d(t, Rotation2d.kZero))
+                .map(t -> new Pose2d(t, Rotation2d.ZERO))
                 .toArray(Pose2d[]::new));
   }
 
@@ -89,7 +88,7 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
     addPoses(
         key,
         Arrays.stream(translations)
-            .map(t -> new Pose2d(t, Rotation2d.kZero))
+            .map(t -> new Pose2d(t, Rotation2d.ZERO))
             .toArray(Pose2d[]::new));
   }
 
@@ -112,12 +111,12 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
    */
   public void clearPose(String key) {
     m_objectPoses.remove(key);
-    m_field2D.getObject(key).close();
+    m_field2D.getObject(key).setPoses();
   }
 
   /** Remove all poses from being displayed on FieldSim */
   public void clearAllPoses() {
-    for (var entry : m_objectPoses.entrySet()) m_field2D.getObject(entry.getKey()).close();
+    for (var entry : m_objectPoses.entrySet()) m_field2D.getObject(entry.getKey()).setPoses();
     m_objectPoses.clear();
   }
 
@@ -128,7 +127,6 @@ public class FieldSim extends SubsystemBase implements AutoCloseable {
    */
   public void addTrajectory(Trajectory trajectory) {
     m_field2D.getObject("trajectory").setTrajectory(trajectory);
-    trajectoryProtoPublisher.accept(trajectory);
   }
 
   private void updateField2d() {

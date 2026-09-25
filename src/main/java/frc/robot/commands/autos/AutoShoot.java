@@ -4,10 +4,10 @@
 
 package frc.robot.commands.autos;
 
-import org.wpilib.command2.*;
 import frc.robot.commands.Fire;
 import frc.robot.commands.JostleIntake;
 import frc.robot.commands.Shoot;
+import org.wpilib.command2.*;
 
 // Begins firing once the shooter is up to speed, and continues firing for a given duration. Used in
 // auto routines to fire shots while running paths.

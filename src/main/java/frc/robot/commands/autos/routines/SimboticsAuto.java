@@ -4,11 +4,11 @@
 
 package frc.robot.commands.autos.routines;
 
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.command2.InstantCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
 import frc.team4201.lib.command.Auto;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.driverstation.DriverStationErrors;
 
 public class SimboticsAuto extends Auto {
   public SimboticsAuto(AutoDependencies deps) {
@@ -21,7 +21,7 @@ public class SimboticsAuto extends Auto {
 
       addCommands(m_path1, new AutoShoot(deps, 2.7), m_path2, new AutoShoot(deps, 2.7));
     } catch (Exception e) {
-      DriverStationBackend.reportError("Failed to load path for Simbotics Auto", e.getStackTrace());
+      DriverStationErrors.reportError("Failed to load path for Simbotics Auto", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

@@ -4,8 +4,20 @@
 
 package frc.robot.subsystems;
 
-import org.wpilib.driverstation.*;
-import org.wpilib.driverstation.internal.DriverStationBackend;
+import frc.robot.constants.FIELD;
+import frc.robot.constants.ROBOT.USB;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.util.Alert;
+import org.wpilib.util.Alert.Level;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.driverstation.DriverStation;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.MedianFilter;
@@ -17,21 +29,14 @@ import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
-import org.wpilib.smartdashboard.SmartDashboard;
-import org.wpilib.command2.Subsystem;
-import org.wpilib.command2.SubsystemBase;
-import frc.robot.constants.FIELD;
-import frc.robot.constants.ROBOT.USB;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import org.wpilib.telemetry.Telemetry;
 
 @Logged
 public class Controls extends SubsystemBase {
   private static boolean m_allianceInit;
   private static Alliance m_allianceColor = Alliance.RED;
 
-  // private static Alert m_visionAlert = new Alert("Vision alert not properly initialized",
+  // private static Alert m_visionAlert = new Alert("Controls", "Vision alert not properly initialized",
   // Level.MEDIUM);
 
   private static Timer m_brownoutTimer = new Timer();
@@ -41,30 +46,39 @@ public class Controls extends SubsystemBase {
   @NotLogged private final Map<String, Subsystem> m_subsystemMap = new HashMap<>();
 
   @NotLogged
-  private final Map<String, Alert> alertMap =
+  // Static because alert IDs must be unique, so the alerts can only be created once
+  private static final Map<String, Alert> alertMap =
       Map.ofEntries(
           Map.entry(
-              "usb", new Alert("USB connection alert not properly initialized", Level.HIGH)),
+              "usb",
+              new Alert("Controls", "usb", "USB connection alert not properly initialized", Level.HIGH)),
           Map.entry(
-              "brownout", new Alert("Brownout alert not properly initialized", Level.MEDIUM)),
+              "brownout",
+              new Alert("Controls", "brownout", "Brownout alert not properly initialized", Level.MEDIUM)),
           Map.entry(
               "storage",
-              new Alert("Storage space alert not properly initialized", Level.MEDIUM)),
+              new Alert("Controls", "storage", "Storage space alert not properly initialized", Level.MEDIUM)),
           Map.entry(
               "epilogue",
-              new Alert("Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
+              new Alert("Controls", "epilogue", "Epilogue Runtime average is > 0.04 seconds!", Level.MEDIUM)),
           // Alerts for setting up the robot properly
           Map.entry(
               "allianceInit",
-              new Alert("Did not get alliance color from FMS/DS!", Level.MEDIUM)),
+              new Alert("Controls", "allianceInit", "Did not get alliance color from FMS/DS!", Level.MEDIUM)),
           Map.entry(
-              "vision", new Alert("Vision Subsystem is not ready!", Level.MEDIUM)),
+              "vision",
+              new Alert("Controls", "vision", "Vision Subsystem is not ready!", Level.MEDIUM)),
 
           // Alerts for when the robot is running
-          Map.entry("radioError", new Alert("Robot Radio not detected!", Level.HIGH)),
           Map.entry(
-              "joystickError", new Alert("Missing joystick detected!", Level.HIGH)),
-          Map.entry("canError", new Alert("CAN bus error detected!", Level.HIGH)));
+              "radioError",
+              new Alert("Controls", "radioError", "Robot Radio not detected!", Level.HIGH)),
+          Map.entry(
+              "joystickError",
+              new Alert("Controls", "joystickError", "Missing joystick detected!", Level.HIGH)),
+          Map.entry(
+              "canError",
+              new Alert("Controls", "canError", "CAN bus error detected!", Level.HIGH)));
 
   private final MedianFilter epilogueBuffer = new MedianFilter(20);
   private final DoubleSubscriber epilogueRuntimeSub =
@@ -72,7 +86,7 @@ public class Controls extends SubsystemBase {
 
   /** Creates a new Controls subsystem */
   public Controls() {
-    initSmartDashboard();
+    initTunables();
   }
 
   public void registerSubsystem(Subsystem subsystem) {
@@ -95,8 +109,8 @@ public class Controls extends SubsystemBase {
     return getAllianceColor() == Alliance.BLUE;
   }
 
-  private void initSmartDashboard() {
-    SmartDashboard.putString("Controls/Serial Number", RobotController.getSerialNumber());
+  private void initTunables() {
+    Telemetry.getTable("Controls").log("Serial Number", RobotController.getSerialNumber());
   }
 
   public void updateAlerts() {
@@ -107,7 +121,7 @@ public class Controls extends SubsystemBase {
     String usbAlertMessage = "The following USB devices are not connected: ";
 
     // TODO: Change this to a loop/array for String.join()
-    if (!DriverStationBackend.isJoystickConnected(USB.driver_xBoxController)) {
+    if (!DriverStation.getGenericHID(USB.driver_xBoxController).isConnected()) {
       usbAlertMessage += String.join(", ", "Driver Xbox Controller");
       alertMap.get("usb").setText(usbAlertMessage);
     }
@@ -194,7 +208,7 @@ public class Controls extends SubsystemBase {
     updateAlerts();
 
     if (RobotState.isDisabled()) {
-      DriverStationBackend.getAlliance()
+      MatchState.getAlliance()
           .ifPresent(
               a -> {
                 m_allianceColor = a;

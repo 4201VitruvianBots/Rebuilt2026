@@ -2,12 +2,13 @@ package frc.team4201.lib.simulation.visualization;
 
 import static org.wpilib.units.Units.*;
 
+import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.smartdashboard.*;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.smartdashboard.*;
-import frc.team4201.lib.simulation.visualization.configs.Elevator2dConfig;
 
 /** Class to represent an elevator using {@link Mechanism2d} */
 public class Elevator2d implements AutoCloseable {
@@ -16,6 +17,8 @@ public class Elevator2d implements AutoCloseable {
   private final MechanismLigament2d[] m_elevatorStages;
   private MechanismObject2d m_parentObject;
   private Elevator2d m_subElevator2d;
+  private Mechanism2d m_subDisplay;
+  private String m_subDisplayName;
 
   /**
    * Create a new {@link Elevator2d} instance
@@ -112,7 +115,9 @@ public class Elevator2d implements AutoCloseable {
         .getRoot(m_subElevator2d + "Root", rootPosition.getX(), rootPosition.getY())
         .append(m_subElevator2d.getLigament());
 
-    SmartDashboard.putData(elevatorSubConfig.m_name, subElevatorDisplay);
+    m_subDisplay = subElevatorDisplay;
+    m_subDisplayName = elevatorSubConfig.m_name;
+    Telemetry.log(m_subDisplayName, m_subDisplay);
   }
 
   /**
@@ -233,17 +238,19 @@ public class Elevator2d implements AutoCloseable {
 
     if (m_subElevator2d != null) {
       m_subElevator2d.update(height, velocity);
+      // Telemetry.log() takes a snapshot, so the display must be logged every update
+      Telemetry.log(m_subDisplayName, m_subDisplay);
     }
   }
 
   @Override
   public void close() throws Exception {
-    for (var elevatorSegment : m_elevatorStages) {
-      elevatorSegment.close();
-    }
+    // for (var elevatorSegment : m_elevatorStages) {
+    //   elevatorSegment.close();
+    // }
 
-    if (m_subElevator2d != null) {
-      m_subElevator2d.close();
-    }
+    // if (m_subElevator2d != null) {
+    //   m_subElevator2d.close();
+    // }
   }
 }

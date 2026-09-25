@@ -1,7 +1,8 @@
 package frc.robot.constants;
 
 public class LED {
-  public static final int kPWMPort = 8;
+  public static final int kPWMPort = 5;
+  // Todo: Figure out real port / if there's still LEDs
 
   public static final int kLEDCount = 32;
 

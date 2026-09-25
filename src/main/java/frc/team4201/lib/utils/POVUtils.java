@@ -1,8 +1,8 @@
 package frc.team4201.lib.utils;
 
+import java.util.function.BooleanSupplier;
 import org.wpilib.command2.button.CommandGenericHID;
 import org.wpilib.command2.button.Trigger;
-import java.util.function.BooleanSupplier;
 
 public class POVUtils {
   /**

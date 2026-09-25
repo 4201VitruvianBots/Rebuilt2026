@@ -5,6 +5,9 @@ import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.MetersPerSecond;
 import static org.wpilib.units.Units.Radians;
 
+import java.util.ArrayList;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -18,9 +21,6 @@ import org.wpilib.networktables.StructArrayPublisher;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.LinearVelocity;
-import java.util.ArrayList;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class FuelSim {
   protected static final double PERIOD = 0.02; // sec
@@ -555,7 +555,7 @@ public class FuelSim {
             .plus(
                 new Transform3d(
                     new Translation3d(Meters.zero(), Meters.zero(), launchHeight),
-                    Rotation3d.kZero));
+                    Rotation3d.ZERO));
     ChassisVelocities fieldSpeeds = this.robotFieldSpeedsSupplier.get();
 
     double horizontalVel = Math.cos(hoodAngle.in(Radians)) * launchVelocity.in(MetersPerSecond);
@@ -575,7 +575,7 @@ public class FuelSim {
 
   protected void handleRobotCollision(Fuel fuel, Pose2d robot, Translation2d robotVel) {
     Translation2d relativePos =
-        new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero).relativeTo(robot).getTranslation();
+        new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.ZERO).relativeTo(robot).getTranslation();
 
     if (fuel.pos.getZ() > bumperHeight) return; // above bumpers
     double distanceToBottom = -FUEL_RADIUS - robotLength / 2 - relativePos.getX();
@@ -929,7 +929,7 @@ public class FuelSim {
       if (!ableToIntake.getAsBoolean() || fuel.pos.getZ() > bumperHeight) return false;
 
       Translation2d fuelRelativePos =
-          new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero)
+          new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.ZERO)
               .relativeTo(robotPose)
               .getTranslation();
 

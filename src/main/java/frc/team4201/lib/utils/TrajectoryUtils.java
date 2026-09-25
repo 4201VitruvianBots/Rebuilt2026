@@ -8,21 +8,19 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FlippingUtil;
-import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.MatchState;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.trajectory.Trajectory;
-import org.wpilib.math.trajectory.TrajectoryConfig;
-import org.wpilib.math.trajectory.TrajectoryGenerator;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.command2.*;
 import frc.team4201.lib.command.SwerveSubsystem;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
+import org.wpilib.command2.*;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.trajectory.DrivetrainSplineTrajectoryGenerator;
+import org.wpilib.math.trajectory.Trajectory;
+import org.wpilib.math.trajectory.TrajectoryConfig;
 
 /**
  * Utility class for working with autonomous trajectory following. Is currently designed around <a
@@ -111,7 +109,7 @@ public class TrajectoryUtils {
                     path,
                     () -> m_swerveDrive.getState().Pose,
                     () -> m_swerveDrive.getState().Velocity,
-                    m_swerveDrive::setChassisSpeedsAuto,
+                    m_swerveDrive::setChassisVelocitiesAuto,
                     new PPHolonomicDriveController(
                         m_swerveDrive.getAutoTranslationPIDConstants(),
                         m_swerveDrive.getAutoRotationPIDConstants()),
@@ -255,12 +253,11 @@ public class TrajectoryUtils {
       }
     }
 
-    return TrajectoryGenerator.generateTrajectory(pathPoses, config);
+    return DrivetrainSplineTrajectoryGenerator.generate(pathPoses, config);
   }
 
   private boolean flipPathByAlliance() {
-    return MatchState.getAlliance().orElse(Alliance.BLUE)
-        == Alliance.RED;
+    return MatchState.getAlliance().orElse(Alliance.BLUE) == Alliance.RED;
   }
 
   /** Class for setting {@link TrajectoryUtils} settings */

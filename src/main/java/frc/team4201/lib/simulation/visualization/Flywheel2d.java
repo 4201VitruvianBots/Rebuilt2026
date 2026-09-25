@@ -7,10 +7,11 @@ package frc.team4201.lib.simulation.visualization;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.RotationsPerSecond;
 
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.smartdashboard.*;
 import frc.team4201.lib.simulation.visualization.configs.Flywheel2dConfig;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.smartdashboard.*;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.units.measure.AngularVelocity;
 
 /** Class to represent a flywheel using {@link Mechanism2d} */
 public class Flywheel2d implements AutoCloseable {
@@ -21,6 +22,8 @@ public class Flywheel2d implements AutoCloseable {
   private final MechanismLigament2d m_flywheel;
   private MechanismObject2d m_parentObject;
   private Flywheel2d m_subFlywheel2d;
+  private Mechanism2d m_subDisplay;
+  private String m_subDisplayName;
 
   /**
    * Create a new {@link Flywheel2d} instance
@@ -120,7 +123,9 @@ public class Flywheel2d implements AutoCloseable {
         .append(m_subFlywheel2d.getLigament());
     ;
 
-    SmartDashboard.putData(flywheelSubConfig.m_name, subFlywheelDisplay);
+    m_subDisplay = subFlywheelDisplay;
+    m_subDisplayName = flywheelSubConfig.m_name;
+    Telemetry.log(m_subDisplayName, m_subDisplay);
   }
 
   /**
@@ -171,18 +176,20 @@ public class Flywheel2d implements AutoCloseable {
 
     if (m_subFlywheel2d != null) {
       m_subFlywheel2d.update(rps);
+      // Telemetry.log() takes a snapshot, so the display must be logged every update
+      Telemetry.log(m_subDisplayName, m_subDisplay);
     }
   }
 
   @Override
   public void close() throws Exception {
-    m_flywheel.close();
-    for (var side : m_sides) {
-      side.close();
-    }
+    // m_flywheel.close();
+    // for (var side : m_sides) {
+    //   side.close();
+    // }
 
-    if (m_subFlywheel2d != null) {
-      m_subFlywheel2d.close();
-    }
+    // if (m_subFlywheel2d != null) {
+    //   m_subFlywheel2d.close();
+    // }
   }
 }

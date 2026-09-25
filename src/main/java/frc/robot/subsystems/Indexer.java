@@ -14,6 +14,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import frc.robot.constants.CAN;
+import frc.robot.constants.INDEXER;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
+import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+import frc.team4201.lib.utils.CtreUtils;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.epilogue.NotLogged;
@@ -21,15 +28,8 @@ import org.wpilib.math.system.Models;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.system.RobotController;
 import org.wpilib.simulation.DCMotorSim;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.SubsystemBase;
-import frc.robot.constants.CAN;
-import frc.robot.constants.INDEXER;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
-import frc.team4201.lib.utils.CtreUtils;
+import org.wpilib.system.RobotController;
 
 public class Indexer extends SubsystemBase {
 
@@ -50,14 +50,15 @@ public class Indexer extends SubsystemBase {
   private DoubleSubscriber m_speedSubscriber2;
   private DoublePublisher m_speedPublisher2;
 
-  
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
-              Models.singleJointedArmFromPhysicalConstants(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+          Models.singleJointedArmFromPhysicalConstants(
+              INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
           INDEXER.gearbox);
   private final DCMotorSim m_indexerMotor2Sim =
       new DCMotorSim(
-              Models.singleJointedArmFromPhysicalConstants(INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
+          Models.singleJointedArmFromPhysicalConstants(
+              INDEXER.gearbox, INDEXER.kInertia, INDEXER.gearRatio),
           INDEXER.gearbox);
   private final TalonFXSimState m_simState1;
   private final TalonFXSimState m_simState2;
@@ -139,7 +140,7 @@ public class Indexer extends SubsystemBase {
         RPM.of(m_indexerMotor2Sim.getAngularVelocity()).times(INDEXER.gearRatio));
   }
 
-  public void testInit() {
+  public void utilityInit() {
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
@@ -156,7 +157,7 @@ public class Indexer extends SubsystemBase {
     m_speedPublisher2.set(0.0);
   }
 
-  public void testPeriodic() {
-    setSpeed(m_speedSubscriber1.get());
+  public void utilityPeriodic() {
+    setSpeeds(m_speedSubscriber1.get(), m_speedSubscriber2.get());
   }
 }

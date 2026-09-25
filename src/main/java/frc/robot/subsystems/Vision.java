@@ -8,27 +8,16 @@ import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.driverstation.RobotState;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
-import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.framework.RobotBase;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.util.Units;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.units.measure.Distance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.command2.SubsystemBase;
-import frc.robot.constants.FIELD;
-import frc.robot.constants.FIELD.BUMP_ALIGNMENT_TARGETS;
-import frc.robot.constants.VISION;
-import frc.robot.constants.VISION.CAMERA_SERVER;
-import frc.robot.constants.VISION.TARGET;
-import frc.robot.lib.BLine.Path;
-import frc.team4201.lib.simulation.FieldSim;
-import frc.team4201.lib.vision.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
   private CommandSwerveDrivetrain m_swerveDriveTrain;
@@ -46,7 +35,7 @@ public class Vision extends SubsystemBase {
   private boolean m_localized;
 
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
-  private Pose2d targetPose = Pose2d.kZero;
+  private Pose2d targetPose = Pose2d.ZERO;
   private Pose2d allianceZonePose = new Pose2d();
   private Pose2d neutralZonePose = new Pose2d();
   private Pose2d unrealisticPose = new Pose2d();
@@ -91,9 +80,8 @@ public class Vision extends SubsystemBase {
 
   public Path updateCrossBumpPath(boolean endsShootingPosition) {
     if (isInLeftHalf()) {
-      neutralZonePose =
-          BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
-      if (endsShootingPosition){
+      neutralZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
+      if (endsShootingPosition) {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_SHOOTING.getAlignmentPose();
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_BUMP.getAlignmentPose();
@@ -101,15 +89,18 @@ public class Vision extends SubsystemBase {
       unrealisticPose = BUMP_ALIGNMENT_TARGETS.LEFT_UNREALISTIC_POSE.getAlignmentPose();
     } else {
       neutralZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
-      if (endsShootingPosition){
+      if (endsShootingPosition) {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_SHOOTING.getAlignmentPose();
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
       }
       unrealisticPose = BUMP_ALIGNMENT_TARGETS.RIGHT_UNREALISTIC_POSE.getAlignmentPose();
     }
-    
-    return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(unrealisticPose, 4.2), new Path.Waypoint(allianceZonePose, 1.0));
+
+    return new Path(
+        new Path.Waypoint(neutralZonePose, 0.8),
+        new Path.Waypoint(unrealisticPose, 4.2),
+        new Path.Waypoint(allianceZonePose, 1.0));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)
@@ -134,7 +125,7 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.LEFT.getTargetPosition().getMeasureY(),
-                  Rotation2d.kZero);
+                  Rotation2d.ZERO);
         } else {
           targetPose =
               new Pose2d(
@@ -149,7 +140,7 @@ public class Vision extends SubsystemBase {
               new Pose2d(
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureX(),
                   FIELD.TOWER.BLUE.RIGHT.getTargetPosition().getMeasureY(),
-                  Rotation2d.kZero);
+                  Rotation2d.ZERO);
         } else {
           targetPose =
               new Pose2d(
@@ -225,7 +216,7 @@ public class Vision extends SubsystemBase {
     } else {
       limelight.publishTimestamp(-1);
       limelight.publishRobotTimestamp(-1);
-      limelight.publishPose(new Pose2d(-1, -1, Rotation2d.kZero));
+      limelight.publishPose(new Pose2d(-1, -1, Rotation2d.ZERO));
       limelight.publishTagCount(-1);
       limelight.publishMegatag2Pose(false);
     }
@@ -235,7 +226,7 @@ public class Vision extends SubsystemBase {
       assert limelightMeasurement != null;
 
       // Reset the Swerve Pose with MegaTag1 if we are disabled
-      if (DriverStationBackend.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
+      if (RobotState.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
       } else {
         m_swerveDriveTrain.addVisionMeasurement(
@@ -256,7 +247,7 @@ public class Vision extends SubsystemBase {
       // Filter out bad AprilTag vision estimates for both MegaTag1 and MegaTag2
       if (poseEstimate.timestampSeconds == 0) {
         return false;
-      } else if (poseEstimate.pose.getTranslation().equals(Translation2d.kZero)) {
+      } else if (poseEstimate.pose.getTranslation().equals(Translation2d.ZERO)) {
         return false;
       } else if (poseEstimate.tagCount == 0) {
         return false;
@@ -319,6 +310,7 @@ public class Vision extends SubsystemBase {
         .getTranslation()
         .minus(targetPose.getTranslation())
         .getAngle()
+        .orElse(Rotation2d.ZERO)
         .plus(m_swerveDriveTrain.getState().Pose.getRotation());
 
     // var setPoint = m_goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation());
@@ -331,7 +323,7 @@ public class Vision extends SubsystemBase {
 
   @Logged(name = "On Target", importance = Logged.Importance.DEBUG)
   public boolean isOnTarget() {
-    if (DriverStationBackend.isAutonomous()) {
+    if (RobotState.isAutonomous()) {
       return Math.abs(getAngleToTarget().getDegrees()) < 2.0;
     } else {
       return Math.abs(getAngleToTarget().getDegrees()) < 0.5;
@@ -342,7 +334,10 @@ public class Vision extends SubsystemBase {
       Translation2d goal, double tolerance, boolean returnAbsoluteValue) {
     // bearing from robot to goal
     var bearing =
-        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation()).getAngle().getRadians();
+        goal.minus(m_swerveDriveTrain.getState().Pose.getTranslation())
+            .getAngle()
+            .orElse(Rotation2d.ZERO)
+            .getRadians();
     // robot heading
     var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
     // smallest signed angle difference in [-pi, pi]
@@ -388,7 +383,7 @@ public class Vision extends SubsystemBase {
     return FIELD.getCurrentSector().name().endsWith("LEFT");
   }
 
-  public void testInit() {
+  public void utilityInit() {
     m_kPAutoAlignPublisher.set(12.0);
     m_kDAutoAlignPublisher.set(0.0);
   }
@@ -419,7 +414,9 @@ public class Vision extends SubsystemBase {
     }
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
-    if (DriverStationBackend.isFMSAttached() && DriverStationBackend.isAutonomous() && !matchStarted) {
+    if (RobotState.isFMSAttached()
+        && RobotState.isAutonomous()
+        && !matchStarted) {
       matchStarted = true;
     }
   }

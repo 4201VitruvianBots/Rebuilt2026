@@ -6,20 +6,18 @@ package frc.robot.commands.autos.segments;
 
 import static org.wpilib.units.Units.Meters;
 
-import java.util.function.BooleanSupplier;
-
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
-
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.command2.InstantCommand;
-import org.wpilib.command2.ParallelDeadlineGroup;
-import org.wpilib.command2.PrintCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
+import java.util.function.BooleanSupplier;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.ParallelDeadlineGroup;
+import org.wpilib.command2.PrintCommand;
+import org.wpilib.driverstation.DriverStationErrors;
 
 public class IntakeFromNeutralNoCross extends Auto {
 
@@ -45,10 +43,10 @@ public class IntakeFromNeutralNoCross extends Auto {
                   getPathCommand(swerveDrive, path, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
-              .andThen(new PrintCommand("[AUTO] Finished crossing over bump"))
-              );
+              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
     } catch (Exception e) {
-      DriverStationBackend.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
+      DriverStationErrors.reportError(
+          "Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }

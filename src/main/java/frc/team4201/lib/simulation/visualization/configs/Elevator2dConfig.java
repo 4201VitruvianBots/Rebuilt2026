@@ -2,13 +2,13 @@ package frc.team4201.lib.simulation.visualization.configs;
 
 import static org.wpilib.units.Units.*;
 
-import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.smartdashboard.Mechanism2d;
-import org.wpilib.smartdashboard.MechanismLigament2d;
-import org.wpilib.util.Color8Bit;
 import frc.team4201.lib.simulation.visualization.Elevator2d;
 import frc.team4201.lib.simulation.visualization.VisualizationUtils.ELEVATOR_TYPE;
+import org.wpilib.smartdashboard.Mechanism2d;
+import org.wpilib.smartdashboard.MechanismLigament2d;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.util.Color8Bit;
 
 /** Configuration used for an {@link Elevator2d} */
 public class Elevator2dConfig extends BaseMechanismConfig {

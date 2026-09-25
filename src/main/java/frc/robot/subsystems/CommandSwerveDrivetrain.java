@@ -53,6 +53,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Subsystem;
+import org.wpilib.command2.sysid.SysIdRoutine;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.math.controller.PIDController;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.numbers.N1;
+import org.wpilib.math.numbers.N3;
+import org.wpilib.system.Notifier;
+import org.wpilib.system.RobotController;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.LinearVelocity;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -97,7 +118,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private double m_lastSimTime;
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-  private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
+  private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.ZERO;
   /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
@@ -203,7 +224,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       m_trajectoryUtils =
           new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
     } catch (Exception ex) {
-      DriverStationBackend.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
+      DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
   }
 
@@ -260,11 +281,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     }
   }
 
-  public void setChassisSpeeds(ChassisVelocities chassisSpeeds) {
+  public void setChassisVelocities(ChassisVelocities chassisSpeeds) {
     setControl(m_pathApplyRobotSpeeds.withVelocity(chassisSpeeds));
   }
 
-  public void setChassisSpeedsWithHeading(
+  public void setChassisVelocitiesWithHeading(
       LinearVelocity velocityX, LinearVelocity velocityY, Rotation2d headingTarget) {
     setControl(
         m_driveWithHeadingRequest
@@ -273,7 +294,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withTargetDirection(headingTarget));
   }
 
-  public void setChassisSpeedsAuto(
+  public void setChassisVelocitiesAuto(
       ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
     setControl(
         m_pathApplyRobotSpeeds
@@ -282,12 +303,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
   }
 
-  public FollowPath.Builder builder =
+  public Builder builder =
       new Builder(
               this,
               () -> this.getState().Pose,
               () -> this.getState().Velocity,
-              this::setChassisSpeeds,
+              this::setChassisVelocities,
               new PIDController(
                   getAutoTranslationPIDConstants().kP,
                   getAutoTranslationPIDConstants().kI,
@@ -333,8 +354,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   public LinearVelocity getVelocityMagnitude(ChassisVelocities cs) {
-    return MetersPerSecond.of(
-        new Translation2d(cs.vx, cs.vy).getNorm());
+    return MetersPerSecond.of(new Translation2d(cs.vx, cs.vy).getNorm());
   }
 
   public Rotation2d getPathVelocityHeading(ChassisVelocities cs, Pose2d target) {
@@ -342,7 +362,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       var diff = target.minus(getState().Pose).getTranslation();
       return (diff.getNorm() < 0.01)
           ? target.getRotation()
-          : diff.getAngle(); // .rotateBy(Rotation2d.k180deg);
+          : diff.getAngle().get(); // .rotateBy(Rotation2d.k180deg);
     }
     return new Rotation2d(cs.vx, cs.vy);
   }
@@ -356,11 +376,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     try {
       return RobotConfig.fromGUISettings();
     } catch (IOException e) {
-      DriverStationBackend.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     } catch (ParseException e) {
-      DriverStationBackend.reportWarning(
+      DriverStationErrors.reportWarning(
           "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
       throw new RuntimeException(e);
     }
@@ -467,7 +487,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       MatchState.getAlliance()
           .ifPresent(
               allianceColor -> {
-                setOperatorPerspectiveForward(
+                setOperatorForwardDirection(
                     allianceColor == Alliance.RED
                         ? kRedAlliancePerspectiveRotation
                         : kBlueAlliancePerspectiveRotation);
@@ -475,7 +495,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
               });
     }
     // poseEstimator.update(getPigeon2().getRotation2d(), getModulePositions());
-    SmartDashboard.putNumber("Gyro Angle", getPigeon2().getYaw().getValueAsDouble());
+    Telemetry.log("Gyro Angle", getPigeon2().getYaw().getValueAsDouble());
   }
 
   private void startSimThread() {

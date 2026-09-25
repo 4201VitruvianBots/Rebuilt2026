@@ -14,23 +14,22 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.Logged.Importance;
-import org.wpilib.epilogue.NotLogged;
-import org.wpilib.math.system.Models;
-import org.wpilib.math.util.MathUtil;
-import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.networktables.DoubleSubscriber;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.system.RobotController;
-import org.wpilib.simulation.FlywheelSim;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.SubsystemBase;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.UPTAKE;
 import frc.team4201.lib.utils.CtreUtils;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.SubsystemBase;
+import org.wpilib.epilogue.Logged;
+import org.wpilib.epilogue.Logged.Importance;
+import org.wpilib.epilogue.NotLogged;
+import org.wpilib.math.system.Models;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.DoubleSubscriber;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.FlywheelSim;
+import org.wpilib.system.RobotController;
+import org.wpilib.units.measure.AngularVelocity;
 
 public class Uptake extends SubsystemBase {
 
@@ -130,11 +129,11 @@ public class Uptake extends SubsystemBase {
         });
   }
 
-  public void testInit() {
+  public void utilityInit() {
     m_rpmPublisher.set(0.0);
   }
 
-  public void testPeriodic() {
+  public void utilityPeriodic() {
     setPercentOutput(m_rpmSubscriber.get());
   }
 

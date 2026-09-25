@@ -13,8 +13,6 @@ import static org.wpilib.units.Units.RadiansPerSecond;
 import static org.wpilib.units.Units.Rotations;
 import static org.wpilib.units.Units.Seconds;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -25,7 +23,15 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
+import frc.robot.constants.CAN;
+import frc.robot.constants.INTAKE.PIVOT;
+import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
+import frc.team4201.lib.utils.CtreUtils;
+import java.util.function.DoubleSupplier;
+import org.wpilib.command2.Command;
+import org.wpilib.command2.Commands;
+import org.wpilib.command2.InstantCommand;
+import org.wpilib.command2.SubsystemBase;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.epilogue.NotLogged;
@@ -35,6 +41,8 @@ import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.SingleJointedArmSim;
+import org.wpilib.system.RobotController;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.system.RobotController;
@@ -135,7 +143,8 @@ public class IntakePivot extends SubsystemBase {
 
   public void setAngle(Angle angle) {
     m_desiredAngle =
-        Degrees.of(Math.clamp(angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
+        Degrees.of(
+            Math.clamp(angle.in(Degrees), PIVOT.minAngle.in(Degrees), PIVOT.maxAngle.in(Degrees)));
   }
 
   @Logged(name = "Pivot Setpoint", importance = Importance.INFO)
@@ -169,8 +178,13 @@ public class IntakePivot extends SubsystemBase {
 
   @NotLogged
   public Command stow() {
-    var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees); 
-    return this.runOnce(() -> setAngle((!desiredAngleStowed) ? PIVOT_SETPOINT.STOWED.getAngle() : PIVOT_SETPOINT.INTAKING.getAngle()));
+    var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees);
+    return this.runOnce(
+        () ->
+            setAngle(
+                (!desiredAngleStowed)
+                    ? PIVOT_SETPOINT.STOWED.getAngle()
+                    : PIVOT_SETPOINT.INTAKING.getAngle()));
   }
   
   public Command percentCommand(double speed) {
@@ -230,7 +244,7 @@ public class IntakePivot extends SubsystemBase {
     // m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));
   }
 
-  public void testInit() {
+  public void utilityInit() {
     var topic =
         NetworkTableInstance.getDefault()
             .getTable("SmartDashboard")
@@ -240,7 +254,7 @@ public class IntakePivot extends SubsystemBase {
     m_anglePublisher.set(PIVOT_SETPOINT.INTAKING.getAngle().abs(Degrees));
   }
 
-  public void testPeriodic() {
+  public void utilityPeriodic() {
     setAngle(Degrees.of(m_angleSubscriber.get()));
   }
 }
