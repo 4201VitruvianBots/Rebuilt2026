@@ -104,6 +104,7 @@ public class Flywheel extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor1, config);
     CtreUtils.configureTalonFx(m_motor2, config);
     CtreUtils.configureTalonFx(m_motor3, config);
+    CtreUtils.configureTalonFx(m_motor4, config);
 
     m_simState = m_motor1.getSimState();
 

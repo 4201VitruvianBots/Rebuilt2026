@@ -20,7 +20,7 @@ public class ReverseUptake extends ParallelCommandGroup {
             ? uptake.percentCommand(UPTAKE_SPEED.INTAKEREVERSING.get())
             : new InstantCommand(),
         (indexer != null)
-            ? indexer.command(INDEXER_SPEED_1.FREEING, INDEXER_SPEED_2.FREEING)
+            ? indexer.command(INDEXER_SPEED_1.FREEING)
             : new InstantCommand());
   }
 }

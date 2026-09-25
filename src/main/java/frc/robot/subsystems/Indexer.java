@@ -8,8 +8,10 @@ import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import org.wpilib.epilogue.Logged;
@@ -37,8 +39,11 @@ public class Indexer extends SubsystemBase {
   @Logged(name = "Indexer Motor 2", importance = Importance.INFO)
   private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.indexer);
 
-  // @Logged(name = "Indexer Motor 3", importance = Importance.DEBUG)
-  // private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3);
+  @Logged(name = "Indexer Motor 3", importance = Importance.INFO)
+  private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3, CAN.indexer);
+
+  @Logged(name = "Indexer Motor 4", importance = Importance.INFO)
+  private final TalonFX m_indexerMotor4 = new TalonFX(CAN.kIndexerMotor3, CAN.indexer);
 
   private DoubleSubscriber m_speedSubscriber1;
   private DoublePublisher m_speedPublisher1;
@@ -70,21 +75,24 @@ public class Indexer extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = INDEXER.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_indexerMotor2, config);
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    CtreUtils.configureTalonFx(m_indexerMotor3, config);
+    CtreUtils.configureTalonFx(m_indexerMotor4, config);
 
-    // m_indexerMotor2.setControl(
-    //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    // m_indexerMotor3.setControl(
-    //     new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_indexerMotor2.setControl(
+        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m_indexerMotor3.setControl(
+        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_indexerMotor4.setControl(
+        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
 
     m_simState1 = m_indexerMotor1.getSimState();
     m_simState2 = m_indexerMotor2.getSimState();
   }
 
-  public void setSpeeds(double speed1, double speed2) {
-    m_indexerMotor1.setThrottle(speed1);
-    m_indexerMotor2.setThrottle(speed2);
+  public void setSpeed(double speed) {
+    m_indexerMotor1.setThrottle(speed);
   }
 
   public boolean isConnected() {
@@ -102,8 +110,8 @@ public class Indexer extends SubsystemBase {
   }
 
   @NotLogged
-  public Command command(INDEXER_SPEED_1 speed1, INDEXER_SPEED_2 speed2) {
-    return this.startEnd(() -> setSpeeds(speed1.get(), speed2.get()), () -> setSpeeds(0.0, 0.0));
+  public Command command(INDEXER_SPEED_1 speed1) {
+    return this.startEnd(() -> setSpeed(speed1.get()), () -> setSpeed(0.0));
   }
 
   @Override
@@ -149,6 +157,6 @@ public class Indexer extends SubsystemBase {
   }
 
   public void testPeriodic() {
-    setSpeeds(m_speedSubscriber1.get(), m_speedSubscriber2.get());
+    setSpeed(m_speedSubscriber1.get());
   }
 }

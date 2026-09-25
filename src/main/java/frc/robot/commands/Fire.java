@@ -21,7 +21,7 @@ public class Fire extends ParallelCommandGroup {
     addCommands(
         (intake != null) ? intake.commandIntakeState(INTAKE_STATE.SHOOTING) : new InstantCommand(),
         (indexer != null)
-            ? indexer.command(INDEXER_SPEED_1.INDEXING, INDEXER_SPEED_2.INDEXING)
+            ? indexer.command(INDEXER_SPEED_1.INDEXING)
             : new InstantCommand(),
         (uptake != null)
             ? uptake.percentCommand(UPTAKE_SPEED.SHOOTING.get())
