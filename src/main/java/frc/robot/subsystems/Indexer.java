@@ -17,7 +17,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INDEXER;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+// import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.team4201.lib.utils.CtreUtils;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
@@ -158,6 +158,6 @@ public class Indexer extends SubsystemBase {
   }
 
   public void utilityPeriodic() {
-    setSpeeds(m_speedSubscriber1.get(), m_speedSubscriber2.get());
+    setSpeed(m_speedSubscriber1.get());
   }
 }

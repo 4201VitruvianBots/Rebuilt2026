@@ -25,7 +25,6 @@ import org.wpilib.framework.RobotBase;
 import org.wpilib.smartdashboard.Mechanism2d;
 import org.wpilib.smartdashboard.MechanismLigament2d;
 import org.wpilib.smartdashboard.MechanismRoot2d;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.util.Color8Bit;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.command2.SubsystemBase;

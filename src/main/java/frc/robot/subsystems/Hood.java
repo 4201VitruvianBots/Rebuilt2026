@@ -17,29 +17,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-<<<<<<< HEAD
-import frc.team4201.lib.utils.MathHelpers;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.Logged.Importance;
-import org.wpilib.math.filter.Debouncer;
-import org.wpilib.math.filter.Debouncer.DebounceType;
-import org.wpilib.math.system.Models;
-import org.wpilib.math.util.MathUtil;
-import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.networktables.DoubleSubscriber;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.system.RobotController;
-import org.wpilib.simulation.DCMotorSim;
-import org.wpilib.sysid.SysIdRoutineLog;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.SubsystemBase;
-import org.wpilib.command2.sysid.SysIdRoutine;
-=======
->>>>>>> origin/SystemCoreAlpha7
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
@@ -50,6 +27,8 @@ import org.wpilib.command2.sysid.SysIdRoutine;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.framework.RobotBase;
+import org.wpilib.math.filter.Debouncer;
+import org.wpilib.math.filter.Debouncer.DebounceType;
 import org.wpilib.math.system.Models;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
@@ -72,7 +51,7 @@ public class Hood extends SubsystemBase {
 
   private DoubleSubscriber m_angleSubscriber;
 
-  private Debouncer m_currentDebouncer = new Debouncer(1.5, DebounceType.kRising);
+  private Debouncer m_currentDebouncer = new Debouncer(1.5, DebounceType.RISING);
 
   private final NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
@@ -146,15 +125,9 @@ public class Hood extends SubsystemBase {
 
   public void setAngle(Angle setpoint) {
     m_hoodSetpoint =
-<<<<<<< HEAD
-        Degrees.of(Math.clamp(setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
-
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
-=======
         Degrees.of(
             Math.clamp(setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
     m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
->>>>>>> origin/SystemCoreAlpha7
   }
 
   @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)
@@ -255,15 +228,6 @@ public class Hood extends SubsystemBase {
         Rotations.of(m_shooterHoodSim.getAngularPosition()).times(HOOD.gearRatio));
     m_simState.setRotorVelocity(
         RPM.of(m_shooterHoodSim.getAngularVelocity()).times(HOOD.gearRatio));
-    // Update the hoodEncoder simState
-<<<<<<< HEAD
-    // m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPosition()));
-    // m_cancoderSimState.setVelocity(
-        // RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
-=======
-    m_cancoderSimState.setRawPosition(Rotations.of(m_shooterHoodSim.getAngularPosition()));
-    m_cancoderSimState.setVelocity(RadiansPerSecond.of(m_shooterHoodSim.getAngularVelocity()));
->>>>>>> origin/SystemCoreAlpha7
   }
 
   private final SysIdRoutine m_sysIdRoutine =

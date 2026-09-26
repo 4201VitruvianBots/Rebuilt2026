@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+// import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
 import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Uptake;

@@ -11,7 +11,7 @@ public class INDEXER {
   public static final double kInertia = 0.005;
   public static final double kStatorCurrentLimit = 80;
 
-  public static final DCMotor gearbox = DCMotor.getKrakenX60(3);
+  public static final DCMotor gearbox = DCMotor.getKrakenX60(4);
 
   public enum INDEXER_SPEED_1 {
     ZERO(0),
@@ -21,22 +21,6 @@ public class INDEXER {
     private final double value;
 
     INDEXER_SPEED_1(double value) {
-      this.value = value;
-    }
-
-    public double get() {
-      return value;
-    }
-  }
-
-  public enum INDEXER_SPEED_2 {
-    ZERO(0),
-    INDEXING(0.75),
-    FREEING(-0.3);
-
-    private final double value;
-
-    INDEXER_SPEED_2(double value) {
       this.value = value;
     }
 

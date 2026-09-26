@@ -29,7 +29,7 @@ public class FLYWHEEL {
   public static double motionMagicJerk = 0.0;
 
   public static final DCMotor gearbox =
-      DCMotor.getKrakenX60Foc(3); // We have more motors than this on the final bot.
+      DCMotor.getKrakenX60Foc(4); // We have more motors than this on the final bot.
 
   public static final Distance fuelLaunchHeight = Inches.of(26.15);
   public static final Distance radius = Inches.of(2.0);
@@ -100,6 +100,7 @@ public class FLYWHEEL {
       HUB(Degrees.of(0.0)), // Old value from v1: 1.0
       BUMP(Degrees.of(4.570313)), // calculated using sim
       TOWER(Degrees.of(8.3)),
+      REVERSE(Degrees.of(30)), //completely made up value
       PASSING(Degrees.of(17.5)),
       FULL(Degrees.of(19.0));
 

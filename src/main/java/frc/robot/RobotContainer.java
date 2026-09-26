@@ -24,8 +24,6 @@ import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.Gamepad.Button;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.framework.RobotBase;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
 import org.wpilib.command2.ConditionalCommand;
@@ -227,8 +225,8 @@ public class RobotContainer {
                             -m_driverController.getAxis(Axis.LEFT_Y))) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         MaxSpeed.times(
-                            -m_driverController.getRawAxis(0))) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRawAxis(4)))));
+                            -m_driverController.getAxis(Axis.LEFT_X))) // Drive left with negative X (left)
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getAxis(Axis.RIGHT_X)))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);

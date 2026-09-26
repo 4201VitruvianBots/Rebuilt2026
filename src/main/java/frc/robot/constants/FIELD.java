@@ -4,8 +4,6 @@ import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 
 import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.vision.apriltag.AprilTagFields;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;

@@ -23,7 +23,6 @@ import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.MedianFilter;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.driverstation.Alert.Level;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.DriverStation;

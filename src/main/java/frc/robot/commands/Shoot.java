@@ -200,10 +200,10 @@ public class Shoot extends Command {
     }
 
     // Calculate parameters accounted for imparted velocity
-    driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle();
+    Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle().get();
 
     if (shouldFlipHood(driveAngle.getDegrees())){
-        hoodAngle = HOOD.hoodReverseOffset.in(Radians)-(shot.hoodAngle.in(Radians));
+        hoodAngle = HOOD.MANUAL_ANGLE.REVERSE.getAngle().in(Radians);
     } 
     else {
         hoodAngle = shot.hoodAngle.in(Radians);
@@ -238,13 +238,13 @@ public class Shoot extends Command {
 
     if (!isBraking) {
         if (shouldFlipHood(driveAngle.getDegrees())) {
-            m_swerveDrivetrain.setChassisSpeedsWithHeading(
+            m_swerveDrivetrain.setChassisVelocitiesWithHeading(
                 SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
                 SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
                 Controls.isRedAlliance() ? driveAngle : driveAngle.rotateBy(Rotation2d.k180deg));
         }
         else {
-                m_swerveDrivetrain.setChassisSpeedsWithHeading(
+                m_swerveDrivetrain.setChassisVelocitiesWithHeading(
                     SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
                     SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
                     Controls.isRedAlliance() ? driveAngle.rotateBy(Rotation2d.k180deg) : driveAngle);

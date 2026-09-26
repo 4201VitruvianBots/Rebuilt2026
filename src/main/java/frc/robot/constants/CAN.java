@@ -5,11 +5,11 @@ import org.wpilib.hardware.bus.CANPort;
 import com.ctre.phoenix6.CANBus;
 
 public class CAN { //ids were gotten from controls
-  public static final CANBus drivetrain = CANBus.systemcore(0);
-  public static final CANBus intake = CANBus.systemcore(1);
-  public static final CANBus indexer = CANBus.systemcore(2);
-  public static final CANBus hood = CANBus.systemcore(3);
-  public static final CANBus shooter = CANBus.systemcore(4);
+  public static final CANBus drivetrain = new CANBus(CANPort.CAN_S0);
+  public static final CANBus intake = new CANBus(CANPort.CAN_S1);
+  public static final CANBus indexer = new CANBus(CANPort.CAN_S2);
+  public static final CANBus hood = new CANBus(CANPort.CAN_S3);
+  public static final CANBus shooter = new CANBus(CANPort.CAN_S4);
 
   public static final int pigeon = 9;
 

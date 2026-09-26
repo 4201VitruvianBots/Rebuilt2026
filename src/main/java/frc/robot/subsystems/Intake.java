@@ -34,6 +34,7 @@ import org.wpilib.math.numbers.N1;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.DCMotorSim;
 import org.wpilib.simulation.LinearSystemSim;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.driverstation.DriverStation;
