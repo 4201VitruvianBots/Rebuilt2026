@@ -328,7 +328,7 @@ public class RobotContainer {
           ).onFalse(m_intakePivot.command(PIVOT_SETPOINT.INTAKING));
 
     if (m_intake != null) {
-      m_driverController.button(1).whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+      m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
     }
     if (m_intake != null) {
       m_driverController

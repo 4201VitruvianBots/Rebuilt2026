@@ -61,12 +61,12 @@ import frc.team4201.lib.utils.CtreUtils;
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.intake);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.indexer);
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
 
-  // private Debouncer m_currentDebouncer = new Debouncer(2, DebounceType.kRising);
+  private Debouncer m_currentDebouncer = new Debouncer(2, DebounceType.RISING);
 
   private final MotionMagicVoltage m_request = new MotionMagicVoltage(Rotations.of(0.0));
 
@@ -89,14 +89,6 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
-    // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-
-    if (RobotBase.isReal()) {
-      
-    }
-
-    
-
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
     config.Slot0.kI = PIVOT.kI;
@@ -112,7 +104,6 @@ public class IntakePivot extends SubsystemBase {
     // config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
-    config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -138,7 +129,8 @@ public class IntakePivot extends SubsystemBase {
       m_motor.setPosition(PIVOT.startingAngle.in(Rotations));
     }
 
-    m_motor.setPosition(getAngle().times(PIVOT.gearRatio).in(Rotations));
+    m_motor.setPosition(0);
+    // m_motor.setPosition(getAngle().times(PIVOT.gearRatio).in(Rotations));
   }
 
   public void setAngle(Angle angle) {
@@ -154,7 +146,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Logged(name = "Pivot Angle Radians", importance = Importance.DEBUG)
   public Angle getAngle() {
-    return m_motor.getPosition().getValue().div(PIVOT.gearRatio);
+    return m_motor.getPosition().getValue();
   }
 
   @Logged(name = "Pivot Angle Degrees", importance = Importance.INFO)
@@ -217,14 +209,9 @@ public class IntakePivot extends SubsystemBase {
   @Override
   public void periodic() {
     m_motor.setControl(m_request.withPosition(m_desiredAngle.times(PIVOT.gearRatio).in(Rotations)));
-    // boolean tripped = m_currentDebouncer.calculate(m_motor.getStatorCurrent().getValue().gte(Amps.of(50)));
-    // if (tripped) {
-    //   if (m_motor.getThrottle() > 0) {
-        // m_motor.setPosition(PIVOT_SETPOINT.STOWED.getAngle().times(PIVOT.gearRatio));
-    //   }
-    // else {
-    //   m_motor.setPosition(PIVOT_SETPOINT.INTAKING.getAngle().times(PIVOT.gearRatio));
-    // }
+    boolean tripped = m_currentDebouncer.calculate(m_motor.getStatorCurrent().getValue().gte(Amps.of(50)));
+    // if (tripped && m_motor.getThrottle() < 0) {
+    //   ;
     // }
   }
 

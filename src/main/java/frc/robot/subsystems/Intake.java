@@ -50,7 +50,7 @@ public class Intake extends SubsystemBase {
   private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.intake);
 
   @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.intake);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.hood);
 
   private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0).withEnableFOC(true);
 
@@ -86,19 +86,21 @@ public class Intake extends SubsystemBase {
     config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_motor, config);
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_motor2, config);
 
-    m_motor2.setControl(new Follower(m_motor.getDeviceID(), MotorAlignmentValue.Opposed));
+    // m_motor2.setControl(new Follower(m_motor.getDeviceID(), MotorAlignmentValue.Opposed));
 
     m_simState = m_motor.getSimState();
   }
 
   public void setOutputPercent(double speed) {
     m_motor.setThrottle(speed);
+    m_motor2.setThrottle(speed);
   }
 
   public boolean isConnected() {
-    return m_motor.isConnected(); // && m_motor2.isConnected();
+    return m_motor.isConnected() && m_motor2.isConnected();
   }
 
   @Logged(name = "Motor Output %", importance = Logged.Importance.INFO)
@@ -114,7 +116,7 @@ public class Intake extends SubsystemBase {
 
   @NotLogged
   public boolean isIntaking() {
-    return m_motor.getThrottle() != 0;
+    return m_motor.getThrottle() != 0 && m_motor2.getThrottle() != 0;
   }
 
   @NotLogged
