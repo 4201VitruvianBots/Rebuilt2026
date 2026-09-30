@@ -45,7 +45,7 @@ public class Hood extends SubsystemBase {
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
       new TalonFX(
-          CAN.kShooterHoodMotor, CAN.hood); // Replace these device ids after motors are set up
+          CAN.kShooterHoodMotor, CAN.indexer); // Replace these device ids after motors are set up
 
   private DoublePublisher m_anglePublisher;
 
@@ -106,7 +106,7 @@ public class Hood extends SubsystemBase {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     // config.Feedback.RotorToSensorRatio = HOOD.rotorToSensorRatio;
     // config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
-    // config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
+    config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;
     config.MotionMagic.MotionMagicAcceleration = HOOD.motionMagicAcceleration;
@@ -120,7 +120,7 @@ public class Hood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     // if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
-    m_motor.setPosition(getHoodAngle().times(HOOD.gearRatio).in(Rotations));
+    m_motor.setPosition(getHoodAngle());
   }
 
   public void setAngle(Angle setpoint) {
@@ -150,8 +150,7 @@ public class Hood extends SubsystemBase {
     return m_motor
         .getPosition()
         .refresh()
-        .getValue()
-        .div(HOOD.gearRatio); // Multiply by gear ratio to make hood angle more manageable
+        .getValue(); // Multiply by gear ratio to make hood angle more manageable
   }
 
   @Logged(name = "Hood Angle Degrees", importance = Importance.INFO)

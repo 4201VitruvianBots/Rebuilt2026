@@ -43,7 +43,7 @@ public class INTAKE {
     public enum INTAKE_SPEED {
       ZERO(0),
       
-      INTAKING(0.95),
+      INTAKING(0.80),
       AUTOINTAKING(0.99),
       SHOOTING(0.9),
       SHOTREVERSING(0.13),
@@ -72,14 +72,14 @@ public class INTAKE {
     // public static final double kA = 0;
     public static final double kG = 0.85;
 
-    public static final double gearRatio = 1.0 / 43.2;
+    public static final double gearRatio = 43.2 / 1.0;
     public static final double motionMagicAcceleration = 15.0;
     public static final double motionMagicCruiseVelocity = 12.0;
     public static final double motionMagicJerk = 0.0;
     public static final double kStatorCurrentLimit = 65.0;
 
     public static final Angle minAngle = Degrees.of(0.0);
-    public static final Angle maxAngle = Degrees.of(60.0); //old 55.0 obtainted from salahuddin barket
+    public static final Angle maxAngle = Degrees.of(180.0);
     public static final Angle startingAngle = maxAngle;
     public static final GravityTypeValue K_GRAVITY_TYPE_VALUE =
         GravityTypeValue
@@ -98,10 +98,10 @@ public class INTAKE {
     public static final Time pivotCycleTime = Seconds.of(0.5); // original: 1.65
 
     public enum PIVOT_SETPOINT {
-      STOWED(Degrees.of(60.0)),
-      INTAKING(Degrees.of(0.0)),
-      JOSTLING(Degrees.of(160.0)),
-      DEFUEL(Degrees.of(132));
+      STOWED(Degrees.of(0.0)),
+      INTAKING(Degrees.of(125.0)),
+      JOSTLING(Degrees.of(0.0)),
+      DEFUEL(Degrees.of(0.0));
 
       private final Angle angle;
 

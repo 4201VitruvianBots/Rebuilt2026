@@ -11,7 +11,7 @@ import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 
 public class FLYWHEEL {
-  public static final double kP = 19.1; // These worked for WoodBot but will need to be retuned
+  public static final double kP = 7.0; // These worked for WoodBot but will need to be retuned
   public static final double kA = 0.0;
   // The value of kS is the largest voltage applied before the mechanism begins to move)
   public static final double gearRatio = 24.0 / 36.0; // Placeholder value
@@ -71,19 +71,18 @@ public class FLYWHEEL {
   }
 
   public class HOOD {
-    public static final double kP = 230; // TODO: Change this
-    public static final double kS = 0.349609375;
-    public static final double gearRatio = 1.0 / 62.4; // old 170:10
-    public static final double rotorToSensorRatio = 3.111;
+    public static final double kP = 190.0; // TODO: Change this
+    public static final double kS = 0.28;
+    public static final double gearRatio = 62.4 / 1.0;
     public static final double kInertia = 0.005;
-    public static final double kStatorCurrentLimit = 15;
+    public static final double kStatorCurrentLimit = 40;
     public static final SensorDirectionValue K_SENSOR_DIRECTION_VALUE =
         SensorDirectionValue.Clockwise_Positive;
     public static final double kMagnetSensorOffset = -0.114013671875;
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.85;
 
-    public static final double motionMagicCruiseVelocity = 68.0;
-    public static final double motionMagicAcceleration = 64.0;
+    public static final double motionMagicCruiseVelocity = 10.0;
+    public static final double motionMagicAcceleration = 7.0;
     public static final double motionMagicJerk = 1500.0;
 
     public static final Angle minAngle = Degrees.of(0.0);

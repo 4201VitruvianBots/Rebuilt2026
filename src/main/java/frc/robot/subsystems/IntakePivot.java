@@ -61,7 +61,7 @@ import frc.team4201.lib.utils.CtreUtils;
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.indexer);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.hood); // its on indexer
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
@@ -100,13 +100,11 @@ public class IntakePivot extends SubsystemBase {
     config.Slot0.GravityType = PIVOT.K_GRAVITY_TYPE_VALUE;
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    // config.Feedback.RotorToSensorRatio = PIVOT.gearRatio;
-    // config.Feedback.FeedbackRemoteSensorID = m_canCoder.getDeviceID();
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
     config.Feedback.SensorToMechanismRatio = PIVOT.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = PIVOT.kStatorCurrentLimit;
 
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     config.MotorOutput.PeakReverseDutyCycle = -0.25;
@@ -146,7 +144,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Logged(name = "Pivot Angle Radians", importance = Importance.DEBUG)
   public Angle getAngle() {
-    return m_motor.getPosition().getValue();
+    return m_motor.getPosition().refresh().getValue();
   }
 
   @Logged(name = "Pivot Angle Degrees", importance = Importance.INFO)
@@ -208,7 +206,7 @@ public class IntakePivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_motor.setControl(m_request.withPosition(m_desiredAngle.times(PIVOT.gearRatio).in(Rotations)));
+    m_motor.setControl(m_request.withPosition(m_desiredAngle));
     boolean tripped = m_currentDebouncer.calculate(m_motor.getStatorCurrent().getValue().gte(Amps.of(50)));
     // if (tripped && m_motor.getThrottle() < 0) {
     //   ;

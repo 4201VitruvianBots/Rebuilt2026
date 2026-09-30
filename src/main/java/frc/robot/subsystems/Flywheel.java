@@ -21,6 +21,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -98,6 +99,7 @@ public class Flywheel extends SubsystemBase {
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
     config.MotorOutput.PeakReverseDutyCycle = -0.1;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
 
@@ -110,8 +112,9 @@ public class Flywheel extends SubsystemBase {
 
     // We only need the sim state of a single motor
 
-    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
     m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
 
     var topic =
         NetworkTableInstance.getDefault()

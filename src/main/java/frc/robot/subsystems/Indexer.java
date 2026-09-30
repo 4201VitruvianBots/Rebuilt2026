@@ -34,16 +34,16 @@ import org.wpilib.system.RobotController;
 public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor 1", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.indexer);
+  private final TalonFX m_indexerMotor1 = new TalonFX(CAN.kIndexerMotor1, CAN.intake);
 
   @Logged(name = "Indexer Motor 2", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.indexer);
+  private final TalonFX m_indexerMotor2 = new TalonFX(CAN.kIndexerMotor2, CAN.intake);
 
   @Logged(name = "Indexer Motor 3", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3, CAN.indexer);
+  private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3, CAN.hood);
 
   @Logged(name = "Indexer Motor 4", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor4 = new TalonFX(CAN.kIndexerMotor3, CAN.indexer);
+  private final TalonFX m_indexerMotor4 = new TalonFX(CAN.kIndexerMotor3, CAN.hood);
 
   private DoubleSubscriber m_speedSubscriber1;
   private DoublePublisher m_speedPublisher1;
@@ -68,25 +68,22 @@ public class Indexer extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = INDEXER.kP;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = INDEXER.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = INDEXER.peakReverseOutput;
-    config.Feedback.SensorToMechanismRatio = INDEXER.gearRatio;
 
     config.CurrentLimits.StatorCurrentLimit = INDEXER.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
     CtreUtils.configureTalonFx(m_indexerMotor2, config);
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     CtreUtils.configureTalonFx(m_indexerMotor3, config);
     CtreUtils.configureTalonFx(m_indexerMotor4, config);
 
     m_indexerMotor2.setControl(
         new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    m_indexerMotor3.setControl(
-        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
     m_indexerMotor4.setControl(
-        new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+        new Follower(m_indexerMotor3.getDeviceID(), MotorAlignmentValue.Aligned));
 
     m_simState1 = m_indexerMotor1.getSimState();
     m_simState2 = m_indexerMotor2.getSimState();
@@ -94,6 +91,7 @@ public class Indexer extends SubsystemBase {
 
   public void setSpeed(double speed) {
     m_indexerMotor1.setThrottle(speed);
+    m_indexerMotor3.setThrottle(speed);
   }
 
   public boolean isConnected() {
