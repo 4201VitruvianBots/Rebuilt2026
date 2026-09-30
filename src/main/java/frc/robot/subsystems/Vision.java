@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
@@ -89,9 +88,8 @@ public class Vision extends SubsystemBase {
 
   public Path updateCrossBumpPath(boolean endsShootingPosition) {
     if (isInLeftHalf()) {
-      neutralZonePose =
-          BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
-      if (endsShootingPosition){
+      neutralZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_NEUTRAL_BUMP.getAlignmentPose();
+      if (endsShootingPosition) {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_SHOOTING.getAlignmentPose();
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.LEFT_ALLIANCE_BUMP.getAlignmentPose();
@@ -99,15 +97,18 @@ public class Vision extends SubsystemBase {
       unrealisticPose = BUMP_ALIGNMENT_TARGETS.LEFT_UNREALISTIC_POSE.getAlignmentPose();
     } else {
       neutralZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_NEUTRAL_BUMP.getAlignmentPose();
-      if (endsShootingPosition){
+      if (endsShootingPosition) {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_SHOOTING.getAlignmentPose();
       } else {
         allianceZonePose = BUMP_ALIGNMENT_TARGETS.RIGHT_ALLIANCE_BUMP.getAlignmentPose();
       }
       unrealisticPose = BUMP_ALIGNMENT_TARGETS.RIGHT_UNREALISTIC_POSE.getAlignmentPose();
     }
-    
-    return new Path(new Path.Waypoint(neutralZonePose, 0.8), new Path.Waypoint(unrealisticPose, 4.2), new Path.Waypoint(allianceZonePose, 1.0));
+
+    return new Path(
+        new Path.Waypoint(neutralZonePose, 0.8),
+        new Path.Waypoint(unrealisticPose, 4.2),
+        new Path.Waypoint(allianceZonePose, 1.0));
   }
 
   @Logged(name = "Left Target", importance = Logged.Importance.CRITICAL)

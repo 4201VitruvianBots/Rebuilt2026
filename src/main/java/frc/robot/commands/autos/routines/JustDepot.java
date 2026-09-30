@@ -6,17 +6,15 @@ package frc.robot.commands.autos.routines;
 
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.AutoShoot;
-import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.autos.segments.IntakeFromNeutralNoCross;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-
 public class JustDepot extends Auto {
   public JustDepot(AutoDependencies deps, BooleanSupplier flipPath) {
     addCommands(
-        new IntakeFromNeutralNoCross(deps, flipPath, TWO_CYCLE_PATH.DEPOT), new AutoShoot(deps, 10.0));
+        new IntakeFromNeutralNoCross(deps, flipPath, TWO_CYCLE_PATH.DEPOT),
+        new AutoShoot(deps, 10.0));
   }
 }

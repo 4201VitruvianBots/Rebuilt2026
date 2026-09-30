@@ -11,8 +11,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -23,7 +21,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.epilogue.NotLogged;
@@ -43,6 +40,7 @@ import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.team4201.lib.utils.CtreUtils;
+import java.util.function.DoubleSupplier;
 
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
@@ -85,7 +83,7 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.kAbsoluteSensorDiscontinuityPoint;
     }
 
-    //CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
+    // CtreUtils.configureCANCoder(m_canCoder, encoderConfig);
 
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
@@ -168,8 +166,13 @@ public class IntakePivot extends SubsystemBase {
 
   @NotLogged
   public Command stow() {
-    var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees); 
-    return this.runOnce(() -> setAngle((!desiredAngleStowed) ? PIVOT_SETPOINT.STOWED.getAngle() : PIVOT_SETPOINT.INTAKING.getAngle()));
+    var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees);
+    return this.runOnce(
+        () ->
+            setAngle(
+                (!desiredAngleStowed)
+                    ? PIVOT_SETPOINT.STOWED.getAngle()
+                    : PIVOT_SETPOINT.INTAKING.getAngle()));
   }
 
   @NotLogged

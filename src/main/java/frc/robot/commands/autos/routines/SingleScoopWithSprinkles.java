@@ -22,9 +22,7 @@ public class SingleScoopWithSprinkles extends Auto {
         new WaitCommand(1),
         new IntakeFromNeutral(deps, flipPath, TWO_CYCLE_PATH.SWING_OUTSIDE_DELAY),
         new AutoShoot(deps, 1.8),
-        new IntakeFromNeutralNoCross(
-            deps,
-            flipPath, TWO_CYCLE_PATH.SIDE_DEPOT),
+        new IntakeFromNeutralNoCross(deps, flipPath, TWO_CYCLE_PATH.SIDE_DEPOT),
         new AutoShoot(deps, 1.8).andThen(new PrintCommand("[AUTO] Finished shooting")));
   }
 }

@@ -219,16 +219,18 @@ public class Flywheel extends SubsystemBase {
     return this.startEnd(
         () -> setRPMOutput(MANUAL_RPM.PASSING.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
-//temporary
+
+  // temporary
   public Command manualBumpShootCommand() {
     return this.startEnd(
-      () -> setRPMOutput(MANUAL_RPM.BUMP.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
+        () -> setRPMOutput(MANUAL_RPM.BUMP.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
-  public Command manualFullFieldPassCommand(){
-      return this.startEnd(
-      () -> setRPMOutput(MANUAL_RPM.FULL.getRPM()), 
-      () -> setVoltageOutput(Volts.of(0.0)));
+
+  public Command manualFullFieldPassCommand() {
+    return this.startEnd(
+        () -> setRPMOutput(MANUAL_RPM.FULL.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
+
   public void testInit() {
     m_rpmPublisher.set(0.0);
   }
@@ -264,7 +266,7 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getRPMSetpoint() == 0.0){
+    if (getRPMSetpoint() == 0.0) {
       m_motor1.setControl(m_dutyCycleOut.withOutput(0.0));
     } else {
       m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
