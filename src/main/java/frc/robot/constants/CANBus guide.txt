@@ -1,0 +1,15 @@
+﻿Add to file as CANbuses get updated
+For more reliable info, reference #controls and the directorate
+* S0
+   * All drivetrain devices
+* S1
+   * Indexer motors 1 and 2
+   * Intake motor 1
+* S2
+   * Hood motor
+   * * S3
+   * Indexer motors 3 and 4
+   * Intake motor 2
+   * Intake Pivot motor
+* S4
+   * Flywheel motors 1, 2, 3, and 4

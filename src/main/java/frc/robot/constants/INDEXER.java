@@ -4,7 +4,6 @@ import org.wpilib.math.system.DCMotor;
 
 public class INDEXER {
   // TODO: change values
-  public static final double kP = 1.0;
   public static final double gearRatio = 16.0 / 48.0;
   public static final double peakForwardOutput = 0.9;
   public static final double peakReverseOutput = -0.9;
@@ -16,7 +15,7 @@ public class INDEXER {
   public enum INDEXER_SPEED_1 {
     ZERO(0),
     INDEXING(0.9),
-    FREEING(-0.5);
+    FREEING(-0.6);
 
     private final double value;
 

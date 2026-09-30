@@ -4,12 +4,14 @@ import org.wpilib.hardware.bus.CANPort;
 
 import com.ctre.phoenix6.CANBus;
 
-public class CAN { //ids were gotten from controls
-  public static final CANBus drivetrain = new CANBus(CANPort.CAN_S0);
-  public static final CANBus intake = new CANBus(CANPort.CAN_S1);
-  public static final CANBus indexer = new CANBus(CANPort.CAN_S2);
-  public static final CANBus hood = new CANBus(CANPort.CAN_S3);
-  public static final CANBus shooter = new CANBus(CANPort.CAN_S4);
+public class CAN { 
+  // Check the .txt file for information about what motor goes on what CANBus
+  public static final CANBus S0 = new CANBus(CANPort.CAN_S0); 
+  public static final CANBus S1 = new CANBus(CANPort.CAN_S1); 
+  public static final CANBus S2 = new CANBus(CANPort.CAN_S2); 
+  public static final CANBus S3 = new CANBus(CANPort.CAN_S3); 
+  public static final CANBus S4 = new CANBus(CANPort.CAN_S4); 
+  public static final CANBus dummyBus = new CANBus(CANPort.CAN_D16);
 
   public static final int pigeon = 9;
 

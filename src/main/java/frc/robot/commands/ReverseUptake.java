@@ -6,19 +6,14 @@ package frc.robot.commands;
 
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 // import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
-import frc.robot.constants.UPTAKE.UPTAKE_SPEED;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Uptake;
 import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.ParallelCommandGroup;
 
 public class ReverseUptake extends ParallelCommandGroup {
   /** Creates a new ReverseUptake. */
-  public ReverseUptake(Indexer indexer, Uptake uptake) {
+  public ReverseUptake(Indexer indexer) {
     addCommands(
-        (uptake != null)
-            ? uptake.percentCommand(UPTAKE_SPEED.INTAKEREVERSING.get())
-            : new InstantCommand(),
         (indexer != null)
             ? indexer.command(INDEXER_SPEED_1.FREEING)
             : new InstantCommand());

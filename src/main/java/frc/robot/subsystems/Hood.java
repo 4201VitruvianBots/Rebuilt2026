@@ -6,16 +6,13 @@ package frc.robot.subsystems;
 
 import static org.wpilib.units.Units.*;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
@@ -45,7 +42,7 @@ public class Hood extends SubsystemBase {
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
       new TalonFX(
-          CAN.kShooterHoodMotor, CAN.indexer); // Replace these device ids after motors are set up
+          CAN.kShooterHoodMotor, CAN.S2); // Replace these device ids after motors are set up
 
   private DoublePublisher m_anglePublisher;
 
@@ -55,6 +52,7 @@ public class Hood extends SubsystemBase {
 
   private final NeutralModeValue m_neutralMode =
       NeutralModeValue.Brake; // Brake... because this is a hood. That doesn't coast.
+
   private final MotionMagicVoltage m_request =
       new MotionMagicVoltage(Rotations.of(0.0)).withEnableFOC(false);
   private final VoltageOut m_VoltageOut = new VoltageOut(Volts.of(0)).withEnableFOC(false);
@@ -68,8 +66,6 @@ public class Hood extends SubsystemBase {
 
   private final TalonFXSimState m_simState = m_motor.getSimState();
 
-  // private final CANcoderSimState m_cancoderSimState = m_cancoder.getSimState();
-
   private void sysIDLogMotors(SysIdRoutineLog log) {
     log.motor("motor1")
         .voltage(m_motor.getMotorVoltage().refresh().getValue()) // Units: Volts
@@ -79,33 +75,22 @@ public class Hood extends SubsystemBase {
   }
 
   public Hood() {
-    // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-    if (RobotBase.isReal()) {
-      // encoderConfig.MagnetSensor.MagnetOffset = HOOD.kMagnetSensorOffset;
-      // encoderConfig.MagnetSensor.SensorDirection = HOOD.K_SENSOR_DIRECTION_VALUE;
-      // encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint =
-          // HOOD.kAbsoluteSensorDiscontinuityPoint;
-    }
-    // CtreUtils.configureCANCoder(m_cancoder, encoderConfig);
-
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = HOOD.kP;
+    config.Slot0.kS = HOOD.kS;
     // config.Slot0.kA = HOOD.kA;
     // config.Slot0.kV = HOOD.kV;
-    config.Slot0.kS = HOOD.kS;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.CurrentLimits.StatorCurrentLimit = HOOD.kStatorCurrentLimit;
-    config.CurrentLimits.StatorCurrentLimitEnable = false;
+    config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.ClosedLoopGeneral.ContinuousWrap = false;
     if (RobotBase.isReal()) {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     } else {
       config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    }
+    } 
 
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    // config.Feedback.RotorToSensorRatio = HOOD.rotorToSensorRatio;
-    // config.Feedback.FeedbackRemoteSensorID = m_cancoder.getDeviceID();
     config.Feedback.SensorToMechanismRatio = HOOD.gearRatio;
 
     config.MotionMagic.MotionMagicCruiseVelocity = HOOD.motionMagicCruiseVelocity;

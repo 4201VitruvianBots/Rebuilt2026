@@ -42,7 +42,7 @@ public class TalonFXLogger extends ClassSpecificLogger<TalonFX> {
             motor.getClosedLoopReference(),
             motor.getClosedLoopError());
       }
-      if (Objects.equals(motor.getNetwork(), CAN.drivetrain)) {
+      if (Objects.equals(motor.getNetwork(), CAN.S0)) {
         System.out.printf(
             "Adding TalonFX %02d (%s) to be logged from roboRIO\n",
             motor.getDeviceID(), motor.getDescription());

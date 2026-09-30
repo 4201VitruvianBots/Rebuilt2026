@@ -8,11 +8,8 @@ import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import frc.robot.constants.CAN;
@@ -28,31 +25,21 @@ import org.wpilib.epilogue.NotLogged;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.math.filter.LinearFilter;
 import org.wpilib.math.system.Models;
-import org.wpilib.math.system.LinearSystemUtil;
-import org.wpilib.math.system.LinearSystem;
-import org.wpilib.math.numbers.N1;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.simulation.DCMotorSim;
-import org.wpilib.simulation.LinearSystemSim;
 import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.framework.RobotBase;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
-import org.wpilib.units.measure.AngularVelocity;
 
 public class Intake extends SubsystemBase {
 
   @Logged(name = "Intake Motor", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.intake);
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakeRollerMotor1, CAN.S1);
 
   @Logged(name = "Intake Motor 2", importance = Logged.Importance.DEBUG)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.hood);
-
-  private final DutyCycleOut m_dutyCycleOut = new DutyCycleOut(0).withEnableFOC(true);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kIntakeRollerMotor2, CAN.S3);
 
   private DoubleSubscriber m_outputSubscriber;
   private DoublePublisher m_outputPublisher;
@@ -76,8 +63,6 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.Slot0.kP = ROLLERS.kP;
-    config.Feedback.SensorToMechanismRatio = ROLLERS.gearRatio;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = ROLLERS.peakForwardOutput;
@@ -85,12 +70,11 @@ public class Intake extends SubsystemBase {
 
     config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+
     CtreUtils.configureTalonFx(m_motor, config);
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     CtreUtils.configureTalonFx(m_motor2, config);
-
-    // m_motor2.setControl(new Follower(m_motor.getDeviceID(), MotorAlignmentValue.Opposed));
-
+  
     m_simState = m_motor.getSimState();
   }
 
@@ -107,7 +91,7 @@ public class Intake extends SubsystemBase {
   public double getPercentOutput() {
     return m_motor.getThrottle();
   }
-
+  
   // For Robot2d simulation
   @NotLogged
   public AngularVelocity getVelocity() {

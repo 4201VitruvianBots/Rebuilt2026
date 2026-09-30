@@ -10,7 +10,6 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
-import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 
 /**
@@ -25,7 +24,6 @@ public class AutoDependencies {
   public final Hood hood;
   public final IntakePivot intakePivot;
   public final Indexer indexer;
-  public final Uptake uptake;
 
   public AutoDependencies(
       CommandSwerveDrivetrain swerveDrive,
@@ -34,8 +32,7 @@ public class AutoDependencies {
       Flywheel flywheel,
       Hood hood,
       IntakePivot intakePivot,
-      Indexer indexer,
-      Uptake uptake) {
+      Indexer indexer) {
     this.swerveDrive = swerveDrive;
     this.intake = intake;
     this.vision = vision;
@@ -43,6 +40,5 @@ public class AutoDependencies {
     this.hood = hood;
     this.intakePivot = intakePivot;
     this.indexer = indexer;
-    this.uptake = uptake;
   }
 }

@@ -12,6 +12,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.autos.PrepareFlywheel;
 import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
+import frc.robot.subsystems.Indexer;
 import frc.team4201.lib.command.Auto;
 import java.util.function.BooleanSupplier;
 import org.wpilib.command2.InstantCommand;
@@ -34,14 +35,14 @@ public class IntakeFromNeutralNoCross extends Auto {
       var swerveDrive = deps.swerveDrive;
       var intake = deps.intake;
       var intakePivot = deps.intakePivot;
-      var uptake = deps.uptake;
+      var indexer = deps.indexer;
 
       PathPlannerPath path = PathPlannerPath.fromPathFile(selectedPath.getPathName());
 
       addCommands(
           new ParallelDeadlineGroup(
                   getPathCommand(swerveDrive, path, flipToRight),
-                  new IntakeCommand(intake, intakePivot, uptake),
+                  new IntakeCommand(intake, intakePivot, indexer),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
     } catch (Exception e) {

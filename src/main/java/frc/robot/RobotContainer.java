@@ -19,27 +19,20 @@ import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.SlewRateLimiter;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.units.measure.Voltage;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.Gamepad.Button;
 import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.Commands;
-import org.wpilib.command2.ConditionalCommand;
 import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.ParallelCommandGroup;
-import org.wpilib.command2.RunCommand;
 import org.wpilib.command2.WaitCommand;
 import org.wpilib.command2.button.CommandGamepad;
-import org.wpilib.command2.button.CommandGenericHID;
 import org.wpilib.command2.button.Trigger;
 import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JostleIntake;
-import frc.robot.commands.ReverseUptake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
@@ -74,31 +67,15 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.Uptake;
 import frc.robot.subsystems.Vision;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.utils.HubTracker;
 import frc.team4201.lib.utils.POVUtils;
 import frc.team4201.lib.utils.CtreTelemetry;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.InstantCommand;
-import org.wpilib.command2.ParallelCommandGroup;
-import org.wpilib.command2.WaitCommand;
-import org.wpilib.command2.button.CommandGamepad;
-import org.wpilib.command2.button.Trigger;
-import org.wpilib.command2.sysid.SysIdRoutine;
 import org.wpilib.driverstation.Gamepad.Axis;
-import org.wpilib.driverstation.internal.DriverStationBackend;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.epilogue.NotLogged;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.math.filter.SlewRateLimiter;
 import org.wpilib.telemetry.Telemetry;
 import org.wpilib.tunable.Selectable;
 import org.wpilib.tunable.Tunables;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.LinearVelocity;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -127,9 +104,6 @@ public class RobotContainer {
 
   @Logged(name = "Indexer", importance = Logged.Importance.INFO)
   private Indexer m_indexer;
-
-  @Logged(name = "Uptake", importance = Logged.Importance.INFO)
-  private Uptake m_uptake;
 
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led;
@@ -232,7 +206,6 @@ public class RobotContainer {
     m_vision = new Vision(m_controls);
     m_hood = new Hood();
     m_intake = new Intake();
-    m_uptake = new Uptake();
     m_indexer = new Indexer();
     if (!ROBOT.robotID.equals(ROBOT_ID.V1) || RobotBase.isSimulation()) {
       m_intakePivot = new IntakePivot();
@@ -250,7 +223,7 @@ public class RobotContainer {
       // m_telemetry.registerFieldSim(m_fieldSim);
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
-          m_intake, m_intakePivot, m_indexer, m_uptake, m_flywheel, m_hood);
+          m_intake, m_intakePivot, m_indexer, m_flywheel, m_hood);
 
       DriverStationBackend.silenceJoystickConnectionAlert(true);
     }
@@ -328,7 +301,7 @@ public class RobotContainer {
           ).onFalse(m_intakePivot.command(PIVOT_SETPOINT.INTAKING));
 
     if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_uptake));
+      m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer));
     }
     if (m_intake != null) {
       m_driverController
@@ -345,7 +318,7 @@ public class RobotContainer {
     }
 
     m_operatorController.rightTrigger().whileTrue(m_intakePivot.stow());
-    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer, m_uptake));
+    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer));
 
     POVUtils.povDownWithTilt(m_driverController.getHID())
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
@@ -395,8 +368,7 @@ public class RobotContainer {
             m_flywheel,
             m_hood,
             m_intakePivot,
-            m_indexer,
-            m_uptake);
+            m_indexer);
 
     IntakeFromNeutral.registerNamedCommands(autoDeps);
 
@@ -548,7 +520,7 @@ public class RobotContainer {
 
   public void updateFuelLaunchSim() {
     // If uptake and flywheel are running, launch fuel from the sim
-    if (m_uptake != null && m_flywheel != null && m_hood != null) {
+    if (m_flywheel != null && m_hood != null) {
       // if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.SHOOTING.get().in(RPM) * 0.90) // TODO:
       // Reimplement
       //     && m_intake.getStoredFuel() > 0) {

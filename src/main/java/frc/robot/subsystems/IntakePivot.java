@@ -13,15 +13,12 @@ import static org.wpilib.units.Units.RadiansPerSecond;
 import static org.wpilib.units.Units.Rotations;
 import static org.wpilib.units.Units.Seconds;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
@@ -37,7 +34,6 @@ import org.wpilib.epilogue.Logged.Importance;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.Debouncer;
 import org.wpilib.math.filter.Debouncer.DebounceType;
-import org.wpilib.math.util.MathUtil;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
@@ -45,23 +41,12 @@ import org.wpilib.simulation.SingleJointedArmSim;
 import org.wpilib.system.RobotController;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.framework.RobotBase;
-import org.wpilib.system.RobotController;
-import org.wpilib.simulation.SingleJointedArmSim;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.InstantCommand;
-import org.wpilib.command2.RepeatCommand;
 import org.wpilib.command2.RunCommand;
-import org.wpilib.command2.SubsystemBase;
-import frc.robot.constants.CAN;
-import frc.robot.constants.INTAKE.PIVOT;
-import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
-import frc.team4201.lib.utils.CtreUtils;
 
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.hood); // its on indexer
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.S3); 
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;

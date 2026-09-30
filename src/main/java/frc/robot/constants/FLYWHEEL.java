@@ -4,6 +4,7 @@ import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.RPM;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import org.wpilib.math.system.DCMotor;
 import org.wpilib.units.measure.Angle;
@@ -22,6 +23,7 @@ public class FLYWHEEL {
   public static final double kFuelDragCoefficient =
       0.48; // Estimation based on it's size and relatively smooth shape. TODO: Tune
   public static final double kRumbleStrength = 0.25;
+  public static final NeutralModeValue neutralMode = NeutralModeValue.Coast;
 
   // These worked on wood bot. Change jerk later if further optimization is needed
   public static double motionMagicCruiseVelocity = 60.0; // target cruise velocity of 60 rps
@@ -83,7 +85,7 @@ public class FLYWHEEL {
 
     public static final double motionMagicCruiseVelocity = 10.0;
     public static final double motionMagicAcceleration = 7.0;
-    public static final double motionMagicJerk = 1500.0;
+    public static final double motionMagicJerk = 1500.0; // Yk What'd be fun, graphing this 
 
     public static final Angle minAngle = Degrees.of(0.0);
     public static final Angle maxAngle = Degrees.of(90.0); //something like that
@@ -96,12 +98,12 @@ public class FLYWHEEL {
 
     public enum MANUAL_ANGLE {
       STOWED(Degrees.of(0.0)),
-      HUB(Degrees.of(0.0)), // Old value from v1: 1.0
-      BUMP(Degrees.of(4.570313)), // calculated using sim
-      TOWER(Degrees.of(8.3)),
-      REVERSE(Degrees.of(30)), //completely made up value
-      PASSING(Degrees.of(17.5)),
-      FULL(Degrees.of(19.0));
+      HUB(Degrees.of(70.0)), // Test to highest possible angle with valid backwards shot
+      BUMP(Degrees.of(30.0)), // calculated using sim
+      TOWER(Degrees.of(20.0)),
+      REVERSE(Degrees.of(80.0)), 
+      PASSING(Degrees.of(45.0)),
+      FULL(Degrees.of(90.0));
 
       private final Angle angle;
 

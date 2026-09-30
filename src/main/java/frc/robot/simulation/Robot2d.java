@@ -36,7 +36,6 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.IntakePivot;
-import frc.robot.subsystems.Uptake;
 import frc.team4201.lib.simulation.visualization.*;
 import frc.team4201.lib.simulation.visualization.configs.*;
 import java.util.HashMap;
@@ -320,12 +319,7 @@ public class Robot2d extends SubsystemBase {
     if (m_subsystemMap.containsKey("Indexer")) {
       var indexerSubsystem = (Indexer) m_subsystemMap.get("Indexer");
       VisualizationUtils.updateMotorColor(
-          m_indexer, indexerSubsystem.getPercentOutput(), m_colorIndexer);
-    }
-    if (m_subsystemMap.containsKey("Uptake")) {
-      var uptakeSubsystem = (Uptake) m_subsystemMap.get("Uptake");
-      VisualizationUtils.updateMotorColor(
-          m_uptake, uptakeSubsystem.getPercentOutput(), m_colorUptake);
+          m_indexer, indexerSubsystem.getS1PercentOutput(), m_colorIndexer);
     }
     if (m_subsystemMap.containsKey("Flywheel")) {
       var flywheelSubsystem = (Flywheel) m_subsystemMap.get("Flywheel");

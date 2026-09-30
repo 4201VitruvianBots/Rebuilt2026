@@ -52,16 +52,16 @@ public class Flywheel extends SubsystemBase {
 
   // TODO: Check how many motors we have later
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
-  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.shooter);
+  private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.S4);
 
   @Logged(name = "Flywheel Motor 2", importance = Importance.INFO)
-  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.shooter);
+  private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.S4);
 
   @Logged(name = "Flywheel Motor 3", importance = Importance.INFO)
-  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.shooter);
+  private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.S4);
 
   @Logged(name = "Flywheel Motor 4", importance = Importance.DEBUG)
-  private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4, CAN.shooter);
+  private final TalonFX m_motor4 = new TalonFX(CAN.kShooterRollerMotor4, CAN.S4);
 
   private NeutralModeValue m_neutralMode =
       NeutralModeValue.Coast; // Coast... because this is a flywheel. That coasts.
@@ -94,7 +94,6 @@ public class Flywheel extends SubsystemBase {
   public Flywheel() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = FLYWHEEL.kP;
-    // config.Slot0.kA = FLYWHEEL.kA;
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
@@ -118,8 +117,8 @@ public class Flywheel extends SubsystemBase {
 
     var topic =
         NetworkTableInstance.getDefault()
-            .getTable("SmartDashboard")
-            .getDoubleTopic("ShooterRPMSetpoint");
+            .getTable("UtilMode")
+            .getDoubleTopic("FlywheelRPMSetpoint");
     m_rpmSubscriber = topic.subscribe(0.0);
     m_rpmPublisher = topic.publish();
   }
@@ -265,18 +264,18 @@ public class Flywheel extends SubsystemBase {
     return Math.abs(getRPMerror());
   }
 
-  // public boolean getShouldRev(){
-  //   boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() &&
-  // HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
-  //   boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null &&
-  // !m_vision.isInOpposingAllianceSector();
-  //   return shouldRev;
-  // }
+  /*public boolean getShouldRev(){
+     boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() &&
+   HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
+     boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null &&
+   !m_vision.isInOpposingAllianceSector();
+     return shouldRev;
+  } */
 
   @Override
   public void periodic() {
     if (getRPMSetpoint() == 0.0) {
-      m_motor1.setControl(m_dutyCycleOut.withOutput(0.0));
+      m_motor1.setControl(m_dutyCycleOut.withOutput(0));
     } else {
       m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
     }
