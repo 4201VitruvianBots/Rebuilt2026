@@ -217,7 +217,7 @@ public class Elevator2d implements AutoCloseable {
         for (int i = 0; i < m_config.m_numberOfStages; i++) {
           if (m_config.m_stageMaxLengths[i].lte(subHeight)) {
             m_elevatorStages[i].setLength(m_config.m_stageMaxLengths[i].in(Meters));
-            subHeight.minus(m_config.m_stageMaxLengths[i]);
+            subHeight = subHeight.minus(m_config.m_stageMaxLengths[i]);
           } else {
             m_elevatorStages[i].setLength(subHeight.in(Meters));
             break;

@@ -62,9 +62,9 @@ public class VisualizationUtils {
 
     Color8Bit newColor =
         new Color8Bit(
-            originalColor.red + (int) deltaBrightness,
-            originalColor.green + (int) deltaBrightness,
-            originalColor.blue + (int) deltaBrightness);
+            Math.min(originalColor.red + (int) deltaBrightness, 255),
+            Math.min(originalColor.green + (int) deltaBrightness, 255),
+            Math.min(originalColor.blue + (int) deltaBrightness, 255));
 
     ligament.setColor(newColor);
   }

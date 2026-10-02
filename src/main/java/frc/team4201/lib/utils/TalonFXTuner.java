@@ -52,7 +52,7 @@ public class TalonFXTuner implements AutoCloseable {
   public TalonFXTuner(TalonFX talon, String subsystemName) {
     m_talon = talon;
     m_talon.getConfigurator().refresh(m_defaultConfig);
-    m_runningConfig = m_defaultConfig;
+    m_runningConfig = m_defaultConfig.clone();
     nt_subsystem = nt_instance.getTable(subsystemName);
     nt_motor_instance = nt_subsystem.getSubTable(talon.getDescription());
 

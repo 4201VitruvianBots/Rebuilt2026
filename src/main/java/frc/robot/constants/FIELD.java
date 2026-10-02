@@ -358,7 +358,7 @@ public class FIELD {
           new Translation3d(
               aprilTagMap.get("HUB_NEAR").getPose(false).getMeasureX().minus(WIDTH.div(2.0)),
               CENTER.getMeasureY(),
-              WIDTH),
+              HEIGHT),
           aprilTagMap.entrySet().stream()
               .filter(e -> e.getKey().startsWith("HUB"))
               .mapToInt(e -> e.getValue().getId(false))
