@@ -284,7 +284,7 @@ public class RobotContainer {
 
 
     m_driverController
-        .button(4)
+        .leftBumper()
         .whileTrue(
           new ParallelCommandGroup(
             new Shoot(
