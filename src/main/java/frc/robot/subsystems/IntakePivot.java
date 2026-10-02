@@ -46,7 +46,7 @@ import org.wpilib.command2.RunCommand;
 public class IntakePivot extends SubsystemBase {
   /** Creates a new IntakePivot. */
   @Logged(name = "Intake Pivot Motor", importance = Importance.INFO)
-  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.S3); 
+  private final TalonFX m_motor = new TalonFX(CAN.kIntakePivotMotor, CAN.S2);
 
   private DoubleSubscriber m_angleSubscriber;
   private DoublePublisher m_anglePublisher;
