@@ -184,14 +184,8 @@ public class Controls extends SubsystemBase {
         "Vision",
         (v, s) -> {
           var vision = (Vision) s;
-          if (!vision.lllConnected() && !vision.llrConnected()) {
-            alertMap.get("vision").setText("Both Limelights are disconnected");
-            alertMap.get("vision").set(true);
-          } else if (!vision.lllConnected()) {
-            alertMap.get("vision").setText("The left Limelight is disconnected");
-            alertMap.get("vision").set(true);
-          } else if (!vision.llrConnected()) {
-            alertMap.get("vision").setText("The right Limelight is disconnected");
+          if (!vision.llfConnected()) {
+            alertMap.get("vision").setText("The front limelight is disconnected!");
             alertMap.get("vision").set(true);
           }
           return vision;
