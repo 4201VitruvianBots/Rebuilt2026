@@ -94,6 +94,9 @@ public class ROBOT {
     }
   }
 
+  private static final Alert INIT_ALERT = new Alert("ROBOT", "init", "Initializing Robot Constants...", Level.LOW);
+  private static final Alert SERIAL_ALERT = new Alert("ROBOT", "serial", "", Level.LOW);
+
   public static void initWoodBot() {
     robotID = ROBOT_ID.WOOD_BOT;
   }
@@ -116,8 +119,7 @@ public class ROBOT {
   }
 
   public static void initializeConstants() {
-//    var alert = new Alert("ROBOT", "init", "Initializing Robot Constants...", Level.LOW);
-
+    INIT_ALERT.set(true);
     try {
       switch (ROBOT_ID.fromSerial(RobotController.getSerialNumber())) {
         case WOOD_BOT -> initWoodBot();
@@ -135,17 +137,12 @@ public class ROBOT {
                           """);
         }
       }
-//      alert.setText("Setting Robot Constants for " + robotID.getName());
+      SERIAL_ALERT.setText("Setting Robot Constants for " + robotID.getName());
     } catch (IllegalArgumentException e) {
-//      alert =
-//          new Alert(
-//              "ROBOT",
-//              "unrecognizedSerial",
-//              "WARN: Robot Serial Not Recognized! Current roboRIO Serial: "
-//                  + RobotController.getSerialNumber(),
-//              Level.MEDIUM);
+      SERIAL_ALERT.setText("WARN: Robot Serial Not Recognized! Current roboRIO Serial: " + RobotController.getSerialNumber());
+
     }
-//    alert.set(true);
+    SERIAL_ALERT.set(true);
   }
 
   public class USB {
