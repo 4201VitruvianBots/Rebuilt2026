@@ -42,7 +42,7 @@ public class Indexer extends SubsystemBase {
   private final TalonFX m_indexerMotor3 = new TalonFX(CAN.kIndexerMotor3, CAN.S3);
 
   @Logged(name = "Indexer Motor 4", importance = Importance.INFO)
-  private final TalonFX m_indexerMotor4 = new TalonFX(CAN.kIndexerMotor3, CAN.S3);
+  private final TalonFX m_indexerMotor4 = new TalonFX(CAN.kIndexerMotor4, CAN.S3);
 
   private DoubleSubscriber m_speedSubscriber1;
   private DoublePublisher m_speedPublisher1;
