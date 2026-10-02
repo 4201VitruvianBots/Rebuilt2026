@@ -29,6 +29,8 @@ import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.simulation.DCMotorSim;
 import org.wpilib.system.RobotController;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.tunable.Tunables;
 
 public class Indexer extends SubsystemBase {
 
@@ -43,9 +45,6 @@ public class Indexer extends SubsystemBase {
 
   @Logged(name = "Indexer Motor 4", importance = Importance.INFO)
   private final TalonFX m_indexerMotor4 = new TalonFX(CAN.kIndexerMotor3, CAN.S3);
-
-  private DoubleSubscriber m_speedSubscriber1;
-  private DoublePublisher m_speedPublisher1;
 
   private final DCMotorSim m_indexerMotor1Sim =
       new DCMotorSim(
@@ -116,16 +115,10 @@ public class Indexer extends SubsystemBase {
   }
 
   public void utilityInit() {
-    var topic =
-        NetworkTableInstance.getDefault()
-            .getTable("SmartDashboard")
-            .getDoubleTopic("Indexer Roller Speed Setpoint 1");
-    m_speedSubscriber1 = topic.subscribe(0.0);
-    m_speedPublisher1 = topic.publish();
-    m_speedPublisher1.set(0.0);
+    Tunables.getTable("SmartDashboard").publishDouble("Indexer Roller Speed Setpoint 1", ()->0.0, this::setSpeed);
   }
 
   public void utilityPeriodic() {
-    setSpeed(m_speedSubscriber1.get());
+
   }
 }

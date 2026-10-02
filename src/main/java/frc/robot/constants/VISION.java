@@ -20,6 +20,8 @@ import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.IntegerPublisher;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.StructPublisher;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.telemetry.TelemetryTable;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 
@@ -95,13 +97,7 @@ public final class VISION {
     private double lastHeartbeat = -1.0;
     private boolean isAlive = false;
 
-    private final DoublePublisher hbPub;
-    private final DoublePublisher estimatedTimestamp;
-    private final StructPublisher<Pose2d> estimatedPose;
-    private final IntegerPublisher numTags;
-    private final BooleanPublisher megatag2Pose;
-    private final BooleanPublisher validPose;
-    private final DoublePublisher robotTimestamp;
+    private final TelemetryTable telemetery;
 
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
@@ -109,20 +105,7 @@ public final class VISION {
       var llSubTable = ntInst.getTable(limelight.name);
       hbSub = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
 
-      var llPubTable = ntInst.getTable("llTable").getSubTable(limelight.name);
-      hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
-      estimatedTimestamp = llPubTable.getDoubleTopic("estTimestamp").publish();
-      estimatedTimestamp.setDefault(-1);
-      robotTimestamp = llPubTable.getDoubleTopic("robotTimestamp").publish();
-      robotTimestamp.setDefault(-1);
-      estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
-      estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.ZERO));
-      numTags = llPubTable.getIntegerTopic("numTags").publish();
-      numTags.setDefault(-1);
-      megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();
-      megatag2Pose.setDefault(false);
-      validPose = llPubTable.getBooleanTopic("poseValid").publish();
-      validPose.setDefault(false);
+      telemetery = Telemetry.getTable("llTable").getTable(limelight.name);
 
       for (int i = 0; i < 10; i++) {
         int ethPort = basePort + i;
@@ -136,27 +119,27 @@ public final class VISION {
     }
 
     public void publishTimestamp(double timestamp) {
-      estimatedTimestamp.set(timestamp);
+      telemetery.log("estTimestamp", timestamp);
     }
 
     public void publishRobotTimestamp(double timestamp) {
-      robotTimestamp.set(timestamp);
+      telemetery.log("robotTimestamp", timestamp);
     }
 
     public void publishPose(Pose2d pose) {
-      estimatedPose.set(pose);
+      telemetery.log("estPose", pose);
     }
 
     public void publishTagCount(int tags) {
-      numTags.set(tags);
+      telemetery.log("numTags", tags);
     }
 
     public void publishMegatag2Pose(boolean isMegatag2) {
-      megatag2Pose.set(isMegatag2);
+      telemetery.log("isMegatag2Pose", isMegatag2);
     }
 
     public void publishValid(boolean valid) {
-      validPose.set(valid);
+      telemetery.log("poseValid", valid);
     }
 
     public double getHeartbeat() {
@@ -168,7 +151,7 @@ public final class VISION {
         isAlive = false;
       }
 
-      hbPub.set(heartbeat);
+      telemetery.log("hb", heartbeat);
 
       return lastHeartbeat;
     }
