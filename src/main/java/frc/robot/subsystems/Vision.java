@@ -40,17 +40,15 @@ public class Vision extends SubsystemBase {
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
-  VISION.Limelight LLL = new VISION.Limelight(CAMERA_SERVER.limelightL);
-  VISION.Limelight LLR = new VISION.Limelight(CAMERA_SERVER.limelightR);
   VISION.Limelight LLF = new VISION.Limelight(CAMERA_SERVER.limelightF);
 
   private boolean m_localized;
 
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
   private Pose2d targetPose = Pose2d.ZERO;
-  private Pose2d allianceZonePose = new Pose2d();
-  private Pose2d neutralZonePose = new Pose2d();
-  private Pose2d unrealisticPose = new Pose2d();
+  private Pose2d allianceZonePose = Pose2d.ZERO;
+  private Pose2d neutralZonePose = Pose2d.ZERO;
+  private Pose2d unrealisticPose = Pose2d.ZERO;
 
   private boolean lockTarget = false;
   private boolean hasInitialPose = false;
@@ -176,25 +174,6 @@ public class Vision extends SubsystemBase {
     if (RobotState.isDisabled()) {
       // TODO: Determine if we change IMUMode to 0 when not disabled for MegaTag2
       LimelightHelpers.SetIMUMode(limelightName, 1);
-
-      // Only use Reef AprilTags for localization
-      // TODO: Update code values before using this
-      //      LimelightHelpers.setCameraPose_RobotSpace(
-      //          "limelight-f",
-      //          VISION.limelightFPosition.getX(),
-      //          VISION.limelightFPosition.getY(),
-      //          VISION.limelightFPosition.getZ(),
-      //          VISION.limelightFPosition.getRotation().getMeasureX().in(Degrees),
-      //          VISION.limelightFPosition.getRotation().getMeasureY().in(Degrees),
-      //          VISION.limelightFPosition.getRotation().getMeasureZ().in(Degrees));
-      //      LimelightHelpers.setCameraPose_RobotSpace(
-      //          "limelight-b",
-      //          VISION.limelightBPosition.getX(),
-      //          VISION.limelightBPosition.getY(),
-      //          VISION.limelightBPosition.getZ(),
-      //          VISION.limelightBPosition.getRotation().getMeasureX().in(Degrees),
-      //          VISION.limelightBPosition.getRotation().getMeasureY().in(Degrees),
-      //          VISION.limelightBPosition.getRotation().getMeasureZ().in(Degrees));
     }
 
     LimelightHelpers.SetRobotOrientation(
@@ -295,16 +274,6 @@ public class Vision extends SubsystemBase {
     return this.hasInitialPose;
   }
 
-  @Logged(name = "LLL Connected", importance = Logged.Importance.INFO)
-  public boolean lllConnected() {
-    return LLL.isAlive();
-  }
-
-  @Logged(name = "LLR Connected", importance = Logged.Importance.INFO)
-  public boolean llrConnected() {
-    return LLR.isAlive();
-  }
-
   @Logged(name = "LLF Connected", importance = Logged.Importance.INFO)
   public boolean llfConnected() {
     return LLF.isAlive();
@@ -354,7 +323,7 @@ public class Vision extends SubsystemBase {
     var heading = m_swerveDriveTrain.getState().Pose.getRotation().getRadians();
     // smallest signed angle difference in [-pi, pi]
     double error = Math.atan2(Math.sin(bearing - heading), Math.cos(bearing - heading));
-    if (returnAbsoluteValue == true) {
+    if (returnAbsoluteValue) {
       return Math.abs(error) <= Units.degreesToRadians(tolerance);
     } else {
       return error <= Units.degreesToRadians(tolerance);
@@ -399,9 +368,6 @@ public class Vision extends SubsystemBase {
     m_kPAutoAlignPublisher.set(12.0);
     m_kDAutoAlignPublisher.set(0.0);
   }
-
-  public void teleopInit() {}
-
   public void disabledPeriodic() {
     m_goal = FIELD.HUB.GOAL.getTargetPosition().toTranslation2d();
   }
@@ -413,16 +379,12 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // limelight-left
-    boolean lllSuccess = processLimelight(LLL);
-    // limelight-right
-    boolean llrSuccess = processLimelight(LLR);
-
-    boolean llfSuccess = processLimelight(LLF);
+    // limelight-front
+    boolean lllSuccess = processLimelight(LLF);
 
     if (!m_localized) {
       // TODO: Change this to check if the robotPose and both limelight are all close to each other
-      m_localized = lllSuccess && llrSuccess && llfSuccess;
+      m_localized = lllSuccess;
     }
 
     // Do this to avoid issues with the brief 'disabled' period between auto and teleop
