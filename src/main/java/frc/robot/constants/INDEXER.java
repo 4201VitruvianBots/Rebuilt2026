@@ -8,14 +8,14 @@ public class INDEXER {
   public static final double peakForwardOutput = 0.9;
   public static final double peakReverseOutput = -0.9;
   public static final double kInertia = 0.005;
-  public static final double kStatorCurrentLimit = 80;
+  public static final double kStatorCurrentLimit = 40;
 
   public static final DCMotor gearbox = DCMotor.getKrakenX60(4);
 
   public enum INDEXER_SPEED_1 {
     ZERO(0),
     INDEXING(0.6),
-    FREEING(-0.6);
+    FREEING(-0.15);
 
     private final double value;
 

@@ -13,7 +13,7 @@ import org.wpilib.units.measure.Distance;
 
 public class FLYWHEEL {
   public static final double kP = 7.0; // These worked for WoodBot but will need to be retuned
-  public static final double kA = 0.0;
+  public static final double kV = 12.0 / 96.66666667;
   // The value of kS is the largest voltage applied before the mechanism begins to move)
   public static final double gearRatio = 24.0 / 36.0; // Placeholder value
   public static final double kInertia = 0.01;
@@ -97,7 +97,7 @@ public class FLYWHEEL {
     public static final Angle hoodReverseOffset = Degrees.of(90);
 
     public enum MANUAL_ANGLE {
-      STOWED(Degrees.of(0.0)),
+      STOWED(Degrees.of(2.0)),
       HUB(Degrees.of(70.0)), // Test to highest possible angle with valid backwards shot
       BUMP(Degrees.of(30.0)), // calculated using sim
       TOWER(Degrees.of(20.0)),

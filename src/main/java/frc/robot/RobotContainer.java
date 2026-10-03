@@ -255,33 +255,8 @@ public class RobotContainer {
     if (m_flywheel != null && m_hood != null) { // Doesn't use utils
       m_driverController
           .dpadLeft()
-          .whileTrue(
-              new ParallelCommandGroup(
-                  m_flywheel.manualBumpShootCommand(), m_hood.manualFromBumpCommand()));
+          .whileTrue(m_intakePivot.reZero());
     }
-
-    if (m_flywheel != null && m_hood != null && m_vision != null && m_swerveDrive != null) {
-      var shoot =
-          new Shoot(
-              m_flywheel,
-              m_hood,
-              m_vision,
-              m_driverController,
-              m_swerveDrive,
-              () -> m_driverController.getAxis(Axis.LEFT_Y),
-              () -> m_driverController.getAxis(Axis.LEFT_X),
-              () -> m_manualHoodAngleShift,
-              () -> m_manualRPMshift);
-      // Only publish the teleop Shoot command. Autos create their own instances of Shoot.
-      Tunables.publish(shoot.getName(), shoot);
-      m_driverController.button(10).whileTrue(shoot);
-
-      POVUtils.povRightWithTilt(m_driverController.getHID())
-          .whileTrue(
-              new ParallelCommandGroup(
-                  m_flywheel.manualFullFieldPassCommand(), m_hood.manualFullFieldPassCommand()));
-    }
-
 
     m_driverController
         .leftBumper()
@@ -302,12 +277,6 @@ public class RobotContainer {
     if (m_intake != null) {
       m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer));
     }
-    if (m_intake != null) {
-      m_driverController
-          .button(0)
-          .or(m_operatorController.button(0))
-          .whileTrue(new JostleIntake(m_intakePivot));
-    }
 
     if (m_intakePivot != null) {
       Trigger manualOverrideActivate =
@@ -316,7 +285,7 @@ public class RobotContainer {
           m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
-    m_operatorController.rightTrigger().whileTrue(m_intakePivot.stow());
+    m_driverController.rightTrigger().whileTrue(m_intakePivot.stow()).onFalse(m_intakePivot.command(PIVOT_SETPOINT.INTAKING));
     m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer));
 
     POVUtils.povDownWithTilt(m_driverController.getHID())

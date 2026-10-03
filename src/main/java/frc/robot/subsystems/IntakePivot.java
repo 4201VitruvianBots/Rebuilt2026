@@ -166,6 +166,10 @@ public class IntakePivot extends SubsystemBase {
     return this.startEnd(() -> m_motor.setThrottle(speed), () -> m_motor.setThrottle(0.0));
   }
 
+  public Command reZero(){
+    return this.runOnce(() -> m_motor.setPosition(0));
+  }
+
   @NotLogged
   public Command manualOpenLoopOverride(DoubleSupplier speed) {
     return new InstantCommand(() -> m_manualOverride = true)
