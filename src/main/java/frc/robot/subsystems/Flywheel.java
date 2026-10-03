@@ -4,7 +4,14 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Amp;
+import static edu.wpi.first.units.Units.Joules;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Watts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -26,6 +33,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Energy;
 import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -43,10 +51,10 @@ public class Flywheel extends SubsystemBase {
   @Logged(name = "Flywheel Motor 1", importance = Importance.INFO)
   private final TalonFX m_motor1 = new TalonFX(CAN.kShooterRollerMotor1, CAN.roboRIO);
 
-  @Logged(name = "Flywheel Motor 2", importance = Importance.DEBUG)
+  @Logged(name = "Flywheel Motor 2", importance = Importance.INFO)
   private final TalonFX m_motor2 = new TalonFX(CAN.kShooterRollerMotor2, CAN.roboRIO);
 
-  @Logged(name = "Flywheel Motor 3", importance = Importance.DEBUG)
+  @Logged(name = "Flywheel Motor 3", importance = Importance.INFO)
   private final TalonFX m_motor3 = new TalonFX(CAN.kShooterRollerMotor3, CAN.roboRIO);
 
   private NeutralModeValue m_neutralMode =
@@ -57,6 +65,7 @@ public class Flywheel extends SubsystemBase {
   private final VoltageOut m_voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
   private Energy m_totalEnergyUsed = Joules.of(0.0);
+  private boolean m_isShooting = false;
 
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
@@ -112,6 +121,15 @@ public class Flywheel extends SubsystemBase {
 
   public void setRPMOutput(AngularVelocity rpm) {
     m_rpmSetpoint = rpm;
+  }
+
+  @Logged(name = "Is Shooting?", importance = Logged.Importance.INFO)
+  public boolean getIsShooting() {
+    return m_isShooting;
+  }
+
+  public void setIsShooting(boolean isShooting) {
+    m_isShooting = isShooting;
   }
 
   public void setVoltageOutput(Voltage voltage) {
@@ -202,6 +220,17 @@ public class Flywheel extends SubsystemBase {
         () -> setRPMOutput(MANUAL_RPM.PASSING.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
   }
 
+  // temporary
+  public Command manualBumpShootCommand() {
+    return this.startEnd(
+        () -> setRPMOutput(MANUAL_RPM.BUMP.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
+  }
+
+  public Command manualFullFieldPassCommand() {
+    return this.startEnd(
+        () -> setRPMOutput(MANUAL_RPM.FULL.getRPM()), () -> setVoltageOutput(Volts.of(0.0)));
+  }
+
   public void testInit() {
     m_rpmPublisher.set(0.0);
   }
@@ -211,7 +240,11 @@ public class Flywheel extends SubsystemBase {
   }
 
   public boolean isAtRPMsetpoint() {
-    return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThreshold;
+    if (DriverStation.isAutonomous()) {
+      return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdAuto;
+    } else {
+      return getAbsoluteRPMerror() <= FLYWHEEL.kVelocityErrorThresholdTeleop;
+    }
   }
 
   public double getRPMerror() {
@@ -223,9 +256,21 @@ public class Flywheel extends SubsystemBase {
     return Math.abs(getRPMerror());
   }
 
+  // public boolean getShouldRev(){
+  //   boolean shiftEnding = HubTracker.timeRemainingInCurrentShift().isPresent() &&
+  // HubTracker.timeRemainingInCurrentShift().get().abs(Seconds) < 3;
+  //   boolean shouldRev = (HubTracker.isActive() || shiftEnding) && m_vision != null &&
+  // !m_vision.isInOpposingAllianceSector();
+  //   return shouldRev;
+  // }
+
   @Override
   public void periodic() {
-    m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+    if (getRPMSetpoint() == 0.0) {
+      m_motor1.setControl(m_dutyCycleOut.withOutput(0.0));
+    } else {
+      m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
+    }
     updateEnergyUsed();
   }
 

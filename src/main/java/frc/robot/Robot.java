@@ -9,6 +9,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.FLYWHEEL;
@@ -33,8 +34,11 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    DataLogManager.start();
     enableLiveWindowInTest(false);
+    LiveWindow.disableAllTelemetry();
+    DataLogManager.logNetworkTables(true);
+    DataLogManager.logConsoleOutput(true);
+    DataLogManager.start("/u/logs/", "", 0.02);
     Epilogue.configure(
         config -> {
           // config.backend = new FileBackend(DataLogManager.getLog());
@@ -91,7 +95,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    m_robotContainer.autonomousPeriodic();
+  }
 
   @Override
   public void teleopInit() {

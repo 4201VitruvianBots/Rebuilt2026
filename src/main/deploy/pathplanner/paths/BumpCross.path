@@ -3,47 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.135430346051464,
-        "y": 4.996725820763088
+        "x": 3.586,
+        "y": 5.535936113575865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.135430346051464,
-        "y": 5.648606921029281
+        "x": 4.586,
+        "y": 5.535936113575865
       },
       "isLocked": false,
-      "linkedName": "ShootingPoint"
+      "linkedName": "SideStartPoint"
     },
     {
       "anchor": {
-        "x": 5.705,
-        "y": 5.536
+        "x": 6.377069143375881,
+        "y": 5.535936113575865
       },
       "prevControl": {
-        "x": 3.7036276230616645,
-        "y": 5.545149327321151
+        "x": 5.377069143375881,
+        "y": 5.535936113575865
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "OverBumpPointStart"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.2,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.8,
+    "maxAcceleration": 3.6,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -51,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -42.55691099572577
   },
   "reversed": false,
-  "folder": "IntakeFromNeutral",
+  "folder": "TwoCycle",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -31.798912824294426
+    "rotation": -33.5
   },
   "useDefaultConstraints": false
 }

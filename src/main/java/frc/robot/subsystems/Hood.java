@@ -130,7 +130,7 @@ public class Hood extends SubsystemBase {
         Degrees.of(
             MathUtil.clamp(
                 setpoint.in(Degrees), HOOD.minAngle.in(Degrees), HOOD.maxAngle.in(Degrees)));
-    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations) * HOOD.gearRatio));
+    m_motor.setControl(m_request.withPosition(m_hoodSetpoint.in(Rotations)));
   }
 
   @Logged(name = "Hood Setpoint", importance = Importance.DEBUG)
@@ -188,6 +188,16 @@ public class Hood extends SubsystemBase {
   public Command manualPassCommand() {
     return this.startEnd(
         () -> setAngle(MANUAL_ANGLE.PASSING.getAngle()), () -> setAngle(Degrees.of(0.0)));
+  }
+
+  public Command manualFromBumpCommand() {
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.BUMP.getAngle()), () -> setAngle(Degrees.of(0.0)));
+  }
+
+  public Command manualFullFieldPassCommand() {
+    return this.startEnd(
+        () -> setAngle(MANUAL_ANGLE.FULL.getAngle()), () -> setAngle(Degrees.of(0.0)));
   }
 
   @Override

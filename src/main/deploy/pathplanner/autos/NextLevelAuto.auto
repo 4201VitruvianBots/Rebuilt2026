@@ -7,55 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ShootNearStart"
+            "pathName": "BumpCross"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CrossOverBumpFromShooting"
+            "pathName": "OutsideDelay"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "IntakeFromCenter"
+            "pathName": "BumpCross"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.8
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ReturnToAllianceZone"
+            "pathName": "SideDepotCycle"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "ShootNearStart"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CrossOverBumpFromShooting"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IntakeFromCenter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ReturnToAllianceZone"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ShootNearStart"
+            "waitTime": 1.8
           }
         }
       ]

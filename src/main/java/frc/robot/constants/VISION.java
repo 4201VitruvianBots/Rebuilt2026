@@ -4,23 +4,30 @@
 
 package frc.robot.constants;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.*;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import frc.team4201.lib.vision.LimelightHelpers;
 
 public final class VISION {
   public enum CAMERA_SERVER {
-    limelightL("limelight-left", "10.42.1.12"),
-    limelightR("limelight-right", "10.42.1.11");
+    limelightF("limelight-front", "10.42.1.12"),
+    limelightR("limelight-right", "10.42.1.11"),
+    limelightL("limelight-left", "10.42.1.13");
 
     private final String name;
     private final String ip;
@@ -87,26 +94,20 @@ public final class VISION {
     private final DoubleSubscriber hbSub;
     private double lastHeartbeat = -1.0;
     private boolean isAlive = false;
-    private final DoubleArraySubscriber stddevsSub;
 
     private final DoublePublisher hbPub;
     private final DoublePublisher estimatedTimestamp;
-    private final DoublePublisher robotTimestamp;
     private final StructPublisher<Pose2d> estimatedPose;
-    private final DoubleArrayPublisher estimatedPoseStdDevs;
     private final IntegerPublisher numTags;
     private final BooleanPublisher megatag2Pose;
     private final BooleanPublisher validPose;
-
-    private LimelightHelpers.PoseEstimate lastGoodEstimate = new LimelightHelpers.PoseEstimate();
-    private Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);
+    private final DoublePublisher robotTimestamp;
 
     public Limelight(CAMERA_SERVER limelight) {
       this.limelight = limelight;
       var ntInst = NetworkTableInstance.getDefault();
       var llSubTable = ntInst.getTable(limelight.name);
       hbSub = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
-      stddevsSub = llSubTable.getDoubleArrayTopic("stddevs").subscribe(new double[12]);
 
       var llPubTable = ntInst.getTable("llTable").getSubTable(limelight.name);
       hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
@@ -116,8 +117,6 @@ public final class VISION {
       robotTimestamp.setDefault(-1);
       estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
       estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
-      estimatedPoseStdDevs = llPubTable.getDoubleArrayTopic("stddevs").publish();
-      estimatedPoseStdDevs.setDefault(new double[3]);
       numTags = llPubTable.getIntegerTopic("numTags").publish();
       numTags.setDefault(-1);
       megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();
@@ -148,10 +147,6 @@ public final class VISION {
       estimatedPose.set(pose);
     }
 
-    public void publishPoseStdDevs(Matrix<N3, N1> stdDevs) {
-      estimatedPoseStdDevs.set(stdDevs.getData());
-    }
-
     public void publishTagCount(int tags) {
       numTags.set(tags);
     }
@@ -176,29 +171,6 @@ public final class VISION {
       hbPub.set(heartbeat);
 
       return lastHeartbeat;
-    }
-
-    public Matrix<N3, N1> getStdDev(boolean mt2) {
-      var stddevArray = stddevsSub.get();
-      if (!mt2) {
-        stdDevs = VecBuilder.fill(stddevArray[0], stddevArray[1], stddevArray[5]);
-      } else {
-        stdDevs = VecBuilder.fill(stddevArray[6], stddevArray[7], stddevArray[11]);
-      }
-
-      return stdDevs;
-    }
-
-    public Matrix<N3, N1> getStdDev() {
-      return stdDevs;
-    }
-
-    public void setLastGoodEstimate(LimelightHelpers.PoseEstimate estimate) {
-      lastGoodEstimate = estimate;
-    }
-
-    public LimelightHelpers.PoseEstimate getLastGoodEstimate() {
-      return lastGoodEstimate;
     }
 
     public boolean isAlive() {

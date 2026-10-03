@@ -5,6 +5,8 @@
 package frc.robot.commands.autos;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import frc.robot.commands.Fire;
 
@@ -18,7 +20,12 @@ public class AutoShootManual extends ParallelDeadlineGroup {
         Commands.waitUntil(() -> (deps.flywheel.isAtRPMsetpoint() && deps.hood.atSetpoint()))
             .withTimeout(fireDurationSeconds)
             .andThen(
-                new Fire(deps.intake, deps.indexer, deps.uptake).withTimeout(fireDurationSeconds)));
+                new InstantCommand(() -> System.out.println(deps.vision.isInNeutralSector())),
+                new ConditionalCommand(
+                    new InstantCommand(),
+                    new Fire(deps.intake, deps.indexer, deps.uptake)
+                        .withTimeout(fireDurationSeconds),
+                    deps.vision::isInNeutralSector)));
     addCommands(deps.flywheel.manualAgainstHubCommand(), deps.hood.manualAgainstHubCommand());
   }
 }

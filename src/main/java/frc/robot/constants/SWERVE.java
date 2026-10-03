@@ -41,22 +41,27 @@ public class SWERVE {
   // Made up values
   public static final LinearVelocity kMaxSpeedBump = FeetPerSecond.of(5.5);
   public static final LinearAcceleration kMaxAccelerationBump = FeetPerSecondPerSecond.of(3.0);
+  // In units, where one unit is the max speed of the robot because 100% output of the joystick will
+  // translate to max speed.
+  public static final double kXAccelRateLimit = 10.0;
+  public static final double kYAccelRateLimit = 10.0;
+  public static final double kXDeccelRateLimit = -3.0;
+  public static final double kYDeccelRateLimit = -3.0;
 
   public static final LinearVelocity kMaxSpeedShooting = FeetPerSecond.of(8.0);
   public static final LinearAcceleration kMaxAccelerationShooting = FeetPerSecondPerSecond.of(11.0);
   public static final AngularVelocity kMaxRotation =
-      RotationsPerSecond.of(Math.PI * 0.3); // Temporary to reduce speed (original value 2.0).
+      RotationsPerSecond.of(Math.PI * 0.4); // Temporary to reduce speed (original value 2.0).
 
   // Constants needed for auto align
-  // TODO: Figure out where these numbers are coming from and if we need to change them.
   public class AUTO_ALIGN {
     public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
     public static final Distance kPositionTolerance = Inches.of(0.4);
     public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
     public static final Time kEndTriggerDebounce = Seconds.of(0.04);
     public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
-    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(17.0, 0.0, 0.0);
-    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(9.0, 0.0, 0.0);
+    public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(2.1, 0.0, 0.0);
+    public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(2.5, 0.0, 0.0);
 
     public static final PPHolonomicDriveController kDriveController =
         new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);

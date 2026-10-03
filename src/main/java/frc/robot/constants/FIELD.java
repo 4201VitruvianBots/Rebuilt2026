@@ -5,7 +5,11 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Controls;
@@ -14,7 +18,12 @@ import frc.team4201.lib.geometry.LinkedAprilTag;
 import frc.team4201.lib.geometry.Target3d;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.wpilib.AllianceInterface;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -481,15 +490,15 @@ public class FIELD {
     public static Target3d RED_LEFT_PASS =
         new Target3d(
             new Translation3d(
-                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5)),
-                FIELD_WIDTH.times(0.1),
+                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85)),
+                FIELD_WIDTH.times(0.2),
                 Meters.zero()));
 
     public static Target3d RED_RIGHT_PASS =
         new Target3d(
             new Translation3d(
-                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5)),
-                FIELD_WIDTH.times(0.9),
+                FIELD_LENGTH.minus(ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85)),
+                FIELD_WIDTH.times(0.8),
                 Meters.zero()));
 
     public static Collection<Translation2d> RED_PASS_POINTS =
@@ -500,12 +509,12 @@ public class FIELD {
     public static Target3d BLUE_LEFT_PASS =
         new Target3d(
             new Translation3d(
-                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5), FIELD_WIDTH.times(0.9), Meters.zero()));
+                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85), FIELD_WIDTH.times(0.8), Meters.zero()));
 
     public static Target3d BLUE_RIGHT_PASS =
         new Target3d(
             new Translation3d(
-                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.5), FIELD_WIDTH.times(0.1), Meters.zero()));
+                ZONE.HALF_ALLIANCE_ZONE_LENGTH.times(0.85), FIELD_WIDTH.times(0.2), Meters.zero()));
 
     public static Collection<Translation2d> BLUE_PASS_POINTS =
         List.of(
@@ -535,6 +544,33 @@ public class FIELD {
               TRANSLATION_TO_TARGET.get(robotPose.getTranslation().nearest(RED_PASS_POINTS));
         }
       }
+    }
+  }
+
+  public enum BUMP_ALIGNMENT_TARGETS {
+    // Naming scheme is as follows:
+    // First word is side
+    // Second word is whether the pose is in the neutral or alliance zone
+    // Third word is what these poses are in relation to
+    // All units are in meters
+    // Everything has been measured from our auto waypoints based on the welded field
+    LEFT_ALLIANCE_BUMP(new Pose2d(2.974, 5.536, Rotation2d.kZero)),
+    RIGHT_ALLIANCE_BUMP(new Pose2d(2.974, 2.533, Rotation2d.kZero)),
+    LEFT_ALLIANCE_SHOOTING(new Pose2d(2.974, 5.536, new Rotation2d(-42.557))),
+    RIGHT_ALLIANCE_SHOOTING(new Pose2d(2.974, 2.533, new Rotation2d(42.557))),
+    LEFT_NEUTRAL_BUMP(new Pose2d(5.833, 5.536, Rotation2d.kZero)),
+    RIGHT_NEUTRAL_BUMP(new Pose2d(5.833, 2.533, Rotation2d.kZero)),
+    RIGHT_UNREALISTIC_POSE(new Pose2d(0.0, 2.354, Rotation2d.kZero)),
+    LEFT_UNREALISTIC_POSE(new Pose2d(0.0, 5.536, Rotation2d.kZero));
+
+    private final Pose2d pose2d;
+
+    BUMP_ALIGNMENT_TARGETS(final Pose2d pose2d) {
+      this.pose2d = pose2d;
+    }
+
+    public Pose2d getAlignmentPose() {
+      return pose2d;
     }
   }
 }

@@ -6,50 +6,46 @@ package frc.robot.commands.autos.segments;
 
 import static edu.wpi.first.units.Units.Meters;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.PrepareFlywheel;
+import frc.robot.constants.ROBOT.TWO_CYCLE_PATH;
 import frc.team4201.lib.command.Auto;
+import java.util.function.BooleanSupplier;
 
-public class IntakeAndShootFromDepot extends Auto {
+public class IntakeFromNeutralNoCross extends Auto {
+
   public static void registerNamedCommands(AutoDependencies deps) {
     NamedCommands.registerCommand(
-        "prepareFlywheelForDepot", new PrepareFlywheel(deps.flywheel, Meters.of(3.31521515713456)));
+        "prepareFlywheelForNearHub",
+        new PrepareFlywheel(deps.flywheel, Meters.of(1.45650895207174))
+            .andThen(new PrintCommand("[AUTO] Preparing flywheel for near hub shot")));
   }
 
-  public IntakeAndShootFromDepot(AutoDependencies deps) {
+  public IntakeFromNeutralNoCross(
+      AutoDependencies deps, BooleanSupplier flipToRight, TWO_CYCLE_PATH selectedPath) {
     try {
       var swerveDrive = deps.swerveDrive;
       var intake = deps.intake;
       var intakePivot = deps.intakePivot;
       var uptake = deps.uptake;
 
-      var stopRequest = new SwerveRequest.ApplyRobotSpeeds();
-
-      var intakeFromDepot =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("IntakeFromDepot");
-      var shootFromDepot =
-          swerveDrive.getTrajectoryUtils().generatePPHolonomicCommand("ShootFromDepot");
+      PathPlannerPath path = PathPlannerPath.fromPathFile(selectedPath.getPathName());
 
       addCommands(
           new ParallelDeadlineGroup(
-                  intakeFromDepot,
+                  getPathCommand(swerveDrive, path, flipToRight),
                   new IntakeCommand(intake, intakePivot, uptake),
-                  new PrintCommand("[AUTO] Intaking from depot..."))
-              .andThen(new PrintCommand("[AUTO] Finished intaking from depot")),
-          shootFromDepot.andThen(new PrintCommand("[AUTO] Ready to shoot from depot")),
-          new AutoShoot(deps, 3.0) // TODO: Tune this timeout
-              .andThen(new PrintCommand("[AUTO] Finished shooting from depot")));
+                  new PrintCommand("[AUTO] Crossing over bump and intaking..."))
+              .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
     } catch (Exception e) {
-      DriverStation.reportError(
-          "Failed to load path for IntakeAndShootFromDepot", e.getStackTrace());
+      DriverStation.reportError("Failed to load path for IntakeFromNeutral", e.getStackTrace());
       addCommands(new InstantCommand());
     }
   }
