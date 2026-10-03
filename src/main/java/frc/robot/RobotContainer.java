@@ -286,7 +286,6 @@ public class RobotContainer {
     m_driverController
         .leftBumper()
         .whileTrue(
-          new ParallelCommandGroup(
             new Shoot(
                 m_flywheel,
                 m_hood,
@@ -297,8 +296,8 @@ public class RobotContainer {
                 m_driverController::getLeftX,
                 () -> m_manualHoodAngleShift,
                 () -> m_manualRPMshift
-              ), m_intakePivot.command(PIVOT_SETPOINT.JOSTLING))
-          ).onFalse(m_intakePivot.command(PIVOT_SETPOINT.INTAKING));
+              )
+          );
 
     if (m_intake != null) {
       m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer));
