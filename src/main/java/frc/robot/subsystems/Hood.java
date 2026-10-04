@@ -247,6 +247,10 @@ public class Hood extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
+   public Command reZero(){
+    return this.runOnce(() -> m_motor.setPosition(0));
+  }
+  
   public void utilityInit() {
     var topic =
         NetworkTableInstance.getDefault()

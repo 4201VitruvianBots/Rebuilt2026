@@ -253,11 +253,19 @@ public class RobotContainer {
     }
 
     if (m_flywheel != null && m_hood != null) { // Doesn't use utils
-      m_driverController
-          .dpadLeft()
+      m_operatorController
+          .button(1) 
           .whileTrue(m_intakePivot.reZero());
     }
 
+    if (m_hood != null){
+      m_operatorController.button(3).whileTrue(m_hood.reZero());
+    }
+
+    m_operatorController.button(0).onTrue(resetManualShifts());
+
+    m_operatorController.button(2).onTrue(new ResetGyro(m_swerveDrive));  
+    
     m_driverController
         .leftBumper()
         .whileTrue(
@@ -311,7 +319,6 @@ public class RobotContainer {
     // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     // );
 
-    m_operatorController.button(0).onTrue(resetManualShifts());
 
     POVUtils.povDownWithTilt(m_operatorController.getHID())
         .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));
