@@ -85,7 +85,7 @@ public class V2Constants {
   // This may need to be tuned to your individual robot
   private static final double kCoupleRatio = 4.5;
 
-  private static final double kDriveGearRatio = 7.03125;
+  private static final double kDriveGearRatio = 6.03;
   private static final double kSteerGearRatio = 26.09090909090909;
   private static final Distance kWheelRadius = Inches.of(2);
  
