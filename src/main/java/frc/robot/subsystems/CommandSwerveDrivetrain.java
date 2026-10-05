@@ -14,6 +14,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import frc.team4201.lib.utils.TrajectoryUtils;
+import org.wpilib.driverstation.*;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.controller.PIDController;
@@ -23,13 +25,9 @@ import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
+import org.wpilib.telemetry.Telemetry;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.MatchState;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.driverstation.internal.DriverStationBackend;
 import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
 import org.wpilib.command2.Command;
@@ -38,41 +36,18 @@ import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.SWERVE;
-import frc.robot.constants.SWERVE.AUTO_ALIGN;
 import frc.robot.generated.V2Constants.TunerSwerveDrivetrain;
 import frc.robot.lib.BLine.FollowPath;
-import frc.robot.lib.BLine.FollowPath.Builder;
 import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.command.SwerveSubsystem;
-import frc.team4201.lib.utils.TrajectoryUtils;
-import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Subsystem;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.driverstation.MatchState;
-import org.wpilib.epilogue.Logged;
-import org.wpilib.math.controller.PIDController;
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.math.linalg.Matrix;
-import org.wpilib.math.numbers.N1;
-import org.wpilib.math.numbers.N3;
-import org.wpilib.system.Notifier;
-import org.wpilib.system.RobotController;
-import org.wpilib.telemetry.Telemetry;
-import org.wpilib.units.measure.AngularVelocity;
-import org.wpilib.units.measure.LinearVelocity;
+import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
+
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -301,23 +276,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withWheelForceFeedforwardsX(driveFeedforwards.robotRelativeForcesXNewtons())
             .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
   }
-
-  public Builder builder =
-      new Builder(
-              this,
-              () -> this.getState().Pose,
-              () -> this.getState().Velocity,
-              this::setChassisVelocities,
-              new PIDController(
-                  getAutoTranslationPIDConstants().kP,
-                  getAutoTranslationPIDConstants().kI,
-                  getAutoTranslationPIDConstants().kD),
-              new PIDController(
-                  getAutoRotationPIDConstants().kP,
-                  getAutoRotationPIDConstants().kI,
-                  getAutoRotationPIDConstants().kD),
-              new PIDController(2.0, 0.0, 0, Robot.DEFAULT_PERIOD))
-          .withDefaultShouldFlip();
+    FollowPath.Builder autoBuilder =
+        new FollowPath.Builder(
+            this,
+            () -> getState().Pose,
+            () -> getState().Velocity,
+            this::setChassisVelocities,
+            new PIDController(
+                getAutoTranslationPIDConstants().kP,
+                getAutoTranslationPIDConstants().kI,
+                getAutoTranslationPIDConstants().kD),
+            new PIDController(
+                getAutoRotationPIDConstants().kP,
+                getAutoRotationPIDConstants().kI,
+                getAutoRotationPIDConstants().kD),
+            new PIDController(
+                getAutoCrossTrackPIDConstants().kP,
+                getAutoCrossTrackPIDConstants().kI,
+                getAutoCrossTrackPIDConstants().kD,
+                Robot.DEFAULT_PERIOD))
+            .withDefaultShouldFlip()
+            .withPoseReset(this::resetPose);
 
   public AngularVelocity getGyroYawRate() {
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
@@ -387,15 +366,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
 
   @Override
   public PIDConstants getAutoTranslationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignTranslationPID;
+    return SWERVE.autoTranslationConstants;
   }
 
   @Override
   public PIDConstants getAutoRotationPIDConstants() {
-    return AUTO_ALIGN.kAutoAlignRotationPID;
+    return SWERVE.autoRotationConstants;
   }
 
-  /**
+  @Override
+  public PIDConstants getAutoCrossTrackPIDConstants() {
+    return SWERVE.autoCrossTrackConstants ;
+  }
+
+    /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
    *
    * @param requestSupplier Function returning the request to apply
@@ -406,7 +390,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   public Command autoCrossBump(Supplier<Path> path) {
-    return defer(() -> builder.build(path.get()));
+    return defer(() -> autoBuilder.build(path.get()));
   }
 
   /**
@@ -533,5 +517,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   @Override
   public void addVisionMeasurement(PoseEstimate poseEstimate) {
     throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
+  }
+
+  public Command generateBLineCommand(String pathName, Supplier<Boolean> allianceFlip) {
+    return autoBuilder.withShouldMirror(allianceFlip).build(new Path(pathName));
+  }
+  public Command generateBLineCommand(String pathName) {
+    return autoBuilder.withShouldMirror(()->false).build(new Path(pathName));
   }
 }

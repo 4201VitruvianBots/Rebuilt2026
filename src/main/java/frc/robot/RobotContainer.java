@@ -14,6 +14,7 @@ import static org.wpilib.units.Units.RPM;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import frc.robot.commands.autos.routines.*;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.SlewRateLimiter;
@@ -36,15 +37,6 @@ import frc.robot.commands.JostleIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
-import frc.robot.commands.autos.routines.CenterPreload;
-import frc.robot.commands.autos.routines.JustDepot;
-import frc.robot.commands.autos.routines.NextLevelAuto;
-import frc.robot.commands.autos.routines.SimboticsAuto;
-import frc.robot.commands.autos.routines.SingleScoopWithSprinkles;
-import frc.robot.commands.autos.routines.TwoCycle;
-import frc.robot.commands.autos.routines.TwoCycleInsideOutRush;
-import frc.robot.commands.autos.routines.TwoCycleRush;
-import frc.robot.commands.autos.segments.IntakeFromNeutral;
 import frc.robot.commands.swerve.ResetGyro;
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
@@ -338,7 +330,9 @@ public class RobotContainer {
             m_intakePivot,
             m_indexer);
 
-    IntakeFromNeutral.registerNamedCommands(autoDeps);
+    m_autoChooser.add("Center Preload", m_swerveDrive.generateBLineCommand("center_preload", () -> m_flipToRight));
+    m_autoChooser.add("Simbotics Auto (Part 1)", m_swerveDrive.generateBLineCommand("simbotics", () -> m_flipToRight));
+    m_autoChooser.add("Depot Only", m_swerveDrive.generateBLineCommand("depot_only"));
 
     m_autoChooser.add("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.add("Simbotics Auto", new SimboticsAuto(autoDeps));
@@ -496,19 +490,19 @@ public class RobotContainer {
       // of the fuel
       // vel in ft/s = 0.0111882 * RPM - 0.
       try {
-        m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
-        m_fuelSim.launchFuel(
-            FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-            m_hood.getHoodAngle(),
-            Degrees.of(0),
-            FLYWHEEL.fuelLaunchHeight);
-        System.out.println(
-            "Launching fuel at velocity: "
-                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
-                + " ft/s and angle: "
-                + m_hood.getHoodAngleDegrees()
-                + " degrees");
-        System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
+        //m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
+//        m_fuelSim.launchFuel(
+//            FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
+//            m_hood.getHoodAngle(),
+//            Degrees.of(0),
+//            FLYWHEEL.fuelLaunchHeight);
+//        System.out.println(
+//            "Launching fuel at velocity: "
+//                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
+//                + " ft/s and angle: "
+//                + m_hood.getHoodAngleDegrees()
+//                + " degrees");
+        //System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
       } catch (IllegalStateException e) {
         return;
       }

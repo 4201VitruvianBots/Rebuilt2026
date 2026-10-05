@@ -1,0 +1,85 @@
+{
+  "path_elements": [
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 13.223757792250835,
+        "y_meters": 2.6045048827050454,
+        "intermediate_handoff_radius_meters": 0.5
+      },
+      "rotation_target": {
+        "rotation_radians": 2.227630253414837,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "translation",
+      "x_meters": 10.939053486808103,
+      "y_meters": 2.569388874264529,
+      "intermediate_handoff_radius_meters": 0.4
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 9.690110351146041,
+        "y_meters": 0.9784798572052198,
+        "intermediate_handoff_radius_meters": 0.9500000000000004
+      },
+      "rotation_target": {
+        "rotation_radians": 1.9609521286280123,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 8.993617098822954,
+        "y_meters": 3.144263772721069,
+        "intermediate_handoff_radius_meters": 0.44999999999999996
+      },
+      "rotation_target": {
+        "rotation_radians": 0.8563421792307748,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "translation",
+      "x_meters": 10.043080137003303,
+      "y_meters": 3.3103149506252123,
+      "intermediate_handoff_radius_meters": 0.4
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 10.291924821317096,
+        "y_meters": 2.6598121074083148,
+        "intermediate_handoff_radius_meters": 0.44999999999999996
+      },
+      "rotation_target": {
+        "rotation_radians": 2.353964764578342,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 13.359391302688643,
+        "y_meters": 2.897106177270219,
+        "intermediate_handoff_radius_meters": 0.5
+      },
+      "rotation_target": {
+        "rotation_radians": 2.4635476955829034,
+        "profiled_rotation": true
+      }
+    }
+  ],
+  "constraints": {
+    "max_velocity_meters_per_sec": [
+      {
+        "value": 2.0999999999999988,
+        "start_ordinal": 3,
+        "end_ordinal": 5
+      }
+    ]
+  }
+}

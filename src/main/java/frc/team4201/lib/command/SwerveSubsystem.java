@@ -39,18 +39,25 @@ public interface SwerveSubsystem extends Subsystem {
   RobotConfig getAutoRobotConfig();
 
   /**
-   * Function to get the translation {@link PIDConstants} for PathPlanner
+   * Function to get the translation {@link PIDConstants} for Bline
    *
    * @return PIDConstants
    */
   PIDConstants getAutoTranslationPIDConstants();
 
   /**
-   * Function to get the rotation {@link PIDConstants} for PathPlanner
+   * Function to get the rotation {@link PIDConstants} for Bline
    *
    * @return PIDConstants
    */
   PIDConstants getAutoRotationPIDConstants();
+
+  /**
+   * Function to get the cross track {@link PIDConstants} for Bline
+   *
+   * @return PIDConstants
+   */
+  PIDConstants getAutoCrossTrackPIDConstants();
 
   /**
    * Function to get the CTRE SwerveDriveState. Used to get the Robot's {@link Pose2d}.
@@ -70,7 +77,7 @@ public interface SwerveSubsystem extends Subsystem {
    * Function for PathPlanner to control the robot's motion in auto.
    *
    * @param chassisSpeeds WPILib's {@link ChassisVelocities}
-   * @param feedforwards PathPlanner's {@link DriveFeedforwards}
+   * @param feedforwards  PathPlanner's {@link DriveFeedforwards}
    */
   void setChassisVelocitiesAuto(ChassisVelocities chassisSpeeds, DriveFeedforwards feedforwards);
 }
