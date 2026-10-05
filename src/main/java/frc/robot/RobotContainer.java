@@ -330,9 +330,9 @@ public class RobotContainer {
             m_intakePivot,
             m_indexer);
 
-    m_autoChooser.add("Center Preload", m_swerveDrive.generateBLineCommand("center_preload", () -> m_flipToRight));
-    m_autoChooser.add("Simbotics Auto (Part 1)", m_swerveDrive.generateBLineCommand("simbotics", () -> m_flipToRight));
-    m_autoChooser.add("Depot Only", m_swerveDrive.generateBLineCommand("depot_only"));
+    m_autoChooser.add("Bline Center Preload", m_swerveDrive.generateBLineCommand("center_preload", () -> m_flipToRight));
+    m_autoChooser.add("Bline Simbotics Auto (Part 1)", m_swerveDrive.generateBLineCommand("simbotics", () -> m_flipToRight));
+    m_autoChooser.add("Bline Depot Only", m_swerveDrive.generateBLineCommand("depot_only"));
 
     m_autoChooser.add("Center Preload", new CenterPreload(autoDeps));
     m_autoChooser.add("Simbotics Auto", new SimboticsAuto(autoDeps));
