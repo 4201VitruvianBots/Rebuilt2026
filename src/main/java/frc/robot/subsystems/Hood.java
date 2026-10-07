@@ -105,7 +105,7 @@ public class Hood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     // if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
-    m_motor.setPosition(getHoodAngle());
+    m_motor.setPosition(0);
   }
 
   public void setAngle(Angle setpoint) {
