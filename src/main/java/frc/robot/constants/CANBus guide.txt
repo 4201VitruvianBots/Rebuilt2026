@@ -7,7 +7,7 @@ For more reliable info, reference #controls and the directorate
    * Intake motor 1
 * S2
    * Hood motor
-   * * S3
+  S3
    * Indexer motors 3 and 4
    * Intake motor 2
    * Intake Pivot motor
