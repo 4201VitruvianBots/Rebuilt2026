@@ -1,0 +1,98 @@
+{
+  "path_elements": [
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 13.01607636068237,
+        "y_meters": 4.022051177904145,
+        "intermediate_handoff_radius_meters": 0.5
+      },
+      "rotation_target": {
+        "rotation_radians": 0.0,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "translation",
+      "x_meters": 13.566839155158407,
+      "y_meters": 3.133707554833472,
+      "intermediate_handoff_radius_meters": 0.35
+    },
+    {
+      "type": "translation",
+      "x_meters": 14.131850528025996,
+      "y_meters": 2.620758732737615,
+      "intermediate_handoff_radius_meters": 0.3
+    },
+    {
+      "type": "translation",
+      "x_meters": 14.582873273761168,
+      "y_meters": 2.3215385865150306,
+      "intermediate_handoff_radius_meters": 0.3
+    },
+    {
+      "type": "translation",
+      "x_meters": 15.105138911454105,
+      "y_meters": 2.1933013809910653,
+      "intermediate_handoff_radius_meters": 0.35
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 16.15514865962631,
+        "y_meters": 2.179052802599518,
+        "intermediate_handoff_radius_meters": 0.5
+      },
+      "rotation_target": {
+        "rotation_radians": 0.0,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "rotation",
+      "rotation_radians": 0.0,
+      "t_ratio": 0.4907409565057495,
+      "profiled_rotation": true
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 14.932510154346055,
+        "y_meters": 3.0767132412672673,
+        "intermediate_handoff_radius_meters": 0.35000000000000003
+      },
+      "rotation_target": {
+        "rotation_radians": 2.9035420455230927,
+        "profiled_rotation": true
+      }
+    },
+    {
+      "type": "waypoint",
+      "translation_target": {
+        "x_meters": 14.362567018683992,
+        "y_meters": 3.9869351694636297,
+        "intermediate_handoff_radius_meters": 0.5
+      },
+      "rotation_target": {
+        "rotation_radians": 3.141592653589793,
+        "profiled_rotation": true
+      }
+    }
+  ],
+  "constraints": {
+    "max_velocity_meters_per_sec": [
+      {
+        "value": 1.8,
+        "start_ordinal": 3,
+        "end_ordinal": 6
+      }
+    ],
+    "max_velocity_deg_per_sec": [
+      {
+        "value": 500.0,
+        "start_ordinal": 3,
+        "end_ordinal": 3
+      }
+    ]
+  }
+}

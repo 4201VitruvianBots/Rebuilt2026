@@ -15,6 +15,7 @@ import frc.robot.constants.VISION.TARGET;
 import frc.robot.lib.BLine.Path;
 import frc.team4201.lib.simulation.FieldSim;
 import frc.team4201.lib.vision.LimelightHelpers;
+import frc.team4201.lib.vision.LimelightHelpers.PoseEstimate;
 
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.driverstation.RobotState;
@@ -185,7 +186,7 @@ public class Vision extends SubsystemBase {
         0,
         0);
     LimelightHelpers.PoseEstimate limelightMeasurement;
-    if (RobotState.isDisabled()) {
+    if (RobotState.isDisabled() || m_swerveDriveTrain.getState().Velocity.omega <= 0.1) {
       // Use MegaTag1 when the robot is disabled to set the initial robot pose
       limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     } else {
@@ -217,7 +218,7 @@ public class Vision extends SubsystemBase {
       assert limelightMeasurement != null;
 
       // Reset the Swerve Pose with MegaTag1 if we are disabled
-      if (RobotState.isDisabled() && !limelightMeasurement.isMegaTag2 && !matchStarted) {
+      if (!limelightMeasurement.isMegaTag2) {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
       } else {
         m_swerveDriveTrain.addVisionMeasurement(
