@@ -156,9 +156,10 @@ public class Hood extends SubsystemBase {
     m_motor.setControl(m_VoltageOut.withOutput(voltage.in(Volts)));
   }
 
+  /// Only shoots in reverse shot mode
   public Command manualAgainstHubCommand() {
     return this.startEnd(
-        () -> setAngle(MANUAL_ANGLE.HUB.getAngle()), () -> setAngle(Degrees.of(0.0)));
+        () -> setAngle(MANUAL_ANGLE.HUB.getAngle()), () -> setAngle(HOOD.minAngle));
   }
 
   public Command manualAgainstTowerCommand() {

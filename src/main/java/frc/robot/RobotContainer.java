@@ -238,7 +238,7 @@ public class RobotContainer {
 
     if (m_flywheel != null && m_hood != null) {
       m_driverController
-          .button(0)
+          .button(2)
           .whileTrue(
               new ParallelCommandGroup(
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
@@ -247,7 +247,7 @@ public class RobotContainer {
     if (m_flywheel != null && m_hood != null) { // Doesn't use utils
       m_driverController
           .dpadLeft()
-          .whileTrue(m_intakePivot.reZero());
+          .whileTrue(m_intakePivot.sendPivotDown());
     }
 
     m_driverController
