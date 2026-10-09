@@ -42,7 +42,7 @@ public class Hood extends SubsystemBase {
   @Logged(name = "Hood Motor", importance = Importance.DEBUG)
   private final TalonFX m_motor =
       new TalonFX(
-          CAN.kShooterHoodMotor, CAN.dummyBus); // Replace these device ids after motors are set up
+          CAN.kShooterHoodMotor, CAN.S2); // Replace these device ids after motors are set up
 
   private DoublePublisher m_anglePublisher;
 
@@ -105,7 +105,7 @@ public class Hood extends SubsystemBase {
     CtreUtils.configureTalonFx(m_motor, config);
 
     // if (RobotBase.isSimulation()) m_cancoder.setPosition(MANUAL_ANGLE.STOWED.getAngle());
-    m_motor.setPosition(getHoodAngle());
+    m_motor.setPosition(0);
   }
 
   public void setAngle(Angle setpoint) {
