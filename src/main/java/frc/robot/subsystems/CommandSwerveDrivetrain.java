@@ -305,7 +305,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
                 getAutoCrossTrackPIDConstants().kD,
                 Robot.DEFAULT_PERIOD))
             .withShouldFlip(CommandSwerveDrivetrain::shouldFlipPath)
-            ;//.withPoseReset(this::resetPose);
+            .withPoseReset(this::resetPose);
 
   private static boolean shouldFlipPath() {
     var alliance = MatchState.getAlliance();

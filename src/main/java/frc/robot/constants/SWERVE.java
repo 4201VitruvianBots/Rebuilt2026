@@ -53,7 +53,7 @@ public class SWERVE {
   public static final AngularVelocity kMaxRotation =
       RotationsPerSecond.of(Math.PI * 0.4); // Temporary to reduce speed (original value 2.0).
 
-    public static final PIDConstants autoTranslationConstants = new PIDConstants(1.5, 0, 0);
+    public static final PIDConstants autoTranslationConstants = new PIDConstants(1.7, 0, 0);
     public static final PIDConstants autoRotationConstants = new PIDConstants(2.5, 0, 0);
     public static final PIDConstants autoCrossTrackConstants = new PIDConstants(0.04, 0, 0);
 

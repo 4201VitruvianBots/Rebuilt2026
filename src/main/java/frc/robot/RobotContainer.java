@@ -14,7 +14,9 @@ import static org.wpilib.units.Units.RPM;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import frc.robot.commands.autos.AutoShoot;
 import frc.robot.commands.autos.routines.*;
+import frc.robot.lib.BLine.FollowPath;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
 import org.wpilib.math.filter.SlewRateLimiter;
@@ -330,13 +332,18 @@ public class RobotContainer {
             m_intakePivot,
             m_indexer);
 
+    FollowPath.registerEventTrigger("shoot", new AutoShoot(autoDeps, 3));
+    FollowPath.registerEventTrigger("intake", new IntakeCommand(m_intake, m_intakePivot, m_indexer));
+
     m_autoChooser.add("Bline Center Preload", m_swerveDrive.generateBLineCommand("center_preload", () -> m_flipToRight));
     m_autoChooser.add("Bline Simbotics Auto (Part 1)", m_swerveDrive.generateBLineCommand("bump_return", () -> m_flipToRight));
     m_autoChooser.add("Bline Depot Only", m_swerveDrive.generateBLineCommand("depot_only"));
     m_autoChooser.add("Trench Return", m_swerveDrive.generateBLineCommand("trench_return"));
+    m_autoChooser.add("Bump Return", m_swerveDrive.generateBLineCommand("bump_return"));
     m_autoChooser.add("pid", m_swerveDrive.generateBLineCommand("pidtuning").andThen(()->System.out.println("Finished Tuning")));
 
 //    m_autoChooser.add("Center Preload", new CenterPreload(autoDeps));
+//    m_autoChooser.add("Simbotics Auto", new SimboticsAuto(autoDeps));
 //    m_autoChooser.add("Simbotics Auto", new SimboticsAuto(autoDeps));
 //    m_autoChooser.add(
 //        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
