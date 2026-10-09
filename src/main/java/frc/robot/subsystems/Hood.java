@@ -197,8 +197,7 @@ public class Hood extends SubsystemBase {
         m_motor.setPosition(MANUAL_ANGLE.PASSING.getAngle().times(HOOD.gearRatio));
       }
     }
-
-    }
+  }
 
 
   @Override
