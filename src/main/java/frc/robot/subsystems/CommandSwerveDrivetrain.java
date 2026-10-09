@@ -200,6 +200,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
     } catch (Exception ex) {
       DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
     }
+
+    FollowPath.setDoubleLoggingConsumer(
+        value -> Telemetry.log(value.getFirst(), value.getSecond()));
+    FollowPath.setBooleanLoggingConsumer(
+        value -> Telemetry.log(value.getFirst(), value.getSecond()));
+    FollowPath.setPoseLoggingConsumer(
+        value -> Telemetry.log(value.getFirst(), value.getSecond()));
+    FollowPath.setTranslationListLoggingConsumer(
+        value -> Telemetry.log(value.getFirst(), value.getSecond()));
   }
 
   /**
@@ -295,8 +304,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
                 getAutoCrossTrackPIDConstants().kI,
                 getAutoCrossTrackPIDConstants().kD,
                 Robot.DEFAULT_PERIOD))
-            .withDefaultShouldFlip()
-            .withPoseReset(this::resetPose);
+            .withShouldFlip(CommandSwerveDrivetrain::shouldFlipPath)
+            ;//.withPoseReset(this::resetPose);
+
+  private static boolean shouldFlipPath() {
+    var alliance = MatchState.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get() == Alliance.BLUE;
+    }
+    return false;
+  }
 
   public AngularVelocity getGyroYawRate() {
     return getPigeon2().getAngularVelocityZWorld().refresh().getValue().unaryMinus();
