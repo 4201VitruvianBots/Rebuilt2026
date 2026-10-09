@@ -186,7 +186,7 @@ public class IntakePivot extends SubsystemBase {
   @NotLogged
   public Command sendPivotDown() {
     return new RunCommand(() -> {
-      m_motor.setThrottle(-0.5);
+      m_motor.setThrottle(0.5);
     }, this).withTimeout(Seconds.of(1.0)).andThen(new RunCommand( () -> {
       m_motor.setPosition(PIVOT_SETPOINT.INTAKING.getAngle());
     }, this));
