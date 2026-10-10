@@ -17,7 +17,8 @@ public class FLYWHEEL {
   // The value of kS is the largest voltage applied before the mechanism begins to move)
   public static final double gearRatio = 24.0 / 36.0; // Placeholder value
   public static final double kInertia = 0.01;
-  public static final double kStatorCurrentLimit = 70.0;
+  public static final double kStatorCurrentLimit = 60.0;
+  public static final double kSupplyCurrentLimit = 60.0;
   public static final double kVelocityErrorThresholdTeleop = 100.0;
   public static final double kVelocityErrorThresholdAuto = 150.0;
   public static final double kFuelDragCoefficient =

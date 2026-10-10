@@ -97,6 +97,7 @@ public class Flywheel extends SubsystemBase {
     config.MotorOutput.NeutralMode = m_neutralMode;
     config.Feedback.SensorToMechanismRatio = FLYWHEEL.gearRatio;
     config.CurrentLimits.StatorCurrentLimit = FLYWHEEL.kStatorCurrentLimit;
+    config.CurrentLimits.SupplyCurrentLimit = FLYWHEEL.kSupplyCurrentLimit;
     config.MotorOutput.PeakReverseDutyCycle = -0.1;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
