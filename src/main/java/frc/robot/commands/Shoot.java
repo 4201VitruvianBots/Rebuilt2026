@@ -147,7 +147,7 @@ public class Shoot extends Command {
     m_vision = vision;
     m_swerveDrivetrain = swerveDrive;
 
-    addRequirements(flywheel, shooterHood, swerveDrive);
+    addRequirements(flywheel, shooterHood);
     Tunables.publish(this.getName(), this);
   }
 
