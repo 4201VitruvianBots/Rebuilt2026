@@ -42,7 +42,7 @@ public class INTAKE {
 
     public enum INTAKE_SPEED {
       ZERO(0),
-      INTAKING(0.90),
+      INTAKING(1.0),
       AUTOINTAKING(0.99),
       SHOOTING(0.0),
       SHOTREVERSING(0.13),
