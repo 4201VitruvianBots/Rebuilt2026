@@ -88,6 +88,11 @@ public class Robot extends TimedRobot {
     }
   }
 
+  @Override
+  public void autonomousExit() {
+//    m_robotContainer.configureTeleopCurrentLimits();
+  }
+
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}

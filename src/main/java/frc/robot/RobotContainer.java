@@ -517,6 +517,10 @@ public class RobotContainer {
     }
   }
 
+  public void configureTeleopCurrentLimits(){
+    m_intake.setCurrentLimits(40, 100);
+  }
+
   public void resetFuelSim() {
     m_fuelSim.clearFuel();
     m_fuelSim.spawnStartingFuel();

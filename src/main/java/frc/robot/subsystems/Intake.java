@@ -60,9 +60,10 @@ public class Intake extends SubsystemBase {
 
   private int simStoredFuel = 8; // For fuel sim - 8 preload during auto
 
+  private TalonFXConfiguration config = new TalonFXConfiguration();
+
   /** Creates a new Intake. */
   public Intake() {
-    TalonFXConfiguration config = new TalonFXConfiguration();
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.PeakForwardDutyCycle = ROLLERS.peakForwardOutput;
@@ -103,6 +104,13 @@ public class Intake extends SubsystemBase {
   @NotLogged
   public boolean isIntaking() {
     return m_motor.getThrottle() != 0 && m_motor2.getThrottle() != 0;
+  }
+
+  public void setCurrentLimits(double supplyCurrent, double statorCurrent){
+    config.CurrentLimits.SupplyCurrentLimit = supplyCurrent;
+    config.CurrentLimits.StatorCurrentLimit = statorCurrent;
+    CtreUtils.configureTalonFx(m_motor, config);
+    CtreUtils.configureTalonFx(m_motor2, config);
   }
 
   @NotLogged
