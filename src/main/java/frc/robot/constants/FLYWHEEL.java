@@ -56,7 +56,7 @@ public class FLYWHEEL {
 
   public enum MANUAL_RPM {
     IDLE(RPM.of(0.0)),
-    HUB(RPM.of(4112)), // Old value from v1: 1470
+    HUB(RPM.of(3647)), // Old value from v1: 1470
     BUMP(RPM.of(1678.683948)), // Calculated using sim (Citrus Refrence????)
     TOWER(RPM.of(1719.0)),
     PASSING(RPM.of(2300.0)),
