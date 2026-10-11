@@ -15,10 +15,9 @@ import org.wpilib.command2.ParallelCommandGroup;
 
 public class IntakeCommand extends ParallelCommandGroup {
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(Intake intake, IntakePivot intakePivot, Indexer indexer) {
+  public IntakeCommand(Intake intake, IntakePivot intakePivot) {
     addCommands(
         (intake != null) ? intake.commandIntakeState(INTAKE_STATE.INTAKING) : new InstantCommand(),
-        (indexer != null) ? indexer.command(INDEXER_SPEED_1.FREEING) : new InstantCommand(),
         (intakePivot != null)
             ? intakePivot.command(PIVOT_SETPOINT.INTAKING)
             : new InstantCommand());

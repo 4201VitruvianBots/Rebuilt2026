@@ -25,10 +25,9 @@ public class AutoShoot extends ParallelDeadlineGroup {
                 new ParallelDeadlineGroup(
                     new ConditionalCommand(
                         new InstantCommand(),
-                        new Fire(deps.intake, deps.indexer)
+                        new Fire(deps.indexer, deps.intakePivot)
                             .withTimeout(fireDurationSeconds),
-                        deps.vision::isInNeutralSector),
-                    new WaitCommand(0.4).andThen(new JostleIntake(deps.intakePivot)))));
+                        deps.vision::isInNeutralSector))));
     addCommands(new Shoot(deps.flywheel, deps.hood, deps.vision, deps.swerveDrive));
   }
 }

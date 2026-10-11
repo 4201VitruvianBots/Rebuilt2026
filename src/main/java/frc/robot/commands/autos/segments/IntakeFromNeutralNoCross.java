@@ -42,7 +42,7 @@ public class IntakeFromNeutralNoCross extends Auto {
       addCommands(
           new ParallelDeadlineGroup(
                   getPathCommand(swerveDrive, path, flipToRight),
-                  new IntakeCommand(intake, intakePivot, indexer),
+                  new IntakeCommand(intake, intakePivot),
                   new PrintCommand("[AUTO] Crossing over bump and intaking..."))
               .andThen(new PrintCommand("[AUTO] Finished crossing over bump")));
     } catch (Exception e) {

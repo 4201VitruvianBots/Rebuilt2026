@@ -21,7 +21,9 @@ public class INTAKE {
     public static final double peakForwardOutput = 1.0;
     public static final double peakReverseOutput = -0.9;
     public static final double kInertia = 0.005;
-    public static final double kStatorCurrentLimit = 40;
+    public static final double kStatorCurrentLimit = 75;
+    public static final double kSupplyCurrentLimit = 30;
+    
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
 
@@ -98,7 +100,7 @@ public class INTAKE {
 
     public enum PIVOT_SETPOINT {
       STOWED(Degrees.of(0.0)),
-      INTAKING(Degrees.of(129.0)),
+      INTAKING(Degrees.of(126.563)),
       JOSTLING(Degrees.of(0.0)),
       DEFUEL(Degrees.of(0.0));
 

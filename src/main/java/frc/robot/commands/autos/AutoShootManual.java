@@ -23,7 +23,7 @@ public class AutoShootManual extends ParallelDeadlineGroup {
                 new InstantCommand(() -> System.out.println(deps.vision.isInNeutralSector())),
                 new ConditionalCommand(
                     new InstantCommand(),
-                    new Fire(deps.intake, deps.indexer)
+                    new Fire(deps.indexer, deps.intakePivot)
                         .withTimeout(fireDurationSeconds),
                     deps.vision::isInNeutralSector)));
     addCommands(deps.flywheel.manualAgainstHubCommand(), deps.hood.manualAgainstHubCommand());

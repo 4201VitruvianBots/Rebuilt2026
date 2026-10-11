@@ -64,7 +64,9 @@ public class Indexer extends SubsystemBase {
 
     config.CurrentLimits.StatorCurrentLimit = INDEXER.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    
+    config.CurrentLimits.SupplyCurrentLimit = INDEXER.kSupplyCurrentLimit;
+    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+
     CtreUtils.configureTalonFx(m_indexerMotor1, config);
     CtreUtils.configureTalonFx(m_indexerMotor2, config);
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -75,7 +77,6 @@ public class Indexer extends SubsystemBase {
         new Follower(m_indexerMotor1.getDeviceID(), MotorAlignmentValue.Aligned));
     m_indexerMotor4.setControl(
         new Follower(m_indexerMotor3.getDeviceID(), MotorAlignmentValue.Aligned));
-
     m_simState1 = m_indexerMotor1.getSimState();
   }
 

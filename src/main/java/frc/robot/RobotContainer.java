@@ -269,7 +269,7 @@ public class RobotContainer {
           );
 
     if (m_intake != null) {
-      m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot, m_indexer));
+      m_driverController.leftTrigger().whileTrue(new IntakeCommand(m_intake, m_intakePivot));
     }
 
     if (m_intakePivot != null) {
@@ -279,8 +279,7 @@ public class RobotContainer {
           m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
-    m_driverController.rightTrigger().whileTrue(m_intakePivot.stow()).onFalse(m_intakePivot.command(PIVOT_SETPOINT.INTAKING));
-    m_driverController.rightTrigger().whileTrue(new Fire(m_intake, m_indexer));
+    m_driverController.rightTrigger().whileTrue(new Fire(m_indexer, m_intakePivot));
 
     POVUtils.povDownWithTilt(m_driverController.getHID())
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));
@@ -333,7 +332,7 @@ public class RobotContainer {
             m_indexer);
 
     FollowPath.registerEventTrigger("shoot", new AutoShoot(autoDeps, 3));
-    FollowPath.registerEventTrigger("intake", new IntakeCommand(m_intake, m_intakePivot, m_indexer));
+    FollowPath.registerEventTrigger("intake", new IntakeCommand(m_intake, m_intakePivot));
 
     m_autoChooser.add("Bline Center Preload", m_swerveDrive.generateBLineCommand("center_preload", () -> m_flipToRight));
     m_autoChooser.add("Bline Simbotics Auto (Part 1)", m_swerveDrive.generateBLineCommand("bump_return", () -> m_flipToRight));

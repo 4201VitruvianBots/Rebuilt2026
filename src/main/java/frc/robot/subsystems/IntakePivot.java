@@ -40,6 +40,7 @@ import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.simulation.SingleJointedArmSim;
 import org.wpilib.system.RobotController;
 import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Current;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.command2.RunCommand;
 
@@ -60,6 +61,7 @@ public class IntakePivot extends SubsystemBase {
   private final TalonFXSimState m_motorSimState = m_motor.getSimState();
 
   private boolean m_manualOverride = false;
+  private TalonFXConfiguration config = new TalonFXConfiguration();
 
   // Simulation Code
   private final SingleJointedArmSim m_pivotSim =
@@ -74,7 +76,6 @@ public class IntakePivot extends SubsystemBase {
           PIVOT.startingAngle.in(Radians));
 
   public IntakePivot() {
-    TalonFXConfiguration config = new TalonFXConfiguration();
     config.Slot0.kP = PIVOT.kP;
     config.Slot0.kI = PIVOT.kI;
     config.Slot0.kD = PIVOT.kD;
@@ -146,6 +147,11 @@ public class IntakePivot extends SubsystemBase {
     return m_motor.isConnected();
   }
 
+  public void setCurrentLimit(double currentLimit){
+    config.CurrentLimits.StatorCurrentLimit = currentLimit;
+    CtreUtils.configureTalonFx(m_motor, config);
+  }
+
   @NotLogged
   public Command command(PIVOT_SETPOINT setpoint) {
     return Commands.runOnce(() -> setAngle(setpoint.getAngle()));
@@ -154,12 +160,11 @@ public class IntakePivot extends SubsystemBase {
   @NotLogged
   public Command stow() {
     var desiredAngleStowed = getDesiredAngle() == PIVOT_SETPOINT.STOWED.getAngle().abs(Degrees);
-    return this.runOnce(
+    return this.startEnd(
         () ->
             setAngle(
                 (!desiredAngleStowed)
-                    ? PIVOT_SETPOINT.STOWED.getAngle()
-                    : PIVOT_SETPOINT.INTAKING.getAngle()));
+                    ? PIVOT_SETPOINT.STOWED.getAngle() : PIVOT_SETPOINT.INTAKING.getAngle()), () -> setAngle(PIVOT_SETPOINT.INTAKING.getAngle()));
   }
   
   public Command percentCommand(double speed) {

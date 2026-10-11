@@ -9,17 +9,18 @@ import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakePivot;
+
 import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.ParallelCommandGroup;
 
 // *insert fire emoji*
 public class Fire extends ParallelCommandGroup {
   /** Creates a new Fire. */
-  public Fire(Intake intake, Indexer indexer) {
+  public Fire(Indexer indexer, IntakePivot intakePivot) {
     addCommands(
-        (intake != null) ? intake.commandIntakeState(INTAKE_STATE.SHOOTING) : new InstantCommand(),
         (indexer != null)
             ? indexer.command(INDEXER_SPEED_1.INDEXING)
-            : new InstantCommand());
+            : new InstantCommand(), intakePivot.stow());
   }
 }

@@ -62,10 +62,7 @@ public class V2Constants {
   // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
   private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration().withCurrentLimits(
       new CurrentLimitsConfigs()
-          .withSupplyCurrentLimit(100.0)
-          .withStatorCurrentLimit(120.0)
-          .withSupplyCurrentLowerLimit(80.0)
-          .withStatorCurrentLimitEnable(true)
+          .withSupplyCurrentLimit(40.0)
           .withSupplyCurrentLimitEnable(true)
   );
   private static final TalonFXConfiguration steerInitialConfigs =
