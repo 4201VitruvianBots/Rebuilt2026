@@ -239,8 +239,7 @@ public class RobotContainer {
         .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath(false)));
 
     if (m_flywheel != null && m_hood != null) {
-      m_driverController
-          .button(2)
+      m_driverController.rightBumper()
           .whileTrue(
               new ParallelCommandGroup(
                   m_flywheel.manualAgainstHubCommand(), m_hood.manualAgainstHubCommand()));
@@ -279,7 +278,7 @@ public class RobotContainer {
           m_intakePivot.manualOpenLoopOverride(m_operatorController::getLeftY));
     }
 
-    m_driverController.rightTrigger().whileTrue(new Fire(m_indexer, m_intakePivot));
+    m_driverController.rightTrigger().whileTrue(new ParallelCommandGroup(new Fire(m_indexer, m_intakePivot), m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest)));
 
     POVUtils.povDownWithTilt(m_driverController.getHID())
         .whileTrue(m_swerveDrive.applyRequest(() -> m_swerveDriveBrakeRequest));

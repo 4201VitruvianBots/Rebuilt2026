@@ -73,13 +73,10 @@ public class Shoot extends Command {
         new Shot(RPM.of(5100), Degrees.of(4.0), 1.1)); // Tuned (Tower)
     distanceToShotMap.put(
         Meters.of(4.02),
-        new Shot(RPM.of(5175
-
-
-          
-        ), Degrees.of(4.0), 1.1)); // Tuned (Tower)
+        new Shot(RPM.of(5175), Degrees.of(4.0), 1.1)); // Tuned (Tower)
     distanceToShotMap.put(
         Meters.of(4.538200), new Shot(RPM.of(5455), Degrees.of(31.5), 1.1)); // Tuned
+
     // distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
   }
 
