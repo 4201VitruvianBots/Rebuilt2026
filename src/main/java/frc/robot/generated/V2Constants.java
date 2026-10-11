@@ -63,7 +63,7 @@ public class V2Constants {
   private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration().withCurrentLimits(
       new CurrentLimitsConfigs()
           .withSupplyCurrentLimit(40.0)
-          .withSupplyCurrentLimitEnable(true)
+          .withSupplyCurrentLimitEnable(true).withStatorCurrentLimit(120.0).withStatorCurrentLimitEnable(true)
   );
   private static final TalonFXConfiguration steerInitialConfigs =
       new TalonFXConfiguration()
