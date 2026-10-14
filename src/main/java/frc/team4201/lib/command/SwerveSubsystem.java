@@ -1,10 +1,10 @@
 package frc.team4201.lib.command;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.limelightvision.PoseEstimate;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
-import frc.team4201.lib.vision.LimelightHelpers;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
@@ -18,7 +18,7 @@ public interface SwerveSubsystem extends Subsystem {
 
   AngularVelocity getYawRate();
 
-  void addVisionMeasurement(LimelightHelpers.PoseEstimate poseEstimate);
+  void addVisionMeasurement(PoseEstimate poseEstimate);
 
   void addVisionMeasurement(Pose2d pose, double timestampSeconds);
 

@@ -27,26 +27,12 @@ import org.wpilib.units.measure.Distance;
 
 public final class VISION {
   public enum CAMERA_SERVER {
-    limelightL("limelight-left", "10.42.1.13"),
-    limelightR("limelight-right", "10.42.1.11"),
-    limelightF("limelight-front", "10.42.1.12");
+    limelightF("limelight-front");
 
     private final String name;
-    private final String ip;
-    private final int lastOctet;
 
-    CAMERA_SERVER(final String name, final String ip) {
+    CAMERA_SERVER(final String name) {
       this.name = name;
-      this.ip = ip;
-      this.lastOctet = Integer.parseInt(this.ip.substring(this.ip.length() - 2));
-    }
-
-    public String getIp() {
-      return ip;
-    }
-
-    public int getLastOctet() {
-      return lastOctet;
     }
 
     @Override
@@ -88,76 +74,5 @@ public final class VISION {
     RIGHT_FRONT_TOWER,
     // LEFT_BACK_TOWER, // add if needed
     // RIGHT_BACK_TOWER // add if needed
-  }
-
-  public static class Limelight {
-    static int basePort = 5800;
-    CAMERA_SERVER limelight;
-    private final DoubleSubscriber hbSub;
-    private double lastHeartbeat = -1.0;
-    private boolean isAlive = false;
-
-    private final TelemetryTable telemetery;
-
-    public Limelight(CAMERA_SERVER limelight) {
-      this.limelight = limelight;
-      var ntInst = NetworkTableInstance.getDefault();
-      var llSubTable = ntInst.getTable(limelight.name);
-      hbSub = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
-
-      telemetery = Telemetry.getTable("llTable").getTable(limelight.name);
-
-      for (int i = 0; i < 10; i++) {
-        int ethPort = basePort + i;
-        int usbPort = ethPort + (limelight.ordinal() * 10);
-        PortForwarder.add(usbPort, this.limelight.ip, ethPort);
-      }
-    }
-
-    public String getName() {
-      return limelight.name;
-    }
-
-    public void publishTimestamp(double timestamp) {
-      telemetery.log("estTimestamp", timestamp);
-    }
-
-    public void publishRobotTimestamp(double timestamp) {
-      telemetery.log("robotTimestamp", timestamp);
-    }
-
-    public void publishPose(Pose2d pose) {
-      telemetery.log("estPose", pose);
-    }
-
-    public void publishTagCount(int tags) {
-      telemetery.log("numTags", tags);
-    }
-
-    public void publishMegatag2Pose(boolean isMegatag2) {
-      telemetery.log("isMegatag2Pose", isMegatag2);
-    }
-
-    public void publishValid(boolean valid) {
-      telemetery.log("poseValid", valid);
-    }
-
-    public double getHeartbeat() {
-      var heartbeat = hbSub.get();
-      if (heartbeat != -1 || heartbeat != lastHeartbeat) {
-        lastHeartbeat = heartbeat;
-        isAlive = true;
-      } else {
-        isAlive = false;
-      }
-
-      telemetery.log("hb", heartbeat);
-
-      return lastHeartbeat;
-    }
-
-    public boolean isAlive() {
-      return isAlive;
-    }
   }
 }
