@@ -5,6 +5,7 @@ import static org.wpilib.units.Units.Meters;
 
 import com.limelightvision.*;
 import com.limelightvision.PoseEstimate;
+import frc.robot.constants.VISION;
 import org.wpilib.command2.SubsystemBase;
 
 import com.ctre.phoenix6.Utils;
@@ -43,6 +44,7 @@ public class Vision extends SubsystemBase {
   private Controls m_controls;
 
   Limelight LLF = new Limelight(CAMERA_SERVER.limelightF.name());
+  VISION.LimelightTable LLF_Table = new VISION.LimelightTable(CAMERA_SERVER.limelightF);
 
   private boolean m_localized;
 
@@ -201,20 +203,20 @@ public class Vision extends SubsystemBase {
     boolean validResult = isPoseValid(limelight, limelightMeasurement);
 
     // Log Data
-//    limelight.publishValid(validResult);
-//    if (limelightMeasurement != null) {
-//      limelight.publishTimestamp(limelightMeasurement.timestampSeconds);
-//      limelight.publishRobotTimestamp(Utils.getCurrentTimeSeconds());
-//      limelight.publishPose(limelightMeasurement.pose);
-//      limelight.publishTagCount(limelightMeasurement.tagCount);
-//      limelight.publishMegatag2Pose(limelightMeasurement.isMegaTag2);
-//    } else {
-//      limelight.publishTimestamp(-1);
-//      limelight.publishRobotTimestamp(-1);
-//      limelight.publishPose(new Pose2d(-1, -1, Rotation2d.ZERO));
-//      limelight.publishTagCount(-1);
-//      limelight.publishMegatag2Pose(false);
-//    }
+    LLF_Table.publishValid(validResult);
+    if (limelightMeasurement != null) {
+      LLF_Table.publishTimestamp(limelightMeasurement.timestampSeconds);
+      LLF_Table.publishRobotTimestamp(Utils.getCurrentTimeSeconds());
+      LLF_Table.publishPose(limelightMeasurement.pose);
+      LLF_Table.publishTagCount(limelightMeasurement.reportedTagCount);
+      LLF_Table.publishMegatag2Pose(limelightMeasurement.isMT2());
+    } else {
+      LLF_Table.publishTimestamp(-1);
+      LLF_Table.publishRobotTimestamp(-1);
+      LLF_Table.publishPose(new Pose2d(-1, -1, Rotation2d.ZERO));
+      LLF_Table.publishTagCount(-1);
+      LLF_Table.publishMegatag2Pose(false);
+    }
 
     if (validResult) {
       // Only good updates reach this point, so use them for updating the robot pose

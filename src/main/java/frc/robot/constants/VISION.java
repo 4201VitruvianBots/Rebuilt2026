@@ -75,4 +75,94 @@ public final class VISION {
     // LEFT_BACK_TOWER, // add if needed
     // RIGHT_BACK_TOWER // add if needed
   }
+
+  public static class LimelightTable {
+    static int basePort = 5800;
+    CAMERA_SERVER limelight;
+    private final DoubleSubscriber hbSub;
+    private double lastHeartbeat = -1.0;
+    private boolean isAlive = false;
+
+    private final DoublePublisher hbPub;
+    private final DoublePublisher estimatedTimestamp;
+    private final StructPublisher<Pose2d> estimatedPose;
+    private final IntegerPublisher numTags;
+    private final BooleanPublisher megatag2Pose;
+    private final BooleanPublisher validPose;
+    private final DoublePublisher robotTimestamp;
+
+    public LimelightTable(CAMERA_SERVER limelight) {
+      this.limelight = limelight;
+      var ntInst = NetworkTableInstance.getDefault();
+      var llSubTable = ntInst.getTable(limelight.name);
+      hbSub = llSubTable.getDoubleTopic("hb").subscribe(-1.0);
+
+      var llPubTable = ntInst.getTable("llTable").getSubTable(limelight.name);
+      hbPub = llPubTable.getDoubleTopic("heartbeat").publish();
+      estimatedTimestamp = llPubTable.getDoubleTopic("estTimestamp").publish();
+      estimatedTimestamp.setDefault(-1);
+      robotTimestamp = llPubTable.getDoubleTopic("robotTimestamp").publish();
+      robotTimestamp.setDefault(-1);
+      estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
+      estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
+      numTags = llPubTable.getIntegerTopic("numTags").publish();
+      numTags.setDefault(-1);
+      megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();
+      megatag2Pose.setDefault(false);
+      validPose = llPubTable.getBooleanTopic("poseValid").publish();
+      validPose.setDefault(false);
+
+      for (int i = 0; i < 10; i++) {
+        int ethPort = basePort + i;
+        int usbPort = ethPort + (limelight.ordinal() * 10);
+        PortForwarder.add(usbPort, this.limelight.ip, ethPort);
+      }
+    }
+
+    public String getName() {
+      return limelight.name;
+    }
+
+    public void publishTimestamp(double timestamp) {
+      estimatedTimestamp.set(timestamp);
+    }
+
+    public void publishRobotTimestamp(double timestamp) {
+      robotTimestamp.set(timestamp);
+    }
+
+    public void publishPose(Pose2d pose) {
+      estimatedPose.set(pose);
+    }
+
+    public void publishTagCount(int tags) {
+      numTags.set(tags);
+    }
+
+    public void publishMegatag2Pose(boolean isMegatag2) {
+      megatag2Pose.set(isMegatag2);
+    }
+
+    public void publishValid(boolean valid) {
+      validPose.set(valid);
+    }
+
+    public double getHeartbeat() {
+      var heartbeat = hbSub.get();
+      if (heartbeat != -1 || heartbeat != lastHeartbeat) {
+        lastHeartbeat = heartbeat;
+        isAlive = true;
+      } else {
+        isAlive = false;
+      }
+
+      hbPub.set(heartbeat);
+
+      return lastHeartbeat;
+    }
+
+    public boolean isAlive() {
+      return isAlive;
+    }
+  }
 }
