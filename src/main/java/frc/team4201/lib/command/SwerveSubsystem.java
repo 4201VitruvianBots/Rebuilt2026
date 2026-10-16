@@ -1,14 +1,11 @@
 package frc.team4201.lib.command;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.util.DriveFeedforwards;
+import frc.team4201.lib.config.PIDConstants;
 import frc.team4201.lib.vision.LimelightHelpers;
 import org.wpilib.command2.Subsystem;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.math.linalg.Matrix;
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
@@ -30,13 +27,6 @@ public interface SwerveSubsystem extends Subsystem {
    * @return Translation2d[]
    */
   Translation2d[] getModuleLocations();
-
-  /**
-   * Function to get the PathPlanner {@link RobotConfig}
-   *
-   * @return RobotConfig
-   */
-  RobotConfig getAutoRobotConfig();
 
   /**
    * Function to get the translation {@link PIDConstants} for Bline
@@ -72,12 +62,4 @@ public interface SwerveSubsystem extends Subsystem {
    * @param pose Robot's position on the field in {@link Pose2d}
    */
   void resetPose(Pose2d pose);
-
-  /**
-   * Function for PathPlanner to control the robot's motion in auto.
-   *
-   * @param chassisSpeeds WPILib's {@link ChassisVelocities}
-   * @param feedforwards  PathPlanner's {@link DriveFeedforwards}
-   */
-  void setChassisVelocitiesAuto(ChassisVelocities chassisSpeeds, DriveFeedforwards feedforwards);
 }
