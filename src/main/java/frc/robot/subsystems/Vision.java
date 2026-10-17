@@ -220,9 +220,8 @@ public class Vision extends SubsystemBase {
 
     if (validResult) {
       // Only good updates reach this point, so use them for updating the robot pose
-      assert limelightMeasurement != null;
 
-      // Reset the Swerve Pose with MegaTag1 if we are disabled
+        // Reset the Swerve Pose with MegaTag1 if we are disabled
       if (!limelightMeasurement.isMT2()) {
         m_swerveDriveTrain.resetPose(limelightMeasurement.pose);
       } else {
