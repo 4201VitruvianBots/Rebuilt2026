@@ -104,7 +104,7 @@ public final class VISION {
       robotTimestamp = llPubTable.getDoubleTopic("robotTimestamp").publish();
       robotTimestamp.setDefault(-1);
       estimatedPose = llPubTable.getStructTopic("estPose", Pose2d.struct).publish();
-      estimatedPose.setDefault(new Pose2d(-1, -1, Rotation2d.kZero));
+      estimatedPose.setDefault(new Pose2d(-5, -5, Rotation2d.ZERO));
       numTags = llPubTable.getIntegerTopic("numTags").publish();
       numTags.setDefault(-1);
       megatag2Pose = llPubTable.getBooleanTopic("isMegatag2Pose").publish();
@@ -115,7 +115,7 @@ public final class VISION {
       for (int i = 0; i < 10; i++) {
         int ethPort = basePort + i;
         int usbPort = ethPort + (limelight.ordinal() * 10);
-        PortForwarder.add(usbPort, this.limelight.ip, ethPort);
+//        PortForwarder.add(usbPort, this.limelight.ip, ethPort);
       }
     }
 
