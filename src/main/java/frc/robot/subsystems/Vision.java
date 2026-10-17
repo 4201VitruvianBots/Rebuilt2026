@@ -204,7 +204,7 @@ public class Vision extends SubsystemBase {
 
     // Log Data
     LLF_Table.publishValid(validResult);
-    if (limelightMeasurement.isValid()) {
+    if (limelightMeasurement.isValid() && validResult) {
       LLF_Table.publishTimestamp(limelightMeasurement.timestampSeconds);
       LLF_Table.publishRobotTimestamp(Utils.getCurrentTimeSeconds());
       LLF_Table.publishPose(limelightMeasurement.pose);
