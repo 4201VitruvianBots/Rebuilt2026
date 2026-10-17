@@ -2,9 +2,7 @@ package frc.robot.constants;
 
 import static org.wpilib.units.Units.*;
 
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
+import frc.team4201.lib.config.PIDConstants;
 import frc.team4201.lib.utils.ModuleMap.MODULE_POSITION;
 import java.util.Map;
 import org.wpilib.math.geometry.Rotation2d;
@@ -66,11 +64,5 @@ public class SWERVE {
     public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
     public static final PIDConstants kAutoAlignTranslationPID = new PIDConstants(2.1, 0.0, 0.0);
     public static final PIDConstants kAutoAlignRotationPID = new PIDConstants(2.5, 0.0, 0.0);
-
-    public static final PPHolonomicDriveController kDriveController =
-        new PPHolonomicDriveController(kAutoAlignTranslationPID, kAutoAlignRotationPID);
-
-    public static final PathConstraints kAutoAlignPathConstraints =
-        new PathConstraints(1.75, 1.25, 1.0 / 2 * Math.PI, 1 * Math.PI);
   }
 }
