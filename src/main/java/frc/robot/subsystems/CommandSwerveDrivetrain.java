@@ -12,10 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.limelightvision.PoseEstimate;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.util.DriveFeedforwards;
-import frc.team4201.lib.utils.TrajectoryUtils;
+import frc.team4201.lib.config.PIDConstants;
 import org.wpilib.driverstation.*;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.math.linalg.Matrix;
@@ -32,7 +29,6 @@ import org.wpilib.units.measure.LinearVelocity;
 import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
 import org.wpilib.command2.Command;
-import org.wpilib.command2.Subsystem;
 import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.constants.CAN;
@@ -45,8 +41,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.json.simple.parser.ParseException;
-import frc.team4201.lib.utils.TrajectoryUtils.TrajectoryUtilsConfig;
 
 
 /**
@@ -97,8 +91,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
-
-  private TrajectoryUtils m_trajectoryUtils;
 
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotVelocity m_pathApplyRobotSpeeds =
@@ -194,13 +186,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
       startSimThread();
     }
 
-    try {
-      m_trajectoryUtils =
-          new TrajectoryUtils(this, new TrajectoryUtilsConfig().withResetPoseOnAuto(true));
-    } catch (Exception ex) {
-      DriverStationErrors.reportError("Failed to configure TrajectoryUtils", ex.getStackTrace());
-    }
-
     FollowPath.setDoubleLoggingConsumer(
         value -> Telemetry.log(value.getFirst(), value.getSecond()));
     FollowPath.setBooleanLoggingConsumer(
@@ -277,14 +262,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withTargetDirection(headingTarget));
   }
 
-  public void setChassisVelocitiesAuto(
-      ChassisVelocities chassisSpeeds, DriveFeedforwards driveFeedforwards) {
-    setControl(
-        m_pathApplyRobotSpeeds
-            .withVelocity(chassisSpeeds)
-            .withWheelForceFeedforwardsX(driveFeedforwards.robotRelativeForcesXNewtons())
-            .withWheelForceFeedforwardsY(driveFeedforwards.robotRelativeForcesYNewtons()));
-  }
     FollowPath.Builder autoBuilder =
         new FollowPath.Builder(
             this,
@@ -360,25 +337,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
           : diff.getAngle().get(); // .rotateBy(Rotation2d.k180deg);
     }
     return new Rotation2d(cs.vx, cs.vy);
-  }
-
-  public TrajectoryUtils getTrajectoryUtils() {
-    return m_trajectoryUtils;
-  }
-
-  @Override
-  public RobotConfig getAutoRobotConfig() {
-    try {
-      return RobotConfig.fromGUISettings();
-    } catch (IOException e) {
-      DriverStationErrors.reportWarning(
-          "[SwerveDrive] Could not load RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    } catch (ParseException e) {
-      DriverStationErrors.reportWarning(
-          "[SwerveDrive] Could not parse RobotConfig for autos!", e.getStackTrace());
-      throw new RuntimeException(e);
-    }
   }
 
   @Override

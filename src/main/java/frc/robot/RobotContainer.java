@@ -15,7 +15,6 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import frc.robot.commands.autos.AutoShoot;
-import frc.robot.commands.autos.routines.*;
 import frc.robot.lib.BLine.FollowPath;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
@@ -334,38 +333,10 @@ public class RobotContainer {
     FollowPath.registerEventTrigger("intake", new IntakeCommand(m_intake, m_intakePivot));
 
     m_autoChooser.add("Bline Center Preload", m_swerveDrive.generateBLineCommand("center_preload", () -> m_flipToRight));
-    m_autoChooser.add("Bline Simbotics Auto (Part 1)", m_swerveDrive.generateBLineCommand("bump_return", () -> m_flipToRight));
     m_autoChooser.add("Bline Depot Only", m_swerveDrive.generateBLineCommand("depot_only"));
     m_autoChooser.add("Trench Return", m_swerveDrive.generateBLineCommand("trench_return", () -> m_flipToRight));
     m_autoChooser.add("Bump Return", m_swerveDrive.generateBLineCommand("bump_return", () -> m_flipToRight));
     m_autoChooser.add("pid", m_swerveDrive.generateBLineCommand("pidtuning").andThen(()->System.out.println("Finished Tuning")));
-
-//    m_autoChooser.add("Center Preload", new CenterPreload(autoDeps));
-//    m_autoChooser.add("Simbotics Auto", new SimboticsAuto(autoDeps));
-//    m_autoChooser.add("Simbotics Auto", new SimboticsAuto(autoDeps));
-//    m_autoChooser.add(
-//        "Two Cycle Conservative", new TwoCycle(autoDeps, () -> m_flipToRight, false));
-//    m_autoChooser.add("Two Cycle", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-//    m_autoChooser.add(
-//        "Two Cycle - Alliance Partner Friendly", new TwoCycle(autoDeps, () -> m_flipToRight, true));
-//    m_autoChooser.add(
-//        "Two Cycle - Inside Out Alliance Partner Friendly",
-//        new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, true));
-//    m_autoChooser.add(
-//        "Two Cycle - Inside Out", new TwoCycleInsideOutRush(autoDeps, () -> m_flipToRight, false));
-//    m_autoChooser.add(
-//        "Two Cycle Delay", new NextLevelAuto(autoDeps, () -> m_flipToRight, true));
-//    m_autoChooser.add(
-//        "Single Scoop with Sprinkles (Depot)",
-//        new SingleScoopWithSprinkles(autoDeps, () -> m_flipToRight, true));
-//    m_autoChooser.add("Just Depot", new JustDepot(autoDeps, () -> m_flipToRight));
-//    // m_autoChooser.add("Two Cycle (Rush) - Inside Out Conservative", new
-//    // TwoCycleInsideOutConservativeRush(autoDeps, () -> m_flipToRight, false));
-//    m_autoChooser.add(
-//        "Two Cycle - Rush", new TwoCycleRush(autoDeps, () -> m_flipToRight, false));
-//    m_autoChooser.add(
-//        "Two Cycle (Rush) - Alliance Partner Friendly",
-//        new TwoCycle(autoDeps, () -> m_flipToRight, true));
   }
 
   private void initSideChooser() {
