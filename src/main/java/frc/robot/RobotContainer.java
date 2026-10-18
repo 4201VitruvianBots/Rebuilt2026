@@ -31,7 +31,6 @@ import org.wpilib.command2.WaitCommand;
 import org.wpilib.command2.button.CommandGamepad;
 import org.wpilib.command2.button.Trigger;
 import org.wpilib.command2.sysid.SysIdRoutine;
-import frc.hammerheads5000.FuelSim;
 import frc.robot.commands.Fire;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JostleIntake;
@@ -101,7 +100,6 @@ public class RobotContainer {
   @Logged(name = "LEDs", importance = Logged.Importance.INFO)
   private LEDs m_led;
 
-  // @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
   @Logged(name = "IntakePivot", importance = Logged.Importance.INFO)
   private IntakePivot m_intakePivot;
 
@@ -145,7 +143,6 @@ public class RobotContainer {
   private final CtreTelemetry m_telemetry =
       new CtreTelemetry(MaxSpeed.in(MetersPerSecond), SWERVE.kModuleTranslations);
   private FieldSim m_fieldSim;
-  private FuelSim m_fuelSim;
 
   private final Selectable<Command> m_autoChooser = new Selectable<>();
 
@@ -205,15 +202,12 @@ public class RobotContainer {
       m_led = new LEDs();
       m_led.setDefaultCommand(new UpdateLEDs(m_led, m_intake, m_flywheel));
       // m_led.setDefaultCommand(new TestLEDs(m_led));
-      // m_climber = new Climber();
     }
 
     if (Robot.isSimulation()) {
-      m_fuelSim = new FuelSim();
       m_fieldSim = new FieldSim();
       m_telemetry.registerFieldSim(m_fieldSim);
       m_vision.registerFieldSim(m_fieldSim);
-      // m_telemetry.registerFieldSim(m_fieldSim);
       FIELD.plotAllPositions(m_fieldSim);
       m_robotSim.registerSubsystems(
           m_intake, m_intakePivot, m_indexer, m_flywheel, m_hood);
@@ -349,23 +343,13 @@ public class RobotContainer {
   }
 
   public void simulationPeriodic() {
-    m_fuelSim.updateSim();
-    // SmartDashboard.putNumber("Current Red Score:",
-    // m_fuelSim.Hub.RED_HUB.getScore());
-    // SmartDashboard.putNumber("Current Blue Score:",
-    // m_fuelSim.Hub.BLUE_HUB.getScore());
+
   }
 
   private void initTunables() {
     initAutoChooser();
     initSideChooser();
     Tunables.publish("ResetGyro", new ResetGyro(m_swerveDrive));
-    if (RobotBase.isSimulation()) {
-      Tunables.publish(
-          "Start Fuel Sim", new InstantCommand((this::initializeFuelSim)).ignoringDisable(true));
-      Tunables.publish(
-          "Reset Fuel Sim", new InstantCommand((this::resetFuelSim)).ignoringDisable(true));
-    }
 
     Tunables.publish("Start Signal Logger", Commands.runOnce(SignalLogger::start));
     Tunables.publish("Stop Signal Logger", Commands.runOnce(SignalLogger::stop));
@@ -430,71 +414,7 @@ public class RobotContainer {
     Telemetry.log("In Neutral Zone?", m_vision.isInNeutralSector());
   }
 
-  public void initializeFuelSim() {
-    if (m_fuelSim.isRunning()) {
-      resetFuelSim();
-    } else {
-      m_fuelSim.spawnStartingFuel(); // spawns fuel in the depots and neutral zone
-      m_fuelSim.registerRobot(
-          SWERVE.kTrackWidth.in(Meters), // from left to right
-          SWERVE.kWheelBase.in(Meters), // from front to back
-          SWERVE.kBumperHeight.in(Meters), // from floor to top of bumpers
-          () -> m_swerveDrive.getState().Pose, // Supplier<Pose2d> of robot pose
-          () ->
-              m_swerveDrive.getState()
-                  .Velocity); // Supplier<ChassisVelocities> of field-centric chassis speeds
-      m_fuelSim
-          .start(); // enables the simulation to run (updateSim must still be called periodically)
-      m_fuelSim.registerIntake(
-          Inches.of(13.688).in(Meters),
-          Inches.of(15.094).in(Meters),
-          Inches.of(-13.938).in(Meters),
-          Inches.of(23.388).in(Meters),
-          () -> m_intake.getStoredFuel() <= SIM.MAX_FUEL && m_intake.isIntaking(),
-          () -> {
-            m_intake.setStoredFuel(m_intake.getStoredFuel() + 1);
-            System.out.println("Intaked fuel! New fuel count: " + m_intake.getStoredFuel());
-          });
-    }
-  }
-
-  public void updateFuelLaunchSim() {
-    // If uptake and flywheel are running, launch fuel from the sim
-    if (m_flywheel != null && m_hood != null) {
-      // if (m_uptake.getMotorSpeedRPM() > (UPTAKE_SPEED.SHOOTING.get().in(RPM) * 0.90) // TODO:
-      // Reimplement
-      //     && m_intake.getStoredFuel() > 0) {
-      // ReCalc and Desmos estimated this equation to convert RPM to linear velocity
-      // of the fuel
-      // vel in ft/s = 0.0111882 * RPM - 0.
-      try {
-        //m_intake.setStoredFuel(m_intake.getStoredFuel() - 1);
-//        m_fuelSim.launchFuel(
-//            FeetPerSecond.of(m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927),
-//            m_hood.getHoodAngle(),
-//            Degrees.of(0),
-//            FLYWHEEL.fuelLaunchHeight);
-//        System.out.println(
-//            "Launching fuel at velocity: "
-//                + (m_flywheel.getMotorSpeedRPM() * 0.0111882 - 0.000174927)
-//                + " ft/s and angle: "
-//                + m_hood.getHoodAngleDegrees()
-//                + " degrees");
-        //System.out.println("Launched fuel! Remaining fuel: " + m_intake.getStoredFuel());
-      } catch (IllegalStateException e) {
-        return;
-      }
-      // }
-    }
-  }
-
   public void configureTeleopCurrentLimits(){
     m_intake.setCurrentLimits(40, 100);
-  }
-
-  public void resetFuelSim() {
-    m_fuelSim.clearFuel();
-    m_fuelSim.spawnStartingFuel();
-    if (m_intake != null) m_intake.setStoredFuel(8); // preload
   }
 }
