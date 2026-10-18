@@ -43,12 +43,10 @@ public class Vision extends SubsystemBase {
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
-  Limelight LLF = new Limelight(CAMERA_SERVER.limelightF.name());
+  Limelight LLF = new Limelight(CAMERA_SERVER.limelightF.toString());
   VISION.LimelightTable LLF_Table = new VISION.LimelightTable(CAMERA_SERVER.limelightF);
 
   private boolean m_localized;
-
-  private final TelemetryTable telemetryTable = Telemetry.getTable("llTable");
 
   private TARGET m_currentTarget = TARGET.LEFT_FRONT_TOWER;
   private Pose2d targetPose = Pose2d.ZERO;
