@@ -494,9 +494,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
   }
 
   public Command generateBLineCommand(String pathName, Supplier<Boolean> allianceFlip) {
-    return autoBuilder.withShouldMirror(allianceFlip).build(new Path(pathName));
+    return autoBuilder.withShouldMirror(allianceFlip).build(new Path(pathName)).andThen(() -> setNeutralMode(SWERVE.MOTOR_TYPE.DRIVE, NeutralModeValue.Coast));
   }
+
   public Command generateBLineCommand(String pathName) {
-    return autoBuilder.withShouldMirror(()->false).build(new Path(pathName));
+    return generateBLineCommand(pathName, () -> false);
   }
 }
