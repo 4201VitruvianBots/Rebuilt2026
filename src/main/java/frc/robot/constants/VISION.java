@@ -27,26 +27,12 @@ import org.wpilib.units.measure.Distance;
 
 public final class VISION {
   public enum CAMERA_SERVER {
-    limelightL("limelight-left", "10.42.1.13"),
-    limelightR("limelight-right", "10.42.1.11"),
-    limelightF("limelight-front", "10.42.1.12");
+    limelightF("limelight-front");
 
     private final String name;
-    private final String ip;
-    private final int lastOctet;
 
-    CAMERA_SERVER(final String name, final String ip) {
+    CAMERA_SERVER(final String name) {
       this.name = name;
-      this.ip = ip;
-      this.lastOctet = Integer.parseInt(this.ip.substring(this.ip.length() - 2));
-    }
-
-    public String getIp() {
-      return ip;
-    }
-
-    public int getLastOctet() {
-      return lastOctet;
     }
 
     @Override
@@ -90,7 +76,7 @@ public final class VISION {
     // RIGHT_BACK_TOWER // add if needed
   }
 
-  public static class Limelight {
+  public static class LimelightTable {
     static int basePort = 5800;
     CAMERA_SERVER limelight;
     private final DoubleSubscriber hbSub;
@@ -99,7 +85,7 @@ public final class VISION {
 
     private final TelemetryTable telemetery;
 
-    public Limelight(CAMERA_SERVER limelight) {
+    public LimelightTable(CAMERA_SERVER limelight) {
       this.limelight = limelight;
       var ntInst = NetworkTableInstance.getDefault();
       var llSubTable = ntInst.getTable(limelight.name);
@@ -110,7 +96,7 @@ public final class VISION {
       for (int i = 0; i < 10; i++) {
         int ethPort = basePort + i;
         int usbPort = ethPort + (limelight.ordinal() * 10);
-        PortForwarder.add(usbPort, this.limelight.ip, ethPort);
+//        PortForwarder.add(usbPort, this.limelight.ip, ethPort);
       }
     }
 
