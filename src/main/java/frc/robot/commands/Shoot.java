@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import static org.wpilib.units.Units.Degree;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.RPM;
