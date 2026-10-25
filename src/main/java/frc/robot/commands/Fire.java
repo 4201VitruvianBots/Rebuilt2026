@@ -13,14 +13,15 @@ import frc.robot.subsystems.IntakePivot;
 
 import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.ParallelCommandGroup;
+import org.wpilib.command2.WaitCommand;
 
 // *insert fire emoji*
 public class Fire extends ParallelCommandGroup {
   /** Creates a new Fire. */
   public Fire(Indexer indexer, IntakePivot intakePivot) {
     addCommands(
-        (indexer != null)
+        (indexer != null && intakePivot != null)
             ? indexer.command(INDEXER_SPEED_1.INDEXING)
-            : new InstantCommand(), intakePivot.stow());
+            : new InstantCommand(), new WaitCommand(1.0).andThen(intakePivot.stow()));
   }
 }
