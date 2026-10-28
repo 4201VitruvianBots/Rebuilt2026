@@ -93,7 +93,7 @@ public class V2Constants {
   private static final double kSteerGearRatio = 26.09090909090909;
   private static final Distance kWheelRadius = Inches.of(2);
  
-  private static final boolean kInvertLeftSide = false;
+  private static final boolean kInvertLeftSide = true;
   private static final boolean kInvertRightSide = true;
 
   private static final int kPigeonId = 9;
@@ -141,7 +141,7 @@ public class V2Constants {
   private static final int kFrontLeftDriveMotorId = 20;
   private static final int kFrontLeftSteerMotorId = 21;
   private static final int kFrontLeftEncoderId = 10;
-  private static final Angle kFrontLeftEncoderOffset = Rotations.of(0.37548828125);
+  private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.124267578125);
   private static final boolean kFrontLeftSteerMotorInverted = false;
   private static final boolean kFrontLeftEncoderInverted = false;
   private static final Distance kFrontLeftXPos = Inches.of(8.875);
@@ -151,7 +151,7 @@ public class V2Constants {
   private static final int kFrontRightDriveMotorId = 22;
   private static final int kFrontRightSteerMotorId = 23;
   private static final int kFrontRightEncoderId = 11;
-  private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.319580078125);
+  private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.327880859375);
   private static final boolean kFrontRightSteerMotorInverted = false;
   private static final boolean kFrontRightEncoderInverted = false;
 
@@ -162,7 +162,7 @@ public class V2Constants {
   private static final int kBackLeftDriveMotorId = 24;
   private static final int kBackLeftSteerMotorId = 25;
   private static final int kBackLeftEncoderId = 12;
-  private static final Angle kBackLeftEncoderOffset = Rotations.of(0.244140625);
+  private static final Angle kBackLeftEncoderOffset = Rotations.of(-0.255126953125);
   private static final boolean kBackLeftSteerMotorInverted = false;
   private static final boolean kBackLeftEncoderInverted = false;
 
@@ -173,7 +173,7 @@ public class V2Constants {
   private static final int kBackRightDriveMotorId = 26;
   private static final int kBackRightSteerMotorId = 27;
   private static final int kBackRightEncoderId = 13;
-  private static final Angle kBackRightEncoderOffset = Rotations.of(-0.2568359375);
+  private static final Angle kBackRightEncoderOffset = Rotations.of(-0.254638671875);
   private static final boolean kBackRightSteerMotorInverted = false;
   private static final boolean kBackRightEncoderInverted = false;
 

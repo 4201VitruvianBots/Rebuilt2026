@@ -76,13 +76,16 @@ public class Shoot extends Command {
         new Shot(RPM.of(5025), Degrees.of(5.25), 1.1)); // Tuned (Trench)
     distanceToShotMap.put(
         Meters.of(3.554487),
-        new Shot(RPM.of(5100), Degrees.of(4.0), 1.1)); // Tuned (Tower)
+        new Shot(RPM.of(5150), Degrees.of(6.0), 1.1)); // Tuned (Tower)
+    distanceToShotMap.put(
+        Meters.of(3.7688405851818256),
+        new Shot(RPM.of(5275), Degrees.of(7.5), 1.1)); //Tuned (towerside)
     distanceToShotMap.put(
         Meters.of(4.00876827189919),
         new Shot(RPM.of(5350), Degrees.of(10.0), 1.1)); // Tuned (Tower)
     distanceToShotMap.put(
-        Meters.of(4.538200), 
-        new Shot(RPM.of(5455), Degrees.of(31.5), 1.1)); // Tuned
+        Meters.of(4.494623043076), 
+        new Shot(RPM.of(5455), Degrees.of(25.0), 1.1)); // Tuned
 
     // distanceToShotMap.put(Meters.of(4.2697), new Shot(RPM.of(1764.3), Degrees.of(8), 1.16));
   }

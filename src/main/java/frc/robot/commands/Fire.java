@@ -22,6 +22,6 @@ public class Fire extends ParallelCommandGroup {
     addCommands(
         (indexer != null && intakePivot != null)
             ? indexer.command(INDEXER_SPEED_1.INDEXING)
-            : new InstantCommand(), new WaitCommand(1.0).andThen(intakePivot.stow()));
+            : new InstantCommand(), new WaitCommand(0.5).andThen(intakePivot.stow()));
   }
 }
