@@ -174,11 +174,8 @@ public class RobotContainer {
   }
 
   private void initializeSubSystems() {
-    if (ROBOT.robotID.equals(ROBOT_ID.V1)) {
-      m_swerveDrive = V1Constants.createDrivetrain();
-    } else {
-      m_swerveDrive = V2Constants.createDrivetrain();
-    }
+    m_swerveDrive = V2Constants.createDrivetrain();
+    
     m_swerveDrive.setDefaultCommand(
         // Drivetrain will execute this command periodically
         m_swerveDrive.applyRequest(

@@ -103,7 +103,7 @@ public class FLYWHEEL {
       BUMP(Degrees.of(30.0)), // calculated using sim
       TOWER(Degrees.of(20.0)),
       REVERSE(Degrees.of(80.0)), 
-      PASSING(Degrees.of(45.0)),
+      PASSING(Degrees.of(35.0)),
       FULL(Degrees.of(90.0));
 
       private final Angle angle;

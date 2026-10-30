@@ -72,6 +72,7 @@ public class INTAKE {
     // public static final double kV = 0; // Recalc these
     // public static final double kA = 0;
     public static final double kG = 0.85;
+    public static final Time squishDelayTime = Seconds.of(0.5);
 
     public static final double gearRatio = 43.2 / 1.0;
     public static final double motionMagicAcceleration = 15.0;

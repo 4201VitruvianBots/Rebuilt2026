@@ -1,16 +1,14 @@
 package frc.robot.commands;
 
-import static org.wpilib.units.Units.Degree;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Radians;
+import static org.wpilib.units.Units.Rotation;
 import static org.wpilib.units.Units.Volts;
 
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FLYWHEEL;
-import frc.robot.constants.FLYWHEEL.HOOD;
-import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
 import frc.robot.constants.FLYWHEEL.Shot;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.robot.constants.SWERVE;
@@ -214,8 +212,11 @@ public class Shoot extends Command {
 
     // Calculate parameters accounted for imparted velocity
     Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle().get();
-
     hoodAngle = shot.hoodAngle.in(Radians);
+    if (m_vision.isInNeutralSector()) {
+        driveAngle = Rotation2d.k180deg;
+        hoodAngle = MANUAL_ANGLE.PASSING.getAngle().in(Radians);
+    }
 
     if (lastDriveAngle == null) lastDriveAngle = driveAngle;
     if (Double.isNaN(lastHoodAngle)) lastHoodAngle = hoodAngle;
@@ -245,12 +246,6 @@ public class Shoot extends Command {
     boolean isBraking = moduleAngleDeltaInt == 0;
 
     if (!isBraking) {
-        // if (shouldFlipHood(driveAngle.getDegrees())) {
-        //     m_swerveDrivetrain.setChassisVelocitiesWithHeading(
-        //         SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
-        //         SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),
-        //         Controls.isRedAlliance() ? driveAngle : driveAngle.rotateBy(Rotation2d.k180deg));
-        // }
         m_swerveDrivetrain.setChassisVelocitiesWithHeading(
                     SWERVE.kMaxSpeed.times(m_throttleInput.getAsDouble()),
                     SWERVE.kMaxSpeed.times(m_strafeInput.getAsDouble()),

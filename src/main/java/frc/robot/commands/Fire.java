@@ -4,8 +4,9 @@
 
 package frc.robot.commands;
 
+import frc.robot.constants.INTAKE;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
-// import frc.robot.constants.INDEXER.INDEXER_SPEED_2;
+import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -22,6 +23,6 @@ public class Fire extends ParallelCommandGroup {
     addCommands(
         (indexer != null && intakePivot != null)
             ? indexer.command(INDEXER_SPEED_1.INDEXING)
-            : new InstantCommand(), new WaitCommand(0.5).andThen(intakePivot.stow()));
+            : new InstantCommand(), new WaitCommand(PIVOT.squishDelayTime).andThen(intakePivot.stow()));
   }
 }

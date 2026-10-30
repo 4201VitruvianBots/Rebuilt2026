@@ -262,7 +262,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Sw
             .withTargetDirection(headingTarget));
   }
 
-    FollowPath.Builder autoBuilder =
+  public FollowPath.Builder autoBuilder =
         new FollowPath.Builder(
             this,
             () -> getState().Pose,
