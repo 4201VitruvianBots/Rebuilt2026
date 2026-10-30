@@ -25,9 +25,12 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.FLYWHEEL.MANUAL_RPM;
+import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
 import frc.team4201.lib.utils.CtreUtils;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
@@ -72,6 +75,7 @@ public class Flywheel extends SubsystemBase {
   private static AngularVelocity m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
   private Energy m_totalEnergyUsed = Joules.of(0.0);
   private boolean m_isShooting = false;
+  private int m_leadMotorID = m_motor1.getDeviceID();
 
   public final DoubleSubscriber m_rpmSubscriber;
   public final DoublePublisher m_rpmPublisher;
@@ -112,9 +116,9 @@ public class Flywheel extends SubsystemBase {
 
     // We only need the sim state of a single motor
 
-    m_motor2.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Aligned));
-    m_motor3.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
-    m_motor4.setControl(new Follower(m_motor1.getDeviceID(), MotorAlignmentValue.Opposed));
+    m_motor2.setControl(new Follower(m_leadMotorID, MotorAlignmentValue.Aligned));
+    m_motor3.setControl(new Follower(m_leadMotorID, MotorAlignmentValue.Opposed));
+    m_motor4.setControl(new Follower(m_leadMotorID, MotorAlignmentValue.Opposed));
 
     var topic =
         NetworkTableInstance.getDefault()
@@ -143,7 +147,7 @@ public class Flywheel extends SubsystemBase {
 
   public void setVoltageOutput(Voltage voltage) {
     m_motor1.setControl(m_voltageOut.withOutput(voltage.abs(Volts)));
-    m_rpmSetpoint = RPM.of(0);
+    m_rpmSetpoint = MANUAL_RPM.IDLE.getRPM();
   }
 
   // public void setTorqueCurrentOutputFOC(Voltage voltage) {
@@ -174,7 +178,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public void updateEnergyUsed() {
-    double newEnergy = (getPowerDraw().in(Watts) * 0.02);
+    double newEnergy = (getPowerDraw().in(Watts) * Robot.DEFAULT_PERIOD);
     m_totalEnergyUsed = m_totalEnergyUsed.plus(Joules.of(newEnergy));
   }
 
@@ -275,7 +279,7 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getRPMSetpoint() == 0.0) {
+    if (getRPMSetpoint() == MANUAL_RPM.IDLE.getRPM().abs(RPM)) {
       m_motor1.setControl(m_dutyCycleOut.withOutput(0));
     } else {
       m_motor1.setControl(m_request.withVelocity(m_rpmSetpoint.abs(RotationsPerSecond)));
@@ -288,7 +292,7 @@ public class Flywheel extends SubsystemBase {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_shooterMotorSim.setInputVoltage(m_simState.getMotorVoltage());
 
-    m_shooterMotorSim.update(0.02);
+    m_shooterMotorSim.update(Robot.DEFAULT_PERIOD);
 
     m_simState.setRawRotorPosition(
         Rotations.of(m_shooterMotorSim.getAngularVelocity()).times(FLYWHEEL.gearRatio));

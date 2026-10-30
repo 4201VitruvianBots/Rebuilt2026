@@ -20,6 +20,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.PIVOT;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
@@ -213,7 +215,7 @@ public class IntakePivot extends SubsystemBase {
     // m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_pivotSim.setInputVoltage(m_motorSimState.getMotorVoltage());
 
-    m_pivotSim.update(0.02);
+    m_pivotSim.update(Robot.DEFAULT_PERIOD);
 
     m_motorSimState.setRawRotorPosition(Radians.of(m_pivotSim.getAngle()));
     m_motorSimState.setRotorVelocity(RadiansPerSecond.of(m_pivotSim.getVelocity()));

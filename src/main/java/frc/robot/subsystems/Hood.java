@@ -14,6 +14,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.FLYWHEEL.HOOD;
 import frc.robot.constants.FLYWHEEL.HOOD.MANUAL_ANGLE;
@@ -206,7 +208,7 @@ public class Hood extends SubsystemBase {
     // m_cancoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_shooterHoodSim.setInputVoltage(m_simState.getMotorVoltage());
 
-    m_shooterHoodSim.update(0.02);
+    m_shooterHoodSim.update(Robot.DEFAULT_PERIOD);
 
     m_simState.setRawRotorPosition(
         Rotations.of(m_shooterHoodSim.getAngularPosition()).times(HOOD.gearRatio));

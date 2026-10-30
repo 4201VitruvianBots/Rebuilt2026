@@ -4,6 +4,9 @@ import static org.wpilib.units.Units.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import frc.robot.Robot;
+
 import org.wpilib.simulation.LinearSystemSim;
 import org.wpilib.system.RobotController;
 import org.wpilib.units.AngleUnit;
@@ -71,7 +74,7 @@ public class TalonFXSim {
     m_simState.setSupplyVoltage(RobotController.getBatteryVoltage());
     setInputVoltage(m_simState.getMotorVoltage());
 
-    m_model.update(0.02);
+    m_model.update(Robot.DEFAULT_PERIOD);
 
     switch (m_modelType) {
       case ARM -> {

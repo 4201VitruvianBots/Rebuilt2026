@@ -12,6 +12,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INTAKE.ROLLERS;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_SPEED;
@@ -186,7 +188,7 @@ public class Intake extends SubsystemBase {
 
     m_motor1Sim.setInputVoltage(m_simState.getMotorVoltage());
 
-    m_motor1Sim.update(0.02);
+    m_motor1Sim.update(Robot.DEFAULT_PERIOD);
 
     m_simState.setRawRotorPosition(
         Rotations.of(m_motor1Sim.getAngularPosition()).times(ROLLERS.gearRatio));

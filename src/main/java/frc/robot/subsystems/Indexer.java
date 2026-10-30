@@ -14,6 +14,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import frc.robot.Robot;
 import frc.robot.constants.CAN;
 import frc.robot.constants.INDEXER;
 import frc.robot.constants.INDEXER.INDEXER_SPEED_1;
@@ -107,7 +109,7 @@ public class Indexer extends SubsystemBase {
     m_simState1.setSupplyVoltage(RobotController.getBatteryVoltage());
     m_indexerMotor1Sim.setInputVoltage(m_simState1.getMotorVoltage());
 
-    m_indexerMotor1Sim.update(0.02);
+    m_indexerMotor1Sim.update(Robot.DEFAULT_PERIOD);
 
     m_simState1.setRawRotorPosition(
         Rotations.of(m_indexerMotor1Sim.getAngularPosition()).times(INDEXER.gearRatio));

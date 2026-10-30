@@ -6,6 +6,9 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import frc.robot.Robot;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.wpilib.util.Alert;
@@ -59,7 +62,7 @@ public final class CtreUtils {
     for (int i = 0; i < (RobotBase.isReal() ? 5 : 1); i++) {
       motorStatus = motor.getConfigurator().apply(config);
       if (motorStatus.isOK()) break;
-      if (RobotBase.isReal()) Timer.delay(0.02);
+      if (RobotBase.isReal()) Timer.delay(Robot.DEFAULT_PERIOD);
     }
     if (!motorStatus.isOK()) {
       var alert =
