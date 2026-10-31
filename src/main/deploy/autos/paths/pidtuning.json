@@ -20,7 +20,7 @@
         "intermediate_handoff_radius_meters": 0.5
       },
       "rotation_target": {
-        "rotation_radians": 0,
+        "rotation_radians": 0.0,
         "profiled_rotation": true
       }
     }
