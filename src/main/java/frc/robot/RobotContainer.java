@@ -15,6 +15,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import frc.robot.commands.autos.AutoShoot;
+import frc.robot.constants.*;
 import frc.robot.lib.BLine.FollowPath;
 import org.wpilib.epilogue.Logged;
 import org.wpilib.epilogue.NotLogged;
@@ -39,15 +40,11 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.UpdateLEDs;
 import frc.robot.commands.autos.AutoDependencies;
 import frc.robot.commands.swerve.ResetGyro;
-import frc.robot.constants.FIELD;
-import frc.robot.constants.FLYWHEEL;
 import frc.robot.constants.INTAKE.PIVOT.PIVOT_SETPOINT;
 import frc.robot.constants.INTAKE.ROLLERS.INTAKE_STATE;
-import frc.robot.constants.ROBOT;
 import frc.robot.constants.ROBOT.ROBOT_ID;
 import frc.robot.constants.ROBOT.SIM;
 import frc.robot.constants.ROBOT.USB;
-import frc.robot.constants.SWERVE;
 import frc.robot.constants.SWERVE.MOTOR_TYPE;
 import frc.robot.generated.V1Constants;
 import frc.robot.generated.V2Constants;
@@ -415,6 +412,6 @@ public class RobotContainer {
   }
 
   public void configureTeleopCurrentLimits(){
-    m_intake.setCurrentLimits(40, 100);
+    m_intake.setCurrentLimits(INTAKE.ROLLERS.kDefaultSupplyCurrentLimit, INTAKE.ROLLERS.kStatorCurrentLimit);
   }
 }

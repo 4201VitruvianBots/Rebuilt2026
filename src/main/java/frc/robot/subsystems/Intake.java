@@ -73,7 +73,7 @@ public class Intake extends SubsystemBase {
 
     config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = ROLLERS.kSupplyCurrentLimit;
+    config.CurrentLimits.SupplyCurrentLimit = ROLLERS.kAutoSupplyCurrentLimit;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     CtreUtils.configureTalonFx(m_motor, config);

@@ -22,8 +22,9 @@ public class INTAKE {
     public static final double peakReverseOutput = -0.9;
     public static final double kInertia = 0.005;
     public static final double kStatorCurrentLimit = 75;
-    public static final double kSupplyCurrentLimit = 35;
-    
+    public static final double kDefaultSupplyCurrentLimit = 40;
+    public static final double kAutoSupplyCurrentLimit = 60;
+
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(2);
 
