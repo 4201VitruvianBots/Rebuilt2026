@@ -111,8 +111,9 @@ public class Intake extends SubsystemBase {
   public void setCurrentLimits(double supplyCurrent, double statorCurrent){
     config.CurrentLimits.SupplyCurrentLimit = supplyCurrent;
     config.CurrentLimits.StatorCurrentLimit = statorCurrent;
-    CtreUtils.configureTalonFx(m_motor, config);
-    CtreUtils.configureTalonFx(m_motor2, config);
+    m_motor2.getConfigurator().apply(config);
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    m_motor2.getConfigurator().apply(config);
   }
 
   @NotLogged
