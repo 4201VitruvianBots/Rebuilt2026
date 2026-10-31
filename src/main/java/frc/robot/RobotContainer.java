@@ -29,6 +29,7 @@ import org.wpilib.command2.InstantCommand;
 import org.wpilib.command2.ParallelCommandGroup;
 import org.wpilib.command2.WaitCommand;
 import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.command2.button.CommandNiDsXboxController;
 import org.wpilib.command2.button.Trigger;
 import org.wpilib.command2.sysid.SysIdRoutine;
 import frc.robot.commands.Fire;
@@ -104,9 +105,9 @@ public class RobotContainer {
   private IntakePivot m_intakePivot;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandGamepad m_driverController = new CommandGamepad(USB.driver_xBoxController);
-  private final CommandGamepad m_operatorController =
-      new CommandGamepad(USB.operator_xboxController);
+  private final CommandNiDsXboxController m_driverController = new CommandNiDsXboxController(USB.driver_xBoxController);
+  private final CommandNiDsXboxController m_operatorController =
+      new CommandNiDsXboxController(USB.operator_xboxController);
 
   @Logged(name = "IsHubActive", importance = Logged.Importance.CRITICAL)
   public boolean isHubActive() {
@@ -183,11 +184,11 @@ public class RobotContainer {
                 drive
                     .withVelocityX(
                         MaxSpeed.times(
-                            -m_driverController.getAxis(Axis.LEFT_Y))) // Drive forward with negative Y (forward)
+                            -m_driverController.getLeftY())) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         MaxSpeed.times(
-                            -m_driverController.getAxis(Axis.LEFT_X))) // Drive left with negative X (left)
-                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getAxis(Axis.RIGHT_X)))));
+                            -m_driverController.getLeftX())) // Drive left with negative X (left)
+                    .withRotationalRate(MaxAngularRate.times(-m_driverController.getRightX()))));
     m_flywheel = new Flywheel();
     m_controls = new Controls();
     m_vision = new Vision(m_controls);
@@ -223,7 +224,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     if (m_intake != null)
-      m_driverController.button(0).whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
+      m_driverController.a().whileTrue(m_intake.commandIntakeState(INTAKE_STATE.REVERSING));
 
     POVUtils.povUpWithTilt(m_driverController.getHID())
         .whileTrue(m_swerveDrive.autoCrossBump(() -> m_vision.updateCrossBumpPath(false)));
@@ -237,7 +238,7 @@ public class RobotContainer {
 
     if (m_flywheel != null && m_hood != null) { // Doesn't use utils
       m_driverController
-          .dpadLeft()
+          .getHID().povLeft()
           .whileTrue(m_intakePivot.sendPivotDown());
     }
 
@@ -293,7 +294,7 @@ public class RobotContainer {
     // (FLYWHEEL.HOOD.angleShiftIncrement.in(Degrees)))
     // );
 
-    m_operatorController.button(0).onTrue(resetManualShifts());
+    m_operatorController.a().onTrue(resetManualShifts());
 
     POVUtils.povDownWithTilt(m_operatorController.getHID())
         .whileTrue(m_intakePivot.command(PIVOT_SETPOINT.DEFUEL));

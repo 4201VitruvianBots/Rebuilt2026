@@ -20,6 +20,7 @@ import frc.robot.subsystems.Vision;
 import java.util.function.DoubleSupplier;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.button.CommandGamepad;
+import org.wpilib.command2.button.CommandNiDsXboxController;
 import org.wpilib.driverstation.GenericHID.RumbleType;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.math.geometry.Pose2d;
@@ -91,7 +92,7 @@ public class Shoot extends Command {
   private final Vision m_vision;
   private final Flywheel m_flywheel;
   private final CommandSwerveDrivetrain m_swerveDrivetrain;
-  private CommandGamepad m_driverController;
+  private CommandNiDsXboxController m_driverController;
   private DoubleSupplier m_throttleInput = () -> 0.0;
   private DoubleSupplier m_strafeInput = () -> 0.0;
   private DoubleSupplier m_hoodAngleShift = () -> 0.0;
@@ -124,7 +125,7 @@ public class Shoot extends Command {
       Flywheel flywheel,
       Hood shooterHood,
       Vision vision,
-      CommandGamepad driverController,
+      CommandNiDsXboxController driverController,
       CommandSwerveDrivetrain swerveDrive,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput,
@@ -214,7 +215,7 @@ public class Shoot extends Command {
     Rotation2d driveAngle = m_goal.minus(lookaheadPose.getTranslation()).getAngle().get();
     hoodAngle = shot.hoodAngle.in(Radians);
     if (m_vision.isInNeutralSector()) {
-        driveAngle = Rotation2d.k180deg;
+        driveAngle = Rotation2d.ZERO;
         hoodAngle = MANUAL_ANGLE.PASSING.getAngle().in(Radians);
     }
 
@@ -226,11 +227,11 @@ public class Shoot extends Command {
     m_shooterHood.setAngle(Radians.of(hoodAngle).plus(Degrees.of(m_hoodAngleShift.getAsDouble())));  
     if (m_flywheel.isAtRPMsetpoint()) {
       if (m_driverController != null)
-        m_driverController.getGamepad().setRumble(
+        m_driverController.getNiDsXboxController().setRumble(
             RumbleType.LEFT_RUMBLE, FLYWHEEL.kRumbleStrength); // Null in auto
     } else {
       if (m_driverController != null)
-        m_driverController.getGamepad().setRumble(RumbleType.RIGHT_RUMBLE, 0); // Null in auto
+        m_driverController.getNiDsXboxController().setRumble(RumbleType.RIGHT_RUMBLE, 0); // Null in auto
     }
 
     Rotation2d moduleAngle = new Rotation2d();
@@ -257,7 +258,7 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     if (m_driverController != null)
-      m_driverController.getGamepad().setRumble(RumbleType.LEFT_RUMBLE, 0); // Null in auto
+      m_driverController.getNiDsXboxController().setRumble(RumbleType.LEFT_RUMBLE, 0); // Null in auto
     m_flywheel.setVoltageOutput(Volts.of(0.0));
     m_flywheel.setIsShooting(false);
     m_shooterHood.setAngle(MANUAL_ANGLE.STOWED.getAngle());
