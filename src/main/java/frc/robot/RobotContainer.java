@@ -329,6 +329,7 @@ public class RobotContainer {
     m_autoChooser.add("Trench Return", m_swerveDrive.generateBLineCommand("trench_return", () -> m_flipToRight));
     m_autoChooser.add("Bump Return", m_swerveDrive.generateBLineCommand("bump_return", () -> m_flipToRight));
     m_autoChooser.add("Bump Return Delay", new WaitCommand(6).andThen(m_swerveDrive.generateBLineCommand("bump_return_single_swipe_delay", () -> m_flipToRight)));
+    m_autoChooser.add("L Shape Test", m_swerveDrive.generateBLineCommand("safe_testing_path"));
     m_autoChooser.add("pid", m_swerveDrive.generateBLineCommand("pidtuning").andThen(()->System.out.println("Finished Tuning")));
   }
 
