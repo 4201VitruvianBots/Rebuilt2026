@@ -113,9 +113,8 @@ public class Intake extends SubsystemBase {
   public void setCurrentLimits(Current supplyCurrent, Current statorCurrent){
     config.CurrentLimits.SupplyCurrentLimit = supplyCurrent.abs(Amps);
     config.CurrentLimits.StatorCurrentLimit = statorCurrent.abs(Amps);
-    m_motor2.getConfigurator().apply(config);
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    m_motor.getConfigurator().apply(config);
+    m_motor.getConfigurator().apply(config.CurrentLimits);
+    m_motor2.getConfigurator().apply(config.CurrentLimits);
   }
 
   @NotLogged
