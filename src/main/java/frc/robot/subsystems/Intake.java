@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.RPM;
 import static org.wpilib.units.Units.Rotations;
 
@@ -32,6 +33,7 @@ import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.simulation.DCMotorSim;
 import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Current;
 import org.wpilib.system.RobotController;
 import org.wpilib.system.Timer;
 
@@ -71,9 +73,9 @@ public class Intake extends SubsystemBase {
     config.MotorOutput.PeakForwardDutyCycle = ROLLERS.peakForwardOutput;
     config.MotorOutput.PeakReverseDutyCycle = ROLLERS.peakReverseOutput;
 
-    config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit;
+    config.CurrentLimits.StatorCurrentLimit = ROLLERS.kStatorCurrentLimit.abs(Amps);
     config.CurrentLimits.StatorCurrentLimitEnable = true;
-    config.CurrentLimits.SupplyCurrentLimit = ROLLERS.kAutoSupplyCurrentLimit;
+    config.CurrentLimits.SupplyCurrentLimit = ROLLERS.kAutoSupplyCurrentLimit.abs(Amps);
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     CtreUtils.configureTalonFx(m_motor, config);
@@ -108,9 +110,9 @@ public class Intake extends SubsystemBase {
     return m_motor.getThrottle() != 0 && m_motor2.getThrottle() != 0;
   }
 
-  public void setCurrentLimits(double supplyCurrent, double statorCurrent){
-    config.CurrentLimits.SupplyCurrentLimit = supplyCurrent;
-    config.CurrentLimits.StatorCurrentLimit = statorCurrent;
+  public void setCurrentLimits(Current supplyCurrent, Current statorCurrent){
+    config.CurrentLimits.SupplyCurrentLimit = supplyCurrent.abs(Amps);
+    config.CurrentLimits.StatorCurrentLimit = statorCurrent.abs(Amps);
     m_motor2.getConfigurator().apply(config);
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     m_motor.getConfigurator().apply(config);

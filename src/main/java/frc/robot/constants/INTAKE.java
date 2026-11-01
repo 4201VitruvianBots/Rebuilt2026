@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Pounds;
@@ -9,6 +10,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import org.wpilib.math.system.DCMotor;
 import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Mass;
 import org.wpilib.units.measure.Time;
@@ -21,9 +23,9 @@ public class INTAKE {
     public static final double peakForwardOutput = 1.0;
     public static final double peakReverseOutput = -0.9;
     public static final double kInertia = 0.005;
-    public static final double kStatorCurrentLimit = 75;
-    public static final double kDefaultSupplyCurrentLimit = 40;
-    public static final double kAutoSupplyCurrentLimit = 60;
+    public static final Current kStatorCurrentLimit = Amps.of(75);
+    public static final Current kDefaultSupplyCurrentLimit = Amps.of(40);
+    public static final Current kAutoSupplyCurrentLimit = Amps.of(60);
 
 
     public static final DCMotor gearbox = DCMotor.getKrakenX60(2);

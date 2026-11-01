@@ -1,4 +1,5 @@
 {
+  "Display": {"window": {"visible": false}},
   "keyboardJoysticks": [{
     "axisConfig": [{
       "decKey": 546,
