@@ -5,10 +5,8 @@ import static org.wpilib.units.Units.Meters;
 
 import com.limelightvision.*;
 import com.limelightvision.PoseEstimate;
-import frc.robot.constants.VISION;
+import frc.team4201.lib.logging.LimeLightLogger;
 import org.wpilib.command2.SubsystemBase;
-
-import com.ctre.phoenix6.Utils;
 
 import frc.robot.constants.FIELD;
 import frc.robot.constants.FIELD.BUMP_ALIGNMENT_TARGETS;
@@ -30,8 +28,6 @@ import org.wpilib.math.util.Units;
 import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.networktables.DoubleSubscriber;
 import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.telemetry.Telemetry;
-import org.wpilib.telemetry.TelemetryTable;
 import org.wpilib.units.measure.Distance;
 
 public class Vision extends SubsystemBase {
@@ -43,8 +39,8 @@ public class Vision extends SubsystemBase {
   //   private LimelightSim visionSim;
   private Controls m_controls;
 
-  Limelight LLF = new Limelight(CAMERA_SERVER.limelightF.toString());
-  VISION.LimelightTable LLF_Table = new VISION.LimelightTable(CAMERA_SERVER.limelightF);
+  Limelight LLF = new Limelight(CAMERA_SERVER.limelightF.getName());
+  LimeLightLogger LLFLogger = new LimeLightLogger(LLF);
 
   private boolean m_localized;
 
@@ -201,20 +197,7 @@ public class Vision extends SubsystemBase {
     boolean validResult = isPoseValid(limelight, limelightMeasurement);
 
     // Log Data
-    LLF_Table.publishValid(validResult);
-    if (limelightMeasurement.isValid() && validResult) {
-      LLF_Table.publishTimestamp(limelightMeasurement.timestampSeconds);
-      LLF_Table.publishRobotTimestamp(Utils.getCurrentTimeSeconds());
-      LLF_Table.publishPose(limelightMeasurement.pose);
-      LLF_Table.publishTagCount(limelightMeasurement.reportedTagCount);
-      LLF_Table.publishMegatag2Pose(limelightMeasurement.isMT2());
-    } else {
-      LLF_Table.publishTimestamp(-1);
-      LLF_Table.publishRobotTimestamp(-1);
-      LLF_Table.publishPose(new Pose2d(-1, -1, Rotation2d.ZERO));
-      LLF_Table.publishTagCount(-1);
-      LLF_Table.publishMegatag2Pose(false);
-    }
+    LLFLogger.logData(limelightMeasurement, validResult);
 
     if (validResult) {
       // Only good updates reach this point, so use them for updating the robot pose
